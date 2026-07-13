@@ -65,29 +65,58 @@ ${ctx.brandVoice ? `- Brand voice: ${ctx.brandVoice}` : ''}
 
 Write the message. Output as ${ctx.channel === 'email' ? 'JSON: {"subject": "...", "body": "..."}' : 'JSON: {"body": "..."}'}`;
 
-  const completion = await getOpenAI().chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-    response_format: { type: 'json_object' },
-    temperature: 0.6,
-    max_tokens: 500,
-  });
-
-  const content = completion.choices[0]?.message?.content;
-  if (!content) throw new Error('No dunning content generated');
-
   try {
-    const parsed = JSON.parse(content);
-    if (ctx.channel === 'email') {
-      return { subject: parsed.subject, body: parsed.body };
+    const completion = await getOpenAI().chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.6,
+      max_tokens: 500,
+    });
+
+    const content = completion.choices[0]?.message?.content;
+    if (!content) throw new Error('No dunning content generated');
+
+    try {
+      const parsed = JSON.parse(content);
+      if (ctx.channel === 'email') {
+        return { subject: parsed.subject, body: parsed.body };
+      }
+      return { body: parsed.body };
+    } catch {
+      return { body: content.slice(0, maxBody) };
     }
-    return { body: parsed.body };
-  } catch {
-    return { body: content.slice(0, maxBody) };
+  } catch (e) {
+    // OpenAI unavailable / invalid key — fall back to a deterministic template.
+    return fallbackDunningMessage(ctx);
   }
+}
+
+export function fallbackDunningMessage(ctx: DunningContext): { subject?: string; body: string } {
+  const link = `https://collectly.app/pay/${ctx.invoiceNumber}`;
+  const linkFragment = ctx.channel === 'email' ? `\n\nPay here: ${link}` : ` ${link}`;
+  let body: string;
+  if (ctx.tone === 'friendly') {
+    body = `Hi ${ctx.contactName ?? 'there'},\n\nJust a quick nudge — invoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} was due on ${ctx.dueDate}. No rush, but if you can settle it today, that'd help us out.${linkFragment}\n\nThanks for being a great customer.\n\n${ctx.businessName}`;
+  } else if (ctx.tone === 'firm') {
+    body = `Hi ${ctx.contactName ?? 'there'},\n\nInvoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} is now ${ctx.daysOverdue} day${ctx.daysOverdue === 1 ? '' : 's'} past due (originally due ${ctx.dueDate}).\n\nPlease review and settle at your earliest convenience. If there's an issue with the work, just reply and we'll sort it out.${linkFragment}\n\n${ctx.businessName}`;
+  } else {
+    body = `Final notice: invoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue} days overdue. After 60 days unpaid, we will need to refer this to collections.${linkFragment}\n\nIf you'd like to discuss payment arrangements, please reply today.\n\n${ctx.businessName}`;
+  }
+  if (ctx.channel === 'sms') {
+    // SMS: shorter, no newlines
+    const short = `${ctx.contactName ?? 'Hi'} — invoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue}d overdue.${linkFragment} — ${ctx.businessName}`;
+    return { body: short.slice(0, 320) };
+  }
+  const subject = ctx.tone === 'friendly'
+    ? `Quick reminder — invoice ${ctx.invoiceNumber}`
+    : ctx.tone === 'firm'
+    ? `Invoice ${ctx.invoiceNumber} — ${ctx.daysOverdue} days overdue`
+    : `Final notice — invoice ${ctx.invoiceNumber}`;
+  return { subject, body };
 }
 
 export async function predictPaymentLikelihood(ctx: {
