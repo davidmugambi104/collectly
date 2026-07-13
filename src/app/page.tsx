@@ -3,6 +3,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { Button } from '@/components/ui/button';
 import { WaitlistForm } from '@/components/marketing/waitlist';
+import { DunningDemo } from '@/components/marketing/dunning-demo';
 import { Logo } from '@/components/brand/logo';
 import {
   ArrowRight, Sparkles, ShieldCheck, Clock, TrendingUp, MessageSquare, Mail, Bell,
@@ -131,6 +132,18 @@ export default function HomePage() {
             <FeatureCard icon={<TrendingUp className="h-5 w-5 text-brand-600" />} title="Customer risk scoring" body="Predictive score for every customer. Know which clients are most likely to pay late. Prioritize the high-value, high-risk ones." />
             <FeatureCard icon={<Users className="h-5 w-5 text-brand-600" />} title="Multi-user + roles" body="Owners, admins, members, viewers. Audit log for everything. SOC 2-ready permissions model." />
           </div>
+        </div>
+      </section>
+
+      {/* AI DUNNING DEMO */}
+      <section className="container-page py-20 sm:py-28">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="eyebrow">Try the AI</p>
+          <h2 className="mt-2 h2">See exactly what we'd send your customer.</h2>
+          <p className="mt-4 lead">No signup. No data stored. Pick a tone, pick a channel, click generate. This is the same engine we ship in production — running in your browser right now.</p>
+        </div>
+        <div className="mt-10 max-w-5xl mx-auto">
+          <DunningDemo />
         </div>
       </section>
 
