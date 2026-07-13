@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from "@/db";
-import { waitlist, events } from '@/db/schema';
+import { db } from '@/db';
+import { waitlist } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
@@ -16,12 +16,22 @@ const schema = z.object({
   referrer: z.string().optional(),
 });
 
+function notify(type: 'waitlist' | 'interview', data: Record<string, any>) {
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3030}`;
+  fetch(`${base}/api/lead-notify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ type, ...data }),
+  }).catch(() => {});
+}
+
 export async function POST(req: NextRequest) {
   try {
     await ensureBootstrapped();
     const body = await req.json();
     const data = schema.parse(body);
     const [row] = await db.insert(waitlist).values({ id: nanoid(), ...data }).onConflictDoNothing({ target: waitlist.email }).returning();
+    notify('waitlist', { email: data.email, name: data.name, company: data.company, meta: { country: data.country, teamSize: data.teamSize, source: data.source } });
     return NextResponse.json({ ok: true, created: !!row });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message ?? 'Bad request' }, { status: 400 });

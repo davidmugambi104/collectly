@@ -18,6 +18,15 @@ const body = z.object({
   pain: z.string().min(1),
 });
 
+function notify(type: 'waitlist' | 'interview', data: Record<string, any>) {
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3030}`;
+  fetch(`${base}/api/lead-notify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ type, ...data }),
+  }).catch(() => {});
+}
+
 export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const data = body.parse(await req.json());
@@ -31,5 +40,17 @@ export async function POST(req: NextRequest) {
     painPoint: `[INTERVIEW] Industry: ${data.industry}, DSO: ${data.dso}, A/R: ${data.outstanding ?? '?'}, Tool: ${data.tool ?? '?'}\n\n${data.pain}`,
     source: 'interview-form',
   }).onConflictDoNothing({ target: schema.waitlist.email }).returning();
+  notify('interview', {
+    email: data.email,
+    name: data.name,
+    company: data.company,
+    meta: {
+      industry: data.industry,
+      dso: data.dso,
+      outstanding: data.outstanding,
+      tool: data.tool,
+      pain: data.pain?.slice(0, 200),
+    },
+  });
   return NextResponse.json({ ok: true, id: row?.id });
 }
