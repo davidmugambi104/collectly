@@ -15,7 +15,7 @@ export default async function IntegrationsPage() {
   if (!orgId) redirect('/sign-in');
 
   const list = await db.select().from(integrations).where(eq(integrations.orgId, orgId));
-  const conn = (p: string) => list.find((i) => i.provider === p);
+  const conn = (p: string) => list.find((i: typeof list[number]) => i.provider === p);
 
   return (
     <AppShell title="Integrations" subtitle="Connect your accounting and payment tools. Setup takes 60 seconds.">

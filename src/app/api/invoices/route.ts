@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
-import { db, schema } from '@/db/client';
+import { db } from "@/db";
 import { invoices } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
+import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
-const schema_ = z.object({
+const schema = z.object({
   customerId: z.string(),
   number: z.string().min(1),
   amount: z.string(),
@@ -16,9 +17,10 @@ const schema_ = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const data = schema_.parse(await req.json());
+  const data = schema.parse(await req.json());
   const [row] = await db.insert(invoices).values({
     id: nanoid(), orgId, customerId: data.customerId, number: data.number,
     status: 'sent', amount: data.amount, amountPaid: '0', currency: data.currency,

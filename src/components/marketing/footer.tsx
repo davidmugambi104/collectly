@@ -29,7 +29,8 @@ export function MarketingFooter() {
               <li><Link href="/about" className="hover:text-ink-900">About</Link></li>
               <li><Link href="/customers" className="hover:text-ink-900">Customers</Link></li>
               <li><Link href="/blog" className="hover:text-ink-900">Blog</Link></li>
-              <li><a href="mailto:hello@collectly.app" className="hover:text-ink-900">Contact</a></li>
+              <li><Link href="/interview" className="hover:text-ink-900">Customer research</Link></li>
+            <li><a href="mailto:hello@collectly.app" className="hover:text-ink-900">Contact</a></li>
             </ul>
           </div>
           <div>

@@ -1,36 +1,27 @@
 /**
  * Dev-only: PGlite (in-process WASM Postgres) wrapper.
- * Use this when USE_PGLITE=1 to avoid requiring a real Postgres in dev.
  */
 import { PGlite } from '@electric-sql/pglite';
 import { drizzle as drizzlePglite, type PgliteDatabase } from 'drizzle-orm/pglite';
 import * as schema from './schema';
 
-const globalForDb = globalThis as unknown as { pglite: PGlite | undefined; db: PgliteDatabase<typeof schema> | undefined };
-
-let _client: PGlite | null = null;
-let _db: PgliteDatabase<typeof schema> | null = null;
+const globalForDb = globalThis as unknown as { pglite: PGlite | undefined; pgliteDb: PgliteDatabase<typeof schema> | undefined };
 
 function getClient(): PGlite {
-  if (!_client) {
-    const dataDir = process.env.PGLITE_DIR ?? './.pglite';
-    _client = globalForDb.pglite ?? new PGlite(dataDir);
-    if (process.env.NODE_ENV !== 'production') globalForDb.pglite = _client;
+  if (!globalForDb.pglite) {
+    globalForDb.pglite = new PGlite();
   }
-  return _client!;
+  return globalForDb.pglite;
 }
 
 function getDb(): PgliteDatabase<typeof schema> {
-  if (!_db) {
-    _db = globalForDb.db ?? drizzlePglite(getClient(), { schema });
-    if (process.env.NODE_ENV !== 'production') globalForDb.db = _db;
+  if (!globalForDb.pgliteDb) {
+    globalForDb.pgliteDb = drizzlePglite(getClient(), { schema });
   }
-  return _db!;
+  return globalForDb.pgliteDb;
 }
 
-export const db = new Proxy({} as PgliteDatabase<typeof schema>, {
-  get(_t, prop) { return (getDb() as any)[prop]; },
-});
-
-export { getClient as client };
+// Build the real db object at import time so the proxy isn't needed.
+export const db = getDb();
+export const client = getClient();
 export { schema };

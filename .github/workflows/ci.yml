@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - name: Build
+        env:
+          DATABASE_URL: postgresql://stub:stub@stub/stub
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_stub
+          CLERK_SECRET_KEY: sk_test_stub
+          STRIPE_SECRET_KEY: sk_test_stub
+          OPENAI_API_KEY: sk-test-stub
+        run: npm run build
+      - run: echo "Build successful ✓"

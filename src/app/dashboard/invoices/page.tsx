@@ -62,7 +62,9 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
             {rows.length === 0 && (
               <tr><td colSpan={6} className="py-10 text-center text-ink-500">No invoices yet. <Link href="/dashboard/integrations" className="link">Connect QuickBooks or Xero</Link> to import.</td></tr>
             )}
-            {rows.map(({ invoice, customer }) => {
+            {rows.map((row: typeof rows[number]) => {
+              const invoice = row.invoice;
+              const customer = row.customer;
               const days = daysOverdue(invoice.dueDate);
               const balance = Number(invoice.amount) - Number(invoice.amountPaid);
               return (

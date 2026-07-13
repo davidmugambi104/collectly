@@ -1,7 +1,7 @@
 import { AppShell } from '@/components/app/shell';
 import { getAuth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
-import { db, schema } from '@/db/client';
+import { db, schema } from '@/db';
 import { invoices, customers, payments, dunningRuns, organizations } from '@/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';

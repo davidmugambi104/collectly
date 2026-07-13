@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
-import { db, schema } from '@/db/client';
+import { db } from "@/db";
 import { dunningSequences, dunningRuns, invoices, customers } from '@/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { sendEmail, sendSms } from '@/lib/infra';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
+import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
 const bodySchema = z.object({
   invoiceId: z.string(),
@@ -16,6 +17,7 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
@@ -27,8 +29,7 @@ export async function POST(req: NextRequest) {
   const [cust] = await db.select().from(customers).where(eq(customers.id, inv.customerId)).limit(1);
   if (!cust) return NextResponse.json({ error: 'customer missing' }, { status: 400 });
 
-  // Get or create default sequence
-  let [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), eq(dunningSequences.isActive, true))).limit(1);
+  const [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), eq(dunningSequences.isActive, true))).limit(1);
 
   const [run] = await db.insert(dunningRuns).values({
     id: nanoid(), orgId, invoiceId: data.invoiceId,

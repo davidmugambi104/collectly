@@ -1,7 +1,7 @@
 import { AppShell } from '@/components/app/shell';
 import { getAuth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
-import { db, schema } from '@/db/client';
+import { db, schema } from '@/db';
 import { events } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { formatDate } from '@/lib/utils';

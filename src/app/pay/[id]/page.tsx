@@ -1,4 +1,4 @@
-import { db, schema } from '@/db/client';
+import { db, schema } from '@/db';
 import { invoices, customers, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';

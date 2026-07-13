@@ -17,7 +17,7 @@ export function DunningSendPanel({ invoiceId, customerName, amount, currency, da
           <button onClick={() => setOpen(true)} className="btn-brand text-sm">
             <Sparkles className="h-3.5 w-3.5" />Send one-off reminder
           </button>
-          <a href="/dashboard/dunning" className="btn-secondary text-sm">Manage sequences</a>
+          <a href="/dashboard/dunning/sequence" className="btn-secondary text-sm">Manage sequences</a>
         </div>
       </div>
     );

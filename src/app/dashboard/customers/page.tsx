@@ -48,7 +48,10 @@ export default async function CustomersPage() {
           </thead>
           <tbody>
             {rows.length === 0 && <tr><td colSpan={6} className="py-10 text-center text-ink-500">No customers yet. Connect an integration to import.</td></tr>}
-            {rows.map(({ customer, invoiceCount, outstanding }) => {
+            {rows.map((row: typeof rows[number]) => {
+              const customer = row.customer;
+              const invoiceCount = row.invoiceCount;
+              const outstanding = row.outstanding;
               const risk = customer.paymentBehavior?.riskScore ?? 20;
               return (
                 <tr key={customer.id} className="border-t border-ink-100 hover:bg-ink-50">

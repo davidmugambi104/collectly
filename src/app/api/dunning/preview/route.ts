@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
-import { db, schema } from '@/db/client';
+import { db } from '@/db';
 import { invoices, customers, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { z } from 'zod';
+import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
-const schema_ = z.object({
+const body = z.object({
   invoiceId: z.string(),
   amount: z.string(),
   currency: z.string().default('USD'),
@@ -16,11 +17,11 @@ const schema_ = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
-  const body = await req.json();
-  const data = schema_.parse(body);
+  const data = body.parse(await req.json());
 
   const [row] = await db
     .select({ invoice: invoices, customer: customers, org: organizations })
@@ -51,7 +52,6 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(result);
   } catch (e: any) {
-    // Fall back to a simple template if OpenAI isn't available
     const fallback = fallbackMessage({ ...data, customerName: row.customer.name, businessName: row.org.name, invoiceNumber: row.invoice.number });
     return NextResponse.json(fallback);
   }

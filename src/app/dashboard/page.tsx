@@ -105,7 +105,9 @@ export default async function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {overdueInvoices.map(({ invoice, customer }) => {
+                {overdueInvoices.map((row: typeof overdueInvoices[number]) => {
+                  const invoice = row.invoice;
+                  const customer = row.customer;
                   const days = daysOverdue(invoice.dueDate);
                   const balance = Number(invoice.amount) - Number(invoice.amountPaid);
                   return (

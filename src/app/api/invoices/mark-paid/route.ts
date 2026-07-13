@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
-import { db, schema } from '@/db/client';
+import { db } from "@/db";
 import { invoices, payments } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
+import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
-const schema_ = z.object({ invoiceId: z.string() });
+const schema = z.object({ invoiceId: z.string() });
 
 export async function POST(req: NextRequest) {
+  await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const { invoiceId } = schema_.parse(await req.json());
+  const { invoiceId } = schema.parse(await req.json());
   const [inv] = await db.select().from(invoices).where(eq(invoices.id, invoiceId)).limit(1);
   if (!inv || inv.orgId !== orgId) return NextResponse.json({ error: 'not found' }, { status: 404 });
 

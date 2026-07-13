@@ -56,7 +56,7 @@ export default async function DunningPage() {
           </div>
 
           <div className="mt-5 space-y-2.5">
-            {(seq?.steps ?? DEFAULT_STEPS).map((step, i) => (
+            {(seq?.steps ?? DEFAULT_STEPS).map((step: any, i: number) => (
               <div key={step.id ?? i} className="flex items-start gap-3 rounded-lg border border-ink-200 p-3.5 hover:border-ink-300">
                 <div className="h-8 w-8 rounded-md bg-ink-100 grid place-items-center text-xs font-semibold text-ink-700">{i + 1}</div>
                 <div className="flex-1 min-w-0">
@@ -84,7 +84,7 @@ export default async function DunningPage() {
           <p className="text-sm text-ink-600 mt-1">Last 20 dunning actions.</p>
           <div className="mt-4 space-y-2 max-h-[480px] overflow-y-auto">
             {recentRuns.length === 0 && <div className="text-sm text-ink-500 text-center py-8">No activity yet. Connect an integration and turn on a sequence to start.</div>}
-            {recentRuns.map((run) => (
+            {recentRuns.map((run: typeof recentRuns[number]) => (
               <div key={run.id} className="flex items-start gap-2 text-sm">
                 {run.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-500 mt-0.5" /> : <Mail className="h-3.5 w-3.5 text-ink-500 mt-0.5" />}
                 <div className="flex-1 min-w-0">

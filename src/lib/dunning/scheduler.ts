@@ -30,7 +30,7 @@ export async function processDunning() {
 
     for (const { invoice, customer } of overdueInvoices) {
       const days = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
-      const dueSteps = (seq.steps ?? []).filter((s) => s.daysFromDue <= days);
+      const dueSteps = (seq.steps ?? []).filter((s: any) => s.daysFromDue <= days);
       if (!dueSteps.length) continue;
 
       const lastStep = dueSteps[dueSteps.length - 1];

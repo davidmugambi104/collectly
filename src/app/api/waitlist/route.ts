@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
+import { db } from "@/db";
 import { waitlist, events } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
+import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
 const schema = z.object({
   email: z.string().email(),
@@ -17,6 +18,7 @@ const schema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureBootstrapped();
     const body = await req.json();
     const data = schema.parse(body);
     const [row] = await db.insert(waitlist).values({ id: nanoid(), ...data }).onConflictDoNothing({ target: waitlist.email }).returning();
@@ -27,6 +29,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
+  await ensureBootstrapped();
   const rows = await db.select().from(waitlist).limit(10);
-  return NextResponse.json({ count: rows.length, sample: rows.map((r) => r.email) });
+  return NextResponse.json({ count: rows.length, sample: rows.map((r: typeof rows[number]) => r.email) });
 }
