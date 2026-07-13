@@ -1,3 +1,4 @@
+import { rateLimit, getIp } from '@/lib/rate-limit';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { sendEmail } from '@/lib/infra';
@@ -14,6 +15,9 @@ const schema = z.object({
 const DASHBOARD_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3030';
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(getIp(req), { max: 10 });
+  if (!rl.allowed) return NextResponse.json({ error: 'Too many requests. Try again in a minute.' }, { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } });
+
   await ensureBootstrapped();
   const data = schema.parse(await req.json());
   const subject =

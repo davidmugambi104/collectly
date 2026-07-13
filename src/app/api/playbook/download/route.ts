@@ -1,3 +1,4 @@
+import { rateLimit, getIp } from '@/lib/rate-limit';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { waitlist } from '@/db/schema';
@@ -21,6 +22,9 @@ const schema = z.object({
  * Side effect: stores email in waitlist with source='playbook-download'
  */
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(getIp(req), { max: 10 });
+  if (!rl.allowed) return NextResponse.json({ error: 'Too many requests. Try again in a minute.' }, { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } });
+
   await ensureBootstrapped();
   const data = schema.parse(await req.json());
   const [row] = await db.insert(waitlist).values({
