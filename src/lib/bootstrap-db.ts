@@ -45,6 +45,8 @@ export async function ensureBootstrapped() {
 }
 
 async function seedIfEmpty(client: any) {
+  // Skip auto-seed if SKIP_BOOTSTRAP_SEED=1 (for testing the empty state)
+  if (process.env.SKIP_BOOTSTRAP_SEED === '1') return;
   const r: { rows: { count: string }[] } = await client.query('SELECT count(*) as count FROM organizations');
   if (Number(r.rows[0]?.count ?? 0) > 0) return;
   const userId = 'user_dev_davie';

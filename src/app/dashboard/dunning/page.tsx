@@ -24,10 +24,11 @@ export default async function DunningPage() {
 
   const [seq] = await db.select().from(dunningSequences).where(eq(dunningSequences.orgId, orgId)).limit(1);
   if (!seq) {
+    // First-time setup: create the default sequence. The page will re-render
+    // on the next request and pick it up — no revalidatePath needed in render.
     await db.insert(dunningSequences).values({
       id: nanoid(), orgId, name: 'Default', isActive: true, steps: DEFAULT_STEPS as any, pauseOnReply: true, pauseOnPayment: true,
     });
-    revalidatePath('/dashboard/dunning');
   }
 
   const recentRuns = await db
