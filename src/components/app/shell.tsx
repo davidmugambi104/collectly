@@ -17,6 +17,7 @@ export function AppShell({ children, title, subtitle }: { children: React.ReactN
             { href: '/dashboard/customers', label: 'Customers' },
             { href: '/dashboard/dunning', label: 'Dunning' },
             { href: '/dashboard/cash-flow', label: 'Cash flow' },
+            { href: '/dashboard/events', label: 'Activity' },
             { href: '/dashboard/payments', label: 'Payments' },
             { href: '/dashboard/integrations', label: 'Integrations' },
             { href: '/dashboard/settings', label: 'Settings' },

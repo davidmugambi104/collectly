@@ -42,7 +42,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
           <Link href="/dashboard/invoices?filter=paid" className={`btn text-sm ${filter === 'paid' ? 'btn-primary' : 'btn-secondary'}`}>Paid</Link>
           <button className="btn-secondary text-sm"><Filter className="h-3.5 w-3.5" />More</button>
           <button className="btn-secondary text-sm"><Download className="h-3.5 w-3.5" />Export</button>
-          <button className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />New invoice</button>
+          <a href="/dashboard/invoices/new" className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />New invoice</a>
         </div>
       </div>
 

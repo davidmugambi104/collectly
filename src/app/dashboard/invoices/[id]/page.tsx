@@ -6,6 +6,7 @@ import { invoices, customers, payments, dunningRuns, organizations } from '@/db/
 import { eq, desc, and } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
 import { DunningSendPanel } from '@/components/dunning/send-panel';
+import { MarkAsPaidButton } from '@/components/invoices/mark-paid-button';
 import { ArrowLeft, MessageSquare, Mail, Send, ExternalLink, Receipt, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -74,6 +75,11 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
                 <div className="text-3xl font-display font-bold text-ink-950 font-mono">{formatCurrency(balance, invoice.currency)}</div>
                 {Number(invoice.amountPaid) > 0 && <div className="text-xs text-ink-500 mt-0.5">of {formatCurrency(invoice.amount, invoice.currency)}</div>}
               </div>
+              {invoice.status !== 'paid' && (
+                <div className="mt-4 pt-4 border-t border-ink-100">
+                  <MarkAsPaidButton invoiceId={invoice.id} />
+                </div>
+              )}
             </div>
 
             <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">

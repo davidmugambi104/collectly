@@ -32,7 +32,7 @@ export default async function CustomersPage() {
     <AppShell title="Customers" subtitle={`${rows.length} customer${rows.length === 1 ? '' : 's'}`}>
       <div className="flex justify-between items-center mb-5">
         <p className="text-sm text-ink-600">Sorted by outstanding balance.</p>
-        <button className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />Add customer</button>
+        <a href="/dashboard/customers/new" className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />Add customer</a>
       </div>
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">
