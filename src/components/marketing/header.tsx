@@ -15,6 +15,7 @@ export function MarketingHeader() {
           <Link href="/pricing" className="hover:text-ink-950">Pricing</Link>
           <Link href="/blog" className="hover:text-ink-950">Blog</Link>
           <Link href="/tools/ar-roi" className="hover:text-ink-950">ROI calculator</Link>
+          <Link href="/playbook" className="hover:text-ink-950">Free playbook</Link>
           <Link href="/customers" className="hover:text-ink-950">Customers</Link>
         </nav>
         <div className="flex items-center gap-2">
