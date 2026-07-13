@@ -3,6 +3,10 @@ import Link from 'next/link';
 import { Logo } from '@/components/brand/logo';
 import { ArrowUpRight, Bell, Search } from 'lucide-react';
 
+const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const ClerkOrgSwitcher = hasClerk ? OrganizationSwitcher : null;
+const ClerkUserButton = hasClerk ? UserButton : null;
+
 export function AppShell({ children, title, subtitle }: { children: React.ReactNode; title: string; subtitle?: string }) {
   return (
     <div className="min-h-screen flex bg-ink-50">
@@ -49,8 +53,18 @@ export function AppShell({ children, title, subtitle }: { children: React.ReactN
               <Bell className="h-4 w-4" />
               <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-red-500" />
             </button>
-            <OrganizationSwitcher hidePersonal afterSelectOrganizationUrl="/dashboard" />
-            <UserButton afterSignOutUrl="/" />
+            {hasClerk && ClerkOrgSwitcher && ClerkUserButton && (
+              <>
+                <ClerkOrgSwitcher hidePersonal afterSelectOrganizationUrl="/dashboard" />
+                <ClerkUserButton afterSignOutUrl="/" />
+              </>
+            )}
+            {!hasClerk && (
+              <div className="flex items-center gap-2 text-sm text-ink-700">
+                <div className="h-8 w-8 rounded-full bg-ink-200 grid place-items-center text-ink-700 text-xs font-semibold">D</div>
+                <span className="hidden sm:inline">Davie</span>
+              </div>
+            )}
           </div>
         </header>
         <main className="flex-1 p-5 sm:p-8 overflow-x-hidden">{children}</main>
