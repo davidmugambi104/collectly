@@ -44,7 +44,7 @@ The fine-grained token doesn't have `Administration: write` on `davidmugambi104`
 2. Name: `collectly`, Public, do NOT init with README/.gitignore/license
 3. Tell me when ready
 4. I run: `cd /home/davie/.openclaw/workspace/collectly && git push -u origin main`
-5. Token `<REDACTED_TOKEN>` should have `Contents: read and write` on the new repo (or I need a new token that includes `repo:write` for the user)
+5. Token <your fine-grained token with Contents: write> should have `Contents: read and write` on the new repo (or I need a new token that includes `repo:write` for the user)
 
 **Option B — make the existing token `repo` scoped:**
 1. https://github.com/settings/tokens → edit the fine-grained token
