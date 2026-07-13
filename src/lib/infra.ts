@@ -1,0 +1,44 @@
+import { Resend } from 'resend';
+import { Twilio } from 'twilio';
+import Stripe from 'stripe';
+
+let _resend: Resend | null = null;
+let _twilio: Twilio | null = null;
+let _stripe: Stripe | null = null;
+
+export function getResend() { if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY); return _resend; }
+export function getTwilio() {
+  if (!_twilio && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    _twilio = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  }
+  return _twilio;
+}
+export function getStripe() {
+  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? 'sk_test_placeholder', { apiVersion: '2025-02-24.acacia' });
+  return _stripe;
+}
+
+// Backward-compatible exports (lazy getters)
+export const resend = new Proxy({} as Resend, { get: (_t, p) => (getResend() as any)[p] });
+export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getTwilio(); return t ? (t as any)[p] : undefined; } });
+export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as any)[p] });
+
+export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string }) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('[email] RESEND_API_KEY missing — skipping send to', opts.to);
+    return { id: 'dev-stub', status: 'skipped' };
+  }
+  return getResend().emails.send({
+    from: opts.from ?? `${process.env.RESEND_FROM_NAME ?? 'Collectly'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@collectly.app'}>`,
+    to: opts.to,
+    subject: opts.subject,
+    html: opts.html,
+    replyTo: opts.replyTo,
+  });
+}
+
+export async function sendSms(opts: { to: string; body: string }) {
+  const client = getTwilio();
+  if (!client) { console.warn('[sms] twilio not configured — skipping send to', opts.to); return { sid: 'dev-stub' }; }
+  return client.messages.create({ from: process.env.TWILIO_FROM_NUMBER ?? '', to: opts.to, body: opts.body });
+}
