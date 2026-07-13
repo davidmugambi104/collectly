@@ -53,8 +53,10 @@ export default async function CustomersPage() {
               return (
                 <tr key={customer.id} className="border-t border-ink-100 hover:bg-ink-50">
                   <td className="py-3 pr-4">
-                    <div className="font-medium text-ink-900">{customer.name}</div>
-                    {customer.company && <div className="text-xs text-ink-500">{customer.company}</div>}
+                    <Link href={`/dashboard/customers/${customer.id}`} className="block">
+                      <div className="font-medium text-ink-900 hover:text-brand-600">{customer.name}</div>
+                      {customer.company && <div className="text-xs text-ink-500">{customer.company}</div>}
+                    </Link>
                   </td>
                   <td className="py-3 px-4 text-xs text-ink-600">
                     <div>{customer.email}</div>
