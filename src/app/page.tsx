@@ -41,6 +41,9 @@ export default function HomePage() {
                 <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> 14-day free trial</span>
                 <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> No credit card</span>
                 <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Cancel anytime</span>
+                <Link href="/tools/ar-roi" className="inline-flex items-center gap-1 font-semibold text-brand-700 hover:text-brand-800">
+                  See your ROI <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
 
               <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-500">
