@@ -1,5 +1,7 @@
+export const dynamic = 'force-dynamic';
+
 import { AppShell } from '@/components/app/shell';
-import { auth } from '@clerk/nextjs/server';
+import { getAuth as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { getCashFlowSnapshot } from '@/lib/analytics';
 import { formatCurrency } from '@/lib/utils';

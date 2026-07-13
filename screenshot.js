@@ -1,18 +1,27 @@
 const { chromium } = require('playwright');
 (async () => {
-  const browser = await chromium.launch({ executablePath: process.env.CHROME_BIN || undefined });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
   const targets = [
     ['home', 'http://localhost:3030/'],
     ['pricing', 'http://localhost:3030/pricing'],
     ['features', 'http://localhost:3030/features'],
-    ['blog', 'http://localhost:3030/blog'],
-    ['customers', 'http://localhost:3030/customers'],
+    ['dashboard-overview', 'http://localhost:3030/dashboard'],
+    ['dashboard-invoices', 'http://localhost:3030/dashboard/invoices'],
+    ['dashboard-customers', 'http://localhost:3030/dashboard/customers'],
+    ['dashboard-dunning', 'http://localhost:3030/dashboard/dunning'],
+    ['dashboard-cash-flow', 'http://localhost:3030/dashboard/cash-flow'],
+    ['dashboard-integrations', 'http://localhost:3030/dashboard/integrations'],
+    ['dashboard-billing', 'http://localhost:3030/dashboard/billing'],
   ];
   for (const [name, url] of targets) {
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 15000 });
-    await page.screenshot({ path: `/tmp/collectly-${name}.png`, fullPage: true });
-    console.log(name, '→', await page.title());
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
+      await page.waitForTimeout(800);
+      await page.screenshot({ path: `/tmp/c-${name}.png`, fullPage: true });
+      console.log(name, '✓', await page.title());
+    } catch (e) { console.log(name, '✗', e.message); }
   }
   await browser.close();
 })();

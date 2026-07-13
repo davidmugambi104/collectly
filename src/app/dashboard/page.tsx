@@ -1,9 +1,11 @@
+export const dynamic = 'force-dynamic';
+
 import { AppShell } from '@/components/app/shell';
 import { db } from '@/db';
 import { invoices, customers, payments, integrations } from '@/db/schema';
 import { eq, and, sql, gte, lte } from 'drizzle-orm';
 import { getAgingReport, getCashFlowSnapshot } from '@/lib/analytics';
-import { auth } from '@clerk/nextjs/server';
+import { getAuth as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { DollarSign, Clock, TrendingUp, Users, AlertCircle, CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
