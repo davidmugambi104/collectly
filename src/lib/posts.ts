@@ -463,6 +463,206 @@ If you want help implementing the rest — that's what Collectly does. 14-day fr
 — Davie
 `,
   },
+  {
+    slug: 'true-cost-of-late-payments-small-business-2026',
+    title: 'The true cost of late payments for small businesses (and what to do about it)',
+    date: '2026-07-15', read: '6 min',
+    excerpt: 'Late invoices cost the average 10-person service business $17,500 in cash plus another $4,000+ in hidden costs. The full breakdown, with sources, and the 4 actions that actually move the number.',
+    tags: ['late payments', 'cash flow', 'small business', 'data'],
+    body: `Late payments are a tax on small businesses. We hear the number "$17,500 average per business" thrown around a lot. Let's actually look at where that comes from, what's behind it, and what the real cost is when you include the stuff people don't count.
+
+## The headline number, sourced
+
+The most-cited data point is from QuickBooks' 2025 *Small Business Late Payments Report*:
+- **56%** of small businesses have unpaid invoices outstanding right now
+- **Average $17,500** per business with outstanding invoices
+- **47%** have invoices 30+ days overdue
+- **$815 billion** in total late payments across US small businesses annually
+
+The UK picture is similar. The *Late Payment Survey* from the Federation of Small Businesses puts the number at **£26 billion** owed to small businesses at any time, and roughly **14,000 UK businesses shut down each year** specifically because a customer didn't pay on time.
+
+The pattern is global. Australia, Canada, EU, Singapore — all in the same range when you adjust for business population. The 30-60 day net-terms default is the single most consequential business norm in B2B, and almost nobody has measured its real cost.
+
+## The hidden costs nobody counts
+
+$17,500 in outstanding A/R is the visible cost. The real cost includes four things most founders don't add up:
+
+### 1. The cost of the line of credit
+
+If your business has a line of credit, you're paying interest on the working capital that's locked up in unpaid invoices. At 9% APR on $17,500, that's **$1,575/year**, just to bridge the gap. Most founders don't think of this as a "late payment cost" but it absolutely is.
+
+### 2. The opportunity cost of slow hiring
+
+A 12-person agency with $3M ARR and a 45-day DSO has ~$370k locked up. That same business at 18-day DSO has ~$148k locked up. The difference — **$222k of working capital** — is the size of two senior hires or a full quarter of operating runway. Late payments don't just delay payroll, they delay *growth*.
+
+### 3. The founder-time cost
+
+Founders spend an average of **11 hours per week** chasing unpaid invoices (Xero 2024). At a $150k founder salary, that's roughly **$32/hr fully-loaded** in opportunity cost — call it **$18,000/year per founder** in time that could go to selling, building, or hiring. For a 5-person business where the founder does most of the chasing, it's worse.
+
+### 4. The bad-debt write-off
+
+Roughly **3-5% of revenue** becomes bad debt in the average small service business. For a $3M agency, that's **$90-150k/year** that never gets collected. Late payments and bad debt are the same problem, just at different stages of escalation.
+
+## The real total
+
+For a typical 10-person service business with $2M revenue and a 50-day DSO, the real annual cost of late payments looks like this:
+
+| Cost category | Annual impact |
+|---|---|
+| Visible A/R outstanding (avg) | $17,500 |
+| Line-of-credit interest on A/R | $1,575 |
+| Lost growth (hiring, runway) | $50,000+ |
+| Founder time (11 hrs/wk @ \$32/hr) | $18,000 |
+| Bad-debt write-off (3% of revenue) | $60,000 |
+| **Real total** | **~$147,000/year** |
+
+That's **7.4% of revenue** going to the cost of getting paid for work you already did. Compare that to the cost of fixing it: a $99/month tool that cuts DSO from 50 to 25 days. The math is not subtle.
+
+## What actually moves the number
+
+Four actions, in order of leverage:
+
+1. **Move from "send and pray" to automated dunning.** One dunning email at 7 days. Another at 14. A final at 30. Most founders do zero of these. Even basic automation cuts DSO by 5-10 days.
+2. **Tighten payment terms upfront.** Net-15 is the new default for service businesses that take this seriously. If your customers are on Net-60, every term you negotiate down to Net-30 is roughly **half your DSO** off the top.
+3. **Require deposits on new customers.** A 25-50% deposit on the first invoice eliminates the worst-case: doing the work and never getting paid. This is the single most under-used tactic in the 5-50 person segment.
+4. **Use a frictionless payment link.** Every email reminder should include a pay link. Customers who can pay in 30 seconds pay 6-9 days faster than customers who have to log into a portal they forgot the password to.
+
+You don't need a $3K/month enterprise AR tool to do any of these. You need 30 minutes and the discipline to do them every week.
+
+## Why this problem persists
+
+The reason late payments are so persistent is that **the cost is distributed and the benefit of fixing it is concentrated.** A single founder bears all the time, interest, and lost growth, but a single customer has no incentive to pay faster. The asymmetry is the entire reason an industry exists to fix it.
+
+If you're a small business owner reading this and the math above feels familiar, that's because it is. The first step is the Monday morning A/R aging audit — 5 minutes, every Monday, sorted by amount, not by date. That single habit surfaces 80% of the problem.
+
+— Davie
+`,
+  },
+  {
+    slug: 'final-notice-that-gets-paid-2026',
+    title: 'How to write a final notice that actually gets paid (with 4 templates)',
+    date: '2026-07-15', read: '5 min',
+    excerpt: 'Most "final notices" are too long, too legal, and too late. Here\'s the 4-paragraph structure that gets paid within 7 days, and 4 templates you can copy.',
+    tags: ['dunning', 'final notice', 'templates', 'collections'],
+    body: `The "final notice" email is the most-rewritten document in any business that hasn't automated its collections. It's also the most poorly-written. Here's the structure that works, the 4 versions you actually need, and what to never do.
+
+## Why most final notices fail
+
+Three things make a final notice useless:
+
+1. **Too long.** Customers skim. If your final notice is more than 4 short paragraphs, you've lost them at "Dear Sir/Madam."
+2. **Too legal.** "We hereby demand immediate payment in full, failing which we will initiate proceedings" reads like a chain email from 2003. Modern customers read it and roll their eyes.
+3. **Too late.** If the final notice is the first time you're saying "we really mean it," you've already lost. The "final" needs to land on a customer who has been hearing from you for 30 days — not be the first signal that something is wrong.
+
+The goal of a final notice is not to threaten. It's to **clarify, document, and provide a clean path forward.** Customers who want to pay will pay; customers who can't pay need help; customers who refuse to pay are a separate problem.
+
+## The 4-paragraph structure
+
+### Paragraph 1: The fact (what's owed, when it was due)
+
+Not "our records show." Just the numbers.
+
+> Invoice 2415 for $11,600 was due on March 15. As of today it's 65 days past due.
+
+That's it. No preamble, no apology, no explanation.
+
+### Paragraph 2: The action (what happens next, calmly)
+
+State what will happen if it's not paid, in one sentence. Don't bluster.
+
+> To keep your account in good standing, we'll need payment by [date, 7 days out]. If we don't hear from you by then, we'll pause services on [date] and refer the balance to collections on [date].
+
+The key is **specific dates, not vague threats.** "We'll refer this to collections" is ignored. "We'll refer this to ABC Collections on July 22" is acted on.
+
+### Paragraph 3: The path (how to resolve)
+
+Make it trivially easy. One click. One link.
+
+> You can pay the full balance here: [link]. If you'd like to discuss a payment plan, reply to this email and I'll send options today.
+
+The reply path is critical. A surprising number of late-paying customers *want* to pay but are embarrassed or unsure how to ask for a plan. Give them an out.
+
+### Paragraph 4: The close (one line, human)
+
+End on a note that signals "I'm a person, not a system."
+
+> Thanks for taking care of this. — Davie
+
+That's it. No exclamation points. No emoji. No "URGENT" in the subject. Just facts, dates, a path, and a human signature.
+
+## 4 templates you can copy
+
+### Template 1: The standard final notice (email, day 30+)
+
+**Subject:** Invoice 2415 — final notice before action on July 22
+
+> Hi {{contact_name}},
+>
+> Invoice 2415 for $11,600 was due on March 15. As of today it's 65 days past due.
+>
+> To keep your account in good standing, we'll need payment by July 22. If we don't hear from you by then, we'll pause services on July 25 and refer the balance to collections on July 29.
+>
+> You can pay the full balance here: [link]. If you'd like to discuss a payment plan, reply to this email and I'll send options today.
+>
+> Thanks for taking care of this. — Davie
+
+### Template 2: The SMS version (under 320 chars)
+
+> Final notice: Invoice 2415 ($11,600) is 65+ days past due. To avoid service suspension on July 25, please pay or reply to discuss options: [link] — Davie, Collectly
+
+SMS final notices work because the customer reads them. Don't use SMS for soft reminders; do use it for the final.
+
+### Template 3: The "I want to help" version (when you suspect it's a cash-flow issue)
+
+**Subject:** Quick chat about Invoice 2415?
+
+> Hi {{contact_name}},
+>
+> Invoice 2415 for $11,600 is now 65 days past due. I want to flag it before it becomes a bigger problem on either side.
+>
+> If cash flow is the issue, I can split it into 3 payments over 30 days. If there's a problem with the work, I'd rather know now. If everything's fine and it just slipped, the link below settles it in 30 seconds.
+>
+> What works for you?
+>
+> [link]
+>
+> — Davie
+
+This version works surprisingly often. A third of the time the customer is having their own cash-flow problem and is relieved to be offered a plan. A third of the time there was an actual issue with the work and you've now saved a relationship. A third of the time they pay within 48 hours.
+
+### Template 4: The collections-handoff version (after 60+ days, when you've genuinely given up)
+
+**Subject:** Invoice 2415 — referral to collections July 29
+
+> Hi {{contact_name}},
+>
+> This is a final attempt to reach you about Invoice 2415 for $11,600, now 75 days past due.
+>
+> We've sent 4 reminders and 2 phone calls. If we don't receive payment or hear from you by July 22, this account will be referred to ABC Collections on July 29. After that, all correspondence goes through them and a 15% collections fee will be added to the balance.
+>
+> This is the easiest time to resolve this. The link below settles the original $11,600 with no fees: [link]
+>
+> — Davie
+
+The "before that date" framing is intentional. It tells the customer: *you have one last clean way out, take it.*
+
+## What to never do
+
+- **Don't use legal language.** "We hereby demand" is a chain-email tell. Customers delete it.
+- **Don't use URGENT in the subject.** It goes to spam, and the customers who do see it are trained to ignore it.
+- **Don't write a 500-word essay.** Long emails are a signal that you're nervous. Short, specific, dated emails are a signal that you know what you're doing.
+- **Don't make empty threats.** If you say you'll pause services on July 25, do it. If you say you'll refer to collections, do it. Customers can smell bluffing.
+- **Don't CC your lawyer.** The lawyer CC is a power move that escalates a $1k invoice into a relationship-ending event. Save it for actual legal disputes, not routine collections.
+
+## The bigger point
+
+The final notice isn't the hard part. The hard part is the **30 days of reminders before it** — the friendly nudge on day 1, the firm reminder on day 7, the action-required on day 14. By the time the final notice lands, the customer should already know exactly where things stand. The final is just the last clean step before a real consequence.
+
+If your business sends fewer than 4 touchpoints before a final notice, the final notice isn't the problem. The process is.
+
+— Davie
+`,
+  },
 ];
 
 export const POSTS_BY_SLUG: Record<string, Post> = POSTS.reduce((acc, p) => { acc[p.slug] = p; return acc; }, {} as Record<string, Post>);
