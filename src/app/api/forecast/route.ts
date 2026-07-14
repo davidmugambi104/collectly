@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
 import { db } from '@/db';
@@ -10,9 +11,15 @@ export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  let currentCash = 0;
-  let monthlyBurn = 0;
-  try { ({ currentCash = 0, monthlyBurn = 0 } = await req.json()); } catch {}
+  const bodySchema = z.object({ currentCash: z.number().nonnegative().default(0), monthlyBurn: z.number().nonnegative().default(0) }).optional();
+  let parsed: { currentCash: number; monthlyBurn: number } | undefined;
+  try {
+    const raw = await req.json().catch(() => ({}));
+    parsed = bodySchema.parse(raw);
+  } catch {
+    parsed = { currentCash: 0, monthlyBurn: 0 };
+  }
+  const { currentCash = 0, monthlyBurn = 0 } = parsed ?? {};
 
   const open = await db
     .select({ amount: invoices.amount, dueDate: invoices.dueDate, customerId: invoices.customerId })

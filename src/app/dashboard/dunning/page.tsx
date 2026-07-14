@@ -8,7 +8,8 @@ import { dunningSequences, dunningRuns } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
-import { Sparkles, Mail, MessageSquare, Pause, Play, Edit2 } from 'lucide-react';
+import Link from 'next/link';
+import { Sparkles, Mail, MessageSquare, Pause, Play, Edit2, BarChart3 } from 'lucide-react';
 
 const DEFAULT_STEPS = [
   { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
@@ -42,6 +43,11 @@ export default async function DunningPage() {
 
   return (
     <AppShell title="AI Dunning" subtitle="Automated, tone-aware reminders — written by GPT-4o, sent on your schedule.">
+      <div className="mb-4 flex justify-end">
+        <Link href="/dashboard/dunning/performance" className="btn-secondary text-sm">
+          <BarChart3 className="h-3.5 w-3.5" />View performance
+        </Link>
+      </div>
       <div className="grid lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 card">
           <div className="flex items-center justify-between">
