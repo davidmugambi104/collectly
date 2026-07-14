@@ -125,13 +125,16 @@
 
 All assets captured (`screenshots/launch/`):
 
-- [x] **01-dashboard-overview.png** — 1280×800 (full page: 308KB) — hero shot. Shows $211,850 outstanding, 5 overdue invoices, AI cash-flow forecast card, 4 stat tiles, customer breakdown
-- [x] **02-dunning-sequence.png** — 1280×900 (137KB) — Default 4-step sequence with AI tones (Friendly / Firm / Firm / Final)
-- [x] **03-cash-flow-forecast.png** — 1280×900 (111KB) — 4-week projection with confidence + narrative
-- [x] **04-ar-aging.png** — 1280×900 (173KB) — invoice list with overdue filter, Acme/Northstar/Westgate/Brightline/Harbor
-- [x] **05-payment-portal.png** — 1280×900 (89KB) — branded payment page, invoice 5mov5zdc835g, $11,600, 95 days overdue
+- [x] **logo-240.png** — 240×240 transparent, dark icon (PH gallery thumbnail spec) — 4KB
+- [x] **logo-480.png** — 480×480 transparent, dark icon @2x retina — 9KB
+- [x] **logo-light.png** — 240×240 transparent, light icon (for dark UIs) — 4KB
+- [x] **og-card-1200x630.png** — Twitter/Open Graph card: icon + Collectly wordmark + tagline + URL — 399KB
+- [x] **01-dashboard-overview.png** — 1280×full (308KB) — hero shot. Shows $211,850 outstanding, 5 overdue invoices, AI cash-flow forecast card, 4 stat tiles, customer breakdown
+- [x] **02-dunning-sequence.png** — 1280×full (137KB) — Default 4-step sequence with AI tones (Friendly / Firm / Firm / Final)
+- [x] **03-cash-flow-forecast.png** — 1280×full (111KB) — 4-week projection with confidence + narrative
+- [x] **04-ar-aging.png** — 1280×full (173KB) — invoice list with overdue filter, Acme/Northstar/Westgate/Brightline/Harbor
+- [x] **05-payment-portal.png** — 1280×full (89KB) — branded payment page, invoice 5mov5zdc835g, $11,600, 95 days overdue
 - [x] **06-invoice-overdue-to-payment.gif** — 4-frame, ~1.2s/frame, 145KB — the full story: dashboard → overdue invoices → invoice detail → payment portal
-- [ ] **Logo** — 240×240 PNG with transparent background (still needed for PH gallery thumbnail)
 
 ## Launch day checklist
 
@@ -156,11 +159,14 @@ USE_DEV_AUTH=1 USE_PGLITE=1 npx next dev -p 3030 &
 # 2. Trigger seed (POST only)
 curl -X POST http://localhost:3030/api/seed-sample
 
-# 3. Capture (one-off, uses local playwright + gifenc + pngjs — all in devDependencies)
+# 3. Capture screenshots + GIF
 node scripts/capture-launch-assets.js
+
+# 4. Render logo + OG card
+node scripts/render-logo.js
 ```
 
-The capture script lives at `scripts/capture-launch-assets.js` (see repo).
+Both scripts are in `scripts/` and use only devDependencies (playwright + gifenc + pngjs).
 
 ## Risk: PH upvote gaming / review-bombing
 - DO NOT use upvote services. PH will shadowban the launch.
