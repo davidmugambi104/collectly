@@ -1,0 +1,4 @@
+id,first_name,last_name,company,role,country,team_size,industry,linkedin_url,email,source,notes
+P001,Alex,Example,Northwind Agency,Founder,US,5-10,agency,https://linkedin.com/in/example1,alex@example.com,manual_seed,Sample row — replace with real prospect
+P002,Sarah,Sample,Pinecrest Consulting,COO,US,11-25,consulting,https://linkedin.com/in/example2,sarah@example.com,manual_seed,Sample row — replace with real prospect
+P003,James,Demo,Westport Legal,Managing Partner,GB,5-10,legal,https://linkedin.com/in/example3,james@example.com,manual_seed,Sample row — replace with real prospect
