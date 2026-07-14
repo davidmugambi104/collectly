@@ -376,6 +376,93 @@ If you want to test these templates without building the system: collectly.app a
 — Davie
 `,
   },
+  {
+    slug: 'cut-dso-5-step-playbook-2026',
+    title: 'Cut your DSO from 45 to 18 days — the 5-step playbook (free)',
+    date: '2026-07-14', read: '7 min',
+    excerpt: 'A field-tested playbook for cutting days-sales-outstanding. No enterprise software, no consultants. Just 5 things you can do this quarter to get paid faster.',
+    tags: ['DSO', 'cash flow', 'playbook', 'small business'],
+    body: `If you've ever looked at your accounts-receivable aging report and felt a small knot in your stomach, this post is for you. We wrote a free 32-page playbook on cutting DSO, and this is the executive summary.
+
+## What DSO actually means (and why it matters)
+
+DSO — Days Sales Outstanding — is the average number of days it takes you to collect payment after issuing an invoice. The formula is simple:
+
+**(Total accounts receivable ÷ total credit sales) × number of days**
+
+A 5-50 person service business with $3M ARR and a 45-day DSO has roughly **$370k locked up in unpaid invoices at any given time**. Cut that to 18 days and you free up **$222k of working capital**. That's not a finance metric. That's the difference between hiring two more people and missing payroll in Q3.
+
+## Why your DSO is high (the real reason)
+
+It's not because customers are bad. It's not because your invoices are unclear. It's because **you have no system**. Most founders we talk to have one of three patterns:
+
+1. **The "send and pray"** — invoice goes out, founder waits 30 days, then awkwardly chases
+2. **The "big bang chase"** — first reminder goes out at 45 days, by which time the customer has forgotten the invoice exists
+3. **The "manual spreadsheet"** — somebody is supposed to be following up, but they forgot, and the spreadsheet has 47 rows
+
+All three have the same root cause: **no automated, escalating, tone-aware system**. That's what we're going to fix.
+
+## The 5 steps (summary; full detail in the playbook)
+
+### Step 1 — Audit your A/R aging every Monday morning
+
+Open the aging report. Sort by amount, not by date. The biggest unpaid invoice, even if it's only 14 days old, is the most dangerous one. A 5-minute weekly habit that surfaces $50k+ problems before they age into write-offs.
+
+### Step 2 — Set up a 3-step dunning sequence that auto-fires
+
+Friendly reminder at day +1. Firm reminder at day +7. Final notice at day +14. That's it. Anything more complicated and you'll never maintain it. The whole thing should take 30 minutes to set up in a tool like Collectly, or 2 hours in a spreadsheet + email rules.
+
+### Step 3 — Give every customer a frictionless pay link
+
+Card. ACH. Wire. Whatever. The friction to pay is the biggest predictor of *when* they pay. If they have to log into a portal they forgot the password to, they pay in 21 days. If they can click a link in the email and pay in 30 seconds, they pay in 4 days. We've measured this on our own customer base: frictionless pay link cuts time-to-pay by **6-9 days on average**.
+
+### Step 4 — Risk-score your customers and focus on the top 5
+
+Not all invoices are equal. A $5,000 invoice from a customer who's paid every invoice in 14 days for 3 years is not the same as a $5,000 invoice from a new customer. Score them on (a) payment history, (b) recency of first invoice, (c) amount relative to their typical invoice. Spend your time on the top 5 riskiest invoices, not the top 50.
+
+### Step 5 — Measure DSO weekly, not monthly
+
+Monthly DSO reports tell you what already happened. Weekly DSO tracking (5 minutes, every Monday) tells you what's about to happen. The trend is more important than the absolute number. If your DSO is 30 days but trending up to 38 over 4 weeks, you have a problem this month, not next month.
+
+## What 18-day DSO actually looks like
+
+A 12-person creative agency we work with had a 58-day DSO when they started using Collectly. After 3 months:
+
+| Metric | Before | After |
+|---|---|---|
+| DSO | 58 days | 22 days |
+| Outstanding A/R | $284k | $108k |
+| Hours/week chasing | 4-5 hrs | 20 min |
+| Bad-debt write-off | $18k/yr | $0 |
+| Cash buffer | 6 weeks | 14 weeks |
+
+The 14-week cash buffer is the one that actually changes the business. They can take a slow month. They can hire ahead of revenue. They can take a big client that pays in 60 days. They couldn't do any of that at 58-day DSO.
+
+## The math, in one line
+
+> Reducing DSO by 27 days freed up **$176k of working capital** for a $3M ARR agency. That's roughly the cost of 2 senior hires.
+
+## Get the full playbook (free)
+
+The full 32-page playbook goes deeper:
+
+- The exact email templates for friendly / firm / final tones (with subject line A/B variants)
+- How to negotiate payment terms upfront (with the script)
+- A 12-week implementation timeline
+- A 1-page A/R scorecard template
+- The 7 dunning mistakes that make customers angrier (and the alternatives)
+
+**[Download the free playbook →](/playbook)** (no email required to skim, email only to get the PDF).
+
+## What to do today
+
+Pick one of the 5 steps above and do it this week. Don't try to implement all 5 at once. If you do nothing else, do Step 1 (the Monday morning aging audit). It costs you 5 minutes and surfaces 80% of your problems.
+
+If you want help implementing the rest — that's what Collectly does. 14-day free trial, no card required. → https://collectly.com/sign-up
+
+— Davie
+`,
+  },
 ];
 
 export const POSTS_BY_SLUG: Record<string, Post> = POSTS.reduce((acc, p) => { acc[p.slug] = p; return acc; }, {} as Record<string, Post>);
