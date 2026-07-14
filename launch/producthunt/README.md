@@ -123,15 +123,15 @@
 
 ## Asset checklist
 
-Need to ship before launch day:
-- [ ] **Logo** — 240×240 PNG, transparent background
-- [ ] **Screenshot 1** — Dashboard (overview) with seeded data showing $200k+ outstanding
-- [ ] **Screenshot 2** — Dunning sequence editor (AI tones visible)
-- [ ] **Screenshot 3** — Cash-flow forecast with 4-week projection
-- [ ] **Screenshot 4** — Branded payment portal (mobile view)
-- [ ] **Screenshot 5** — AR aging dashboard with drill-down
-- [ ] **GIF** — 15-second "invoice overdue → automated reminder sent → customer pays" flow
-- [ ] **Twitter card** — 1200×630 with tagline + URL
+All assets captured (`screenshots/launch/`):
+
+- [x] **01-dashboard-overview.png** — 1280×800 (full page: 308KB) — hero shot. Shows $211,850 outstanding, 5 overdue invoices, AI cash-flow forecast card, 4 stat tiles, customer breakdown
+- [x] **02-dunning-sequence.png** — 1280×900 (137KB) — Default 4-step sequence with AI tones (Friendly / Firm / Firm / Final)
+- [x] **03-cash-flow-forecast.png** — 1280×900 (111KB) — 4-week projection with confidence + narrative
+- [x] **04-ar-aging.png** — 1280×900 (173KB) — invoice list with overdue filter, Acme/Northstar/Westgate/Brightline/Harbor
+- [x] **05-payment-portal.png** — 1280×900 (89KB) — branded payment page, invoice 5mov5zdc835g, $11,600, 95 days overdue
+- [x] **06-invoice-overdue-to-payment.gif** — 4-frame, ~1.2s/frame, 145KB — the full story: dashboard → overdue invoices → invoice detail → payment portal
+- [ ] **Logo** — 240×240 PNG with transparent background (still needed for PH gallery thumbnail)
 
 ## Launch day checklist
 
@@ -142,6 +142,25 @@ Need to ship before launch day:
 - [ ] Email the waitlist: "We're live on PH"
 - [ ] Cross-post to: Hacker News (Show HN), Indie Hackers, LinkedIn, relevant Slack communities
 - [ ] Stay online answering comments for 24h straight
+
+## Re-generating screenshots
+
+The 5 PNGs + 1 GIF in `screenshots/launch/` were captured against the dev PGlite seed data
+(8 customers, 11 invoices, $211,850 outstanding). To recapture (e.g., when real production
+data is available):
+
+```bash
+# 1. Start dev server with PGlite + dev auth
+USE_DEV_AUTH=1 USE_PGLITE=1 npx next dev -p 3030 &
+
+# 2. Trigger seed (POST only)
+curl -X POST http://localhost:3030/api/seed-sample
+
+# 3. Capture (one-off, uses local playwright + gifenc + pngjs — all in devDependencies)
+node scripts/capture-launch-assets.js
+```
+
+The capture script lives at `scripts/capture-launch-assets.js` (see repo).
 
 ## Risk: PH upvote gaming / review-bombing
 - DO NOT use upvote services. PH will shadowban the launch.
