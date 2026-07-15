@@ -2,6 +2,7 @@
 
 **Owner:** Davie
 **Generated:** 2026-07-15 16:15 EAT
+**Launch date:** LOCKED — Wed 22 July 2026, 12:01 AM PT / 8:01 AM EAT (confirmed by Davie 2026-07-15 19:23 EAT)
 **Target launch:** Wednesday, 22 July 2026, 12:01 AM PT / 8:01 AM EAT
 
 ---
@@ -64,10 +65,14 @@ The job between now and launch is **fix what's broken, not build what's missing.
 
 ## Decision points where you need to choose
 
-1. **Domain.** `collectly.app`? If taken, `getcollectly.com`? `trycollectly.com`? (Today, before PH maker account.)
-2. **Launch day confirmation.** Wed 22 July, or push to Wed 29 July? (Today.)
-3. **HN same-day as PH, or 2 days later?** I recommend same-day. The combined effect is bigger, but the workload is brutal. (Today.)
-4. **Solo launch vs. with co-hunters.** If you have 2-3 people willing to commit to upvotes at 12:01 AM PT, your launch ranks higher. (Ask today.)
+1. **Domain.** `collectly.app`? If taken, `getcollectly.com`? `trycollectly.com`? (Today, before PH maker account.)  ← still open
+2. **Launch day confirmation.** ✅ Wed 22 July 2026 — LOCKED.
+3. **HN same-day as PH, or 2 days later?** ✅ Same-day. (Confirmed by Davie 2026-07-15.)
+4. **Solo launch vs. with co-hunters.** If you have 2-3 people willing to commit to upvotes at 12:01 AM PT, your launch ranks higher. (Ask today.)  ← still open
+
+## Resolved decisions
+
+- **2026-07-15 19:23 EAT — Launch date LOCKED to Wed 22 July 2026, 12:01 AM PT / 8:01 AM EAT.** HN post goes same-day at 8 AM ET / 5 PM EAT.
 
 ---
 
