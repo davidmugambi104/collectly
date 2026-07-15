@@ -1,6 +1,5 @@
-const config = {
-  crons: [
-    { path: '/api/cron/dunning', schedule: '0 14 * * *' }, // daily 14:00 UTC
-  ],
-};
-export default config;
+{
+  "crons": [
+    { "path": "/api/cron/dunning", "schedule": "0 14 * * *" }
+  ]
+}

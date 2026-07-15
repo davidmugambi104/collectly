@@ -51,3 +51,4 @@ github.md
 .creds
 .env.local.save
 
+.vercel
