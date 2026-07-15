@@ -32,8 +32,11 @@ jobs:
     needs: check
     env:
       NEXT_PUBLIC_APP_URL: http://localhost:3000
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci
-      CLERK_SECRET_KEY: sk_test_ci
+      # Leave Clerk keys empty in CI — the ClerkProvider falls back to no-provider
+      # mode (mirroring the dev shim) and the build completes. Real keys are
+      # injected at runtime via Vercel env vars.
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ""
+      CLERK_SECRET_KEY: ""
       STRIPE_SECRET_KEY: sk_test_ci_stripe
       OPENAI_API_KEY: sk-test-ci-openai
       RESEND_API_KEY: re_test_ci
@@ -47,6 +50,8 @@ jobs:
       STRIPE_WEBHOOK_SECRET: whsec_test_ci
       POSTHOG_API_KEY: phc_test_ci
       POSTHOG_HOST: https://us.i.posthog.com
+      USE_DEV_AUTH: 1
+      USE_PGLITE: 1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -91,9 +96,6 @@ jobs:
       - name: Push schema
         run: npx drizzle-kit push --config=drizzle.config.ts
       - name: Smoke test
-        env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci
-          CLERK_SECRET_KEY: sk_test_ci
         run: |
           node -e "
             const { Client } = require('pg');
