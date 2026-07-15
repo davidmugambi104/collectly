@@ -9,6 +9,7 @@ import { eq, count } from 'drizzle-orm';
 import { CheckCircle2, AlertCircle, ExternalLink, BookOpen, RefreshCw, Sparkles, Database, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { SampleDataButton } from './sample-data-button';
+import { PlaidCard } from './plaid-card';
 
 export default async function IntegrationsPage() {
   const { userId, orgId } = await auth();
@@ -47,9 +48,9 @@ export default async function IntegrationsPage() {
       <div id="providers" className="grid md:grid-cols-2 gap-4">
         <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" />
         <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" />
-        <IntegrationCard logo="S" name="Stripe" description="Auto-collect payments and reconcile transactions to invoices." status={conn('stripe')?.status ?? 'disconnected'} connectHref={`/api/stripe/connect?orgId=${orgId}`} docsHref="#" />
+        <IntegrationCard logo="S" name="Stripe" description="Auto-collect payments and reconcile transactions to invoices." status={conn('stripe')?.status ?? 'disconnected'} connectHref={`/api/stripe-connect/connect?orgId=${orgId}`} docsHref="#" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" />
-        <IntegrationCard logo="P" name="Plaid" description="Read-only bank feeds for cash-flow forecasting." status={conn('plaid')?.status ?? 'disconnected'} connectHref={`/api/plaid/connect?orgId=${orgId}`} docsHref="#" />
+        <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
         <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref="mailto:hello@collectly.app?subject=Integration%20request" docsHref="#" ctaLabel="Request" />
       </div>
 

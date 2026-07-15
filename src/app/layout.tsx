@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { PostHogProvider } from '@/components/posthog-provider';
+import { ClerkProvider } from '@/components/clerk-provider';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
@@ -28,9 +29,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <Suspense>
-          <PostHogProvider>{children}</PostHogProvider>
-        </Suspense>
+        <ClerkProvider>
+          <Suspense>
+            <PostHogProvider>{children}</PostHogProvider>
+          </Suspense>
+        </ClerkProvider>
       </body>
     </html>
   );

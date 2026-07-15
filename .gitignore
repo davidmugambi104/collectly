@@ -46,3 +46,8 @@ logs
 .idea/
 .pglite/
 github.md
+
+# Local secrets (never commit)
+.creds
+.env.local.save
+

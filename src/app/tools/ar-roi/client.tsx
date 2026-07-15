@@ -125,7 +125,7 @@ export function RoiCalculator() {
               Sleep through the month-end close (instead of refreshing bank accounts)
             </li>
           </ul>
-          <Link href="/signup" className="mt-5 btn-brand w-full justify-center">
+          <Link href="/sign-up" className="mt-5 btn-brand w-full justify-center">
             Try Collectly free for 14 days <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <p className="mt-3 text-xs text-ink-500 text-center">No credit card. 10-minute setup. Cancel anytime.</p>

@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { Logo } from '@/components/brand/logo';
 import { ArrowUpRight, Bell, Search } from 'lucide-react';
 
-const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+// Skip Clerk components when dev shim is on — they'd throw at runtime
+// because there's no <ClerkProvider> wrapping them.
+const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.USE_DEV_AUTH !== '1';
 const ClerkOrgSwitcher = hasClerk ? OrganizationSwitcher : null;
 const ClerkUserButton = hasClerk ? UserButton : null;
 

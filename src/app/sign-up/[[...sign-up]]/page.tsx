@@ -1,5 +1,9 @@
 import { SignUp } from '@clerk/nextjs';
 import { Logo } from '@/components/brand/logo';
+import { MarketingFooter } from '@/components/marketing/footer';
+import { DevAuthForm } from '@/components/dev-auth-form';
+
+const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.USE_DEV_AUTH !== '1';
 
 export default function SignUpPage() {
   return (
@@ -20,9 +24,14 @@ export default function SignUpPage() {
           <p className="text-xs text-ink-500">© 2026 Collectly, Inc.</p>
         </div>
         <div className="flex items-center justify-center p-6 sm:p-12 bg-ink-50">
-          <SignUp appearance={{ elements: { card: 'shadow-xl border border-ink-200' } }} />
+          {hasClerk ? (
+            <SignUp appearance={{ elements: { card: 'shadow-xl border border-ink-200' } }} />
+          ) : (
+            <DevAuthForm mode="sign-up" />
+          )}
         </div>
       </div>
+      <MarketingFooter />
     </div>
   );
 }
