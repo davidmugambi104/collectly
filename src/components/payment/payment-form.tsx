@@ -1,30 +1,59 @@
 'use client';
 import { useState } from 'react';
-import { CheckCircle2, Lock, ShieldCheck, Loader2 } from 'lucide-react';
+import { CheckCircle2, Lock, ShieldCheck, Loader2, AlertTriangle } from 'lucide-react';
 
-export function PaymentForm({ amount, currency, invoiceNumber, onPaid }: { amount: number; currency: string; invoiceNumber: string; onPaid?: () => void }) {
+export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string }) {
   const [method, setMethod] = useState<'card' | 'ach' | 'wire'>('card');
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function pay(e: React.FormEvent) {
     e.preventDefault();
+    if (method === 'wire') {
+      // Wire transfers can't be initiated online — surface instructions
+      window.location.href = `mailto:${orgSlug}@collectly.app?subject=Wire transfer for invoice ${invoiceNumber}`;
+      return;
+    }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setLoading(false);
-    setDone(true);
-    onPaid?.();
+    setError(null);
+    try {
+      const res = await fetch('/api/payment/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceId, method }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data?.error ?? 'Could not start checkout');
+        setLoading(false);
+        return;
+      }
+      if (data.url) {
+        // Redirect to Stripe-hosted checkout
+        window.location.href = data.url;
+        return;
+      }
+      setError('Checkout session missing redirect URL');
+    } catch (e: any) {
+      setError(e?.message ?? 'Network error');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  if (done) {
+  if (error) {
     return (
-      <div className="text-center py-6">
-        <div className="h-14 w-14 mx-auto rounded-full bg-emerald-50 grid place-items-center">
-          <CheckCircle2 className="h-7 w-7 text-emerald-600" />
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="flex items-start gap-2">
+          <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+          <div>
+            <div className="font-semibold">Payment setup failed</div>
+            <div className="mt-1">{error}</div>
+            <div className="mt-2 text-xs text-red-600">
+              If this persists, contact <a href={`mailto:${orgSlug}@collectly.app`} className="underline">{orgSlug}@collectly.app</a>.
+            </div>
+          </div>
         </div>
-        <h2 className="mt-4 text-xl font-display font-semibold text-ink-950">Payment received</h2>
-        <p className="mt-2 text-sm text-ink-600">Thank you. A receipt has been emailed to you.</p>
-        <p className="mt-1 text-xs text-ink-500 font-mono">Invoice #{invoiceNumber} · {currency} {amount.toFixed(2)}</p>
       </div>
     );
   }
@@ -38,47 +67,27 @@ export function PaymentForm({ amount, currency, invoiceNumber, onPaid }: { amoun
             key={m}
             onClick={() => setMethod(m)}
             className={`rounded-lg border px-3 py-2.5 text-sm font-medium capitalize transition-colors ${method === m ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-ink-200 text-ink-700 hover:border-ink-300'}`}
-          >{m}</button>
+          >{m === 'ach' ? 'ACH' : m === 'wire' ? 'Wire' : 'Card'}</button>
         ))}
       </div>
 
       {method === 'card' && (
-        <div className="space-y-3">
-          <div>
-            <label className="label">Card number</label>
-            <input required placeholder="4242 4242 4242 4242" className="input" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-lg border border-ink-200 bg-ink-50/50 p-4 text-sm text-ink-700">
+          <div className="flex items-start gap-2">
+            <Lock className="h-4 w-4 mt-0.5 flex-shrink-0 text-ink-500" />
             <div>
-              <label className="label">Expiry</label>
-              <input required placeholder="MM/YY" className="input" />
+              You'll be redirected to a secure Stripe page to enter your card details. We never see or store your card number.
             </div>
-            <div>
-              <label className="label">CVC</label>
-              <input required placeholder="123" className="input" />
-            </div>
-          </div>
-          <div>
-            <label className="label">Name on card</label>
-            <input required placeholder="Your name" className="input" />
           </div>
         </div>
       )}
 
       {method === 'ach' && (
-        <div className="space-y-3">
-          <div>
-            <label className="label">Bank account number</label>
-            <input required placeholder="000123456789" className="input font-mono" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-lg border border-ink-200 bg-ink-50/50 p-4 text-sm text-ink-700">
+          <div className="flex items-start gap-2">
+            <Lock className="h-4 w-4 mt-0.5 flex-shrink-0 text-ink-500" />
             <div>
-              <label className="label">Routing number</label>
-              <input required placeholder="021000021" className="input font-mono" />
-            </div>
-            <div>
-              <label className="label">Account type</label>
-              <select className="input"><option>Checking</option><option>Savings</option></select>
+              ACH transfers are processed by Stripe. You'll enter your bank routing and account number on their secure page. ACH typically settles in 3-5 business days.
             </div>
           </div>
         </div>
@@ -86,23 +95,18 @@ export function PaymentForm({ amount, currency, invoiceNumber, onPaid }: { amoun
 
       {method === 'wire' && (
         <div className="rounded-lg border border-ink-200 bg-ink-50 p-4 text-sm space-y-1.5">
-          <div className="font-semibold text-ink-900">Wire instructions</div>
-          <div className="font-mono text-xs text-ink-700">
-            Bank: First Republic<br/>
-            Account: ****6789<br/>
-            Routing: 021000089<br/>
-            Reference: Invoice {invoiceNumber}
-          </div>
+          <div className="font-semibold text-ink-900">Wire transfer</div>
+          <div className="text-ink-600 text-xs">Clicking Pay will open an email to the business requesting wire instructions. Wire transfers cannot be initiated online.</div>
         </div>
       )}
 
       <button type="submit" disabled={loading} className="btn-primary w-full text-base h-12">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
-        Pay {currency} {amount.toFixed(2)}
+        {method === 'wire' ? 'Request wire instructions' : `Continue to secure payment · ${currency} ${amount.toFixed(2)}`}
       </button>
 
       <div className="flex items-center justify-center gap-1.5 text-xs text-ink-500">
-        <ShieldCheck className="h-3.5 w-3.5" /> Encrypted via Stripe · PCI DSS Level 1
+        <ShieldCheck className="h-3.5 w-3.5" /> Powered by Stripe · PCI DSS Level 1
       </div>
     </form>
   );

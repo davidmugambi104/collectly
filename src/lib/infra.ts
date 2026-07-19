@@ -25,7 +25,7 @@ export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as 
 
 export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string }) {
   if (!process.env.RESEND_API_KEY) {
-    console.warn('[email] RESEND_API_KEY missing — skipping send to', opts.to);
+    console.warn('[email] RESEND_API_KEY missing — skipping send');
     return { id: 'dev-stub', status: 'skipped' };
   }
   return getResend().emails.send({
@@ -39,6 +39,6 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
 
 export async function sendSms(opts: { to: string; body: string }) {
   const client = getTwilio();
-  if (!client) { console.warn('[sms] twilio not configured — skipping send to', opts.to); return { sid: 'dev-stub' }; }
+  if (!client) { console.warn('[sms] twilio not configured — skipping send'); return { sid: 'dev-stub' }; }
   return client.messages.create({ from: process.env.TWILIO_FROM_NUMBER ?? '', to: opts.to, body: opts.body });
 }

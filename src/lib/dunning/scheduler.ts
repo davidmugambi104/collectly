@@ -3,11 +3,22 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations } from '@/db/schema';
 import { eq, and, sql, lte, isNull, gt } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms } from '@/lib/infra';
 import { nanoid } from '@/lib/utils';
+
+// Cache org names per process to avoid re-querying on every invoice
+const orgNameCache = new Map<string, string>();
+async function getOrgName(orgId: string): Promise<string> {
+  const cached = orgNameCache.get(orgId);
+  if (cached) return cached;
+  const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
+  const name = org?.name ?? 'Your team';
+  orgNameCache.set(orgId, name);
+  return name;
+}
 
 export async function processDunning() {
   const now = new Date();
@@ -15,6 +26,8 @@ export async function processDunning() {
   let scheduled = 0, sent = 0, errors = 0;
 
   for (const seq of sequences) {
+    const businessName = await getOrgName(seq.orgId);
+
     const overdueInvoices = await db
       .select({
         invoice: invoices,
@@ -49,7 +62,7 @@ export async function processDunning() {
 
       try {
         const result = await generateDunningMessage({
-          businessName: 'Your team',
+          businessName,
           contactName: customer.name,
           invoiceNumber: invoice.number,
           amount: invoice.amount,
@@ -84,7 +97,7 @@ export async function processDunning() {
             await sendEmail({
               to: customer.email,
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
-              html: renderEmailHtml({ body: result.body, invoice, businessName: 'Your business' }),
+              html: renderEmailHtml({ body: result.body, invoice, businessName }),
             });
             await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
             sent += 1;

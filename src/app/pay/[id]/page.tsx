@@ -54,7 +54,7 @@ export default async function PaymentPortal({ params }: { params: Promise<{ id: 
               </div>
             )}
             <div className="mt-6">
-              <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} />
+              <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} />
             </div>
           </div>
         </div>

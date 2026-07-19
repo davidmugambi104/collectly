@@ -1,0 +1,12 @@
+We just shipped Collectly — AI-native accounts receivable for small businesses.
+
+The problem: most SMBs wait 30-90 days to get paid. The fix: connect QuickBooks or Xero, and our AI chases overdue invoices automatically — friendly nudge at day 1, firm reminder at day 7, escalation at day 14. Cash flow predictions included.
+
+We built it because I was tired of watching founders spend 5+ hours a week chasing payments instead of building.
+
+14-day free trial, no card required.
+https://collectly.vercel.app
+
+Would love your feedback — what is the worst invoice-chasing story you have ever lived through?
+
+— Davie Mugambi, founder @ Collectly
