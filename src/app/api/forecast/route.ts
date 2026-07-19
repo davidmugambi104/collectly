@@ -46,14 +46,21 @@ export async function POST(req: NextRequest) {
   try {
     const forecast = await generateCashFlowForecast({ openInvoices, monthlyBurn, currentCash });
     return NextResponse.json(forecast);
-  } catch {
+  } catch (e: any) {
+    // Fallback is intentionally simple: weighted by customer paid rate, no LLM.
+    // Surface the failure via `degraded: true` so the dashboard can show a
+    // "forecast unavailable" banner instead of silently showing the heuristic
+    // as if it were authoritative.
     const total = openInvoices.reduce((s: number, i: typeof openInvoices[number]) => s + i.amount * (i.customerPaidRate ?? 0.7), 0);
+    console.warn(`[forecast] AI forecast failed, using heuristic fallback: ${e?.message ?? e}`);
     return NextResponse.json({
       week1: Math.round(total * 0.4),
       week2: Math.round(total * 0.3),
       week3: Math.round(total * 0.2),
       week4: Math.round(total * 0.1),
       confidence: 'low' as const,
+      degraded: true,
+      degradedReason: 'ai_forecast_failed',
       narrative: 'Forecast unavailable — using baseline probability weighting.',
     });
   }

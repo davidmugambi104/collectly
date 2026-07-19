@@ -117,8 +117,9 @@ export async function handleStripeEvent(event: Stripe.Event) {
           // Future: write a `disputes` row + email org owner. For now, structured log.
           console.warn(`[stripe-webhook] dispute orgId=${orgId} amount_cents=${dispute.amount}`);
         }
-      } catch (e) {
-        console.warn('[stripe-webhook] dispute handler non-fatal error');
+      } catch (e: any) {
+        // Future: write a `disputes` row + email org owner. For now, structured log.
+        console.warn(`[stripe-webhook] dispute handler non-fatal error: ${e?.message ?? e}`);
       }
       break;
     }
