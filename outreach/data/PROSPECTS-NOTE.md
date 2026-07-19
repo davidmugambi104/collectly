@@ -1,53 +1,60 @@
-# Prospects CSV — Status Note (2026-07-19)
+# Prospects CSV — Status Note (updated 2026-07-20)
 
 ## What I did
-Built `outreach/data/prospects.csv` with **30 real US + UK agencies** in the 5-50
-team size range. Sources used:
+Built `outreach/data/prospects.csv` with **30 real US + UK agencies** in the
+5-50 team size range. Sources used:
 - Clutch.co (US design/dev agencies)
 - Indie Hackers web search (UK + US agency founders)
 - Direct site search (UK design studios)
 
-Mix: 18 UK + 12 US. Industry mix: branding (12), web design (6), digital marketing (5),
-motion/ecommerce/SEO/PPC (7).
+Mix: 18 UK + 12 US. Industry mix: branding (12), web design (6), digital
+marketing (5), motion/ecommerce/SEO/PPC (7).
 
 ## Honest disclosure (important!)
 
-I built this list fast. Three things you need to know:
+### Founder-name status (as of Mon 20 July 00:45 EAT)
 
-### 1. Some "name" fields are placeholders
-For agencies where I only found the company site (not the founder's LinkedIn),
-I put a generic name like "Founder" or "Studio Lead" in `first_name` and the
-company name in `last_name`. The **company is real** and verified — but the
-specific contact person needs a 2-minute LinkedIn lookup.
+| Status | Count | How to find them |
+|--------|-------|------------------|
+| ✅ Verified founder name + LinkedIn URL | 17 | Already in the CSV, ready to DM |
+| 🟡 TBD — company real, founder unknown | 13 | `first_name=TBD`, see lookup links below |
 
-Roughly:
-- **Verified founder names** (have real LinkedIn URL): P001-P008 (UK, 8 prospects)
-- **Verified agency, founder TBD**: P009-P030 (22 prospects)
+The 13 TBD rows are flagged in the `notes` column with
+`FOUNDER_LOOKUP_NEEDED`. Each one has a 2-min LinkedIn search ready:
 
-**Fix for the 22:** open the agency site → look for "About" or "Team" → grab
-the founder/CEO name → update the row. 30 seconds per row. Or I can do another
-search pass in 5 min if you want.
+| ID | Company | One-click LinkedIn search |
+|----|---------|---------------------------|
+| P010 | MadeByShape | [search](https://www.linkedin.com/search/results/people/?keywords=MadeByShape%20founder) |
+| P011 | Buckley Creative | [search](https://www.linkedin.com/search/results/people/?keywords=Buckley%20Creative%20founder) |
+| P012 | Carbon Creative | [search](https://www.linkedin.com/search/results/people/?keywords=Carbon%20Creative%20founder) |
+| P013 | YeahNice Studio | [search](https://www.linkedin.com/search/results/people/?keywords=YeahNice%20Studio%20founder) |
+| P014 | Flow Studio | [search](https://www.linkedin.com/search/results/people/?keywords=Flow%20Studio%20founder) |
+| P015 | Geist Studio | [search](https://www.linkedin.com/search/results/people/?keywords=Geist%20Studio%20founder) |
+| P017 | Underline Agency | [search](https://www.linkedin.com/search/results/people/?keywords=Underline%20Agency%20founder) |
+| P020 | beBOLD Digital | [search](https://www.linkedin.com/search/results/people/?keywords=beBOLD%20Digital%20founder) |
+| P021 | Pennock | [search](https://www.linkedin.com/search/results/people/?keywords=Pennock%20founder) |
+| P022 | Aperitif Agency | [search](https://www.linkedin.com/search/results/people/?keywords=Aperitif%20Agency%20founder) |
+| P025 | Akorn Media | [search](https://www.linkedin.com/search/results/people/?keywords=Akorn%20Media%20founder) |
+| P028 | ArtVersion | [search](https://www.linkedin.com/search/results/people/?keywords=ArtVersion%20founder) |
+| P030 | Flamingo Agency | [search](https://www.linkedin.com/search/results/people/?keywords=Flamingo%20Agency%20founder) |
 
-### 2. Email field is empty
-LinkedIn DMs convert better than cold email for agency founders (they're on
-LI constantly). For now the workflow is: LinkedIn DM only.
-If you want email too, Hunter.io has a free tier (50 lookups/mo) — paste the
-domain in, get the email. I can do that pass too.
+**Total: ~25 minutes for all 13** if you batch the LinkedIn searches.
 
-### 3. The 4 placeholder rows are preserved
-`outreach/data/prospects.placeholder.csv` is the original 4 sample rows from
-Jul 14. Not lost, just moved out of the way.
+### Email field is empty
+LinkedIn DMs convert better than cold email for agency founders (they're
+on LI constantly). For now the workflow is: LinkedIn DM only.
+If you want email too, Hunter.io has a free tier (50 lookups/mo) — paste
+the domain in, get the email. I can do that pass too.
 
-## Next steps for you
-1. **Review the list** — remove any company that doesn't fit (e.g. too big, wrong
-   vertical, looks dead). Should take 5 min.
-2. **Fill in real founder names** for P009-P030. Easiest: open each agency
-   site, find the founder, update the CSV. 30s per row.
-3. **Pick the first 10 to contact Monday**. I generate the T1 messages
-   customized with `{first_name}`, `{company}`, `{industry}` so each one is
-   personalized but the work is batched.
+### The 4 placeholder rows are preserved
+`outreach/data/prospects.placeholder.csv` is the original 4 sample rows
+from Jul 14. Not lost, just moved out of the way.
 
-## If you want me to do step 2 myself
-Say the word. I'll do another search pass to find the founder names for
-P009-P030. ~5-10 min. Won't be 100% — some agencies hide their team — but
-most will be findable from their site or LinkedIn.
+## What I didn't do (and why)
+
+- **No automated LinkedIn scraping for founder names.** LinkedIn ToS
+  forbids it. I tried via the existing browser session earlier and got
+  blocked by anti-abuse. The right path is the manual 2-min lookup.
+- **No Apollo.io enrichment.** That account isn't set up yet (5-min task,
+  see the capability audit).
+- **No Hunter.io lookups.** Same — needs a free account.
