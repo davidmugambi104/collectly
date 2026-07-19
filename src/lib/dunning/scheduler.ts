@@ -94,22 +94,31 @@ export async function processDunning() {
         // Send immediately (in production: queue with retries)
         try {
           if (lastStep.channel === 'email' && customer.email) {
-            await sendEmail({
+            const sendResult = await sendEmail({
               to: customer.email,
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
               html: renderEmailHtml({ body: result.body, invoice, businessName }),
             });
-            await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
-            sent += 1;
+            // sendEmail throws on real failures (Resend 403, etc.) and returns
+            // status='skipped' only when the API key is missing (a config bug).
+            if ((sendResult as any).status === 'skipped') {
+              await db.update(dunningRuns).set({ status: 'failed', error: 'resend api key missing' }).where(eq(dunningRuns.id, run.id));
+              errors += 1;
+            } else {
+              await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
+              sent += 1;
+            }
           } else if (lastStep.channel === 'sms' && customer.phone) {
-            await sendSms({ to: customer.phone, body: result.body });
+            const sms = await sendSms({ to: customer.phone, body: result.body });
             await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
             sent += 1;
           } else {
-            await db.update(dunningRuns).set({ status: 'cancelled' }).where(eq(dunningRuns.id, run.id));
+            // No channel available for this customer — cancel, don't mark 'sent'
+            await db.update(dunningRuns).set({ status: 'cancelled', error: 'no email/phone on file' }).where(eq(dunningRuns.id, run.id));
           }
         } catch (e: any) {
-          await db.update(dunningRuns).set({ status: 'failed', error: String(e?.message ?? e) }).where(eq(dunningRuns.id, run.id));
+          // Real send failure (Resend 403, Twilio error_code, etc.)
+          await db.update(dunningRuns).set({ status: 'failed', error: String(e?.message ?? e).substring(0, 500) }).where(eq(dunningRuns.id, run.id));
           errors += 1;
         }
         scheduled += 1;
