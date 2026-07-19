@@ -7,6 +7,7 @@ import { dunningSequences, dunningRuns, invoices, customers, organizations } fro
 import { eq, and, sql, lte, isNull, gt } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms } from '@/lib/infra';
+import { recordEvent } from '@/lib/events';
 import { nanoid } from '@/lib/utils';
 
 // Cache org names per process to avoid re-querying on every invoice
@@ -107,21 +108,46 @@ export async function processDunning() {
             } else {
               await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
               sent += 1;
+              await recordEvent({
+                orgId: seq.orgId,
+                type: 'dunning.run.sent',
+                payload: { runId: run.id, invoiceId: invoice.id, channel: 'email', customer: customer.email, days },
+              });
             }
           } else if (lastStep.channel === 'sms' && customer.phone) {
             const sms = await sendSms({ to: customer.phone, body: result.body });
             await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
             sent += 1;
+            await recordEvent({
+              orgId: seq.orgId,
+              type: 'dunning.run.sent',
+              payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', customer: customer.phone, days },
+            });
           } else {
             // No channel available for this customer — cancel, don't mark 'sent'
             await db.update(dunningRuns).set({ status: 'cancelled', error: 'no email/phone on file' }).where(eq(dunningRuns.id, run.id));
+            await recordEvent({
+              orgId: seq.orgId,
+              type: 'dunning.run.cancelled',
+              payload: { runId: run.id, invoiceId: invoice.id, reason: 'no email/phone on file' },
+            });
           }
         } catch (e: any) {
           // Real send failure (Resend 403, Twilio error_code, etc.)
           await db.update(dunningRuns).set({ status: 'failed', error: String(e?.message ?? e).substring(0, 500) }).where(eq(dunningRuns.id, run.id));
           errors += 1;
+          await recordEvent({
+            orgId: seq.orgId,
+            type: 'dunning.run.failed',
+            payload: { runId: run.id, invoiceId: invoice.id, channel: lastStep.channel, error: String(e?.message ?? e).substring(0, 500) },
+          });
         }
         scheduled += 1;
+        await recordEvent({
+          orgId: seq.orgId,
+          type: 'dunning.run.scheduled',
+          payload: { runId: run.id, invoiceId: invoice.id, stepId: lastStep.id, days },
+        });
       } catch (e) {
         errors += 1;
       }

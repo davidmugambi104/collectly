@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { subscriptions, organizations, invoices, payments } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid, PLAN_PRICING } from '@/lib/utils';
+import { recordEvent } from '@/lib/events';
 
 export type PlanKey = keyof typeof PLAN_PRICING;
 
@@ -197,6 +198,11 @@ async function reversePaymentForInvoice({ invoiceId, refundAmount, reason }: { i
     updatedAt: now,
   }).where(eq(invoices.id, invoiceId));
   console.warn(`[stripe-webhook] refund applied invoice=${invoiceId} -${refundAmount} newPaid=${newAmountPaid} status=${newStatus}`);
+  await recordEvent({
+    orgId: inv.orgId,
+    type: 'payment.refunded',
+    payload: { invoiceId, refundAmount, newAmountPaid, status: newStatus, reason },
+  });
 }
 
 /**
@@ -264,6 +270,12 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
     paidAt: isPaidInFull ? now : null,
     updatedAt: now,
   }).where(eq(invoices.id, args.invoiceId));
+
+  await recordEvent({
+    orgId: args.orgId,
+    type: isPaidInFull ? 'payment.succeeded' : 'invoice.partial',
+    payload: { invoiceId: args.invoiceId, amount: args.amount, method: args.method, totalDue, newAmountPaid },
+  });
 
   // Best-effort payment receipt email to the customer. Failures are non-fatal;
   // the payment is already recorded and the customer can request a receipt.

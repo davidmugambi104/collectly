@@ -16,6 +16,8 @@
   (template in `supporter-email-monday.md`)
 - [ ] Confirm phone is charged, alarms set
 - [ ] Pre-stage 3 tweets for Wed (early / mid / late)
+  - **Full copy is already pre-written in `tweets/README.md` — paste
+    from there at the times below.**
   - Early (8 AM EAT): "We're live on Product Hunt → link"
   - Mid (12 PM EAT): "8 hours in — N signups, M upvotes" (with screenshot)
   - Late (8 PM EAT): "Just crossed N signups. Recap thread incoming"
@@ -161,7 +163,7 @@ not 4 hours later when 50 people have bounced.
 ## T+24h: Thu 23 July 8:01 AM EAT (Wed 11 PM ET) — Post-Mortem
 
 ### Davie
-- [ ] Write the post-mortem:
+- [ ] Write the post-mortem (template in `postmortem/TEMPLATE.md`)
   - What we expected vs. what happened
   - Best comment / worst comment / most-upvoted comment
   - Top 3 questions from the comments
