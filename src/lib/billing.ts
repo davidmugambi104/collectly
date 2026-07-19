@@ -103,7 +103,100 @@ export async function handleStripeEvent(event: Stripe.Event) {
       }
       break;
     }
+    case 'charge.dispute.created': {
+      // A customer has disputed a charge. Log it and surface to the org owner.
+      const dispute = event.data.object as Stripe.Dispute;
+      const chargeId = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge?.id;
+      console.warn(`[stripe-webhook] dispute opened: ${dispute.id} for charge ${chargeId} amount=${dispute.amount} reason=${dispute.reason}`);
+      // Best-effort: mark the related payment as disputed by external id lookup.
+      // (Full evidence-tracking is queued as Fix #5 in the events-table refactor.)
+      try {
+        const orgId = (dispute.metadata as any)?.orgId;
+        if (orgId) {
+          // Future: write a `disputes` row + email org owner. For now, structured log.
+          console.warn(`[stripe-webhook] dispute orgId=${orgId} amount_cents=${dispute.amount}`);
+        }
+      } catch (e) {
+        console.warn('[stripe-webhook] dispute handler non-fatal error');
+      }
+      break;
+    }
+    case 'charge.dispute.closed': {
+      const dispute = event.data.object as Stripe.Dispute;
+      console.warn(`[stripe-webhook] dispute closed: ${dispute.id} status=${dispute.status}`);
+      break;
+    }
+    case 'charge.refunded': {
+      // Full or partial refund. Pull the PaymentIntent and reverse the related payment row,
+      // recompute the invoice balance and roll back status from paid→partial (or partial→sent).
+      const charge = event.data.object as Stripe.Charge;
+      const piId = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id;
+      if (!piId) break;
+      const stripe = getStripe();
+      const pi = await stripe.paymentIntents.retrieve(piId);
+      const invoiceId = pi.metadata?.invoiceId;
+      if (!invoiceId) {
+        console.warn(`[stripe-webhook] charge.refunded for PI ${piId} without invoiceId metadata — skipped`);
+        break;
+      }
+      const refundAmount = (charge.amount_refunded ?? 0) / 100;
+      if (refundAmount <= 0) break;
+      await reversePaymentForInvoice({ invoiceId, refundAmount, reason: 'stripe-refund' });
+      break;
+    }
+    case 'invoice.payment_failed': {
+      // Stripe-subscription invoice failed (recurring billing retry, not our customer invoices).
+      // We surface this in logs and let the existing subscription.dunning flow pick it up.
+      const inv = event.data.object as Stripe.Invoice;
+      const orgId = (inv.subscription_details as any)?.metadata?.orgId;
+      console.warn(`[stripe-webhook] invoice.payment_failed subscription=${inv.subscription} orgId=${orgId} amount=${inv.amount_due}`);
+      if (orgId) {
+        await db.update(subscriptions).set({ status: 'past_due', updatedAt: new Date() }).where(eq(subscriptions.orgId, orgId));
+      }
+      break;
+    }
   }
+}
+
+/**
+ * Roll back a payment and recompute the invoice balance. Used for refunds.
+ * If the refund brings amountPaid below the invoice total, the invoice is moved
+ * from 'paid' to 'partial' (or stays at the lower amount).
+ */
+async function reversePaymentForInvoice({ invoiceId, refundAmount, reason }: { invoiceId: string; refundAmount: number; reason: string }) {
+  const now = new Date();
+  const [inv] = await db
+    .select({ amount: invoices.amount, amountPaid: invoices.amountPaid, orgId: invoices.orgId, customerId: invoices.customerId })
+    .from(invoices)
+    .where(eq(invoices.id, invoiceId))
+    .limit(1);
+  if (!inv) {
+    console.warn(`[stripe-webhook] reverse for unknown invoice ${invoiceId}`);
+    return;
+  }
+  const priorPaid = Number(inv.amountPaid ?? 0);
+  const newAmountPaid = Math.max(0, priorPaid - refundAmount);
+  const totalDue = Number(inv.amount);
+  const newStatus = newAmountPaid + 0.005 >= totalDue ? 'paid' : newAmountPaid > 0 ? 'partial' : 'sent';
+
+  await db.insert(payments).values({
+    id: nanoid(),
+    orgId: inv.orgId,
+    invoiceId,
+    customerId: inv.customerId,
+    amount: String(-refundAmount),
+    currency: 'USD',
+    method: reason,
+    paidAt: now,
+    externalId: `refund-${invoiceId}-${refundAmount}-${now.getTime()}`,
+  });
+  await db.update(invoices).set({
+    status: newStatus as any,
+    amountPaid: String(newAmountPaid),
+    paidAt: newStatus === 'paid' ? inv.paidAt : null,
+    updatedAt: now,
+  }).where(eq(invoices.id, invoiceId));
+  console.warn(`[stripe-webhook] refund applied invoice=${invoiceId} -${refundAmount} newPaid=${newAmountPaid} status=${newStatus}`);
 }
 
 /**
@@ -138,6 +231,14 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
   const existingPayment = await db.select().from(payments).where(eq(payments.invoiceId, args.invoiceId)).limit(1);
   if (existingPayment[0] && existingPayment[0].externalId === `stripe-${args.invoiceId}-${args.amount}`) return;
 
+  // Load the invoice to compute the running balance (supports partial payments)
+  const [inv] = await db
+    .select({ amount: invoices.amount, amountPaid: invoices.amountPaid })
+    .from(invoices)
+    .where(eq(invoices.id, args.invoiceId))
+    .limit(1);
+  if (!inv) return;
+
   await db.insert(payments).values({
     id: nanoid(),
     orgId: args.orgId,
@@ -149,10 +250,18 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
     paidAt: now,
     externalId: `stripe-${args.invoiceId}-${args.amount}`,
   });
+
+  // Running total: previous amountPaid + this payment
+  const priorPaid = Number(inv.amountPaid ?? 0);
+  const newAmountPaid = priorPaid + args.amount;
+  const totalDue = Number(inv.amount);
+  const isPaidInFull = newAmountPaid + 0.005 >= totalDue; // half-cent tolerance for rounding
+  const newStatus = isPaidInFull ? 'paid' : 'partial';
+
   await db.update(invoices).set({
-    status: 'paid',
-    amountPaid: String(args.amount),
-    paidAt: now,
+    status: newStatus,
+    amountPaid: String(newAmountPaid),
+    paidAt: isPaidInFull ? now : null,
     updatedAt: now,
   }).where(eq(invoices.id, args.invoiceId));
 
@@ -169,11 +278,18 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
       .where(eq(invoices.id, args.invoiceId))
       .limit(1);
     if (row?.customer?.email) {
-      const [inv] = await db.select({ number: invoices.number }).from(invoices).where(eq(invoices.id, args.invoiceId)).limit(1);
+      const [invRow] = await db.select({ number: invoices.number }).from(invoices).where(eq(invoices.id, args.invoiceId)).limit(1);
+      const remaining = Math.max(0, totalDue - newAmountPaid);
+      const subject = isPaidInFull
+        ? `Receipt for invoice ${invRow?.number ?? ''}`
+        : `Partial payment received for invoice ${invRow?.number ?? ''}`;
+      const body = isPaidInFull
+        ? `<p>Thank you. We received your payment of <b>${args.currency} ${args.amount}</b> on ${now.toISOString().slice(0, 10)}. Your invoice is paid in full.</p>`
+        : `<p>Thank you. We received a partial payment of <b>${args.currency} ${args.amount}</b> on ${now.toISOString().slice(0, 10)}.</p><p>Remaining balance: <b>${args.currency} ${remaining.toFixed(2)}</b>.</p>`;
       await sendEmail({
         to: row.customer.email,
-        subject: `Receipt for invoice ${inv?.number ?? ''}`,
-        html: `<p>Thank you. We received your payment of <b>${args.currency} ${args.amount}</b> on ${now.toISOString().slice(0, 10)}.</p><p>If you have any questions, reply to this email.</p><p>— ${row.org.name}</p>`,
+        subject,
+        html: `${body}<p>If you have any questions, reply to this email.</p><p>— ${row.org.name}</p>`,
       });
     }
   } catch (e) {

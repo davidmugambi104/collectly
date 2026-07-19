@@ -4,13 +4,14 @@ import { eq } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
 import { PaymentForm } from '@/components/payment/payment-form';
 import { Logo } from '@/components/brand/logo';
-import { ShieldCheck, Clock, Mail, ExternalLink } from 'lucide-react';
+import { ShieldCheck, Clock, Mail, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function PaymentPortal({ params }: { params: Promise<{ id: string }> }) {
+export default async function PaymentPortal({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ paid?: string; session_id?: string; cancelled?: string }> }) {
   const { id } = await params;
+  const { paid, cancelled, session_id } = await searchParams;
 
   const [row] = await db
     .select({ invoice: invoices, customer: customers, org: organizations })
@@ -45,17 +46,40 @@ export default async function PaymentPortal({ params }: { params: Promise<{ id: 
       <div className="container-tight py-10 grid md:grid-cols-5 gap-6">
         <div className="md:col-span-3">
           <div className="card-lg">
-            <h1 className="h3">Pay invoice #{invoice.number}</h1>
-            <p className="mt-1 text-sm text-ink-600">Amount due: <span className="font-display font-semibold text-ink-950">{formatCurrency(balance, invoice.currency)}</span></p>
-            {isOverdue && (
-              <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start gap-2">
-                <Clock className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <div>This invoice is <b>{days} day{days === 1 ? '' : 's'}</b> past due. Settling now will close the account.</div>
+            {paid ? (
+              <div className="text-center py-6">
+                <div className="h-14 w-14 mx-auto rounded-full bg-emerald-50 grid place-items-center">
+                  <CheckCircle2 className="h-7 w-7 text-emerald-600" />
+                </div>
+                <h1 className="mt-4 h3">Payment received</h1>
+                <p className="mt-2 text-sm text-ink-600">Thank you. We received your payment for invoice <b>#{invoice.number}</b>.</p>
+                <p className="mt-1 text-sm text-ink-600">A receipt has been emailed to <span className="font-mono">{customer.email ?? 'your address'}</span>.</p>
+                {session_id && <p className="mt-1 text-xs text-ink-500 font-mono">Stripe session: {session_id.substring(0, 18)}…</p>}
+                <p className="mt-4 text-xs text-ink-500">If you have any questions, reply to the receipt email or contact <a className="link" href={`mailto:${org.slug}@collectly.app`}>{org.slug}@collectly.app</a>.</p>
               </div>
+            ) : cancelled ? (
+              <div>
+                <h1 className="h3">Payment cancelled</h1>
+                <p className="mt-2 text-sm text-ink-600">No charge was made. You can try again below or contact {org.name} with any questions.</p>
+                <div className="mt-6">
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} />
+                </div>
+              </div>
+            ) : (
+              <>
+                <h1 className="h3">Pay invoice #{invoice.number}</h1>
+                <p className="mt-1 text-sm text-ink-600">Amount due: <span className="font-display font-semibold text-ink-950">{formatCurrency(balance, invoice.currency)}</span></p>
+                {isOverdue && (
+                  <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start gap-2">
+                    <Clock className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <div>This invoice is <b>{days} day{days === 1 ? '' : 's'}</b> past due. Settling now will close the account.</div>
+                  </div>
+                )}
+                <div className="mt-6">
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} />
+                </div>
+              </>
             )}
-            <div className="mt-6">
-              <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} />
-            </div>
           </div>
         </div>
 

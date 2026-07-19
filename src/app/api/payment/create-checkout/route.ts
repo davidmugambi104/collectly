@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getStripe } from '@/lib/infra';
+import { rateLimit, getIp } from '@/lib/rate-limit';
 import { db } from '@/db';
 import { invoices, customers, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -16,6 +17,17 @@ const body = z.object({
  * /api/webhooks/stripe is called and the invoice is marked paid.
  */
 export async function POST(req: NextRequest) {
+  // Rate-limit checkout creation: each call creates a real Stripe Session,
+  // so cap at 5/min per IP. Returning 429 cheaply stops the spam vector
+  // where an attacker burns our Stripe quota.
+  const rl = rateLimit(getIp(req), { max: 5 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Too many checkout attempts. Please wait a minute and try again.' },
+      { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } },
+    );
+  }
+
   let data: z.infer<typeof body>;
   try {
     data = body.parse(await req.json());
