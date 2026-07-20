@@ -26,12 +26,13 @@ export default function HomePage() {
                 <Sparkles className="h-3.5 w-3.5 text-brand-600" /> YC-style speed · Built in Nairobi · Used globally
               </div>
               <h1 className="mt-5 h1">
-                Get paid <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">3× faster</span>.
-                <br />Without chasing invoices.
+                Chasing late invoices is <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">awkward</span>.
+                <br />You shouldn't be the one doing it.
               </h1>
               <p className="mt-5 lead max-w-xl">
-                Collectly is the AI-native accounts-receivable platform for small businesses.
-                Connect QuickBooks or Xero. We chase your invoices, predict your cash, and bring you the money — in days, not months.
+                Collectly follows up on overdue invoices the way a thoughtful operations person would —
+                adapting tone to context, escalating when appropriate, tracking promises to pay, and keeping
+                you out of the uncomfortable parts. Built for small B2B service businesses on QBO or Xero.
               </p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
@@ -101,14 +102,14 @@ export default function HomePage() {
           <HowItWorksCard
             step="2"
             icon={<Bot className="h-5 w-5 text-brand-600" />}
-            title="Turn on AI dunning"
-            body="Choose a tone (friendly, firm, final), a sequence, and a budget. Our AI writes and sends the reminders. You stay in control — pause, edit, or override anything."
+            title="Set the tone and the line"
+            body="Pick how firm Collectly should be (friendly, firm, final), when to escalate, and which invoices to leave alone. You set the line. Collectly stays on the right side of it — and you stop writing those emails yourself."
           />
           <HowItWorksCard
             step="3"
             icon={<Wallet className="h-5 w-5 text-brand-600" />}
-            title="Get paid faster"
-            body="Customers pay through a branded portal. Cash is auto-matched to invoices. You see the cash-flow forecast for the next 4 weeks in real time."
+            title="Get paid — without the awkward chase"
+            body="Customers pay through a branded portal. Cash is auto-matched to invoices. You see the cash-flow forecast for the next 4 weeks in real time — and stop having to ask \"did they pay yet?\" in every team meeting."
           />
         </div>
       </section>
@@ -227,8 +228,8 @@ export default function HomePage() {
       {/* CTA */}
       <section className="container-page pb-20">
         <div className="card-lg grad-mesh text-center">
-          <h2 className="h2">Stop chasing invoices. Start collecting them.</h2>
-          <p className="mt-4 lead max-w-xl mx-auto">14-day free trial. No credit card. Set up in 10 minutes. Get paid 3× faster.</p>
+          <h2 className="h2">Stop being the one who has to ask.</h2>
+          <p className="mt-4 lead max-w-xl mx-auto">14-day free trial. No credit card. Set up in 10 minutes. Get back to running the business.</p>
           <div className="mt-6"><WaitlistForm variant="dark" /></div>
         </div>
       </section>

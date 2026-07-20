@@ -1,23 +1,13 @@
-Subject: Quick question about {{company}}'s collections process
+Subject: Who chases invoices?
 
 Hi {{first_name}},
 
-I'm {{your_name}}, building Collectly — an AI tool that automates dunning for
-small B2B service businesses. We chase unpaid invoices so founders don't have
-to.
+I'm sanity-checking something with small {{segment_label}}.
 
-I'm not pitching. I'm doing 10 customer interviews before we ship the next
-version, and I noticed {{company}} fits the profile perfectly ({{industry}},
-{{team_size}} people).
+When a client invoice goes overdue, who usually nudges the client: you, the project lead, or whoever handles billing?
 
-Two things I can offer:
-1. **$25 for your time** (gift card) — 15 minutes, very low friction.
-2. **First 6 months free** if you end up using Collectly and we're a fit.
+I'm building Collectly around this workflow, so even a one-line reply ("me", "project lead", "billing", or "no clear owner") would be genuinely helpful.
 
-If you're open to it, here's my calendar: {{calendar_link}}
+If there's more nuance, I'd be grateful to compare notes for 10 minutes sometime this week or next.
 
-If not, no worries at all — would you mind pointing me to whoever handles
-billing at {{company}}?
-
-Thanks,
-{{your_name}}
+David

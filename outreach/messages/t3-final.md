@@ -1,13 +1,11 @@
-Subject: closing the loop
+Subject: Re: Who chases invoices? — different person?
 
 Hi {{first_name}},
 
-Last note from me on this — I don't want to be a pest.
+Last attempt before I stop nudging.
 
-If collecting unpaid invoices is ever a real headache at {{company}}, the door
-is open. Otherwise, wishing you a great Q3.
+If someone else at {{company}} owns billing or AR, would you mind forwarding this their way, or pointing me to the right name?
 
-(If you ever know another {{industry}} founder who chases late payments, a
-referral would be the biggest help.)
+Either way, no hard feelings — I appreciate the consideration.
 
-{{your_name}}
+David

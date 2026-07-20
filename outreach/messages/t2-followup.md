@@ -1,12 +1,11 @@
-Subject: Re: Quick question about {{company}}'s collections process
+Subject: Re: Who chases invoices?
 
 Hi {{first_name}},
 
-Just bumping this in case it got buried. I know founder inboxes are a warzone.
+Just bumping this — I know founder inboxes are a warzone.
 
-If now isn't a good time, happy to wait — but if it's a "no" I'd rather hear
-that too so I can stop following up.
+Even a one-liner ("me", "project lead", "billing", or "no clear owner") is all I need to know if late-payment follow-up is something you personally feel the pain of.
 
-15 minutes, $25 Amazon gift card. Here's the calendar again: {{calendar_link}}
+If it's a "no" or wrong person, I won't bother you again.
 
-{{your_name}}
+David
