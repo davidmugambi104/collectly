@@ -5,7 +5,7 @@ The problem: most SMBs wait 30-90 days to get paid. The fix: connect QuickBooks 
 We built it because I was tired of watching founders spend 5+ hours a week chasing payments instead of building.
 
 14-day free trial, no card required.
-https://collectly.vercel.app
+https://collectly-ochre.vercel.app
 
 Would love your feedback — what is the worst invoice-chasing story you have ever lived through?
 

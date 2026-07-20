@@ -36,7 +36,7 @@
 | Product Hunt           | _____   | _____   | _____%     |
 | Hacker News            | _____   | _____   | _____%     |
 | collectly.app direct   | _____   | _____   | _____%     |
-| collectly.vercel.app   | _____   | _____   | _____%     |
+| collectly-ochre.vercel.app | _____ | _____ | _____%     |
 | LinkedIn post          | _____   | _____   | _____%     |
 | Twitter                | _____   | _____   | _____%     |
 | G2 listing             | _____   | _____   | _____%     |

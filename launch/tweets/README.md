@@ -2,7 +2,8 @@
 
 Pre-staged by the agent. Davie pastes these in **chronological order** at the
 stamped times. All three are under 280 chars and include the same product URL
-(`https://collectly.vercel.app`) so the analytics can attribute traffic.
+(`https://collectly-ochre.vercel.app` — the live production deploy, since
+`collectly.app` is currently parked) so the analytics can attribute traffic.
 
 > ⚠️ **Read each one before posting.** They're written in Davie's voice but
 > the agent can't be 100% sure of tone — adjust as needed. Each one is short
@@ -20,7 +21,7 @@ stamped times. All three are under 280 chars and include the same product URL
 > our AI chases invoices automatically, you get paid in days instead of months.
 >
 > 14-day free trial, no card:
-> https://collectly.vercel.app
+> https://collectly-ochre.vercel.app
 
 Char count: 268/280.
 
@@ -35,7 +36,7 @@ Char count: 268/280.
 >
 > We built Collectly because I was tired of being that founder.
 >
-> Try it free → https://collectly.vercel.app
+> Try it free → https://collectly-ochre.vercel.app
 
 Char count: 257/280.
 
@@ -51,7 +52,7 @@ Char count: 257/280.
 >
 > If invoice chasing eats your week, this is for you.
 >
-> https://collectly.vercel.app
+> https://collectly-ochre.vercel.app
 
 Char count: 256/280.
 
