@@ -10,7 +10,7 @@ function getModel(): GenerativeModel {
   }
   if (!_model) {
     _model = _genai.getGenerativeModel({
-      model: 'gemini-flash-latest',
+      model: 'gemini-flash-lite-latest',
       generationConfig: {
         temperature: 0.6,
         responseMimeType: 'application/json',
