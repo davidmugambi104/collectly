@@ -109,7 +109,7 @@ export default function HomePage() {
             step="3"
             icon={<Wallet className="h-5 w-5 text-brand-600" />}
             title="Get paid — without the awkward chase"
-            body="Customers pay through a branded portal. Cash is auto-matched to invoices. You see the cash-flow forecast for the next 4 weeks in real time — and stop having to ask \"did they pay yet?\" in every team meeting."
+            body="Customers pay through a branded portal. Cash is auto-matched to invoices. You see the cash-flow forecast for the next 4 weeks in real time — and stop having to ask whether they paid yet in every team meeting."
           />
         </div>
       </section>
