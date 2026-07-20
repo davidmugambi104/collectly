@@ -1,11 +1,23 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 
-let _openai: OpenAI | null = null;
-export function getOpenAI() {
-  if (!_openai) {
-    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY ?? 'sk-placeholder' });
+let _genai: GoogleGenerativeAI | null = null;
+let _model: GenerativeModel | null = null;
+
+function getModel(): GenerativeModel {
+  if (!_genai) {
+    const key = process.env.GEMINI_API_KEY ?? process.env.OPENAI_API_KEY ?? '';
+    _genai = new GoogleGenerativeAI(key);
   }
-  return _openai;
+  if (!_model) {
+    _model = _genai.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.6,
+        responseMimeType: 'application/json',
+      },
+    });
+  }
+  return _model;
 }
 
 export type DunningTone = 'friendly' | 'firm' | 'final';
@@ -36,6 +48,16 @@ const TONE_GUIDANCE: Record<DunningTone, string> = {
 
 const MAX_BODY = { email: 600, sms: 320 };
 
+async function callGeminiJSON<T>(systemPrompt: string, userPrompt: string): Promise<T> {
+  const result = await getModel().generateContent({
+    contents: [
+      { role: 'user', parts: [{ text: systemPrompt + '\n\n' + userPrompt }] },
+    ],
+  });
+  const text = result.response.text();
+  return JSON.parse(text) as T;
+}
+
 export async function generateDunningMessage(ctx: DunningContext): Promise<{ subject?: string; body: string }> {
   const toneGuide = TONE_GUIDANCE[ctx.tone];
   const maxBody = MAX_BODY[ctx.channel];
@@ -48,7 +70,8 @@ Output rules:
 - No exclamation points. No emoji. No all-caps. No pleading.
 - Include a clear next step and a payment link if natural ("Click here to pay" or "Reply with any questions").
 - Currency formatting: include the symbol and proper amount.
-- Sound like a thoughtful operations person, not a debt collector.`;
+- Sound like a thoughtful operations person, not a debt collector.
+- Output as ${ctx.channel === 'email' ? 'JSON: {"subject": "...", "body": "..."}' : 'JSON: {"body": "..."}'}`;
 
   const userPrompt = `Context:
 - Business: ${ctx.businessName}
@@ -63,34 +86,19 @@ Output rules:
 - Tone: ${ctx.tone}
 ${ctx.brandVoice ? `- Brand voice: ${ctx.brandVoice}` : ''}
 
-Write the message. Output as ${ctx.channel === 'email' ? 'JSON: {"subject": "...", "body": "..."}' : 'JSON: {"body": "..."}'}`;
+Write the message.`;
 
   try {
-    const completion = await getOpenAI().chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.6,
-      max_tokens: 500,
-    });
-
-    const content = completion.choices[0]?.message?.content;
-    if (!content) throw new Error('No dunning content generated');
-
-    try {
-      const parsed = JSON.parse(content);
-      if (ctx.channel === 'email') {
-        return { subject: parsed.subject, body: parsed.body };
-      }
+    if (ctx.channel === 'email') {
+      const parsed = await callGeminiJSON<{ subject: string; body: string }>(systemPrompt, userPrompt);
+      return { subject: parsed.subject, body: parsed.body };
+    } else {
+      const parsed = await callGeminiJSON<{ body: string }>(systemPrompt, userPrompt);
       return { body: parsed.body };
-    } catch {
-      return { body: content.slice(0, maxBody) };
     }
   } catch (e) {
-    // OpenAI unavailable / invalid key — fall back to a deterministic template.
+    // Gemini unavailable / invalid key — fall back to a deterministic template.
+    console.error('[dunning] Gemini call failed, using fallback:', e instanceof Error ? e.message : e);
     return fallbackDunningMessage(ctx);
   }
 }
@@ -126,20 +134,12 @@ export async function predictPaymentLikelihood(ctx: {
   priorMessages: number;
   invoiceAmount: number;
 }): Promise<{ score: number; reasoning: string }> {
-  const completion = await getOpenAI().chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      { role: 'system', content: 'You predict the probability that a small business will pay an overdue invoice within the next 7 days. Output JSON: {"score": number 0-100, "reasoning": "one short sentence"}' },
-      { role: 'user', content: JSON.stringify(ctx) },
-    ],
-    response_format: { type: 'json_object' },
-    temperature: 0.3,
-  });
-  const content = completion.choices[0]?.message?.content;
-  if (!content) return { score: 50, reasoning: 'Unable to predict' };
   try {
-    return JSON.parse(content);
-  } catch {
+    const systemPrompt = 'You predict the probability that a small business will pay an overdue invoice within the next 7 days.';
+    const userPrompt = `Input: ${JSON.stringify(ctx)}\n\nOutput JSON: {"score": number 0-100, "reasoning": "one short sentence"}`;
+    return await callGeminiJSON<{ score: number; reasoning: string }>(systemPrompt, userPrompt);
+  } catch (e) {
+    console.error('[dunning] predictPaymentLikelihood Gemini call failed:', e instanceof Error ? e.message : e);
     return { score: 50, reasoning: 'Unable to predict' };
   }
 }
@@ -149,20 +149,12 @@ export async function generateCashFlowForecast(ctx: {
   monthlyBurn: number;
   currentCash: number;
 }): Promise<{ week1: number; week2: number; week3: number; week4: number; confidence: 'low' | 'medium' | 'high'; narrative: string }> {
-  const completion = await getOpenAI().chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      { role: 'system', content: 'You forecast weekly incoming cash for a small business over the next 4 weeks based on open invoices. Adjust for late payment probability (older invoices more likely to pay but lower amounts recoverable). Output JSON: {"week1": number, "week2": number, "week3": number, "week4": number, "confidence": "low"|"medium"|"high", "narrative": "one sentence"}' },
-      { role: 'user', content: JSON.stringify(ctx) },
-    ],
-    response_format: { type: 'json_object' },
-    temperature: 0.2,
-  });
-  const content = completion.choices[0]?.message?.content;
-  if (!content) return { week1: 0, week2: 0, week3: 0, week4: 0, confidence: 'low', narrative: 'Insufficient data' };
   try {
-    return JSON.parse(content);
-  } catch {
+    const systemPrompt = 'You forecast weekly incoming cash for a small business over the next 4 weeks based on open invoices. Adjust for late payment probability (older invoices more likely to pay but lower amounts recoverable).';
+    const userPrompt = `Input: ${JSON.stringify(ctx)}\n\nOutput JSON: {"week1": number, "week2": number, "week3": number, "week4": number, "confidence": "low"|"medium"|"high", "narrative": "one sentence"}`;
+    return await callGeminiJSON<{ week1: number; week2: number; week3: number; week4: number; confidence: 'low' | 'medium' | 'high'; narrative: string }>(systemPrompt, userPrompt);
+  } catch (e) {
+    console.error('[dunning] generateCashFlowForecast Gemini call failed:', e instanceof Error ? e.message : e);
     return { week1: 0, week2: 0, week3: 0, week4: 0, confidence: 'low', narrative: 'Insufficient data' };
   }
 }
