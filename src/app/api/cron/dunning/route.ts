@@ -5,8 +5,15 @@ import { events } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 
 export async function GET(req: NextRequest) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret) {
+    // Fail-closed: refuse to run if the secret is not configured, rather than
+    // silently skipping the auth check. Prevents an unauthenticated dunning
+    // trigger if the env var is missing in a deploy environment.
+    return NextResponse.json({ error: 'cron not configured' }, { status: 503 });
+  }
   const auth = req.headers.get('authorization');
-  if (process.env.CRON_SECRET && auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
   const t0 = Date.now();
