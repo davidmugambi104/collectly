@@ -23,6 +23,31 @@ export default async function IntegrationsPage() {
   const customerCount = Number(customerCountRow[0]?.n ?? 0);
   const conn = (p: string) => list.find((i: typeof list[number]) => i.provider === p);
 
+  // Detect which providers have production credentials configured
+  const providerStatus: Record<string, { ready: boolean; reason?: string }> = {
+    quickbooks: {
+      ready: !!process.env.QBO_CLIENT_ID && !!process.env.QBO_CLIENT_SECRET,
+      reason: !process.env.QBO_CLIENT_ID ? 'QBO_CLIENT_ID not set in production env' : undefined,
+    },
+    xero: {
+      ready: !!process.env.XERO_CLIENT_ID && !!process.env.XERO_CLIENT_SECRET,
+      reason: !process.env.XERO_CLIENT_ID ? 'Xero developer app not yet configured' : undefined,
+    },
+    stripe: {
+      ready: !!process.env.STRIPE_CONNECT_CLIENT_ID,
+      reason: !process.env.STRIPE_CONNECT_CLIENT_ID ? 'Stripe Connect platform onboarding required' : undefined,
+    },
+    square: {
+      ready: !!process.env.SQUARE_CLIENT_ID && !!process.env.SQUARE_CLIENT_SECRET,
+      reason: !process.env.SQUARE_CLIENT_ID ? 'Square developer app not yet configured' : undefined,
+    },
+    plaid: {
+      ready: !!process.env.PLAID_CLIENT_ID && !!process.env.PLAID_SECRET,
+      reason: !process.env.PLAID_CLIENT_ID ? 'Plaid developer account not yet configured' : undefined,
+    },
+  };
+  const needsSetup = Object.values(providerStatus).filter((s) => !s.ready).length;
+
   return (
     <AppShell title="Integrations" subtitle="Connect your accounting and payment tools. Setup takes 60 seconds.">
       {customerCount === 0 && (
@@ -40,6 +65,26 @@ export default async function IntegrationsPage() {
                   Or connect a provider below <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {needsSetup > 0 && (
+        <div className="mb-6 card bg-amber-50 border-amber-200">
+          <div className="flex items-start gap-4">
+            <div className="h-10 w-10 rounded-xl bg-amber-100 grid place-items-center shrink-0">
+              <AlertCircle className="h-5 w-5 text-amber-700" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="font-display font-semibold text-ink-950 text-lg">{needsSetup} integration{needsSetup > 1 ? 's' : ''} need production setup</h2>
+              <p className="mt-1 text-sm text-ink-700">These providers are wired in the code but their developer-app credentials aren't configured in this environment. OAuth won't complete until they're set.</p>
+              <ul className="mt-3 space-y-1 text-xs text-ink-700">
+                {Object.entries(providerStatus).filter(([_, s]) => !s.ready).map(([k, s]) => (
+                  <li key={k}><b className="capitalize">{k}:</b> {s.reason}</li>
+                ))}
+              </ul>
+              <p className="mt-3 text-xs text-ink-600">For the production app, each provider needs: (1) a developer app on the platform's site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@collectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
             </div>
           </div>
         </div>
