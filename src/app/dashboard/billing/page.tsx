@@ -100,9 +100,26 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   return (
     <AppShell title="Billing" subtitle="Plans, usage, and receipts.">
       {justRequested && (
-        <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 flex items-center gap-2 text-sm text-emerald-800">
-          <CheckCircle2 className="h-4 w-4" />
-          <span>Upgrade request received for the <b>{PLAN_PRICING[sp.plan as keyof typeof PLAN_PRICING]?.name ?? sp.plan}</b> plan. We'll email you within 1 business day with a manual invoice and onboarding link.</span>
+        <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <div className="flex items-start gap-2">
+            <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <div className="font-semibold">
+                {PLAN_PRICING[sp.plan as keyof typeof PLAN_PRICING]?.name ?? sp.plan} upgrade request received
+              </div>
+              <p className="mt-1 text-emerald-900/80">
+                Here's what happens next:
+              </p>
+              <ol className="mt-2 space-y-1 text-emerald-900/80 list-decimal list-inside">
+                <li>David emails your invoice <b>within 12 hours</b> (bank transfer, Wise, or PayPal — your choice).</li>
+                <li>Once paid, your account is upgraded manually and you'll get a confirmation email.</li>
+                <li>You can keep using Collectly during this window — no interruption.</li>
+              </ol>
+              <p className="mt-2 text-xs text-emerald-900/70">
+                Questions? Reply to the invoice email or reach David at <a href="mailto:david@getcollectly.app" className="underline">david@getcollectly.app</a>.
+              </p>
+            </div>
+          </div>
         </div>
       )}
       {justUpgraded && (
@@ -125,7 +142,10 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           <div>
             <div className="font-semibold text-brand-950">You're in the private beta</div>
             <p className="mt-1 text-brand-900/80">
-              All plans are <b>free during the beta</b>. When you click <i>Switch to {PLAN_PRICING.growth.name === current.name ? PLAN_PRICING.starter.name : PLAN_PRICING.growth.name}</i>, you'll get a confirmation here and we'll email you within 1 business day with a manual invoice (bank transfer, Wise, or PayPal) for the first month. Online card checkout opens when the public beta launches in a few weeks.
+              Card checkout opens with the public beta in a few weeks. During the
+              private beta, plan upgrades are handled by manual invoice (bank
+              transfer, Wise, or PayPal) so David can support setup personally
+              for the first customer batch.
             </p>
           </div>
         </div>
@@ -225,12 +245,20 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                   {p.features.map((f) => <li key={f} className="flex items-start gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />{f}</li>)}
                 </ul>
                 <button disabled={isCurrent} className={`mt-4 w-full ${isCurrent ? 'btn-secondary opacity-50' : 'btn-primary'} text-sm`} type="submit">
-                  {isCurrent ? 'Current plan' : <>Request {p.name} <ArrowUpRight className="h-3.5 w-3.5" /></>}
+                  {isCurrent ? 'Current plan' : <>Start {p.name} at ${p.monthly}/mo <ArrowUpRight className="h-3.5 w-3.5" /></>}
                 </button>
               </div>
             </form>
           );
         })}
+      </div>
+
+      {/* Founder note about the manual flow */}
+      <div className="mt-3 text-xs text-ink-500 text-center max-w-2xl mx-auto">
+        Card checkout is coming soon. For the first customer batch, David handles
+        upgrades manually by invoice (bank transfer, Wise, or PayPal) so he can
+        support setup personally. Same price, same plan — just a 12-hour
+        window between click and confirmation.
       </div>
 
       {/* Invoice history */}

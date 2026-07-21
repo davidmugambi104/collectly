@@ -321,7 +321,7 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
  * once Stripe Atlas (or a payment partner) is wired.
  */
 export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey; customerName?: string; country?: string; notes?: string }) {
-  const { upgradeRequests, organizations: orgs } = await import('@/db/schema');
+  const { upgradeRequests, organizations: orgs, users } = await import('@/db/schema');
   const { sendEmail } = await import('@/lib/infra');
 
   const [org] = await db.select().from(orgs).where(eq(orgs.id, opts.orgId)).limit(1);
@@ -346,6 +346,39 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
     })
     .returning();
 
+  // Look up the org owner's real email so we can send them the
+  // automated "here's what happens next" email. (customerEmail
+  // above is the @getcollectly.app placeholder, not the inbox.)
+  const [owner] = await db
+    .select({ email: users.email, name: users.name })
+    .from(users)
+    .where(eq(users.id, org.ownerId))
+    .limit(1);
+
+  // Notify the customer with the 12h timeline (best-effort, non-blocking)
+  if (owner?.email) {
+    try {
+      await sendEmail({
+        to: owner.email,
+        subject: `Your ${planInfo.name} upgrade for ${org.name} — invoice coming within 12 hours`,
+        html: [
+          `<p>Hi ${owner.name?.split(' ')[0] ?? 'there'},</p>`,
+          `<p>I just received your <strong>${planInfo.name}</strong> upgrade request for <strong>${org.name}</strong>. Here's what happens next:</p>`,
+          `<ol>`,
+          `<li>I'll email your invoice within 12 hours (bank transfer, Wise, or PayPal — your call).</li>`,
+          `<li>Once paid, I'll upgrade your account manually and confirm by email.</li>`,
+          `<li>You can keep using Collectly during this window — no interruption.</li>`,
+          `</ol>`,
+          `<p>If you have any questions in the meantime, just reply to this email.</p>`,
+          `<p>— David<br/>Founder, Collectly</p>`,
+          `<hr/><p style="color:#666;font-size:12px">Request ID: ${created.id} &mdash; ${planInfo.name} ($${planInfo.monthly}/mo)</p>`,
+        ].join('\n'),
+      });
+    } catch (e) {
+      console.error('[recordUpgradeRequest] customer email failed (non-fatal):', e instanceof Error ? e.message : e);
+    }
+  }
+
   // Notify Davie (best-effort)
   try {
     await sendEmail({
@@ -356,7 +389,7 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
         `<table style="border-collapse:collapse">`,
         `<tr><td style="padding:4px 12px 4px 0"><strong>Org</strong></td><td>${org.name} (${org.slug})</td></tr>`,
         `<tr><td style="padding:4px 12px 4px 0"><strong>Plan</strong></td><td>${planInfo.name} ($${planInfo.monthly}/mo)</td></tr>`,
-        `<tr><td style="padding:4px 12px 4px 0"><strong>Email</strong></td><td>${customerEmail}</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Email</strong></td><td>${owner?.email ?? customerEmail}</td></tr>`,
         `<tr><td style="padding:4px 12px 4px 0"><strong>Contact</strong></td><td>${opts.customerName ?? 'n/a'}</td></tr>`,
         `<tr><td style="padding:4px 12px 4px 0"><strong>Country</strong></td><td>${opts.country ?? 'n/a'}</td></tr>`,
         `</table>`,
