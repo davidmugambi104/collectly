@@ -60,9 +60,9 @@ in the abstract sense.
 
 #### Description (PH "About" field, ~260 chars max)
 ```
-Collectly is the AI-native accounts-receivable platform for small businesses. Connect QuickBooks or Xero. We chase your invoices, predict your cash, and bring you the money — in days, not months. $49–$149/mo. No per-invoice fees.
+Collectly is the AI-native accounts-receivable platform for small businesses. Connect QuickBooks or Xero. We chase your invoices, predict your cash, and bring you the money — in days, not months. Private beta: all plans free right now.
 ```
-*Char count: 254 ✓ (just under 260)*
+*Char count: ~245 ✓*
 
 ---
 

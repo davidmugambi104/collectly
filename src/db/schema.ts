@@ -204,6 +204,28 @@ export const subscriptions = pgTable('subscriptions', {
   orgIdx: uniqueIndex('subs_org_idx').on(t.orgId),
 }));
 
+/* ----------------------------- UPGRADE REQUESTS (no-Stripe path) ----------------------------- */
+// Captures "user wants to upgrade to X plan" when we can't take payment online.
+// Davie reviews these manually and invoices via bank transfer / Wise / PayPal.
+// Replaced by Stripe checkout when Stripe Atlas is set up.
+
+export const upgradeRequests = pgTable('upgrade_requests', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  plan: planTier('plan').notNull(),
+  customerEmail: text('customer_email').notNull(),
+  customerName: text('customer_name'),
+  businessName: text('business_name'),
+  country: text('country'),        // ISO 2-letter; helps Davie decide on payment method
+  notes: text('notes'),            // free-form: customer's preferred payment, timeline, etc.
+  status: text('status').notNull().default('pending'),  // pending | invoiced | paid | cancelled
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  orgIdx: index('upgrade_req_org_idx').on(t.orgId),
+  statusIdx: index('upgrade_req_status_idx').on(t.status),
+}));
+
 /* ----------------------------- AUDIT / EVENTS ----------------------------- */
 
 export const events = pgTable('events', {
@@ -269,6 +291,7 @@ export type Integration = typeof integrations.$inferSelect;
 export type DunningSequence = typeof dunningSequences.$inferSelect;
 export type DunningRun = typeof dunningRuns.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;
+export type UpgradeRequest = typeof upgradeRequests.$inferSelect;
 export type Event = typeof events.$inferSelect;
 export type Waitlist = typeof waitlist.$inferSelect;
 

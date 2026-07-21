@@ -310,3 +310,63 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
     console.warn('[stripe-webhook] payment receipt email failed (non-fatal)');
   }
 }
+
+/* ----------------------------- UPGRADE REQUEST (soft-launch) ----------------------------- */
+
+/**
+ * Record an "I want to upgrade to plan X" request from a logged-in org.
+ * Used during the soft-launch window when Stripe isn't available for the
+ * Kenya-based founder. Davie reviews these manually and invoices via
+ * bank transfer / Wise / PayPal. Replaced by Stripe checkout redirect
+ * once Stripe Atlas (or a payment partner) is wired.
+ */
+export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey; customerName?: string; country?: string; notes?: string }) {
+  const { upgradeRequests, organizations: orgs } = await import('@/db/schema');
+  const { sendEmail } = await import('@/lib/infra');
+
+  const [org] = await db.select().from(orgs).where(eq(orgs.id, opts.orgId)).limit(1);
+  if (!org) throw new Error('organization not found');
+
+  const planInfo = PLAN_PRICING[opts.plan];
+  if (!planInfo) throw new Error('invalid plan');
+
+  const customerEmail = `${org.slug}@getcollectly.app`;
+
+  const [created] = await db
+    .insert(upgradeRequests)
+    .values({
+      orgId: opts.orgId,
+      plan: opts.plan,
+      customerEmail,
+      customerName: opts.customerName ?? null,
+      businessName: org.name,
+      country: opts.country ?? null,
+      notes: opts.notes ?? null,
+      status: 'pending',
+    })
+    .returning();
+
+  // Notify Davie (best-effort)
+  try {
+    await sendEmail({
+      to: process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app',
+      subject: `[Upgrade request] ${org.name} → ${planInfo.name} ($${planInfo.monthly}/mo)`,
+      html: [
+        `<p><strong>New upgrade request.</strong></p>`,
+        `<table style="border-collapse:collapse">`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Org</strong></td><td>${org.name} (${org.slug})</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Plan</strong></td><td>${planInfo.name} ($${planInfo.monthly}/mo)</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Email</strong></td><td>${customerEmail}</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Contact</strong></td><td>${opts.customerName ?? 'n/a'}</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Country</strong></td><td>${opts.country ?? 'n/a'}</td></tr>`,
+        `</table>`,
+        `<p><strong>Notes from customer:</strong><br/>${(opts.notes ?? '(none)').replace(/</g, '&lt;').replace(/\n/g, '<br/>')}</p>`,
+        `<p style="color:#666;font-size:12px">Request ID: ${created.id} &mdash; review at <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'}/admin/upgrade-requests">/admin/upgrade-requests</a></p>`,
+      ].join('\n'),
+    });
+  } catch (e) {
+    console.error('[recordUpgradeRequest] notify Davie failed (non-fatal):', e instanceof Error ? e.message : e);
+  }
+
+  return { requestId: created.id, plan: planInfo.name, monthly: planInfo.monthly };
+}

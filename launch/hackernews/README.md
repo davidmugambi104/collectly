@@ -113,10 +113,10 @@ build time across two long sessions.
 
 ## What's next
 
-- Wire real 3rd-party keys (Clerk, Stripe, OpenAI, Resend, Twilio, QuickBooks)
-  — landing this week
+- Stripe Atlas setup for US Stripe account (currently using manual upgrade
+  request flow during private beta — all plans are free)
 - 10-20 design partners from a cold-outbound pipeline (built, ready to send)
-- First paying customer (target: week 2 post-launch)
+- First paying customer (target: week 2 post-launch, after Atlas lands)
 - 2-3 more blog posts (we're at 6 now)
 
 The repo is public: https://github.com/davidmugambi104/collectly

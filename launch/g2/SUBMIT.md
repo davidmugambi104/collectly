@@ -36,7 +36,7 @@ Get paid 3× faster without chasing invoices. AI-native A/R for small businesses
 
 ### Short description (max 250 chars)
 ```
-AI accounts-receivable platform for small businesses. Automates dunning (email + SMS), forecasts cash, and runs branded payment pages. QuickBooks + Xero native. $49–$149/mo.
+AI accounts-receivable platform for small businesses. Automates dunning (email + SMS), forecasts cash, and runs branded payment pages. QuickBooks + Xero. Private beta: all plans free right now.
 ```
 *Char count: 191 ✓*
 

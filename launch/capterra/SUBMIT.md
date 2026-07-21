@@ -38,9 +38,9 @@ AI accounts-receivable software for small businesses. Automates invoice chasing,
 
 ### Short description (max 300 chars)
 ```
-Collectly is the AI-native accounts-receivable platform for $1M–$20M revenue businesses. It connects to QuickBooks or Xero, automates dunning (email + SMS), forecasts your 4-week cash position, and gives customers a branded payment page. No per-invoice fees.
+Collectly is the AI-native accounts-receivable platform for $1M–$20M revenue businesses. It connects to QuickBooks or Xero, automates dunning (email + SMS), forecasts your 4-week cash position, and gives customers a branded payment page. Private beta: all plans free right now.
 ```
-*Char count: 247 ✓*
+*Char count: ~280 ✓*
 
 ### Full description
 ```

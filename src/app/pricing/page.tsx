@@ -15,6 +15,7 @@ export default function PricingPage() {
         <p className="eyebrow">Pricing</p>
         <h1 className="mt-3 h1">Honest pricing.<br/>Built for the long tail.</h1>
         <p className="mt-5 lead max-w-2xl mx-auto">Start free for 14 days. Upgrade when you're hooked. Cancel anytime. No per-invoice fees, no setup costs, no hidden anything.</p>
+        <p className="mt-3 text-sm text-brand-700 font-medium">Private beta: all plans are free right now. Online checkout opens when the public beta launches.</p>
       </section>
 
       <section className="container-page pb-20">
