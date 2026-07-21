@@ -11,7 +11,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
     e.preventDefault();
     if (method === 'wire') {
       // Wire transfers can't be initiated online — surface instructions
-      window.location.href = `mailto:${orgSlug}@collectly.app?subject=Wire transfer for invoice ${invoiceNumber}`;
+      window.location.href = `mailto:${orgSlug}@getcollectly.app?subject=Wire transfer for invoice ${invoiceNumber}`;
       return;
     }
     setLoading(true);
@@ -50,7 +50,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
             <div className="font-semibold">Payment setup failed</div>
             <div className="mt-1">{error}</div>
             <div className="mt-2 text-xs text-red-600">
-              If this persists, contact <a href={`mailto:${orgSlug}@collectly.app`} className="underline">{orgSlug}@collectly.app</a>.
+              If this persists, contact <a href={`mailto:${orgSlug}@getcollectly.app`} className="underline">{orgSlug}@getcollectly.app</a>.
             </div>
           </div>
         </div>

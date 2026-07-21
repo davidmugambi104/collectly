@@ -27,7 +27,7 @@ Collectly
 
 ### Product URL
 ```
-https://collectly.app
+https://getcollectly.app
 ```
 
 ### Product tagline (max 200 chars)
@@ -81,9 +81,9 @@ Most AR tools charge 5-15% of recovered. We charge $49–$149 flat. We don't tak
 
 Support:
 
-- Email: hello@collectly.app
+- Email: hello@getcollectly.app
 - Live chat: 9am–6pm ET, Mon–Fri
-- Help center: collectly.app/docs
+- Help center: getcollectly.app/docs
 - Response time: <2 hours during business hours
 ```
 
@@ -152,7 +152,7 @@ Remote (international team)
 
 ### Company website
 ```
-https://collectly.app
+https://getcollectly.app
 ```
 
 ### Primary phone
@@ -163,7 +163,7 @@ https://collectly.app
 
 ### Support email
 ```
-hello@collectly.app
+hello@getcollectly.app
 ```
 
 ---
@@ -193,7 +193,7 @@ Capterra will:
 ## Post-launch (after Wed 22 July)
 
 1. Ask 3-5 design partners to leave honest Capterra reviews
-2. Track Capterra traffic via UTM params in your collectly.app URL
+2. Track Capterra traffic via UTM params in your getcollectly.app URL
 3. Check Capterra's "GetApp" sister-site (same company) — submit there too using the same payload
 
 ---

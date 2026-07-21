@@ -51,7 +51,7 @@ const sections = [
       <>
         <p>
           Collectly uses the following sub-processors. You can subscribe to changes at{' '}
-          <a href="mailto:dpa@collectly.app" className="link">dpa@collectly.app</a>.
+          <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a>.
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
           <li><b>Vercel</b> — application hosting (US, EU region available).</li>
@@ -193,11 +193,11 @@ export default function DPAPage() {
           <h3 className="h3">Need this countersigned?</h3>
           <p className="mt-2 text-sm text-ink-600 leading-relaxed">
             We accept email-based DPA execution. Send a countersigned PDF to{' '}
-            <a href="mailto:dpa@collectly.app" className="link">dpa@collectly.app</a> and we'll return a fully
+            <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a> and we'll return a fully
             executed copy within one business day. No DocuSign loop required.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <a href="mailto:dpa@collectly.app" className="btn-primary">
+            <a href="mailto:dpa@getcollectly.app" className="btn-primary">
               <Mail className="h-4 w-4" /> Request countersignature
             </a>
             <a href="/security" className="btn-ghost">

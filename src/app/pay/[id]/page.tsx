@@ -55,7 +55,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                 <p className="mt-2 text-sm text-ink-600">Thank you. We received your payment for invoice <b>#{invoice.number}</b>.</p>
                 <p className="mt-1 text-sm text-ink-600">A receipt has been emailed to <span className="font-mono">{customer.email ?? 'your address'}</span>.</p>
                 {session_id && <p className="mt-1 text-xs text-ink-500 font-mono">Stripe session: {session_id.substring(0, 18)}…</p>}
-                <p className="mt-4 text-xs text-ink-500">If you have any questions, reply to the receipt email or contact <a className="link" href={`mailto:${org.slug}@collectly.app`}>{org.slug}@collectly.app</a>.</p>
+                <p className="mt-4 text-xs text-ink-500">If you have any questions, reply to the receipt email or contact <a className="link" href={`mailto:${org.slug}@getcollectly.app`}>{org.slug}@getcollectly.app</a>.</p>
               </div>
             ) : cancelled ? (
               <div>
@@ -99,13 +99,13 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
 
           <div className="card">
             <h2 className="font-semibold text-ink-900">Questions?</h2>
-            <p className="mt-1 text-sm text-ink-600">Reply to the email this link came from, or contact <a href={`mailto:${org.slug}@collectly.app`} className="link">{org.slug}@collectly.app</a>.</p>
+            <p className="mt-1 text-sm text-ink-600">Reply to the email this link came from, or contact <a href={`mailto:${org.slug}@getcollectly.app`} className="link">{org.slug}@getcollectly.app</a>.</p>
           </div>
 
           <div className="card bg-ink-50/50">
             <h3 className="font-semibold text-ink-900 text-sm">Powered by Collectly</h3>
             <p className="mt-1 text-xs text-ink-600">AI-native accounts-receivable for small businesses.</p>
-            <a href="https://collectly.app" className="mt-2 inline-flex items-center gap-1 text-xs text-brand-600 font-medium">Learn more <ExternalLink className="h-3 w-3" /></a>
+            <a href="https://getcollectly.app" className="mt-2 inline-flex items-center gap-1 text-xs text-brand-600 font-medium">Learn more <ExternalLink className="h-3 w-3" /></a>
           </div>
         </div>
       </div>

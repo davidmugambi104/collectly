@@ -71,7 +71,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
     const session = await createCheckoutSession({
       orgId: orgId!,
       plan: target,
-      customerEmail: org?.slug ? `${org.slug}@collectly.app` : 'customer@collectly.app',
+      customerEmail: org?.slug ? `${org.slug}@getcollectly.app` : 'customer@getcollectly.app',
       successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing?upgraded=1`,
       cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing?cancelled=1`,
     });
@@ -180,10 +180,10 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           <ul className="mt-3 space-y-2 text-sm">
             <li><Link href="/dashboard/invoices" className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" />View invoices</Link></li>
             <li><Link href="/dashboard/payments" className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><CreditCard className="h-3.5 w-3.5" />View payments</Link></li>
-            <li><a href="mailto:billing@collectly.app" className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
+            <li><a href="mailto:billing@getcollectly.app" className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
           </ul>
           <div className="mt-4 pt-4 border-t border-ink-100 text-xs text-ink-500">
-            Questions about your plan? Email <a href="mailto:billing@collectly.app" className="text-brand-600">billing@collectly.app</a>.
+            Questions about your plan? Email <a href="mailto:billing@getcollectly.app" className="text-brand-600">billing@getcollectly.app</a>.
           </div>
         </div>
       </div>

@@ -144,7 +144,7 @@ export default function SecurityPage() {
         <p className="mt-4 text-ink-600 leading-relaxed">
           We commit to notifying affected customers within 72 hours of confirming a security incident that
           materially impacts their data. You can reach the security team directly at{' '}
-          <a href="mailto:security@collectly.app" className="link">security@collectly.app</a> for disclosure,
+          <a href="mailto:security@getcollectly.app" className="link">security@getcollectly.app</a> for disclosure,
           responsible-vulnerability reports, or to request our latest penetration-test summary.
         </p>
         <div className="mt-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
@@ -189,7 +189,7 @@ export default function SecurityPage() {
           <a href="/privacy" className="btn-ghost">
             Privacy policy
           </a>
-          <a href="mailto:security@collectly.app" className="btn-ghost">
+          <a href="mailto:security@getcollectly.app" className="btn-ghost">
             Email the security team
           </a>
         </div>

@@ -211,7 +211,7 @@ export default function IntegrationsPage() {
             Tell us what's blocking you and we'll add it to the public roadmap.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <a href="mailto:hello@collectly.app?subject=Integration%20request" className="btn-primary">
+            <a href="mailto:hello@getcollectly.app?subject=Integration%20request" className="btn-primary">
               Request an integration
             </a>
             <Link href="/customers" className="btn-ghost">

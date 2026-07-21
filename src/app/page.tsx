@@ -310,7 +310,7 @@ function HeroDashboardMock() {
             <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
             <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
           </div>
-          <div className="mx-auto text-xs text-ink-500 font-medium">app.collectly.app/dashboard</div>
+          <div className="mx-auto text-xs text-ink-500 font-medium">app.getcollectly.app/dashboard</div>
         </div>
         <div className="p-5">
           <div className="flex items-center justify-between mb-4">

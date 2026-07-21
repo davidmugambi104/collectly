@@ -104,7 +104,7 @@ Write the message.`;
 }
 
 export function fallbackDunningMessage(ctx: DunningContext): { subject?: string; body: string } {
-  const link = `https://collectly.app/pay/${ctx.invoiceNumber}`;
+  const link = `https://getcollectly.app/pay/${ctx.invoiceNumber}`;
   const linkFragment = ctx.channel === 'email' ? `\n\nPay here: ${link}` : ` ${link}`;
   let body: string;
   if (ctx.tone === 'friendly') {

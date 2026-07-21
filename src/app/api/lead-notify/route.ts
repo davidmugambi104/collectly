@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 </body></html>`;
 
   try {
-    const to = process.env.LEAD_NOTIFY_EMAIL ?? 'davie@collectly.app';
+    const to = process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app';
     const result = await sendEmail({ to, subject, html });
     return NextResponse.json({ ok: true, sent: result });
   } catch (e: any) {

@@ -57,7 +57,7 @@ export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
       {status === 'error' && <div className="mt-2 text-xs text-red-600">{message}</div>}
       {!message && (
         <p className={`mt-2 text-xs ${dark ? 'text-ink-400' : 'text-ink-500'}`}>
-          Or <a href="https://app.collectly.app/sign-up" className="link">create an account</a> to start now.
+          Or <a href="https://app.getcollectly.app/sign-up" className="link">create an account</a> to start now.
         </p>
       )}
     </form>

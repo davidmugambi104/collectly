@@ -59,9 +59,9 @@ export async function POST(req: NextRequest) {
 
 function fallbackMessage(d: { customerName: string; businessName: string; invoiceNumber: string; amount: string; currency: string; daysOverdue: number; tone: 'friendly'|'firm'|'final'; channel: 'email'|'sms' }) {
   const body = d.tone === 'friendly'
-    ? `Hi ${d.customerName}, just a quick nudge that invoice ${d.invoiceNumber} for ${d.currency} ${d.amount} was due ${d.daysOverdue} days ago. You can settle it here: https://collectly.app/pay/${d.invoiceNumber}. Thanks!\n\n${d.businessName}`
+    ? `Hi ${d.customerName}, just a quick nudge that invoice ${d.invoiceNumber} for ${d.currency} ${d.amount} was due ${d.daysOverdue} days ago. You can settle it here: https://getcollectly.app/pay/${d.invoiceNumber}. Thanks!\n\n${d.businessName}`
     : d.tone === 'firm'
-    ? `Hi ${d.customerName}, invoice ${d.invoiceNumber} for ${d.currency} ${d.amount} is now ${d.daysOverdue} days past due. Please review and settle at your earliest convenience: https://collectly.app/pay/${d.invoiceNumber}. Reply with any questions.\n\n${d.businessName}`
-    : `Final notice: invoice ${d.invoiceNumber} for ${d.currency} ${d.amount} is ${d.daysOverdue} days overdue. Please reply or settle: https://collectly.app/pay/${d.invoiceNumber}. After 60 days this will be referred to collections.\n\n${d.businessName}`;
+    ? `Hi ${d.customerName}, invoice ${d.invoiceNumber} for ${d.currency} ${d.amount} is now ${d.daysOverdue} days past due. Please review and settle at your earliest convenience: https://getcollectly.app/pay/${d.invoiceNumber}. Reply with any questions.\n\n${d.businessName}`
+    : `Final notice: invoice ${d.invoiceNumber} for ${d.currency} ${d.amount} is ${d.daysOverdue} days overdue. Please reply or settle: https://getcollectly.app/pay/${d.invoiceNumber}. After 60 days this will be referred to collections.\n\n${d.businessName}`;
   return { subject: d.tone === 'friendly' ? `Quick reminder — invoice ${d.invoiceNumber}` : `Invoice ${d.invoiceNumber} — ${d.daysOverdue} days overdue`, body };
 }

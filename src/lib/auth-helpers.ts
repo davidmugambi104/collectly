@@ -13,7 +13,7 @@ export async function ensureUserAndOrg(req: NextRequest) {
   if (!user) {
     [user] = await db
       .insert(users)
-      .values({ id: nanoid(), clerkId: userId, email: 'unknown@collectly.app' })
+      .values({ id: nanoid(), clerkId: userId, email: 'unknown@getcollectly.app' })
       .returning();
   }
 

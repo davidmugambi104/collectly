@@ -24,7 +24,7 @@
 - [ ] Charge devices, prep snacks
 
 ### Me
-- [ ] Verify production build still serves correctly at collectly.app
+- [ ] Verify production build still serves correctly at getcollectly.app
 - [ ] Confirm all 24 routes 200 OK
 - [ ] Confirm Resend domain is verified (emails go out, not bounce)
 - [ ] Confirm Stripe live keys are wired (test a $1 charge with your own card)

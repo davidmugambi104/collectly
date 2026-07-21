@@ -25,7 +25,7 @@ Collectly
 
 ### Product URL
 ```
-https://collectly.app
+https://getcollectly.app
 ```
 
 ### Tagline (max 150 chars)
@@ -116,7 +116,7 @@ Remote
 
 ### Company website
 ```
-https://collectly.app
+https://getcollectly.app
 ```
 
 ### Company description (max 500 chars)

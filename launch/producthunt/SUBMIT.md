@@ -45,7 +45,7 @@ Get paid 3× faster. Without chasing invoices.
 
 #### URL
 ```
-https://collectly.app
+https://getcollectly.app
 ```
 *(or whatever you bought — use the live production URL, not the Vercel preview)*
 

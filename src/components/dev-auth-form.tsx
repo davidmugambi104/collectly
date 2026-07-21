@@ -18,7 +18,7 @@ type Mode = 'sign-in' | 'sign-up';
 
 export function DevAuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
-  const [email, setEmail] = useState('dev@collectly.app');
+  const [email, setEmail] = useState('dev@getcollectly.app');
   const [name, setName] = useState('Dev User');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -114,7 +114,7 @@ Reply to this email or book a 15-min call: https://cal.com/davie-collectly/15min
 
 — Davie
 Founder, Collectly
-https://collectly.app
+https://getcollectly.app
 `,
   },
 
@@ -207,7 +207,7 @@ Your bookkeeper's spreadsheet almost certainly uses straight-line aging. That's 
 
 The fix isn't complicated — it's just not the default. The math above is what every modern AR tool computes. We built it into Collectly because we couldn't find it anywhere else at this price.
 
-If you want to try it: https://collectly.app — 14-day free trial, no credit card, 10-minute setup.
+If you want to try it: https://getcollectly.app — 14-day free trial, no credit card, 10-minute setup.
 
 — Davie
 `,
@@ -371,7 +371,7 @@ Total recovery: **70-90%** of invoices paid within 30 days. Industry baseline wi
 
 **That's the difference between a healthy business and a constant cash-flow crisis.**
 
-If you want to test these templates without building the system: collectly.app automates all 7 in 10 minutes, $49/mo. 14-day free trial.
+If you want to test these templates without building the system: getcollectly.app automates all 7 in 10 minutes, $49/mo. 14-day free trial.
 
 — Davie
 `,

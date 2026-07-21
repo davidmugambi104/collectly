@@ -120,7 +120,7 @@ build time across two long sessions.
 - 2-3 more blog posts (we're at 6 now)
 
 The repo is public: https://github.com/davidmugambi104/collectly
-Live at https://collectly.app. I can answer anything about the build, the
+Live at https://getcollectly.app. I can answer anything about the build, the
 stack, the market, or the dunning prompts.
 
 — Davie

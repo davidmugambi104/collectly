@@ -37,7 +37,7 @@ Before we go live, I'm sending this to 8 people I trust. Not for
 **What I'm asking for (3 minutes total):**
 
 1. **Tomorrow (Tuesday 21 July)**: spend 5 minutes on the product.
-   https://collectly.app → click "Start free trial" → click through
+   https://getcollectly.app → click "Start free trial" → click through
    the dashboard. I want honest reactions, not polite ones. If
    something feels off, ugly, or confusing — tell me. Reply to
    this email or text me.
@@ -55,8 +55,8 @@ is to spam people who don't care, so if this isn't a fit, no
 hard feelings — you can ignore this email and I'll never bring it
 up again.
 
-The product: https://collectly.app
-A 2-min walkthrough: https://collectly.app/feature (or whatever
+The product: https://getcollectly.app
+A 2-min walkthrough: https://getcollectly.app/feature (or whatever
 your video is)
 
 If you want the full story before deciding, the deck is here:

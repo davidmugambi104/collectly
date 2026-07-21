@@ -29,7 +29,7 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
     return { id: 'dev-stub', status: 'skipped' as const };
   }
   const { data, error } = await getResend().emails.send({
-    from: opts.from ?? `${process.env.RESEND_FROM_NAME ?? 'Collectly'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@collectly.app'}>`,
+    from: opts.from ?? `${process.env.RESEND_FROM_NAME ?? 'Collectly'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app'}>`,
     to: opts.to,
     subject: opts.subject,
     html: opts.html,

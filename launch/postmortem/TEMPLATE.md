@@ -35,7 +35,7 @@
 |------------------------|---------|---------|------------|
 | Product Hunt           | _____   | _____   | _____%     |
 | Hacker News            | _____   | _____   | _____%     |
-| collectly.app direct   | _____   | _____   | _____%     |
+| getcollectly.app direct   | _____   | _____   | _____%     |
 | collectly-ochre.vercel.app | _____ | _____ | _____%     |
 | LinkedIn post          | _____   | _____   | _____%     |
 | Twitter                | _____   | _____   | _____%     |
@@ -127,7 +127,7 @@
 - **Dunning cron actually ran on launch day?** YES / NO (check `dunning_runs`)
 - **Healthcheck cron passed at every 15-min check?** YES / NO (check logs)
 - **No customer-reported P1 bugs in first 4 hours?** YES / NO
-- **Support inbox reachable?** YES / NO (test: hello@collectly.app)
+- **Support inbox reachable?** YES / NO (test: hello@getcollectly.app)
 - **Errors visible without a paid Sentry?** YES / NO (check `dev/errors.log`)
 
 ### If any are NO, why?

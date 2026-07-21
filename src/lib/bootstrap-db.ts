@@ -52,7 +52,7 @@ async function seedIfEmpty(client: any) {
   const userId = 'user_dev_davie';
   const orgId = 'org_demo_collectly';
   const now = new Date().toISOString();
-  await client.exec(`INSERT INTO users (id, clerk_id, email, name, created_at, updated_at) VALUES ('${userId}', '${userId}', 'davie@collectly.app', 'Davie', '${now}', '${now}')`);
+  await client.exec(`INSERT INTO users (id, clerk_id, email, name, created_at, updated_at) VALUES ('${userId}', '${userId}', 'davie@getcollectly.app', 'Davie', '${now}', '${now}')`);
   await client.exec(`INSERT INTO organizations (id, name, slug, base_currency, country, timezone, business_type, owner_id, plan, trial_ends_at, created_at, updated_at) VALUES ('${orgId}', 'Lumen & Co', 'lumen-co', 'USD', 'US', 'America/New_York', 'Design agency', '${userId}', 'growth', '${new Date(Date.now() + 13 * 86400000).toISOString()}', '${now}', '${now}')`);
   await client.exec(`INSERT INTO memberships (id, user_id, org_id, role, created_at) VALUES ('${nanoid()}', '${userId}', '${orgId}', 'owner', '${now}')`);
   await client.exec(`INSERT INTO integrations (id, org_id, provider, status, realm_id, last_sync_at, created_at, updated_at) VALUES ('${nanoid()}', '${orgId}', 'quickbooks', 'connected', 'demo-realm-1', '${now}', '${now}', '${now}')`);

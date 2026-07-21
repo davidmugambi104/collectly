@@ -84,7 +84,7 @@ export default async function IntegrationsPage() {
                   <li key={k}><b className="capitalize">{k}:</b> {s.reason}</li>
                 ))}
               </ul>
-              <p className="mt-3 text-xs text-ink-600">For the production app, each provider needs: (1) a developer app on the platform's site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@collectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
+              <p className="mt-3 text-xs text-ink-600">For the production app, each provider needs: (1) a developer app on the platform's site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@getcollectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@ export default async function IntegrationsPage() {
         <IntegrationCard logo="S" name="Stripe" description="Auto-collect payments and reconcile transactions to invoices." status={conn('stripe')?.status ?? 'disconnected'} connectHref={`/api/stripe-connect/connect?orgId=${orgId}`} docsHref="#" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
-        <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref="mailto:hello@collectly.app?subject=Integration%20request" docsHref="#" ctaLabel="Request" />
+        <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref="mailto:hello@getcollectly.app?subject=Integration%20request" docsHref="#" ctaLabel="Request" />
       </div>
 
       <div className="mt-8 card">

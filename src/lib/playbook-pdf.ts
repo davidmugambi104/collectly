@@ -202,7 +202,7 @@ function makeCtaPage(pageNum: number): string {
 (Try it free for 14 days:) Tj
 0 -28 Td
 /F2 12 Tf
-(https://collectly.app) Tj
+(https://getcollectly.app) Tj
 0 -180 Td
 /F1 14 Tf
 (What our customers say:) Tj
