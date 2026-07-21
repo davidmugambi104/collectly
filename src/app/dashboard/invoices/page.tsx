@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { AppShell } from '@/components/app/shell';
+import { InvoicesTable } from '@/components/dashboard/invoices-table';
 import { getAuth as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
@@ -58,52 +59,17 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
         </div>
       </form>
 
-      <div className="card overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-ink-500 text-xs uppercase tracking-wider">
-              <th className="pb-2 pr-4">Customer</th>
-              <th className="pb-2 px-4">Invoice</th>
-              <th className="pb-2 px-4">Status</th>
-              <th className="pb-2 px-4">Due</th>
-              <th className="pb-2 px-4 text-right">Amount</th>
-              <th className="pb-2 pl-4 text-right">Balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 && (
-              <tr><td colSpan={6} className="py-10 text-center text-ink-500">
-                {q ? <>No invoices matching <b>"{q}"</b>. <Link href="/dashboard/invoices" className="link">Clear search</Link></> : <>No invoices yet. <Link href="/dashboard/integrations" className="link">Connect QuickBooks or Xero</Link> to import.</>}
-              </td></tr>
-            )}
-            {filtered.map((row: typeof rows[number]) => {
-              const invoice = row.invoice;
-              const customer = row.customer;
-              const days = daysOverdue(invoice.dueDate);
-              const balance = Number(invoice.amount) - Number(invoice.amountPaid);
-              return (
-                <tr key={invoice.id} className="border-t border-ink-100 hover:bg-ink-50">
-                  <td className="py-3 pr-4">
-                    <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
-                      <div className="font-medium text-ink-900">{customer.name}</div>
-                      <div className="text-xs text-ink-500">{customer.email ?? customer.phone}</div>
-                    </Link>
-                  </td>
-                  <td className="py-3 px-4 font-mono text-xs text-ink-700">{invoice.number}</td>
-                  <td className="py-3 px-4">
-                    {invoice.status === 'paid' ? <span className="badge-success">Paid</span>
-                      : invoice.status === 'overdue' || days > 0 ? <span className="badge-danger">Overdue</span>
-                      : <span className="badge-neutral capitalize">{invoice.status}</span>}
-                  </td>
-                  <td className="py-3 px-4 text-ink-700">{formatDate(invoice.dueDate)}</td>
-                  <td className="py-3 px-4 text-right font-mono">{formatCurrency(invoice.amount, invoice.currency)}</td>
-                  <td className="py-3 pl-4 text-right font-mono font-semibold">{formatCurrency(balance, invoice.currency)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {filtered.length === 0 ? (
+        <div className="card text-center py-12 text-ink-500">
+          {q ? (
+            <>No invoices matching <b>"{q}"</b>. <Link href="/dashboard/invoices" className="link">Clear search</Link></>
+          ) : (
+            <>No invoices yet. <Link href="/dashboard/integrations" className="link">Connect QuickBooks or Xero</Link> to import.</>
+          )}
+        </div>
+      ) : (
+        <InvoicesTable rows={filtered} />
+      )}
     </AppShell>
   );
 }
