@@ -4,6 +4,7 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { Button } from '@/components/ui/button';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { DunningDemo } from '@/components/marketing/dunning-demo';
+import { ComparisonTable } from '@/components/marketing/comparison-table';
 import { Logo } from '@/components/brand/logo';
 import {
   ArrowRight, Sparkles, ShieldCheck, Clock, TrendingUp, MessageSquare, Mail, Bell,
@@ -155,40 +156,7 @@ export default function HomePage() {
           <h2 className="mt-2 h2">Built for the SMB long tail. Not the enterprise.</h2>
           <p className="mt-4 lead">The AR automation market is dominated by tools priced for 500-person companies. We built the one priced for you.</p>
         </div>
-        <div className="mt-10 overflow-x-auto">
-          <table className="w-full min-w-[680px] border-separate border-spacing-0 text-sm">
-            <thead>
-              <tr className="text-left">
-                <th className="py-3 pr-4 font-semibold text-ink-600">Feature</th>
-                <th className="py-3 px-4 text-center font-semibold text-ink-950">Collectly</th>
-                <th className="py-3 px-4 text-center font-semibold text-ink-600">HighRadius</th>
-                <th className="py-3 px-4 text-center font-semibold text-ink-600">Gaviti / Growfin</th>
-                <th className="py-3 px-4 text-center font-semibold text-ink-600">QuickBooks AR</th>
-              </tr>
-            </thead>
-            <tbody className="text-ink-700">
-              {[
-                ['AI dunning (tone-aware, multi-channel)', '✓', '✓', '✓', '—'],
-                ['Pricing starts at', '$49/mo', '$3,000+/mo', '$500+/mo', 'Free (limited)'],
-                ['Time to set up', '< 10 min', '6+ weeks', '1–2 weeks', '—'],
-                ['Built for 1–50 person teams', '✓', '—', '—', '✓'],
-                ['Multi-currency', '✓', '✓', '✓', '—'],
-                ['Cash-flow forecast', '✓', '✓', '—', '—'],
-                ['Customer risk scoring', '✓', '✓', '—', '—'],
-                ['Self-service payment portal', '✓', '✓', '—', '—'],
-                ['14-day free trial', '✓', '—', '—', '—'],
-              ].map(([feat, us, hr, gg, qb], i) => (
-                <tr key={i} className={i % 2 ? 'bg-ink-50' : ''}>
-                  <td className="py-3 pr-4">{feat}</td>
-                  <td className="py-3 px-4 text-center font-semibold text-emerald-600">{us}</td>
-                  <td className="py-3 px-4 text-center text-ink-500">{hr}</td>
-                  <td className="py-3 px-4 text-center text-ink-500">{gg}</td>
-                  <td className="py-3 px-4 text-center text-ink-500">{qb}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ComparisonTable />
       </section>
 
       {/* PRICING */}
