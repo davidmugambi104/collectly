@@ -44,7 +44,7 @@ echo
 # Link project if not linked
 if [ ! -d ".vercel" ]; then
   echo "=== Linking to Vercel ==="
-  npx vercel link --yes --token *** 2>&1 | tail -5
+  npx vercel link --yes --token "$VERCEL_TOKEN" 2>&1 | tail -5
 else
   echo "=== Already linked ==="
   cat .vercel/project.json
@@ -66,10 +66,10 @@ for key in "${KEYS[@]}"; do
     envs="production"
   fi
 
-  echo -n "$value" | npx vercel env add "$key" $envs --yes --token *** 2>&1 | grep -v "Vercel CLI" | head -2 | sed "s/^/  /"
+  echo -n "$value" | npx vercel env add "$key" $envs --yes --token "$VERCEL_TOKEN" 2>&1 | grep -v "Vercel CLI" | head -2 | sed "s/^/  /"
   echo "  ✓ $key"
 done
 
 echo
 echo "=== Deploying ==="
-npx vercel deploy --prod --yes --token *** 2>&1 | tail -15
+npx vercel deploy --prod --yes --token "$VERCEL_TOKEN" 2>&1 | tail -15

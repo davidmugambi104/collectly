@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/stripe-connect/callback', '/api/stripe-connect/connect',
   '/api/square/callback', '/api/square/connect',
   '/api/plaid/connect', '/api/plaid/exchange',
+  '/api/integrations/sync',
   '/api/dunning/preview', '/api/dunning/public-demo',
   '/api/exec-summary', '/api/forecast',
   // Sample data + dev seed (dev shim returns synthetic session anyway)
