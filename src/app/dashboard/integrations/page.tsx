@@ -10,6 +10,7 @@ import { CheckCircle2, AlertCircle, ExternalLink, BookOpen, RefreshCw, Sparkles,
 import Link from 'next/link';
 import { SampleDataButton } from './sample-data-button';
 import { PlaidCard } from './plaid-card';
+import { IntegrationControls } from './integration-controls';
 
 export default async function IntegrationsPage() {
   const { userId, orgId } = await auth();
@@ -91,8 +92,8 @@ export default async function IntegrationsPage() {
       )}
 
       <div id="providers" className="grid md:grid-cols-2 gap-4">
-        <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" />
-        <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" />
+        <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt as any} />
+        <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt as any} />
         <IntegrationCard logo="S" name="Stripe" description="Auto-collect payments and reconcile transactions to invoices." status={conn('stripe')?.status ?? 'disconnected'} connectHref={`/api/stripe-connect/connect?orgId=${orgId}`} docsHref="#" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
@@ -113,9 +114,10 @@ export default async function IntegrationsPage() {
   );
 }
 
-function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel }: { logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string }) {
+function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt }: { logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero'; label?: string; lastSyncAt?: string | null }) {
   const connected = status === 'connected';
   const errored = status === 'error';
+  const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero');
   return (
     <div className={`card transition-colors ${connected ? 'border-emerald-200 bg-emerald-50/30' : errored ? 'border-red-200 bg-red-50/30' : ''}`}>
       <div className="flex items-start gap-3">
@@ -138,6 +140,9 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
               <a href={docsHref} className="btn-ghost text-sm"><BookOpen className="h-3.5 w-3.5" />Docs</a>
             )}
           </div>
+          {showControls && (
+            <IntegrationControls provider={provider!} label={label!} lastSyncAt={lastSyncAt ?? null} />
+          )}
         </div>
       </div>
     </div>

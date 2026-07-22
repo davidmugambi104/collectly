@@ -278,6 +278,18 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
     payload: { invoiceId: args.invoiceId, amount: args.amount, method: args.method, totalDue, newAmountPaid },
   });
 
+  // Push the payment back to the connected accounting system. Best-effort:
+  // if QBO/Xero is not connected, or the push fails, the local payment is
+  // still recorded and a follow-up sync will reconcile on next run.
+  if (isPaidInFull) {
+    try {
+      const { pushPaymentToAccounting } = await import('@/lib/integrations/pushback');
+      await pushPaymentToAccounting({ orgId: args.orgId, invoiceId: args.invoiceId, amount: args.amount, currency: args.currency, paymentRef: newAmountPaid.toFixed(2) });
+    } catch (e: any) {
+      console.warn(`[stripe-webhook] payment pushback to accounting failed (non-fatal): ${e?.message ?? e}`);
+    }
+  }
+
   // Best-effort payment receipt email to the customer. Failures are non-fatal;
   // the payment is already recorded and the customer can request a receipt.
   try {
