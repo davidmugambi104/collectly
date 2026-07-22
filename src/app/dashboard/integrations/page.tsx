@@ -36,7 +36,11 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   const customerCount = Number(customerCountRow[0]?.n ?? 0);
   const conn = (p: string) => list.find((i: typeof list[number]) => i.provider === p);
 
-  // Detect which providers have production credentials configured
+  // Detect which providers have production credentials configured.
+  // Stripe Connect is intentionally excluded — we're not using it
+  // (recorded in OPERATING-DIRECTIVE.md, 2026-07-23). Its env var
+  // may still be set in Vercel for legacy reasons, so we don't
+  // flag it as "needs setup".
   const providerStatus: Record<string, { ready: boolean; reason?: string }> = {
     quickbooks: {
       ready: !!process.env.QBO_CLIENT_ID && !!process.env.QBO_CLIENT_SECRET,
@@ -45,10 +49,6 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
     xero: {
       ready: !!process.env.XERO_CLIENT_ID && !!process.env.XERO_CLIENT_SECRET,
       reason: !process.env.XERO_CLIENT_ID ? 'Xero developer app not yet configured' : undefined,
-    },
-    stripe: {
-      ready: !!process.env.STRIPE_CONNECT_CLIENT_ID,
-      reason: !process.env.STRIPE_CONNECT_CLIENT_ID ? 'Stripe Connect platform onboarding required' : undefined,
     },
     square: {
       ready: !!process.env.SQUARE_CLIENT_ID && !!process.env.SQUARE_CLIENT_SECRET,
@@ -131,7 +131,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       <div id="providers" className="grid md:grid-cols-2 gap-4">
         <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt as any} />
         <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt as any} />
-        <IntegrationCard logo="S" name="Stripe" description="Auto-collect payments and reconcile transactions to invoices." status={conn('stripe')?.status ?? 'disconnected'} connectHref={`/api/stripe-connect/connect?orgId=${orgId}`} docsHref="#" />
+        <IntegrationCard logo="S" name="Stripe" description="Payments processor. Paused — we use bank transfer / Wise for billing. Code is kept in case we re-enable." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
         <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref="mailto:hello@getcollectly.app?subject=Integration%20request" docsHref="#" ctaLabel="Request" />
@@ -154,11 +154,12 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
 function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt }: { logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero'; label?: string; lastSyncAt?: string | null }) {
   const connected = status === 'connected';
   const errored = status === 'error';
+  const paused = status === 'paused';
   const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero');
   return (
-    <div className={`card transition-colors ${connected ? 'border-emerald-200 bg-emerald-50/30' : errored ? 'border-red-200 bg-red-50/30' : ''}`}>
+    <div className={`card transition-colors ${connected ? 'border-emerald-200 bg-emerald-50/30' : errored ? 'border-red-200 bg-red-50/30' : paused ? 'border-ink-200 bg-ink-50/50 opacity-70' : ''}`}>
       <div className="flex items-start gap-3">
-        <div className={`h-10 w-10 rounded-lg grid place-items-center font-display font-bold text-sm shrink-0 ${connected ? 'bg-emerald-600 text-white' : 'bg-ink-950 text-white'}`}>
+        <div className={`h-10 w-10 rounded-lg grid place-items-center font-display font-bold text-sm shrink-0 ${connected ? 'bg-emerald-600 text-white' : paused ? 'bg-ink-300 text-ink-600' : 'bg-ink-950 text-white'}`}>
           {logo}
         </div>
         <div className="flex-1 min-w-0">
@@ -166,13 +167,18 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
             <h3 className="font-semibold text-ink-900">{name}</h3>
             {connected && <span className="badge-success text-[10px]">Connected</span>}
             {errored && <span className="badge-danger text-[10px]">Error</span>}
-            {!connected && !errored && <span className="badge-neutral text-[10px]">Not connected</span>}
+            {paused && <span className="badge-neutral text-[10px]">Paused</span>}
+            {!connected && !errored && !paused && <span className="badge-neutral text-[10px]">Not connected</span>}
           </div>
           <p className="mt-1 text-sm text-ink-600">{description}</p>
           <div className="mt-3 flex items-center gap-2">
-            <a href={connectHref} className={connected ? 'btn-secondary text-sm' : 'btn-primary text-sm'}>
-              {connected ? 'Manage' : ctaLabel ?? 'Connect'}
-            </a>
+            {paused ? (
+              <span className="btn-secondary text-sm opacity-60 cursor-not-allowed" aria-disabled="true">Paused</span>
+            ) : (
+              <a href={connectHref} className={connected ? 'btn-secondary text-sm' : 'btn-primary text-sm'}>
+                {connected ? 'Manage' : ctaLabel ?? 'Connect'}
+              </a>
+            )}
             {docsHref !== '#' && (
               <a href={docsHref} className="btn-ghost text-sm"><BookOpen className="h-3.5 w-3.5" />Docs</a>
             )}
