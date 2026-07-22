@@ -6,6 +6,10 @@ export async function GET(req: NextRequest) {
   const code = url.searchParams.get('code');
   const realmId = url.searchParams.get('realmId');
   const state = url.searchParams.get('state'); // orgId
+  const error = url.searchParams.get('error');
+  if (error) {
+    return NextResponse.redirect(new URL(`/dashboard/integrations?err=quickbooks&reason=${encodeURIComponent(error)}`, req.url));
+  }
   if (!code || !realmId || !state) return NextResponse.json({ error: 'missing params' }, { status: 400 });
   try {
     const tokens = await qboExchangeCode(code, realmId);

@@ -53,3 +53,4 @@ github.md
 
 .vercel
 .cron_secret.txt
+.env*

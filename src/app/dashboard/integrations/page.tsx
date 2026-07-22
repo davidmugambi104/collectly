@@ -12,10 +12,22 @@ import { SampleDataButton } from './sample-data-button';
 import { PlaidCard } from './plaid-card';
 import { IntegrationControls } from './integration-controls';
 
-export default async function IntegrationsPage() {
+const PROVIDER_LABELS: Record<string, string> = {
+  quickbooks: 'QuickBooks Online',
+  xero: 'Xero',
+  stripe: 'Stripe',
+  square: 'Square',
+  plaid: 'Plaid',
+};
+
+export default async function IntegrationsPage(props: { searchParams?: Promise<{ ok?: string; err?: string; reason?: string }> }) {
   const { userId, orgId } = await auth();
   if (!userId) redirect('/sign-in');
   if (!orgId) redirect('/sign-in');
+
+  const sp = (props.searchParams ? await props.searchParams : {}) as { ok?: string; err?: string; reason?: string };
+  const connectedProvider = sp?.ok && PROVIDER_LABELS[sp.ok] ? sp.ok : null;
+  const erroredProvider = sp?.err && PROVIDER_LABELS[sp.err] ? sp.err : null;
 
   const [list, customerCountRow] = await Promise.all([
     db.select().from(integrations).where(eq(integrations.orgId, orgId)),
@@ -51,6 +63,31 @@ export default async function IntegrationsPage() {
 
   return (
     <AppShell title="Integrations" subtitle="Connect your accounting and payment tools. Setup takes 60 seconds.">
+      {connectedProvider && (
+        <div className="mb-6 card bg-emerald-50 border-emerald-200">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-emerald-700 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-emerald-900">
+                <b>{PROVIDER_LABELS[connectedProvider]}</b> connected. Hit <b>Sync now</b> below to import your customers and invoices.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {erroredProvider && (
+        <div className="mb-6 card bg-red-50 border-red-200">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-red-700 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-red-900">
+                <b>{PROVIDER_LABELS[erroredProvider]}</b> connection failed{sp?.reason ? `: ${sp.reason}` : '.'} Try again from the card below.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {customerCount === 0 && (
         <div className="mb-6 card bg-gradient-to-br from-brand-50 to-emerald-50 border-brand-200">
           <div className="flex items-start gap-4">

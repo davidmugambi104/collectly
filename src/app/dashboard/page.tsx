@@ -6,7 +6,7 @@ import * as schema from '@/db/schema';
 import { invoices, customers, payments, integrations } from '@/db/schema';
 import { eq, and, sql, lte, desc } from 'drizzle-orm';
 import { getAgingReport, getCashFlowSnapshot, getAIInsights, getCustomerInsights } from '@/lib/analytics';
-import { getAuth as auth } from '@/lib/auth-helper';
+import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { DollarSign, Clock, TrendingUp, AlertCircle, CheckCircle2, Sparkles, ArrowRight, Activity, Users, Wallet, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
@@ -14,9 +14,14 @@ import { formatCurrency, daysOverdue } from '@/lib/utils';
 import { AIInsightsPanel } from '@/components/dashboard/ai-insights-panel';
 
 export default async function DashboardPage() {
-  const { userId, orgId } = await auth();
-  if (!userId) redirect('/sign-in');
-  if (!orgId) redirect('/sign-in');
+  const session = await auth();
+  if (!session?.userId) redirect('/sign-in');
+  const orgId = session.orgId;
+  if (!orgId) {
+    // Should never happen — getAuthWithOrg auto-creates a personal org.
+    // If it does (e.g. Clerk API failure), redirect to sign-in to retry.
+    redirect('/sign-in');
+  }
 
   const [aging, cash, aiInsights, topRiskCustomers, connectedIntegrations, recentPayments] = await Promise.all([
     getAgingReport(orgId),
