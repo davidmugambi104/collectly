@@ -17,7 +17,7 @@
 
 ## Body — pick the variant that matches `outreach/data/prospects.csv > industry`
 
-### Branding (12 prospects in tier 2)
+### Branding (12 prospects total across tiers 1 and 2)
 ```
 Hi {{first_name}},
 

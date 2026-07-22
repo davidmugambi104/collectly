@@ -15,7 +15,7 @@
 import { db, schema } from '@/db';
 import { events } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
-import { eq, desc, gte } from 'drizzle-orm';
+import { and, eq, desc, gte } from 'drizzle-orm';
 
 export type EventType =
   | 'dunning.run.scheduled'
@@ -70,5 +70,6 @@ export async function getEventsByType(orgId: string, type: string, sinceMs: numb
   return db
     .select()
     .from(events)
-    .where(eq(events.orgId, orgId) && gte(events.createdAt, since));
+    .where(and(eq(events.orgId, orgId), eq(events.type, type), gte(events.createdAt, since)))
+    .orderBy(desc(events.createdAt));
 }

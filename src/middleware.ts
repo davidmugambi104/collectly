@@ -22,12 +22,33 @@ const isPublicRoute = createRouteMatcher([
   '/api/seed', '/api/seed-sample',
   // Lead capture + admin read-only
   '/api/admin/interviews/(.*)', '/api/playbook/download',
+  // Unsubscribe (CAN-SPAM/PECR compliance) and one-shot migration endpoints
+  '/api/unsubscribe', '/api/migrate/(.*)',
 ]);
 
 // In dev mode without Clerk keys, fall through (no-op).
 // Also skip Clerk middleware when the dev shim is on, otherwise Clerk
 // tries to validate tokens that don't exist and gets into a loop.
-const hasClerk = !!(process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) && process.env.USE_DEV_AUTH !== '1';
+// SECURITY: refuse to enable the dev shim in production. We check this
+// lazily (on first request) rather than at module load, because Next.js
+// loads middleware at build time even for production builds — and the
+// build must not require prod env to be production-clean. The first
+// runtime request in production with USE_DEV_AUTH=1 will throw a 500,
+// which is loud and obvious.
+function isDevAuthShimAllowed(): boolean {
+  if (process.env.USE_DEV_AUTH === '1' && process.env.NODE_ENV === 'production') {
+    // Log once per process; do not throw at module load (breaks build).
+    console.error(
+      'FATAL: USE_DEV_AUTH=1 is set in production. Disable it (set USE_DEV_AUTH=0 or remove) before the next deploy.'
+    );
+    return false;
+  }
+  return true;
+}
+
+const hasClerk = isDevAuthShimAllowed()
+  && !!(process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+  && process.env.USE_DEV_AUTH !== '1';
 
 export default hasClerk
   ? clerkMiddleware(async (auth, req) => {

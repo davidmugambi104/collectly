@@ -12,7 +12,7 @@ const schema = z.object({
 /**
  * Public AI dunning demo — no auth, no DB, no signup. Returns a sample
  * message based on the inputs using our deterministic fallback template.
- * (When the user has a real OpenAI key, this will use GPT-4o.)
+ * (When a real Gemini key is set, this will use Gemini Flash Lite.)
  */
 export async function POST(req: NextRequest) {
   try {

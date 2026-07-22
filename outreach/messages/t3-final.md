@@ -8,4 +8,11 @@ If someone else at {{company}} owns billing or AR, would you mind forwarding thi
 
 Either way, no hard feelings — I appreciate the consideration.
 
-David
+Davie Mugambi
+
+---
+
+Davie Mugambi · Collectly · getcollectly.app
+
+If this isn't relevant, you can unsubscribe here:
+https://getcollectly.app/api/unsubscribe?token={{unsubscribe_token}}

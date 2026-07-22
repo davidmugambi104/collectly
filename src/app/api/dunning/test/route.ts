@@ -4,7 +4,7 @@ import { db } from '@/db';
 import { invoices, customers, organizations, dunningRuns, dunningSequences } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
-import { sendEmail, sendSms } from '@/lib/infra';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
@@ -95,7 +95,8 @@ export async function POST(req: NextRequest) {
         const sendResult = await sendEmail({
           to: row.customer.email,
           subject: result.subject ?? `Invoice ${row.invoice.number} is overdue`,
-          html: `<p style="white-space: pre-wrap; font-family: -apple-system, sans-serif;">${result.body}</p>`,
+          html: withUnsubscribeFooter(`<p style="white-space: pre-wrap; font-family: -apple-system, sans-serif;">${result.body}</p>`, row.customer.email),
+          headers: dunningListUnsubscribeHeaders(row.customer.email),
         });
         await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));
         return NextResponse.json({ ok: true, sent: true, dryRun: false, runId: run.id, ...result, sendResult });

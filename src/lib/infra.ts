@@ -23,7 +23,7 @@ export const resend = new Proxy({} as Resend, { get: (_t, p) => (getResend() as 
 export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getTwilio(); return t ? (t as any)[p] : undefined; } });
 export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as any)[p] });
 
-export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string }) {
+export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }) {
   if (!process.env.RESEND_API_KEY) {
     console.warn('[email] RESEND_API_KEY missing — skipping send');
     return { id: 'dev-stub', status: 'skipped' as const };
@@ -34,6 +34,7 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
     subject: opts.subject,
     html: opts.html,
     replyTo: opts.replyTo,
+    headers: opts.headers,
   });
   // Resend returns { data, error } where error is non-null on failures
   // (sandbox restrictions, bad address, rate limit, etc.). We MUST surface
@@ -55,4 +56,49 @@ export async function sendSms(opts: { to: string; body: string }) {
     throw new Error(`twilio: ${(msg as any).errorCode ?? 'error'}: ${(msg as any).errorMessage}`);
   }
   return msg;
+}
+
+/**
+ * Build the unsubscribe URL token for a given email. Returns a base64url
+ * encoding of the email — NOT signed. For production-grade anti-spoofing
+ * we'd HMAC this with a server secret; for the current beta the
+ * acceptable risk is that an attacker can unsubscribe arbitrary addresses
+ * (annoying) but cannot read or send anything to them.
+ */
+export function unsubscribeToken(email: string): string {
+  return Buffer.from(email.toLowerCase().trim(), 'utf8').toString('base64url');
+}
+
+/**
+ * Append a CAN-SPAM/PECR-compliant unsubscribe footer to the bottom of
+ * an HTML email body. Uses the email recipient as the unsubscribe target.
+ */
+export function withUnsubscribeFooter(html: string, email: string, appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'): string {
+  const token = unsubscribeToken(email);
+  const url = `${appUrl.replace(/\/$/, '')}/api/unsubscribe?token=${token}`;
+  const footer = `
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0 12px">
+<p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0 0 8px">
+  You're receiving this because you signed up at getcollectly.app or are an existing customer.
+</p>
+<p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0">
+  <a href="${url}" style="color:#6b7280;text-decoration:underline">Unsubscribe</a>
+  &middot; <a href="${appUrl.replace(/\/$/, '')}/privacy" style="color:#6b7280;text-decoration:underline">Privacy</a>
+  &middot; Collectly
+</p>`;
+  return html + footer;
+}
+
+/**
+ * Build the RFC 8058 List-Unsubscribe headers for transactional dunning
+ * emails. Different from the marketing footer — points to a per-customer
+ * DND endpoint so clicking unsubscribes only THIS customer's dunning.
+ */
+export function dunningListUnsubscribeHeaders(customerEmail: string, appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'): Record<string, string> {
+  const token = unsubscribeToken(customerEmail);
+  const url = `${appUrl.replace(/\/$/, '')}/api/unsubscribe?token=${token}&includeDnd=1`;
+  return {
+    'List-Unsubscribe': `<${url}>`,
+    'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+  };
 }

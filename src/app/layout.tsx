@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   },
   twitter: { card: 'summary_large_image', title: 'Collectly — stop being the one who has to ask', description: 'AI-native accounts receivable that handles the awkward parts. For small B2B service businesses on QBO or Xero.' },
   robots: { index: true, follow: true },
+  icons: { icon: '/icon.svg' },
 };
 
 export const viewport: Viewport = {

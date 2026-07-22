@@ -35,7 +35,7 @@ starting with a small batch before broad launch.
 
 Worth 10 minutes this week? I can send a few open times.
 
-David
+Davie Mugambi
 ```
 
 ## {{hook}} slot (use only if you have one specific observation)
@@ -96,3 +96,10 @@ A reply that is **not** positive:
   with same opener, 5/day cadence.
 - **4+/10 positive**: opener is strong. Move to t2 followup
   template (next file) and re-engage replies.
+
+---
+
+Davie Mugambi · Collectly · getcollectly.app
+
+If this isn't relevant, you can unsubscribe here:
+https://getcollectly.app/api/unsubscribe?token={{unsubscribe_token}}

@@ -43,6 +43,13 @@ def render(template_path, row):
     body = body.replace('{{company}}', row.get('company', ''))
     body = body.replace('{{segment_label}}', SEGMENT_LABEL.get(row.get('industry', ''), 'agency'))
     body = body.replace('{{your_name}}', YOUR_NAME)
+    # Build a per-recipient unsubscribe token (base64url of email).
+    # The /api/unsubscribe endpoint will mark this address as unsubscribed
+    # from Collectly marketing emails (CAN-SPAM / UK PECR / AU Spam Act).
+    import base64
+    email = (row.get('email') or '').lower().strip().encode('utf-8')
+    token = base64.urlsafe_b64encode(email).decode('utf-8').rstrip('=')
+    body = body.replace('{{unsubscribe_token}}', token)
     return body
 
 

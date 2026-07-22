@@ -72,6 +72,10 @@ export const customers = pgTable('customers', {
     riskScore: number; // 0..100
   }>().default({ avgDaysToPay: 30, paidRate: 1, lastPaidAt: null, riskScore: 20 }),
   notes: text('notes'),
+  // When set, skip all dunning sends (email + SMS) for this customer.
+  // Set via /api/unsubscribe or future in-app preference. Honored by the
+  // dunning scheduler and the manual send endpoint.
+  dndAt: timestamp('dnd_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({
@@ -251,6 +255,10 @@ export const waitlist = pgTable('waitlist', {
   painPoint: text('pain_point'),
   source: text('source'),
   referrer: text('referrer'),
+  // When set, this email is unsubscribed from marketing email (waitlist
+  // campaigns, product updates). Set via /api/unsubscribe.
+  unsubscribedAt: timestamp('unsubscribed_at', { withTimezone: true }),
+  unsubscribeToken: text('unsubscribe_token'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 

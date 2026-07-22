@@ -62,15 +62,19 @@ Postgres (or PGlite in dev) ─── Drizzle ORM ─── 13-table schema
                                        ├── events, waitlist, subscriptions
                                        └── organizations, memberships
 
-OpenAI gpt-4o-mini  ──┬── Dunning message generation
+Gemini Flash Lite   ──┬── Dunning message generation
                       ├── Cash-flow forecast narrative
                       └── Customer payment likelihood
 
 Clerk (auth)         ─── Organizations + users + memberships
-Stripe               ─── Subscriptions + customer portal
 Resend + Twilio      ─── Email + SMS delivery
 PostHog              ─── Product analytics
-```
+
+> **Note (2026-07-23):** Stripe Connect was parked; billing is currently
+> manual (Davie sends invoices via Wise/PayPal for the first customer
+> batch). The `upgrade-request` flow handles this. See
+> `memory/OPERATING-DIRECTIVE.md`. Stripe keys in `.env.example` are
+> only for dev/Stripe webhooks and the future Connect re-enable.
 
 See `src/lib/analytics.ts` for the AI insights engine (risk scoring, recommended actions, exec summary).
 
@@ -101,7 +105,7 @@ npm run db:studio   # Drizzle Studio (DB browser)
 | `DATABASE_URL` | yes (prod) | Postgres connection string |
 | `CLERK_SECRET_KEY` + `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | yes (prod) | Auth |
 | `OPENAI_API_KEY` | recommended | Dunning + forecast (falls back to template if missing) |
-| `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` | yes (prod billing) | Subscriptions |
+| `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` | optional (legacy) | Subscriptions — currently parked; manual upgrades used instead. See note above. |
 | `RESEND_API_KEY` | yes (prod email) | Outbound email |
 | `TWILIO_*` | yes (prod SMS) | Outbound SMS |
 | `QUICKBOOKS_CLIENT_ID` + `QUICKBOOKS_CLIENT_SECRET` | yes (prod QBO) | QBO integration |

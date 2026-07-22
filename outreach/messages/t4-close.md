@@ -8,4 +8,11 @@ If late-payment follow-up is ever a real headache at {{company}}, the door's ope
 
 If you know another {{segment_label}} who wrestles with this, a referral would be the biggest help.
 
-David
+Davie Mugambi
+
+---
+
+Davie Mugambi · Collectly · getcollectly.app
+
+If this isn't relevant, you can unsubscribe here:
+https://getcollectly.app/api/unsubscribe?token={{unsubscribe_token}}

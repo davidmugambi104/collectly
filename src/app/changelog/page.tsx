@@ -16,7 +16,7 @@ export default function ChangelogPage() {
             {
               date: '2026-07-12',
               title: 'Beta: production-ready dashboard + integrations',
-              body: '13-table Drizzle schema, 24 routes all 200 OK, AI dunning engine (GPT-4o tone-aware), QuickBooks OAuth, Stripe subscriptions, Resend email + Twilio SMS, PGlite in-memory dev mode for zero-setup local dev.',
+              body: '13-table Drizzle schema, 24 routes all 200 OK, AI dunning engine (Gemini tone-aware), QuickBooks OAuth, Stripe subscriptions, Resend email + Twilio SMS, PGlite in-memory dev mode for zero-setup local dev.',
             },
             {
               date: '2026-07-05',

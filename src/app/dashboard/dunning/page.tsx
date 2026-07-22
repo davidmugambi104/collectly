@@ -42,7 +42,7 @@ export default async function DunningPage() {
   const active = seq?.isActive ?? true;
 
   return (
-    <AppShell title="AI Dunning" subtitle="Automated, tone-aware reminders — written by GPT-4o, sent on your schedule.">
+    <AppShell title="AI Dunning" subtitle="Automated, tone-aware reminders — written by Gemini, sent on your schedule.">
       <div className="mb-4 flex justify-end">
         <Link href="/dashboard/dunning/performance" className="btn-secondary text-sm">
           <BarChart3 className="h-3.5 w-3.5" />View performance

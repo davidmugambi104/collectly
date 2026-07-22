@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { getStripe } from '@/lib/infra';
 import { db } from '@/db';
-import { subscriptions, organizations, invoices, payments } from '@/db/schema';
+import { subscriptions, organizations, invoices, payments, events } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid, PLAN_PRICING } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
@@ -246,36 +246,41 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
     .limit(1);
   if (!inv) return;
 
-  await db.insert(payments).values({
-    id: nanoid(),
-    orgId: args.orgId,
-    invoiceId: args.invoiceId,
-    customerId: args.customerId,
-    amount: String(args.amount),
-    currency: args.currency,
-    method: args.method,
-    paidAt: now,
-    externalId: `stripe-${args.invoiceId}-${args.amount}`,
-  });
-
-  // Running total: previous amountPaid + this payment
+  // Compute balance variables up-front so they're available both inside
+  // the transaction (for the events row) and after (for the pushback +
+  // receipt email best-effort work).
   const priorPaid = Number(inv.amountPaid ?? 0);
   const newAmountPaid = priorPaid + args.amount;
   const totalDue = Number(inv.amount);
   const isPaidInFull = newAmountPaid + 0.005 >= totalDue; // half-cent tolerance for rounding
   const newStatus = isPaidInFull ? 'paid' : 'partial';
 
-  await db.update(invoices).set({
-    status: newStatus,
-    amountPaid: String(newAmountPaid),
-    paidAt: isPaidInFull ? now : null,
-    updatedAt: now,
-  }).where(eq(invoices.id, args.invoiceId));
+  await db.transaction(async (tx: typeof db) => {
+    await tx.insert(payments).values({
+      id: nanoid(),
+      orgId: args.orgId,
+      invoiceId: args.invoiceId,
+      customerId: args.customerId,
+      amount: String(args.amount),
+      currency: args.currency,
+      method: args.method,
+      paidAt: now,
+      externalId: `stripe-${args.invoiceId}-${args.amount}`,
+    });
 
-  await recordEvent({
-    orgId: args.orgId,
-    type: isPaidInFull ? 'payment.succeeded' : 'invoice.partial',
-    payload: { invoiceId: args.invoiceId, amount: args.amount, method: args.method, totalDue, newAmountPaid },
+    await tx.update(invoices).set({
+      status: newStatus,
+      amountPaid: String(newAmountPaid),
+      paidAt: isPaidInFull ? now : null,
+      updatedAt: now,
+    }).where(eq(invoices.id, args.invoiceId));
+
+    await tx.insert(events).values({
+      id: nanoid(),
+      orgId: args.orgId,
+      type: isPaidInFull ? 'payment.succeeded' : 'invoice.partial',
+      payload: { invoiceId: args.invoiceId, amount: args.amount, method: args.method, totalDue, newAmountPaid },
+    });
   });
 
   // Push the payment back to the connected accounting system. Best-effort:

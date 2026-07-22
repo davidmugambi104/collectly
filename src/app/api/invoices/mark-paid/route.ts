@@ -19,10 +19,13 @@ export async function POST(req: NextRequest) {
 
   const balance = Number(inv.amount) - Number(inv.amountPaid);
   const now = new Date();
-  await db.insert(payments).values({
-    id: nanoid(), orgId, invoiceId, customerId: inv.customerId,
-    amount: String(balance), currency: inv.currency, method: 'manual', paidAt: now,
+  // Atomic: insert payment + update invoice. If anything fails, neither persists.
+  await db.transaction(async (tx: typeof db) => {
+    await tx.insert(payments).values({
+      id: nanoid(), orgId, invoiceId, customerId: inv.customerId,
+      amount: String(balance), currency: inv.currency, method: 'manual', paidAt: now,
+    });
+    await tx.update(invoices).set({ status: 'paid', amountPaid: String(inv.amount), paidAt: now, updatedAt: now }).where(eq(invoices.id, invoiceId));
   });
-  await db.update(invoices).set({ status: 'paid', amountPaid: String(inv.amount), paidAt: now, updatedAt: now }).where(eq(invoices.id, invoiceId));
   return NextResponse.json({ ok: true });
 }

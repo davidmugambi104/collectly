@@ -124,7 +124,7 @@ export default function HomePage() {
             <p className="mt-4 lead">Designed for businesses with 1–50 employees. Priced for the long tail. Built for speed.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="AI dunning engine" body="Tone-aware email and SMS reminders, written by GPT-4o, optimized for the probability of payment. Pause on reply, pause on payment, fully editable." />
+            <FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="AI dunning engine" body="Tone-aware email and SMS reminders, written by Gemini, optimized for the probability of payment. Pause on reply, pause on payment, fully editable." />
             <FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="Branded payment portal" body="Customers click, pay, settle. ACH, card, wire, and local payment methods (GoCardless, SEPA, BACS) out of the box." />
             <FeatureCard icon={<BarChart3 className="h-5 w-5 text-brand-600" />} title="Cash-flow forecast" body="Four-week projection of incoming cash, based on payment history, age of invoice, and customer risk score. Tells you when you can make payroll." />
             <FeatureCard icon={<Clock className="h-5 w-5 text-brand-600" />} title="AR aging dashboard" body="Real-time buckets — Current, 1–30, 31–60, 61–90, 90+. Drill into a customer, see exactly who owes what and how overdue." />

@@ -6,7 +6,7 @@ import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations } from '@/db/schema';
 import { eq, and, sql, lte, isNull, gt } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
-import { sendEmail, sendSms } from '@/lib/infra';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
 import { nanoid } from '@/lib/utils';
 
@@ -43,6 +43,11 @@ export async function processDunning() {
       ));
 
     for (const { invoice, customer } of overdueInvoices) {
+      // Respect customer's do-not-disturb preference (set via /api/unsubscribe
+      // with includeDnd=1). Skips email + SMS for this customer entirely.
+      if (customer.dndAt) {
+        continue;
+      }
       const days = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
       const dueSteps = (seq.steps ?? []).filter((s: any) => s.daysFromDue <= days);
       if (!dueSteps.length) continue;
@@ -98,7 +103,8 @@ export async function processDunning() {
             const sendResult = await sendEmail({
               to: customer.email,
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
-              html: renderEmailHtml({ body: result.body, invoice, businessName }),
+              html: withUnsubscribeFooter(renderEmailHtml({ body: result.body, invoice, businessName }), customer.email),
+              headers: dunningListUnsubscribeHeaders(customer.email),
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns
             // status='skipped' only when the API key is missing (a config bug).

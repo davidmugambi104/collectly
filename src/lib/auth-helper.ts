@@ -12,7 +12,25 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { clerkClient } from '@clerk/nextjs/server';
 import { getDevAuth } from '@/db/dev-auth';
 
+// SECURITY: refuse to enable the dev shim in production. We check this
+// lazily (on first call) rather than at module load, because Next.js
+// loads helpers at build time even for production builds. The first
+// runtime request in production with USE_DEV_AUTH=1 will throw a 500,
+// which is loud and obvious.
+function devShimEnabled(): boolean {
+  if (process.env.USE_DEV_AUTH === '1' && process.env.NODE_ENV === 'production') {
+    console.error(
+      'FATAL: USE_DEV_AUTH=1 is set in production. Disable it (set USE_DEV_AUTH=0 or remove) before the next deploy.'
+    );
+    return false;
+  }
+  return true;
+}
+
 export async function getAuth() {
+  if (!devShimEnabled()) {
+    throw new Error('Dev auth shim is disabled in production');
+  }
   if (process.env.USE_DEV_AUTH === '1') {
     const dev = await getDevAuth();
     if (dev) return dev;
@@ -28,6 +46,9 @@ export async function getAuth() {
  * doesn't have one. Returns null if not signed in.
  */
 export async function getAuthWithOrg() {
+  if (!devShimEnabled()) {
+    throw new Error('Dev auth shim is disabled in production');
+  }
   if (process.env.USE_DEV_AUTH === '1') {
     const dev = await getDevAuth();
     if (dev) return { userId: dev.userId, orgId: dev.orgId, user: null };

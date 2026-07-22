@@ -10,4 +10,11 @@ I'm building Collectly around this workflow, so even a one-line reply ("me", "pr
 
 If there's more nuance, I'd be grateful to compare notes for 10 minutes sometime this week or next.
 
-David
+Davie Mugambi
+
+---
+
+Davie Mugambi · Collectly · getcollectly.app
+
+If this isn't relevant, you can unsubscribe here:
+https://getcollectly.app/api/unsubscribe?token={{unsubscribe_token}}

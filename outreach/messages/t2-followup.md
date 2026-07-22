@@ -8,4 +8,11 @@ Even a one-liner ("me", "project lead", "billing", or "no clear owner") is all I
 
 If it's a "no" or wrong person, I won't bother you again.
 
-David
+Davie Mugambi
+
+---
+
+Davie Mugambi · Collectly · getcollectly.app
+
+If this isn't relevant, you can unsubscribe here:
+https://getcollectly.app/api/unsubscribe?token={{unsubscribe_token}}
