@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { href: '/changelog', label: 'Changelog' },
 ];
 
-const HIGHLIGHT_LINK = { href: '/interview', label: 'Get $25 for an interview' };
+const HIGHLIGHT_LINK = { href: '/ar-audit', label: 'Free A/R audit' };
 
 export function MarketingHeader() {
   const [open, setOpen] = useState(false);

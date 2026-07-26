@@ -96,14 +96,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* LOGOS / SOCIAL PROOF */}
+      {/* HONEST TRUST STRIP */}
       <section className="border-y border-ink-200 bg-white">
         <div className="container-page py-10">
-          <p className="text-center text-xs font-semibold uppercase tracking-widest text-ink-500">Built for small businesses across the US, UK, AU, and beyond</p>
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-6 gap-y-4 items-center justify-items-center text-ink-400">
-            {['Acme Studios', 'Lumen & Co', 'Westgate Advisory', 'Brightline Legal', 'Harbor Painting', 'Northstar Marketing'].map((n) => (
-              <div key={n} className="font-display text-sm font-semibold tracking-tight opacity-70">{n}</div>
-            ))}
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink-500">Built in Nairobi · Serving small B2B services worldwide</p>
+            <p className="mt-3 text-sm text-ink-700">
+              No Fortune 500 case studies yet. Just a founder who got tired of awkward invoice follow-ups, and a tool built for businesses that want AR automation without enterprise price tags.
+            </p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-600">
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2-grade security</span>
+              <span className="inline-flex items-center gap-1.5"><Globe2 className="h-3.5 w-3.5 text-emerald-600" /> Global payment rails</span>
+              <span className="inline-flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-emerald-600" /> 10-minute setup</span>
+            </div>
           </div>
         </div>
       </section>
@@ -199,6 +204,47 @@ export default function HomePage() {
           </div>
         </div>
         <ComparisonTable />
+      </section>
+
+      {/* PSYCHOLOGICAL TRUST + RISK REVERSAL */}
+      <section className="container-page py-20 sm:py-28">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="eyebrow">Try it without risk</p>
+          <h2 className="mt-2 h2">No enterprise sales call. No 12-month contract. No fake case studies.</h2>
+          <p className="mt-4 lead">
+            Most AR tools make you book a demo, negotiate a contract, and pray the implementation works.
+            Collectly is built for founders who want to fix cash flow this week.
+          </p>
+        </div>
+
+        <div className="mt-12 grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+          <div className="card">
+            <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center mb-4">
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+            </div>
+            <h3 className="font-semibold text-ink-900 mb-1.5">14-day free trial</h3>
+            <p className="text-sm text-ink-600">Full access. No credit card. If you don't see a clear path to faster payments, cancel in one click.</p>
+          </div>
+
+          <div className="card">
+            <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center mb-4">
+              <ShieldCheck className="h-5 w-5 text-emerald-600" />
+            </div>
+            <h3 className="font-semibold text-ink-900 mb-1.5">Your data stays yours</h3>
+            <p className="text-sm text-ink-600">We don't hold your invoices hostage. Connect QBO or Xero, try Collectly, and disconnect anytime with zero migration pain.</p>
+          </div>
+
+          <div className="card">
+            <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center mb-4">
+              <Sparkles className="h-5 w-5 text-emerald-600" />
+            </div>
+            <h3 className="font-semibold text-ink-900 mb-1.5">Free AR health audit</h3>
+            <p className="text-sm text-ink-600">Not ready to sign up? Send us your A/R snapshot and we'll reply with 3 specific things slowing your cash flow — no pitch, no spam.</p>
+            <Link href="/ar-audit" className="mt-3 inline-flex text-sm font-semibold text-brand-700 hover:text-brand-800">
+              Get your free audit →
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* PRICING */}
