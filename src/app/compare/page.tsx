@@ -62,7 +62,7 @@ export default function ComparePage() {
               <p className="mt-1 text-sm text-ink-700">
                 Tell us who you're evaluating and we'll add a comparison.{' '}
                 <Link href="/contact" className="link">Contact us</Link> or{' '}
-                <Link href="/interview" className="link">get $25 for a 15-minute interview</Link>.
+                <Link href="/ar-audit" className="link">get a free A/R audit</Link>.
               </p>
             </div>
           </div>

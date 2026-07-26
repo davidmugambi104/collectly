@@ -3,13 +3,13 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 const isPublicRoute = createRouteMatcher([
   // Marketing pages
   '/', '/pricing', '/features', '/blog', '/customers', '/about', '/contact', '/changelog', '/privacy', '/terms', '/security',
-  '/dpa', '/integrations', '/tools/(.*)', '/compare', '/ar-roi', '/ar-audit',
+  '/dpa', '/integrations', '/tools/(.*)', '/compare', '/ar-roi', '/ar-audit', '/tour',
   '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
   '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
   // Public auth flow
   '/sign-in(.*)', '/sign-up(.*)', '/sso-callback(.*)',
   // Public marketing APIs
-  '/api/waitlist', '/api/lead-notify', '/api/interview',
+  '/api/waitlist', '/api/lead-notify', '/api/interview', '/api/ar-audit',
   // Public demo / preview / seed flows (no auth needed)
   '/api/cron/dunning', '/api/webhooks/stripe',
   '/api/quickbooks/callback', '/api/quickbooks/connect',

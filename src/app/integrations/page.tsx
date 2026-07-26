@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, Database, Banknote, ReceiptText, MessageSquar
 
 export const metadata = {
   title: 'Integrations',
-  description: 'Connect your books, payments, and communications in 60 seconds. QuickBooks, Xero, Stripe, Square, Plaid, Resend, and Twilio.',
+  description: 'Connect your books, payments, and communications in 60 seconds. QuickBooks, Xero, Stripe, Square, Plaid, Resend, and Twilio integration statuses.',
 };
 
 const categories = [
@@ -16,21 +16,21 @@ const categories = [
       {
         name: 'QuickBooks Online',
         slug: 'quickbooks',
-        status: 'live',
+        status: 'needs-credentials',
         bullets: [
+          'OAuth 2.0 connection route is built and tested',
           'Pull invoices, customers, payments, and aging reports',
-          'Sandbox + production environments',
-          'OAuth 2.0 — never see your password',
+          'Add your production keys to go live',
         ],
       },
       {
         name: 'Xero',
         slug: 'xero',
-        status: 'live',
+        status: 'needs-credentials',
         bullets: [
+          'OAuth 2.0 callback and token-refresh flow ready',
           'Sync contacts, invoices, and credit notes',
-          'Multi-org support (agencies, franchises)',
-          'OAuth 2.0 with refresh-token rotation',
+          'Add your client ID/secret to enable',
         ],
       },
     ],
@@ -42,21 +42,21 @@ const categories = [
       {
         name: 'Stripe',
         slug: 'stripe',
-        status: 'live',
+        status: 'test-mode',
         bullets: [
           'ACH, card, and SEPA on the hosted portal',
           'Webhook reconciliation against invoices',
-          'Apple Pay / Google Pay enabled by default',
+          'Swap to live keys when you are ready to collect real payments',
         ],
       },
       {
         name: 'Square',
         slug: 'square',
-        status: 'live',
+        status: 'sandbox',
         bullets: [
+          'Sandbox OAuth tested end-to-end',
           'Sync Square sales as paid invoices',
-          'Useful for product + subscription hybrids',
-          'OAuth 2.0 with location-based scoping',
+          'Production approval required from Square',
         ],
       },
     ],
@@ -94,10 +94,10 @@ const categories = [
       {
         name: 'Twilio (SMS)',
         slug: 'twilio',
-        status: 'live',
+        status: 'test-mode',
         bullets: [
-          'SMS dunning for high-urgency invoices',
-          'Short-code or long-code support',
+          'SMS dunning route is built and ready',
+          'Add a verified from-number for production sends',
           'Compliance with TCPA, GDPR, and AU spam laws',
         ],
       },
@@ -109,6 +109,18 @@ const statusBadge: Record<string, string> = {
   live: 'badge-success',
   beta: 'badge-warn',
   planned: 'badge-neutral',
+  'needs-credentials': 'badge-warn',
+  'test-mode': 'badge-warn',
+  sandbox: 'badge-warn',
+};
+
+const statusLabel: Record<string, string> = {
+  live: 'Live',
+  beta: 'Beta',
+  planned: 'Planned',
+  'needs-credentials': 'Needs credentials',
+  'test-mode': 'Test mode',
+  sandbox: 'Sandbox',
 };
 
 export default function IntegrationsPage() {
@@ -122,6 +134,9 @@ export default function IntegrationsPage() {
         <p className="mt-6 lead">
           Connect your books, payments, banking, and comms in 60 seconds. We read from your accounting system
           and write back payments. Everything else stays in the apps you already pay for.
+        </p>
+        <p className="mt-3 text-sm text-ink-500">
+          Status means what is wired today. Some integrations need production credentials swapped in before they collect real money.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link href="/sign-up" className="btn-primary">
@@ -163,7 +178,7 @@ export default function IntegrationsPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="h3">{item.name}</h3>
-                    <span className={`mt-2 inline-block ${statusBadge[item.status]}`}>{item.status}</span>
+                    <span className={`mt-2 inline-block ${statusBadge[item.status]}`}>{statusLabel[item.status] ?? item.status}</span>
                   </div>
                 </div>
                 <ul className="mt-5 space-y-2 text-sm text-ink-700">

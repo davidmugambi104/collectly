@@ -49,7 +49,7 @@ export function PlaybookForm() {
         <p className="mt-1 text-sm text-ink-600">
           The PDF should be on your machine. Read it today — Step 1 alone typically recovers $4,200 in the first week.
         </p>
-        <p className="mt-3 text-xs text-ink-500">Want us to email you the playbook too? <a href="/interview" className="link">Book a 15-min AR review</a> and we'll send it.</p>
+        <p className="mt-3 text-xs text-ink-500">Want us to email you the playbook too? <a href="/ar-audit" className="link">Book a free 15-min A/R review</a> and we'll send it.</p>
       </div>
     );
   }
