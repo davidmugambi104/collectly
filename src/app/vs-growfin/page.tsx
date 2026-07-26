@@ -19,7 +19,7 @@ export const metadata = {
 const DIFFS = [
   { icon: Bot, label: 'AI approach', collectly: 'Tone-aware Gemini dunning + risk scoring', competitor: 'Behavioral AI for enterprise collections CRM' },
   { icon: Clock, label: 'Time to value', collectly: '< 1 day, self-serve', competitor: 'Months (ERP implementation)' },
-  { icon: Building2, label: 'Integrations', collectly: 'QBO, Xero, Stripe, Square, Plaid', competitor: 'NetSuite, Salesforce, major ERPs' },
+  { icon: Building2, label: 'Integrations', collectly: 'QBO, Xero, Plaid, Paystack (live); Stripe/Square (test/sandbox)', competitor: 'NetSuite, Salesforce, major ERPs' },
   { icon: Target, label: 'Best for', collectly: 'Small B2B services (1–50 people)', competitor: 'Enterprise AR managers / controllers' },
 ];
 

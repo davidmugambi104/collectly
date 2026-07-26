@@ -80,10 +80,10 @@ export default function PricingPage() {
         <div className="mt-10 max-w-2xl mx-auto space-y-4">
           {[
             { q: 'Do you support multi-entity or multiple companies?', a: 'Growth supports multiple entities under one account with consolidated reporting. Scale adds per-entity workflows and role isolation.' },
-            { q: 'What payment methods does the portal accept?', a: 'ACH, Visa/Mastercard/Amex, wire, Apple Pay, Google Pay, and local rails including GoCardless (SEPA/BACS), AU Direct Debit, and UK Faster Payments. Processing fees pass through at cost + 0.4%.' },
+            { q: 'What payment methods does the portal accept?', a: "It depends on the payment provider you connect. Paystack is live today for NG/GH/KE/ZA (card, bank transfer, mobile money). Stripe and Square are wired but still in test/sandbox for US/UK/AU/CA until production credentials are swapped. We never mark up processor fees." },
             { q: 'Is there really a free trial?', a: 'Yes. 14 days, full access to Growth-tier features, no credit card required.' },
-            { q: 'How does billing work?', a: 'Monthly subscription via Stripe. Cancel anytime. Annual plans save 20%.' },
-            { q: 'Do you take a cut of payments?', a: 'No. We pass through Stripe processing at cost + 0.4% margin, fully transparent.' },
+            { q: 'How does billing work?', a: 'During the beta, upgrade requests are handled via manual invoice. Automated Stripe/Square checkout is coming once production payment keys are live. Annual plans save 20%.' },
+            { q: 'Do you take a cut of payments?', a: 'No. We pass through processor fees at cost. We make money on the subscription, not your transaction volume.' },
             { q: 'What if I outgrow my plan?', a: 'Upgrade in one click. We prorate the difference automatically.' },
             { q: 'Do you support multi-currency?', a: 'Yes. USD, GBP, AUD, CAD, EUR in Growth and above. KES, NGN, ZAR in Scale and above.' },
             { q: 'Can I switch from another tool?', a: 'Yes. Free migration from QuickBooks, Xero, FreshBooks, Wave, and most others.' },

@@ -1,10 +1,23 @@
 import { Resend } from 'resend';
 import { Twilio } from 'twilio';
 import Stripe from 'stripe';
+import { Redis } from '@upstash/redis';
 
 let _resend: Resend | null = null;
 let _twilio: Twilio | null = null;
 let _stripe: Stripe | null = null;
+let _redis: Redis | null = null;
+
+/** Lazy Upstash Redis client. Returns null if env vars are missing. */
+export function getRedis(): Redis | null {
+  if (!_redis && process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    _redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+  return _redis;
+}
 
 export function getResend() { if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY); return _resend; }
 export function getTwilio() {
@@ -22,6 +35,7 @@ export function getStripe() {
 export const resend = new Proxy({} as Resend, { get: (_t, p) => (getResend() as any)[p] });
 export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getTwilio(); return t ? (t as any)[p] : undefined; } });
 export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as any)[p] });
+export const redis = new Proxy({} as Redis, { get: (_t, p) => { const r = getRedis(); return r ? (r as any)[p] : undefined; } });
 
 export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }) {
   if (!process.env.RESEND_API_KEY) {

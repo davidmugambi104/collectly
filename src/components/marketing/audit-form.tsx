@@ -15,16 +15,25 @@ export function AuditForm() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
+  const [error, setError] = useState('');
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
-      await fetch('/api/ar-audit', {
+      const res = await fetch('/api/ar-audit', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ email, name, company, country, tool, ar, dso, topPain }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Request failed (${res.status})`);
+      }
       setDone(true);
+    } catch (err: any) {
+      setError(err?.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -39,7 +48,7 @@ export function AuditForm() {
         <h2 className="mt-3 font-display font-semibold text-xl text-ink-950">Audit request received</h2>
         <p className="mt-2 text-sm text-ink-600">
           We'll review your A/R snapshot and reply within 24 hours with 3 specific fixes.
-          Check your inbox — we've sent a confirmation.
+          If you don't hear back, check your spam folder or email hello@getcollectly.app.
         </p>
       </div>
     );
@@ -110,6 +119,12 @@ export function AuditForm() {
           placeholder="e.g. Clients go quiet after 30 days and I don't know how to follow up without sounding desperate..."
         />
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          {error}
+        </div>
+      )}
 
       <button type="submit" disabled={loading} className="btn-primary w-full text-base h-12">
         {loading ? (

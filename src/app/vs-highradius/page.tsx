@@ -19,7 +19,7 @@ export const metadata = {
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR dunning, portal, forecast, risk scoring', competitor: 'O2C + AP + Treasury + Close/Reconciliation' },
   { icon: Clock, label: 'Deployment', collectly: '10-minute self-serve setup', competitor: 'Enterprise implementation + change management' },
-  { icon: Globe2, label: 'Integrations', collectly: 'QBO, Xero, Stripe, Square, Plaid', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
+  { icon: Globe2, label: 'Integrations', collectly: 'QBO, Xero, Plaid, Paystack (live); Stripe/Square (test/sandbox)', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
   { icon: Target, label: 'Best for', collectly: '1–50 person B2B services', competitor: 'Large enterprises / Office of the CFO' },
 ];
 

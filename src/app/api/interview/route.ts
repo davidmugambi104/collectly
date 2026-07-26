@@ -29,7 +29,7 @@ function notify(type: 'waitlist' | 'interview', data: Record<string, any>) {
 }
 
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(getIp(req), { max: 10 });
+  const rl = await rateLimit(getIp(req), { max: 10 });
   if (!rl.allowed) return NextResponse.json({ error: 'Too many requests. Try again in a minute.' }, { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } });
 
   await ensureBootstrapped();

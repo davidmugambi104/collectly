@@ -1,11 +1,11 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Database, Banknote, ReceiptText, MessageSquare, BarChart3, Lock } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Database, Banknote, ReceiptText, MessageSquare, BarChart3, Lock, Server } from 'lucide-react';
 
 export const metadata = {
   title: 'Integrations',
-  description: 'Connect your books, payments, and communications in 60 seconds. QuickBooks, Xero, Stripe, Square, Plaid, Resend, and Twilio integration statuses.',
+  description: 'Connect your books, payments, and communications in 60 seconds. QuickBooks, Xero, Stripe, Square, Plaid, Resend, Twilio, and Paystack integration statuses.',
 };
 
 const categories = [
@@ -16,11 +16,11 @@ const categories = [
       {
         name: 'QuickBooks Online',
         slug: 'quickbooks',
-        status: 'needs-credentials',
+        status: 'sandbox',
         bullets: [
           'OAuth 2.0 connection route is built and tested',
           'Pull invoices, customers, payments, and aging reports',
-          'Add your production keys to go live',
+          'Currently using sandbox keys; swap to production keys to go live',
         ],
       },
       {
@@ -30,7 +30,7 @@ const categories = [
         bullets: [
           'OAuth 2.0 callback and token-refresh flow ready',
           'Sync contacts, invoices, and credit notes',
-          'Add your client ID/secret to enable',
+          'Production app credentials present but first connection must be verified',
         ],
       },
     ],
@@ -46,7 +46,7 @@ const categories = [
         bullets: [
           'ACH, card, and SEPA on the hosted portal',
           'Webhook reconciliation against invoices',
-          'Swap to live keys when you are ready to collect real payments',
+          'Swap to live keys when you are ready to collect real payments in US/UK/AU/CA',
         ],
       },
       {
@@ -57,6 +57,16 @@ const categories = [
           'Sandbox OAuth tested end-to-end',
           'Sync Square sales as paid invoices',
           'Production approval required from Square',
+        ],
+      },
+      {
+        name: 'Paystack',
+        slug: 'paystack',
+        status: 'live',
+        bullets: [
+          'Live keys verified; ready to process payments',
+          'Best for Nigeria, Ghana, Kenya, and South Africa',
+          'Card, bank transfer, and mobile money where supported',
         ],
       },
     ],
@@ -97,8 +107,44 @@ const categories = [
         status: 'test-mode',
         bullets: [
           'SMS dunning route is built and ready',
-          'Add a verified from-number for production sends',
+          'Add a verified from-number and complete A2P registration for US sends',
           'Compliance with TCPA, GDPR, and AU spam laws',
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Infrastructure',
+    description: 'Reliability, analytics, and intelligence under the hood.',
+    items: [
+      {
+        name: 'Upstash Redis',
+        slug: 'upstash',
+        status: 'live',
+        bullets: [
+          'Distributed rate limiting for public forms and API routes',
+          'Low-latency caching for forecasts and session state',
+          'Serverless-friendly REST client with automatic failover',
+        ],
+      },
+      {
+        name: 'PostHog',
+        slug: 'posthog',
+        status: 'live',
+        bullets: [
+          'Product analytics and event tracking',
+          'Funnel and retention insights',
+          'Self-hostable if you want data sovereignty later',
+        ],
+      },
+      {
+        name: 'OpenAI',
+        slug: 'openai',
+        status: 'live',
+        bullets: [
+          'Powers tone-aware dunning message generation',
+          'No customer financial data is sent to the model',
+          'Prompts are versioned and reviewable',
         ],
       },
     ],
@@ -137,6 +183,7 @@ export default function IntegrationsPage() {
         </p>
         <p className="mt-3 text-sm text-ink-500">
           Status means what is wired today. Some integrations need production credentials swapped in before they collect real money.
+          Paystack is live for Nigeria, Ghana, Kenya, and South Africa. Stripe is test-mode for US/UK/AU/CA until live keys are added.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link href="/sign-up" className="btn-primary">
@@ -154,7 +201,7 @@ export default function IntegrationsPage() {
           {[
             { icon: Lock, label: 'OAuth 2.0 everywhere' },
             { icon: Database, label: 'Read-only by default' },
-            { icon: CheckCircle2, label: 'Token rotation' },
+            { icon: Server, label: 'Redis-backed rate limits' },
             { icon: Lock, label: 'No password storage' },
           ].map(({ icon: Icon, label }) => (
             <div key={label} className="flex items-center gap-2 rounded-lg border border-ink-200 bg-white px-3 py-2 text-xs text-ink-600">

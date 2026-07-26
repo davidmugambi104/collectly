@@ -28,7 +28,7 @@ const body = z.object({
  * with a real checkout redirect.
  */
 export async function POST(req: NextRequest) {
-  const rl = rateLimit(getIp(req), { max: 5 });
+  const rl = await rateLimit(getIp(req), { max: 5 });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: 'Too many requests. Please wait a minute.' },

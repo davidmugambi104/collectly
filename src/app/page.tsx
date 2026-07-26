@@ -59,9 +59,11 @@ export default function HomePage() {
                 <span>Integrates with</span>
                 <LogoMark label="QuickBooks" />
                 <LogoMark label="Xero" />
-                <LogoMark label="Stripe" />
-                <LogoMark label="Square" />
                 <LogoMark label="Plaid" />
+                <LogoMark label="Paystack" />
+                <LogoMark label="Stripe*" />
+                <LogoMark label="Square*" />
+                <span className="text-ink-400">*test/sandbox for US/UK/AU/CA</span>
               </div>
             </div>
 
@@ -125,7 +127,7 @@ export default function HomePage() {
             step="1"
             icon={<Zap className="h-5 w-5 text-brand-600" />}
             title="Connect your books"
-            body="One-click integration with QuickBooks Online, Xero, Stripe, or Square. We pull in your customers, invoices, and payment history in under a minute."
+            body="QuickBooks and Xero OAuth routes are built. Plaid bank feeds are live. Paystack is live for NG/GH/KE/ZA. Stripe and Square are wired but still in test/sandbox for US/UK/AU/CA until production keys are swapped."
           />
           <HowItWorksCard
             step="2"

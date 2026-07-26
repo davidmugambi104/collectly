@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   // Rate-limit checkout creation: each call creates a real Stripe Session,
   // so cap at 5/min per IP. Returning 429 cheaply stops the spam vector
   // where an attacker burns our Stripe quota.
-  const rl = rateLimit(getIp(req), { max: 5 });
+  const rl = await rateLimit(getIp(req), { max: 5 });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: 'Too many checkout attempts. Please wait a minute and try again.' },
