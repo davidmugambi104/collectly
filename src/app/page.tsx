@@ -36,6 +36,12 @@ export default function HomePage() {
                 you out of the uncomfortable parts. Built for small B2B service businesses on QBO or Xero.
               </p>
 
+              <div className="mt-6 inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/60 px-3 py-2 text-xs text-emerald-800">
+                <span className="font-semibold">$49/mo</span>
+                <span className="text-emerald-700">· 14-day free trial · No per-invoice fees</span>
+                <span className="hidden sm:inline text-emerald-600">· Setup in 10 minutes</span>
+              </div>
+
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
                 <WaitlistForm />
               </div>
@@ -154,7 +160,24 @@ export default function HomePage() {
         <div className="max-w-2xl">
           <p className="eyebrow">How we compare</p>
           <h2 className="mt-2 h2">Built for the SMB long tail. Not the enterprise.</h2>
-          <p className="mt-4 lead">The AR automation market is dominated by tools priced for 500-person companies. We built the one priced for you.</p>
+          <p className="mt-4 lead">
+            Chaser starts at ~$259/mo. BILL charges per user plus transaction fees. Melio is free but AP-first.
+            Collectly is the only AR-native tool built for small B2B services at a flat, transparent price.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/vs-chaser" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+              Collectly vs Chaser <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link href="/vs-bill" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+              Collectly vs BILL <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link href="/vs-melio" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+              Collectly vs Melio <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link href="/vs-quickbooks" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+              Collectly vs QuickBooks <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
         </div>
         <ComparisonTable />
       </section>

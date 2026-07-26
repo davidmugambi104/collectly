@@ -1,28 +1,32 @@
 'use client';
 import { Check, X } from 'lucide-react';
 
-type Row = [string, string, string, string, string]; // [feature, us, hr, gg, qb]
+type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb';
+type Row = [string, string, string, string, string, string];
 
-const ROWS: Row[] = [
-  ['AI dunning (tone-aware, multi-channel)', '✓', '✓', '✓', '—'],
-  ['Pricing starts at', '$49/mo', '$3,000+/mo', '$500+/mo', 'Free (limited)'],
-  ['Time to set up', '< 10 min', '6+ weeks', '1–2 weeks', '—'],
-  ['Built for 1–50 person teams', '✓', '—', '—', '✓'],
-  ['Multi-currency', '✓', '✓', '✓', '—'],
-  ['Cash-flow forecast', '✓', '✓', '—', '—'],
-  ['Customer risk scoring', '✓', '✓', '—', '—'],
-  ['Self-service payment portal', '✓', '✓', '—', '—'],
-  ['14-day free trial', '✓', '—', '—', '—'],
+const ROWS: Array<[string, string, string, string, string, string]> = [
+  ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic'],
+  ['Public starting price', '$49/mo', '~$259/mo', '$49/user/mo', '$0/mo', 'Free'],
+  ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees'],
+  ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min'],
+  ['Built for 1–50 person teams', '✓', '✓', '✓', '✓', '✓'],
+  ['Multi-currency', '✓', '✓', '✓', '✓', '—'],
+  ['Multi-entity', 'Growth+', 'Core+', 'Corporate+', '—', '—'],
+  ['Cash-flow forecast', '✓', 'Complete+', 'QBO only', '—', 'Basic'],
+  ['Customer risk scoring', '✓', '✓', '—', '—', '—'],
+  ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓'],
+  ['Free trial / self-serve', '14-day free', 'Demo-first', 'Free trial', 'Free forever', 'Within QBO'],
 ];
 
-const COMPETITORS: Array<{ key: string; label: string; highlight?: boolean }> = [
+const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolean }> = [
   { key: 'us', label: 'Collectly', highlight: true },
-  { key: 'hr', label: 'HighRadius' },
-  { key: 'gg', label: 'Gaviti / Growfin' },
+  { key: 'chaser', label: 'Chaser' },
+  { key: 'bill', label: 'BILL' },
+  { key: 'melio', label: 'Melio' },
   { key: 'qb', label: 'QuickBooks AR' },
 ];
 
-const COMPETITOR_INDEX: Record<string, 1 | 2 | 3 | 4> = { us: 1, hr: 2, gg: 3, qb: 4 };
+const COMPETITOR_INDEX: Record<CompetitorKey, number> = { us: 1, chaser: 2, bill: 3, melio: 4, qb: 5 };
 
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   const isYes = value === '✓';
@@ -47,13 +51,13 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
 export function ComparisonTable() {
   return (
     <>
-      {/* Mobile: stacked feature cards (one per row) */}
+      {/* Mobile: stacked feature cards */}
       <div className="mt-10 md:hidden space-y-3">
-        {ROWS.map(([feat, us, hr, gg, qb], i) => (
+        {ROWS.map(([feat, ...vals], i) => (
           <div key={i} className="card">
             <div className="text-sm font-semibold text-ink-900">{feat}</div>
             <div className="mt-3 space-y-2">
-              {[us, hr, gg, qb].map((v, j) => {
+              {vals.map((v, j) => {
                 const c = COMPETITORS[j];
                 return (
                   <div key={c.key} className="flex items-center justify-between text-sm">
@@ -67,7 +71,7 @@ export function ComparisonTable() {
         ))}
       </div>
 
-      {/* Desktop: traditional table */}
+      {/* Desktop: table */}
       <div className="mt-10 hidden md:block overflow-x-auto">
         <table className="w-full border-separate border-spacing-0 text-sm">
           <thead>
@@ -81,13 +85,17 @@ export function ComparisonTable() {
             </tr>
           </thead>
           <tbody className="text-ink-700">
-            {ROWS.map(([feat, us, hr, gg, qb], i) => (
+            {ROWS.map(([feat, ...vals], i) => (
               <tr key={i} className={i % 2 ? 'bg-ink-50' : ''}>
                 <td className="py-3 pr-4">{feat}</td>
-                <td className="py-3 px-4 text-center"><Cell value={us} highlight /></td>
-                <td className="py-3 px-4 text-center"><Cell value={hr} /></td>
-                <td className="py-3 px-4 text-center"><Cell value={gg} /></td>
-                <td className="py-3 px-4 text-center"><Cell value={qb} /></td>
+                {vals.map((v, j) => {
+                  const c = COMPETITORS[j];
+                  return (
+                    <td key={c.key} className="py-3 px-4 text-center">
+                      <Cell value={v} highlight={c.highlight} />
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

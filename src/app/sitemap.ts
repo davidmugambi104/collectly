@@ -4,5 +4,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     '', '/pricing', '/features', '/blog', '/customers', '/about', '/contact',
     '/changelog', '/privacy', '/terms', '/security', '/dpa', '/integrations', '/tools/ar-roi',
+    '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
   ].map((p) => ({ url: `${base}${p}`, lastModified: new Date() }));
 }

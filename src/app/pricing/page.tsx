@@ -16,6 +16,20 @@ export default function PricingPage() {
         <h1 className="mt-3 h1">Honest pricing.<br/>Built for the long tail.</h1>
         <p className="mt-5 lead max-w-2xl mx-auto">Start free for 14 days. Upgrade when you're hooked. Cancel anytime. No per-invoice fees, no setup costs, no hidden anything.</p>
         <p className="mt-3 text-sm text-brand-700 font-medium">Private beta: all plans are free right now. Online checkout opens when the public beta launches.</p>
+
+        <div className="mt-8 grid sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          {[
+            { label: 'Chaser', price: '~$259/mo', note: 'starts 5× higher' },
+            { label: 'BILL', price: '$49/user/mo', note: '+ transaction fees' },
+            { label: 'Collectly', price: '$49/mo flat', note: 'no per-invoice fees', highlight: true },
+          ].map((c) => (
+            <div key={c.label} className={`rounded-xl border px-4 py-3 text-left ${c.highlight ? 'border-emerald-300 bg-emerald-50/40' : 'border-ink-200 bg-white'}`}>
+              <div className="text-xs font-semibold uppercase tracking-wider text-ink-500">{c.label}</div>
+              <div className={`mt-1 text-lg font-display font-bold ${c.highlight ? 'text-emerald-800' : 'text-ink-900'}`}>{c.price}</div>
+              <div className="text-xs text-ink-600">{c.note}</div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="container-page pb-20">
@@ -65,6 +79,8 @@ export default function PricingPage() {
         <h2 className="h2 text-center">Frequently asked</h2>
         <div className="mt-10 max-w-2xl mx-auto space-y-4">
           {[
+            { q: 'Do you support multi-entity or multiple companies?', a: 'Growth supports multiple entities under one account with consolidated reporting. Scale adds per-entity workflows and role isolation.' },
+            { q: 'What payment methods does the portal accept?', a: 'ACH, Visa/Mastercard/Amex, wire, Apple Pay, Google Pay, and local rails including GoCardless (SEPA/BACS), AU Direct Debit, and UK Faster Payments. Processing fees pass through at cost + 0.4%.' },
             { q: 'Is there really a free trial?', a: 'Yes. 14 days, full access to Growth-tier features, no credit card required.' },
             { q: 'How does billing work?', a: 'Monthly subscription via Stripe. Cancel anytime. Annual plans save 20%.' },
             { q: 'Do you take a cut of payments?', a: 'No. We pass through Stripe processing at cost + 0.4% margin, fully transparent.' },
