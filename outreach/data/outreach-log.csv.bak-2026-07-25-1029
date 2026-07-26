@@ -1,0 +1,160 @@
+id,email,touch,sent_at,replied_at,status,next_step,message_id,detail,segment
+P004,jason@foundrybend.org,t1,2026-07-20T13:25:00Z,,sent,,,hunter_v2,
+P005,mellor@duo.at,t1,2026-07-20T13:00:00Z,,sent,,,hunter_conf_0_risky,
+P007,eleanor@oslo.agency,t1,2026-07-20T13:00:00Z,,sent,,,hunter_conf_0_risky,
+P008,bev@brandbritain.co.uk,t1,2026-07-20T13:25:00Z,,sent,,,hunter_v2,
+P024,shijo@silverpointprint.com,t1,2026-07-20T13:25:00Z,,sent,,,hunter_v2,
+P026,morgan@workshopdigital.com,t1,2026-07-20T13:25:00Z,,sent,,,hunter_v2,
+P027,jessie@bopdesign.com,t1,2026-07-20T13:25:00Z,,sent,,,hunter_v2,
+P002,courtney.dodds@edna.studio,t1,2026-07-20T13:35:00Z,,sent,,,hunter_v3,
+P012,ilyass@carbon.studio,t1,2026-07-20T13:35:00Z,,sent,,,hunter_v3,
+P017,hello@underlineagency.com,t1,2026-07-20T13:35:00Z,,sent,,,hunter_v3,
+P022,joe@aperitif.agency,t1,2026-07-20T13:35:00Z,,sent,,,hunter_v3,
+P029,anjelika@dd.nyc,t1,2026-07-20T13:35:00Z,,sent,,,hunter_v3,
+P030,info@flamingoagency.com,t1,2026-07-20T13:35:00Z,,sent,,,hunter_v3,
+P003,graham.hearfield@edna.studio,t1,2026-07-20T13:40:00Z,,sent,,,hunter_v4,
+P009,jon.burdon@bertagency.co.uk,t1,2026-07-20T12:40:00Z,,sent,,19f7ee54bfccf00a,migrated_from_gog_log,
+P010,jason@madebyshape.co.uk,t1,2026-07-20T12:40:00Z,,sent,,19f7ee55b0ed268e,migrated_from_gog_log,
+P011,sam@buckleycreative.co.uk,t1,2026-07-20T12:40:00Z,,sent,,19f7ee568c2e5fea,migrated_from_gog_log,
+P013,matt@yeahnice.studio,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5777354292,migrated_from_gog_log,
+P014,rosa@weareflow.uk,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5845854b93,migrated_from_gog_log,
+P015,josh@geist.studio,t1,2026-07-20T12:40:00Z,,sent,,19f7ee59314ed536,migrated_from_gog_log,
+P016,andy@ninesixty.co.uk,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5a03c4519b,migrated_from_gog_log,
+P018,angela@loveandlogic.co.uk,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5aeab0e664,migrated_from_gog_log,
+P019,andy@o8.agency,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5be697b243,migrated_from_gog_log,
+P020,chad@bebolddigital.com,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5cfa48a6a2,migrated_from_gog_log,
+P021,nikki@pennock.co,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5e32f242f2,migrated_from_gog_log,
+P023,devin@fluencyfirm.com,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5f0c1d70b2,migrated_from_gog_log,
+P025,max@akornmedia.com,t1,2026-07-20T12:40:00Z,,sent,,19f7ee5ffba83607,migrated_from_gog_log,
+P028,goran@artversion.com,t1,2026-07-20T12:40:00Z,,sent,,19f7ee60eccdb9f1,migrated_from_gog_log,
+P006,lennart@stanley.nu,t1,2026-07-20T12:40:00Z,2026-07-20T13:16:46Z,replied_do_not_contact,no_followup,19f7f073591d330e,Auto-reply: address closed - Lennart Westlund deceased (1 mars). Family asks contact via daughter Elin at elin@stanley.nu. NOT a business reply. Marked DNC permanently.,unclear
+P001,hello@studio-analogue.com,t1,2026-07-21T15:43:05Z,,sent,,,"message_id	19f85584efab78d6
+thread_id	19f85584efab78d6
+",branding
+P019,andy@o8.agency,t1,2026-07-23T08:35:44Z,,sent,,1d76e575-2cdf-4e6c-9d5a-48a71b844274,v3_resend; variant:digital_marketing; hook:social_proof (review_count/award); replaces_jul20_hunter_v2,agency
+P023,devin@fluencyfirm.com,t1,2026-07-23T08:35:44Z,,sent,,b49a5deb-903f-4b12-884c-4ddee818da23,v3_resend; variant:digital_marketing; hook:social_proof (review_count/award); replaces_jul20_hunter_v2,agency
+P026,morgan@workshopdigital.com,t1,2026-07-23T08:35:44Z,,sent,,012e6471-9c43-41b6-863b-d86f43632dea,v3_resend; variant:ppc; hook:social_proof (review_count/award); replaces_jul20_hunter_v2,agency
+P027,jessie@bopdesign.com,t1,2026-07-23T08:35:44Z,,sent,,edc40d45-a0e2-4f5c-bbca-672fa9e3ca13,v3_resend; variant:web_design; hook:social_proof (review_count/award); replaces_jul20_hunter_v2,agency
+P029,anjelika@dd.nyc,t1,2026-07-23T08:35:44Z,,sent,,f70dfe90-80e8-4762-b100-e882ae87bb67,v3_resend; variant:design; hook:social_proof (review_count/award); replaces_jul20_hunter_v2,agency
+P006,lennart@stanley.nu,t1,2026-07-23T15:43:06Z,,err,,,"Post ""https://gmail.googleapis.com/gmail/v1/users/me/messages/send?alt=json&prettyPrint=false"": round trip: base token source: resettable oauth token source: Post ""https://oauth2.googleapis.com/token"": EOF
+",branding
+P006,lennart@stanley.nu,t1,2026-07-23T15:43:10Z,,duplicate_same_day,,,"duplicate_log_entry; gmail options: read credentials: read OAuth client secret from keyring: read secret: get secret: read encoded file keyring item: no TTY available for keyring file backend password prompt; set GOG_KEYRING_PASSWORD
+",branding
+META,,,2026-07-24T15:24:00Z,,t2_drafts_queued,resend_blocked_403,23 t2 drafts written to outputs/t2-drafts-2026-07-24T1524.csv,
+P031,stan@stanbranding.com,t1,2026-07-24T15:43:05Z,,err,,,"Post ""https://gmail.googleapis.com/gmail/v1/users/me/messages/send?alt=json&prettyPrint=false"": round trip: base token source: resettable oauth token source: oauth2: ""invalid_grant"" ""Token has been expired or revoked.""
+",web_design
+P032,sam@wildishandco.co.uk,t1,2026-07-24T15:43:08Z,,err,,,"Post ""https://gmail.googleapis.com/gmail/v1/users/me/messages/send?alt=json&prettyPrint=false"": round trip: base token source: resettable oauth token source: oauth2: ""invalid_grant"" ""Token has been expired or revoked.""
+",branding
+P004,t2,jason@foundrybend.org,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:12:52.326718+00:00,gmail_fallback
+P005,t2,mellor@duo.at,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:12:55.737093+00:00,gmail_fallback
+P007,t2,eleanor@oslo.agency,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:12:59.259776+00:00,gmail_fallback
+P008,t2,bev@brandbritain.co.uk,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:02.779126+00:00,gmail_fallback
+P024,t2,shijo@silverpointprint.com,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:06.153599+00:00,gmail_fallback
+P002,t2,courtney.dodds@edna.studio,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:09.523204+00:00,gmail_fallback
+P012,t2,ilyass@carbon.studio,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:12.972135+00:00,gmail_fallback
+P017,t2,hello@underlineagency.com,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:16.546894+00:00,gmail_fallback
+P022,t2,joe@aperitif.agency,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:20.191772+00:00,gmail_fallback
+P030,t2,info@flamingoagency.com,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:23.907505+00:00,gmail_fallback
+P003,t2,graham.hearfield@edna.studio,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:27.396210+00:00,gmail_fallback
+P009,t2,jon.burdon@bertagency.co.uk,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:30.711901+00:00,gmail_fallback
+P010,t2,jason@madebyshape.co.uk,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:34.124777+00:00,gmail_fallback
+P011,t2,sam@buckleycreative.co.uk,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:37.427764+00:00,gmail_fallback
+P013,t2,matt@yeahnice.studio,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:40.770276+00:00,gmail_fallback
+P014,t2,rosa@weareflow.uk,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:44.198059+00:00,gmail_fallback
+P015,t2,josh@geist.studio,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:47.526092+00:00,gmail_fallback
+P016,t2,andy@ninesixty.co.uk,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:50.864869+00:00,gmail_fallback
+P018,t2,angela@loveandlogic.co.uk,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:54.427885+00:00,gmail_fallback
+P020,t2,chad@bebolddigital.com,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:13:57.767850+00:00,gmail_fallback
+P021,t2,nikki@pennock.co,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:14:01.140806+00:00,gmail_fallback
+P025,t2,max@akornmedia.com,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:14:04.569199+00:00,gmail_fallback
+P028,t2,goran@artversion.com,davidmugambi104@gmail.com,Re: Who chases invoices?,sent,,2026-07-24T16:14:08.034139+00:00,gmail_fallback
+P033,t1,kristijan@unikostudio.co,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:16.592868+00:00,gmail_fallback
+P034,t1,sarah@makeitclear.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:19.979324+00:00,gmail_fallback
+P035,t1,mo@motacreative.co.uk,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:23.507778+00:00,gmail_fallback
+P036,t1,david@c42d.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:26.924511+00:00,gmail_fallback
+P037,t1,brian@ignytebrands.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:30.571211+00:00,gmail_fallback
+P038,t1,brent@monikersf.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:34.039186+00:00,gmail_fallback
+P039,t1,katie@smakkstudios.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:37.569815+00:00,gmail_fallback
+P040,t1,daniel@visionsdesign.co.uk,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:40.962707+00:00,gmail_fallback
+P041,t1,samuel.rawlings@firstratemarketing.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:44.664906+00:00,gmail_fallback
+P042,t1,tom@superco.io,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:48.122272+00:00,gmail_fallback
+P043,t1,philip.young@birdmarketing.co.uk,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:51.357425+00:00,gmail_fallback
+P045,t1,markerle@soapmedia.co.uk,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:54.686823+00:00,gmail_fallback
+P046,t1,kim@squibble.design,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:14:58.240450+00:00,gmail_fallback
+P048,t1,lee@polar.agency,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:15:01.651268+00:00,gmail_fallback
+P050,t1,josh@goldfront.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:15:05.380970+00:00,gmail_fallback
+P051,t1,victor@readyartwork.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:15:08.898475+00:00,gmail_fallback
+P052,t1,james@tronviggroup.com,davidmugambi104@gmail.com,Who chases invoices?,sent,,2026-07-24T16:15:12.395574+00:00,gmail_fallback
+P031,t1,stan@stanbranding.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:02.994227+00:00,duplicate_log_entry; gmail_fallback
+P032,t1,sam@wildishandco.co.uk,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:05.662936+00:00,duplicate_log_entry; gmail_fallback
+P033,t1,kristijan@unikostudio.co,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:08.336102+00:00,duplicate_log_entry; gmail_fallback
+P034,t1,sarah@makeitclear.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:11.120007+00:00,duplicate_log_entry; gmail_fallback
+P035,t1,mo@motacreative.co.uk,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:13.786472+00:00,duplicate_log_entry; gmail_fallback
+P036,t1,david@c42d.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:16.048326+00:00,duplicate_log_entry; gmail_fallback
+P037,t1,brian@ignytebrands.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:18.540010+00:00,duplicate_log_entry; gmail_fallback
+P038,t1,brent@monikersf.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:21.143827+00:00,duplicate_log_entry; gmail_fallback
+P039,t1,katie@smakkstudios.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:23.565073+00:00,duplicate_log_entry; gmail_fallback
+P040,t1,daniel@visionsdesign.co.uk,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:25.914410+00:00,duplicate_log_entry; gmail_fallback
+P041,t1,samuel.rawlings@firstratemarketing.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:28.487942+00:00,duplicate_log_entry; gmail_fallback
+P042,t1,tom@superco.io,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:31.059869+00:00,duplicate_log_entry; gmail_fallback
+P043,t1,philip.young@birdmarketing.co.uk,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:33.527137+00:00,duplicate_log_entry; gmail_fallback
+P045,t1,markerle@soapmedia.co.uk,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:35.758386+00:00,duplicate_log_entry; gmail_fallback
+P046,t1,kim@squibble.design,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:38.139039+00:00,duplicate_log_entry; gmail_fallback
+P048,t1,lee@polar.agency,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:40.669850+00:00,duplicate_log_entry; gmail_fallback
+P050,t1,josh@goldfront.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:43.108905+00:00,duplicate_log_entry; gmail_fallback
+P051,t1,victor@readyartwork.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:45.355501+00:00,duplicate_log_entry; gmail_fallback
+P052,t1,james@tronviggroup.com,davidmugambi104@gmail.com,"QBO invoice, 2 weeks overdue, awkward to chase?",duplicate_same_day,,2026-07-24T16:25:47.886249+00:00,duplicate_log_entry; gmail_fallback
+P004,jason@foundrybend.org,t2,2026-07-25T08:31:45.892167+00:00,,sent,,,gmail_fallback,
+P005,mellor@duo.at,t2,2026-07-25T08:31:49.391577+00:00,,sent,,,gmail_fallback,
+P007,eleanor@oslo.agency,t2,2026-07-25T08:31:52.273305+00:00,,sent,,,gmail_fallback,
+P008,bev@brandbritain.co.uk,t2,2026-07-25T08:31:56.888866+00:00,,sent,,,gmail_fallback,
+P024,shijo@silverpointprint.com,t2,2026-07-25T08:32:00.323427+00:00,,sent,,,gmail_fallback,
+P002,courtney.dodds@edna.studio,t2,2026-07-25T08:32:03.740988+00:00,,sent,,,gmail_fallback,
+P012,ilyass@carbon.studio,t2,2026-07-25T08:32:07.130174+00:00,,sent,,,gmail_fallback,
+P017,hello@underlineagency.com,t2,2026-07-25T08:32:10.869482+00:00,,sent,,,gmail_fallback,
+P022,joe@aperitif.agency,t2,2026-07-25T08:32:15.146638+00:00,,sent,,,gmail_fallback,
+P030,info@flamingoagency.com,t2,2026-07-25T08:32:19.154872+00:00,,sent,,,gmail_fallback,
+P003,graham.hearfield@edna.studio,t2,2026-07-25T08:32:21.851000+00:00,,sent,,,gmail_fallback,
+P009,jon.burdon@bertagency.co.uk,t2,2026-07-25T08:32:25.289437+00:00,,sent,,,gmail_fallback,
+P010,jason@madebyshape.co.uk,t2,2026-07-25T08:32:30.114782+00:00,,sent,,,gmail_fallback,
+P011,sam@buckleycreative.co.uk,t2,2026-07-25T08:32:33.544201+00:00,,sent,,,gmail_fallback,
+P013,matt@yeahnice.studio,t2,2026-07-25T08:32:38.371093+00:00,,sent,,,gmail_fallback,
+P014,rosa@weareflow.uk,t2,2026-07-25T08:32:41.869129+00:00,,sent,,,gmail_fallback,
+P015,josh@geist.studio,t2,2026-07-25T08:32:47.276760+00:00,,sent,,,gmail_fallback,
+P016,andy@ninesixty.co.uk,t2,2026-07-25T08:32:50.823656+00:00,,sent,,,gmail_fallback,
+P018,angela@loveandlogic.co.uk,t2,2026-07-25T08:32:54.203771+00:00,,sent,,,gmail_fallback,
+P020,chad@bebolddigital.com,t2,2026-07-25T08:32:57.710399+00:00,,sent,,,gmail_fallback,
+P021,nikki@pennock.co,t2,2026-07-25T08:33:01.389714+00:00,,sent,,,gmail_fallback,
+P025,max@akornmedia.com,t2,2026-07-25T08:33:05.489836+00:00,,sent,,,gmail_fallback,
+P028,goran@artversion.com,t2,2026-07-25T08:33:10.635649+00:00,,sent,,,gmail_fallback,
+P004,jason@foundrybend.org,t2,2026-07-25T08:33:32.538439+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P005,mellor@duo.at,t2,2026-07-25T08:33:36.364773+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P007,eleanor@oslo.agency,t2,2026-07-25T08:33:40.992725+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P008,bev@brandbritain.co.uk,t2,2026-07-25T08:33:45.242594+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P024,shijo@silverpointprint.com,t2,2026-07-25T08:33:49.111366+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P002,courtney.dodds@edna.studio,t2,2026-07-25T08:33:53.025406+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P012,ilyass@carbon.studio,t2,2026-07-25T08:33:55.500103+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P017,hello@underlineagency.com,t2,2026-07-25T08:33:59.337967+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P022,joe@aperitif.agency,t2,2026-07-25T08:34:02.752211+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P030,info@flamingoagency.com,t2,2026-07-25T08:34:06.432362+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P003,graham.hearfield@edna.studio,t2,2026-07-25T08:34:10.413469+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P009,jon.burdon@bertagency.co.uk,t2,2026-07-25T08:34:14.876300+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P010,jason@madebyshape.co.uk,t2,2026-07-25T08:34:18.707509+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P011,sam@buckleycreative.co.uk,t2,2026-07-25T08:34:23.659405+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P013,matt@yeahnice.studio,t2,2026-07-25T08:34:27.265168+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P014,rosa@weareflow.uk,t2,2026-07-25T08:34:31.218732+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P015,josh@geist.studio,t2,2026-07-25T08:34:36.144469+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P016,andy@ninesixty.co.uk,t2,2026-07-25T08:34:39.892563+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P018,angela@loveandlogic.co.uk,t2,2026-07-25T08:34:43.612141+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P020,chad@bebolddigital.com,t2,2026-07-25T08:34:47.680011+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P021,nikki@pennock.co,t2,2026-07-25T08:34:51.176141+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P025,max@akornmedia.com,t2,2026-07-25T08:34:54.773317+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P028,goran@artversion.com,t2,2026-07-25T08:34:56.983036+00:00,,duplicate_same_day,,,duplicate_log_entry; gmail_fallback,
+P050,josh@goldfront.com,t1,2026-07-25T09:46:18.000041+00:00,,sent,,57a0d1e7-5723-4914-b78e-962fe59d9fa9,v2_opener_pilot; resend,branding
+P051,victor@readyartwork.com,t1,2026-07-25T09:46:18.536017+00:00,,sent,,36bb8077-6246-4630-a296-af122ec94951,v2_opener_pilot; resend,web_design
+P052,james@tronviggroup.com,t1,2026-07-25T09:46:19.062828+00:00,,sent,,942e7772-b41c-4869-b16c-c38c1159cbe3,v2_opener_pilot; resend,branding
+P041,samuel.rawlings@firstratemarketing.com,t1,2026-07-25T09:46:19.598028+00:00,,sent,,0d3bd76f-87e7-45f1-ac66-080db085df31,v2_opener_pilot; resend,digital_marketing
+P043,philip.young@birdmarketing.co.uk,t1,2026-07-25T09:46:20.155063+00:00,,sent,,b274bfa7-afe0-4f0e-a9a9-26d7e7171864,v2_opener_pilot; resend,digital_marketing
+P045,markerle@soapmedia.co.uk,t1,2026-07-25T09:46:20.949742+00:00,,sent,,b10e4851-7b4a-438d-9836-21274500ebe9,v2_opener_pilot; resend,digital_marketing
+P046,kim@squibble.design,t1,2026-07-25T09:46:21.594159+00:00,,sent,,7725c78c-f3c8-46b4-a820-095bf9ef876a,v2_opener_pilot; resend,web_design
+P048,lee@polar.agency,t1,2026-07-25T09:46:22.137631+00:00,,sent,,3dc3a11f-6536-4c88-9395-8b9419b0ebe9,v2_opener_pilot; resend,web_design

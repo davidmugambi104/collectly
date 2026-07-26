@@ -38,8 +38,8 @@ export default function HomePage() {
 
               <div className="mt-6 inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/60 px-3 py-2 text-xs text-emerald-800">
                 <span className="font-semibold">$49/mo</span>
-                <span className="text-emerald-700">· 14-day free trial · No per-invoice fees</span>
-                <span className="hidden sm:inline text-emerald-600">· Setup in 10 minutes</span>
+                <span className="text-emerald-700">· 14-day free trial · No per-invoice fees · </span>
+                <Link href="/tools/ar-roi" className="hidden sm:inline text-emerald-700 hover:text-emerald-900 font-medium underline-offset-2 hover:underline">See your ROI →</Link>
               </div>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
@@ -76,6 +76,22 @@ export default function HomePage() {
             <StatTile label="Open invoices auto-handled" value="94%" />
             <StatTile label="Avg. AR recovered / month" value="$28.4K" />
             <StatTile label="Net Promoter Score" value="74" />
+          </div>
+        </div>
+      </section>
+
+      {/* AR AUDIT LEAD MAGNET */}
+      <section className="bg-brand-600 text-white">
+        <div className="container-page py-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Free 2-minute audit</div>
+              <h3 className="mt-1 text-xl font-display font-bold">How much cash is stuck in your A/R right now?</h3>
+              <p className="mt-1 text-sm text-brand-100 max-w-xl">Plug in your A/R balance, DSO, and revenue. See exactly how much faster collections would free up — and how Collectly stacks up against Chaser, BILL, Melio, and QuickBooks.</p>
+            </div>
+            <Link href="/tools/ar-roi" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white text-brand-700 px-5 py-3 text-sm font-semibold hover:bg-brand-50 transition-colors shrink-0">
+              Run the numbers <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -176,6 +192,9 @@ export default function HomePage() {
             </Link>
             <Link href="/vs-quickbooks" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               Collectly vs QuickBooks <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link href="/compare" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+              See all comparisons <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
         </div>

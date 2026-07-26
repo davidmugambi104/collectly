@@ -110,6 +110,30 @@ export function RoiCalculator() {
         </div>
 
         <div className="card">
+          <h3 className="font-semibold text-ink-900">Cost comparison vs alternatives</h3>
+          <p className="mt-1 text-sm text-ink-600">Annual software cost for similar AR coverage.</p>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            <li className="flex items-center justify-between">
+              <span className="text-ink-700">Collectly (Growth)</span>
+              <span className="font-mono font-semibold text-emerald-700">{sym}1,188/yr</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-ink-700">Chaser Compact</span>
+              <span className="font-mono font-semibold text-ink-600">~{sym}3,108/yr</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-ink-700">BILL Essentials (1 user)</span>
+              <span className="font-mono font-semibold text-ink-600">{sym}588/yr + fees</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-ink-700">Melio / QuickBooks AR</span>
+              <span className="font-mono font-semibold text-ink-600">Free + payment fees</span>
+            </li>
+          </ul>
+          <p className="mt-3 text-xs text-ink-500">Chaser and BILL numbers are based on public list prices. Melio and QuickBooks are free for basic invoicing but lack deep collections automation.</p>
+        </div>
+
+        <div className="card">
           <h3 className="font-semibold text-ink-900">What you'd do with the extra cash</h3>
           <ul className="mt-3 space-y-2 text-sm text-ink-700">
             <li className="flex items-start gap-2">

@@ -6,7 +6,7 @@ type Row = [string, string, string, string, string, string];
 
 const ROWS: Array<[string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic'],
-  ['Public starting price', '$49/mo', '~$259/mo', '$49/user/mo', '$0/mo', 'Free'],
+  ['Public starting price', '$49/mo flat', '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees'],
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees'],
   ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min'],
   ['Built for 1–50 person teams', '✓', '✓', '✓', '✓', '✓'],
@@ -16,6 +16,10 @@ const ROWS: Array<[string, string, string, string, string, string]> = [
   ['Customer risk scoring', '✓', '✓', '—', '—', '—'],
   ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓'],
   ['Free trial / self-serve', '14-day free', 'Demo-first', 'Free trial', 'Free forever', 'Within QBO'],
+  ['Time-to-value', '< 1 day', '1–2 weeks', '1–2 weeks', '< 1 day', '< 1 day'],
+  ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic'],
+  ['Payment plans / subscriptions', 'Growth+', '✓', '✓', '—', '✓'],
+  ['Support model', 'Email + chat', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help'],
 ];
 
 const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolean }> = [

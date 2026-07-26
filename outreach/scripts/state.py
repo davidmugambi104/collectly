@@ -16,8 +16,9 @@ LOG_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log
 
 # Statuses that mean "do not contact again"
 SKIP_STATUSES = {
-    'sent', 'replied', 'positive_reply', 'booked_chat', 'bounced',
-    'do_not_contact', 'unsubscribed', 'wrong_person_forward',
+    'sent', 'replied', 'replied_do_not_contact', 'positive_reply',
+    'booked_chat', 'bounced', 'do_not_contact', 'unsubscribed',
+    'wrong_person_forward',
 }
 
 # Statuses that mean "still in the queue, ok to send"
