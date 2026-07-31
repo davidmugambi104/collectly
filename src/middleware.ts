@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   // Marketing pages
@@ -30,6 +31,8 @@ const isPublicRoute = createRouteMatcher([
   '/api/unsubscribe', '/api/migrate/(.*)',
   // Outreach inbound reply webhook
   '/api/inbound',
+  // Healthcheck must be public so external monitors can ping it.
+  '/api/healthcheck',
 ]);
 
 // In dev mode without Clerk keys, fall through (no-op).
@@ -57,9 +60,17 @@ const hasClerk = isDevAuthShimAllowed()
   && process.env.USE_DEV_AUTH !== '1';
 
 export default hasClerk
-  ? clerkMiddleware(async (auth, req) => {
+  ? clerkMiddleware(async (auth, req: NextRequest) => {
       if (!isPublicRoute(req)) {
-        await auth.protect();
+        // Manual auth check instead of auth.protect() to avoid Clerk's
+        // default 404 rewrite when the sign-in redirect can't be resolved.
+        const { userId } = await auth();
+        if (!userId) {
+          if (req.nextUrl.pathname.startsWith('/api/')) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+          }
+          return NextResponse.redirect(new URL('/sign-in', req.url));
+        }
         // MFA enforcement removed for free-tier dev builds. The helper
         // `src/lib/mfa.ts` is still available for when the workspace
         // upgrades to Pro and Clerk Multi-factor is flipped on.
