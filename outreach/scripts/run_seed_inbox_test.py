@@ -87,14 +87,24 @@ def main():
         print("Missing RESEND_API_KEY or RESEND_FROM_EMAIL in collectly/.env.local")
         sys.exit(1)
 
-    if len(sys.argv) < 2:
-        print("Usage: run_seed_inbox_test.py <gmail1> [gmail2] <outlook1> [outlook2]")
+    args = sys.argv[1:]
+    dry_run = False
+    if "--dry-run" in args:
+        dry_run = True
+        args.remove("--dry-run")
+
+    if not args:
+        print("Usage: run_seed_inbox_test.py [--dry-run] <gmail1> [gmail2] <outlook1> [outlook2]")
         sys.exit(1)
 
-    emails = sys.argv[1:]
+    emails = args
 
     for to_email in emails:
-        print(f"Sending to {to_email} ...")
+        print(f"{'[DRY] ' if dry_run else ''}Sending to {to_email} ...")
+        if dry_run:
+            # Don't hit Resend, don't append to the log CSV.
+            print(f"  [DRY] from={from_email} to={to_email} subject='Collectly deliverability test - inbox placement check'")
+            continue
         resp = send_test_email(to_email, from_email, api_key)
         body = resp.text.strip()
         mid = ""
