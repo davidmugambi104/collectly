@@ -46,19 +46,23 @@ export default function TourPage() {
         </div>
       </section>
 
-      {/* Live walkthrough CTA — product videos are recorded on request, so
-          the honest move is to send visitors to a founder walkthrough rather
-          than ship empty player shells. */}
+      {/* Live walkthrough CTA — product videos are recorded on request and
+          there's no scheduling tool wired up yet, so the honest move is a
+          direct mailto that actually reaches the founder, not a dead link
+          to a contact page with no booking calendar. */}
       <section className="container-page pb-24">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="h2 mb-4">See Collectly in action</h2>
           <p className="text-ink-600 mb-8">
-            Product videos are being recorded. For now, book a live walkthrough with the founder —
+            Product videos are being recorded. For now, email the founder directly and we'll find a time —
             we'll show you exactly how Collectly works for your business and answer your questions.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <a href="/contact" className="btn-primary">
-              Book a founder walkthrough
+            <a
+              href="mailto:hello@getcollectly.app?subject=Founder%20walkthrough%20request&body=Hi%20Davie%2C%0A%0AI'd%20like%20to%20book%20a%20founder%20walkthrough.%20Here's%20a%20good%20time%20for%20me%3A%0A%0A"
+              className="btn-primary"
+            >
+              Request a founder walkthrough
             </a>
             <Link href="/sign-up" className="btn-ghost">
               Start free trial
