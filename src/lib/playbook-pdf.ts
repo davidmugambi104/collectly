@@ -13,11 +13,11 @@ export function generatePlaybookPdf(): Buffer {
   const sections = [
     {
       heading: 'Step 1 — Audit your A/R aging every Monday morning',
-      body: `Most 5–50 person businesses look at A/R aging once a month, at the bookkeeping close. That's too late. By the time an invoice is 60+ days overdue, your chance of collecting it at face value drops to 60%. By 90 days, it drops to 35%.
+      body: `Most 5–30 person businesses look at A/R aging once a month, at the bookkeeping close. That's too late. By the time an invoice is 60+ days overdue, your chance of collecting it at face value drops to 60%. By 90 days, it drops to 35%.
 
 The fix: a 10-minute Monday morning ritual. Open your A/R aging report every Monday. Bucket invoices by age: current, 1-30, 31-60, 61-90, 90+. For each invoice in the 31-60+ bucket, ask: who owes us, how long, and what's the next step? Write it down.
 
-Most teams we work with find 5-10 invoices they forgot about in the first week. Average value recovered: $4,200.`,
+A first Monday audit typically turns up 5-10 forgotten invoices, averaging $4,200 in value.`,
     },
     {
       heading: 'Step 2 — Set up a 3-step dunning sequence that auto-fires',
@@ -37,7 +37,7 @@ Pause the sequence automatically if the customer pays or replies. That's the key
 
 The fix: a one-click pay link on every reminder. Click → payment page → done. ACH for US customers, BACS for UK, SEPA for EU, Direct Debit for AU. Card as fallback.
 
-Average improvement in time-to-pay when you ship a real pay portal: 12 days.`,
+Typical improvement in time-to-pay after adding a one-click pay portal: 12 days.`,
     },
     {
       heading: 'Step 4 — Risk-score your customers and prioritize the top 5',
@@ -129,14 +129,14 @@ function makePage1(): string {
 (Reduction Playbook) Tj
 0 -90 Td
 /F2 14 Tf
-(For 5\\22650 person B2B service businesses) Tj
+(For 5\\22630 person agencies and consultancies) Tj
 0 -22 Td
 (who are tired of chasing invoices.) Tj
 0 -180 Td
 /F2 11 Tf
-(By the Collectly team \\226 built from 1,000+ real customer) Tj
+(By the Collectly team \\226 pre-launch, building in public) Tj
 0 -16 Td
-(AR workflows across the US, UK, AU, and CA.) Tj
+(with early customers in the US, UK, AU, and CA.) Tj
 0 -180 Td
 /F1 16 Tf
 (What you'll learn:) Tj
@@ -190,13 +190,15 @@ function makeCtaPage(pageNum: number): string {
 0 -40 Td
 /F2 12 Tf
 14 TL
-(Collectly is the AI-native A/R platform for 5-50 person B2B) Tj
+(Collectly is the AI-native A/R platform for 5-30 person) Tj
 0 -18 Td
-(service businesses. We connect to QuickBooks or Xero, write) Tj
+(agencies and consultancies. We connect to Xero \\226 QuickBooks) Tj
 0 -18 Td
-(tone-aware dunning emails and SMS in your voice, and give) Tj
+(is in beta \\226 write tone-aware dunning emails and SMS in) Tj
 0 -18 Td
-(you a 4-week cash-flow forecast so you always know what's coming.) Tj
+(your voice, and give you a 4-week cash-flow forecast so you) Tj
+0 -18 Td
+(always know what's coming.) Tj
 0 -60 Td
 /F1 16 Tf
 (Try it free for 14 days:) Tj
@@ -213,7 +215,7 @@ function makeCtaPage(pageNum: number): string {
 (What early users are saying:) Tj
 0 -22 Td
 /F2 11 Tf
-(Founding-customer program open. The first 20 agencies and bookkeepers lock) Tj
+(Founding-customer program open. The first 20 agencies and consultancies lock) Tj
 0 -16 Td
 (in $49/mo for life. Email hello@getcollectly.app to apply.) Tj
 ET`;

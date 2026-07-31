@@ -4,7 +4,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     '', '/pricing', '/features', '/blog', '/customers', '/about', '/contact',
     '/changelog', '/privacy', '/terms', '/security', '/dpa', '/integrations', '/tools/ar-roi',
-    '/compare', '/ar-roi', '/ar-audit', '/tour',
+    '/tools/ar-cost-calculator', '/playbook', '/interview',
+    '/compare', '/ar-audit', '/tour',
     '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
     '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
   ].map((p) => ({ url: `${base}${p}`, lastModified: new Date() }));

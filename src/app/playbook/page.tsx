@@ -5,12 +5,12 @@ import { PlaybookForm } from './playbook-form';
 import { Sparkles, CheckCircle2, Clock, Mail, TrendingDown } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Free guide: cut your DSO from 45 days to 18 — the 5-step playbook',
-  description: 'A free 7-page PDF with the exact 5 steps we use to help 5-50 person service businesses cut DSO from 45 days to 18 in 90 days. No fluff, no upsell.',
+  title: 'Free guide: a 5-step method to cut DSO from 45 days to 18',
+  description: 'A free 7-page PDF with a 5-step method to help 5-30 person agencies and consultancies cut DSO from 45 days to 18 in 90 days. No fluff, no upsell.',
   keywords: ['DSO', 'days sales outstanding', 'AR playbook', 'cash flow', 'small business', 'accounts receivable', 'B2B services'],
   openGraph: {
     title: 'Cut your DSO from 45 to 18 days — free 5-step playbook',
-    description: 'A 7-page PDF with the exact 5 steps we use to help 5-50 person service businesses cut DSO from 45 days to 18 in 90 days.',
+    description: 'A 7-page PDF with a 5-step method to help 5-30 person agencies and consultancies cut DSO from 45 days to 18 in 90 days.',
   },
 };
 
@@ -59,12 +59,12 @@ export default function PlaybookPage() {
                 Cut your DSO from <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">45 days to 18</span> in 90 days.
               </h1>
               <p className="mt-5 text-lg text-ink-600 max-w-xl">
-                The exact 5 steps we use to help 5–50 person B2B service businesses stop chasing invoices and start collecting them. No fluff, no upsell, no "book a call."
+                A 5-step method to help 5–30 person agencies and consultancies stop chasing invoices and start collecting them. No fluff, no upsell, no "book a call."
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-700">
                 <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" />7-page PDF</span>
                 <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" />~5 min read</span>
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" />From real customer data</span>
+                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" />Free, no signup</span>
               </div>
             </div>
             <div>
@@ -79,6 +79,7 @@ export default function PlaybookPage() {
             <p className="eyebrow">What's inside</p>
             <h2 className="mt-2 h2">5 steps, each with the exact action to take.</h2>
             <p className="mt-4 lead">No theory, no "consider doing X" — each step ends with a concrete ritual you can start this week.</p>
+            <p className="mt-3 text-xs text-ink-500">Figures below are typical benchmarks from common A/R patterns, not Collectly's own customer data — we're pre-launch and don't have that yet.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {STEPS.map((s) => (
