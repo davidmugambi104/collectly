@@ -34,7 +34,7 @@ export default function VsQuickbooksPage() {
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/sign-up">
-            <Button className="gap-1.5">Start free trial <ArrowRight className="h-4 w-4" /></Button>
+            <Button className="gap-1.5">Start founding trial <ArrowRight className="h-4 w-4" /></Button>
           </Link>
           <Link href="/pricing">
             <Button variant="secondary">See pricing</Button>

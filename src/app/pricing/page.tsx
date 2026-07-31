@@ -14,7 +14,7 @@ export default function PricingPage() {
       <section className="container-page pt-16 pb-12 text-center">
         <p className="eyebrow">Pricing</p>
         <h1 className="mt-3 h1">Honest pricing.<br/>Built for the long tail.</h1>
-        <p className="mt-5 lead max-w-2xl mx-auto">Start free for 14 days. Cancel anytime. No per-invoice fees, no setup costs, no hidden anything.</p>
+        <p className="mt-5 lead max-w-2xl mx-auto">14-day trial, founder-assisted setup. Cancel anytime. No per-invoice fees, no setup costs, no hidden anything.</p>
         <p className="mt-3 text-sm text-brand-700 font-medium">Founding customer pricing: $49/mo for the first 20 signups, then $99/mo.</p>
 
         <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
@@ -51,7 +51,7 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 <Link href="/sign-up" className={`mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${p.popular ? 'bg-brand-600 text-white hover:bg-brand-700' : 'bg-ink-900 text-white hover:bg-ink-800'}`}>
-                  Start free <ArrowRight className="h-4 w-4" />
+                  {k === 'starter' ? 'Start founding trial' : 'Start free trial'} <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             );
@@ -98,10 +98,10 @@ export default function PricingPage() {
       <section className="container-page pb-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Ready to stop chasing invoices?</h2>
-          <p className="mt-4 lead">14-day free trial. No credit card.</p>
+          <p className="mt-4 lead">14-day trial. No credit card. Founder-assisted setup.</p>
           <div className="mt-6 max-w-md mx-auto">
             <Link href="/sign-up" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
-              Start free 14-day trial <ArrowRight className="h-4 w-4" />
+              Start founding trial <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

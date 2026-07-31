@@ -22,7 +22,7 @@ export default function TourPage() {
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/sign-up" className="btn-primary">
-            Start free trial <ArrowRight className="h-4 w-4" />
+            Start founding trial <ArrowRight className="h-4 w-4" />
           </Link>
           <Link href="/ar-audit" className="btn-ghost">
             Get a free A/R audit
@@ -65,7 +65,7 @@ export default function TourPage() {
               Request a founder walkthrough
             </a>
             <Link href="/sign-up" className="btn-ghost">
-              Start free trial
+              Start founding trial
             </Link>
           </div>
           <p className="mt-6 text-xs text-ink-500">

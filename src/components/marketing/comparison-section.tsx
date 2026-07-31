@@ -27,7 +27,7 @@ export function ComparisonHero({
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href={ctaHref}>
           <Button className="gap-1.5">
-            Start free trial <ArrowRight className="h-4 w-4" />
+            Start founding trial <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>
         <Link href="/pricing">

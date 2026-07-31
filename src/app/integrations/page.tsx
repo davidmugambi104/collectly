@@ -187,7 +187,7 @@ export default function IntegrationsPage() {
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link href="/sign-up" className="btn-primary">
-            Start free trial <ArrowRight className="h-4 w-4" />
+            Start founding trial <ArrowRight className="h-4 w-4" />
           </Link>
           <Link href="/security" className="btn-ghost">
             Read security details

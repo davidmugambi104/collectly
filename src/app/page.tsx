@@ -38,15 +38,15 @@ export default function HomePage() {
               </p>
 
               <div className="mt-6 inline-flex flex-col sm:flex-row items-start sm:items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 backdrop-blur px-4 py-3 text-sm text-emerald-900 shadow-sm">
-                <span className="font-bold">$49/mo · 14-day free trial · No per-invoice fees</span>
+                <span className="font-bold">$49/mo · 14-day trial · No per-invoice fees</span>
                 <span className="hidden sm:inline text-emerald-300">|</span>
                 <span className="text-emerald-700">Chaser starts at ~$259/mo · BILL charges per user + transaction fees</span>
               </div>
-              <p className="mt-2 text-xs text-ink-500">First 20 customers lock in $49/mo forever. Cancel anytime.</p>
+              <p className="mt-2 text-xs text-ink-500">First 20 customers lock in $49/mo forever · founder-assisted setup · cancel anytime.</p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
                 <Link href="/sign-up" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
-                  Start free 14-day trial <ArrowRight className="h-4 w-4" />
+                  Start founding trial <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link href="/tour" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-ink-200 bg-white px-5 py-3 text-sm font-semibold text-ink-900 hover:bg-ink-50 transition-colors">
                   See the dashboard demo
@@ -281,11 +281,11 @@ export default function HomePage() {
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-emerald-400">Pricing</p>
             <h2 className="mt-2 text-3xl sm:text-4xl font-display font-bold tracking-tight">Honest pricing. No per-invoice fees. No setup costs.</h2>
-            <p className="mt-4 text-lg text-ink-300">Start free for 14 days. Upgrade when you're hooked. Cancel anytime.</p>
+            <p className="mt-4 text-lg text-ink-300">14-day trial, founder-assisted setup. Upgrade when you're hooked. Cancel anytime.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-3 gap-5">
-            <PricingCard name="Founding Customer" price="$49" period="/mo" popular audience="First 20 customers · lifetime price lock" features={['All features unlocked', 'Founder onboarding call', 'Email + SMS dunning', 'Payment portal', 'Cash-flow forecast', 'Unlimited invoices', 'Priority support']} cta="Start free" />
-            <PricingCard name="Growth" price="$99" period="/mo" audience="After founding cohort" features={['Everything in Founding', 'Multi-currency (USD, GBP, AUD, CAD, EUR, KES, NGN)', 'Up to 10 users', 'Advanced reporting', 'Custom workflows']} cta="Start free" />
+            <PricingCard name="Founding Customer" price="$49" period="/mo" popular audience="First 20 customers · lifetime price lock" features={['All features unlocked', 'Founder onboarding call', 'Email + SMS dunning', 'Payment portal', 'Cash-flow forecast', 'Unlimited invoices', 'Priority support']} cta="Start founding trial" />
+            <PricingCard name="Growth" price="$99" period="/mo" audience="After founding cohort" features={['Everything in Founding', 'Multi-currency (USD, GBP, AUD, CAD, EUR, KES, NGN)', 'Up to 10 users', 'Advanced reporting', 'Custom workflows']} cta="Start free trial" />
           </div>
           <p className="mt-6 text-sm text-ink-400">Payment methods, SMS, and accounting integrations depend on region, provider approval, and production credentials. Availability will be confirmed before billing. Annual plans save 20%.</p>
         </div>
@@ -444,7 +444,7 @@ export default function HomePage() {
             </p>
             <div className="mt-6 max-w-md mx-auto">
               <Link href="/sign-up" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
-                Start free 14-day trial <ArrowRight className="h-4 w-4" />
+                Start founding trial <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
             <p className="mt-3 text-xs text-ink-500">Founding customer price locks at $49/mo forever. After 20 customers, the Growth plan is $99/mo.</p>

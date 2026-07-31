@@ -58,7 +58,7 @@ export function MarketingHeader() {
         <div className="flex items-center gap-2">
           <Link href="/sign-in" className="hidden sm:inline-flex btn-ghost text-sm">Sign in</Link>
           <Link href="/sign-up" className="hidden sm:inline-flex">
-            <Button size="sm">Start free</Button>
+            <Button size="sm">Join founding</Button>
           </Link>
 
           {/* Mobile hamburger */}
@@ -104,7 +104,7 @@ export function MarketingHeader() {
                   Sign in
                 </Link>
                 <Link href="/sign-up" onClick={() => setOpen(false)}>
-                  <Button size="sm" className="w-full">Start free</Button>
+                  <Button size="sm" className="w-full">Join founding</Button>
                 </Link>
               </div>
             </nav>

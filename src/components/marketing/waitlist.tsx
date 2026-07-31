@@ -51,7 +51,7 @@ export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
           disabled={status === 'loading'}
           className="inline-flex items-center justify-center gap-1.5 rounded-md bg-ink-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-ink-800 disabled:opacity-50 transition-colors"
         >
-          {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start free <ArrowRight className="h-4 w-4" /></>}
+          {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Join waitlist <ArrowRight className="h-4 w-4" /></>}
         </button>
       </div>
       {status === 'error' && <div className="mt-2 text-xs text-red-600">{message}</div>}
