@@ -43,7 +43,15 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
     return { id: 'dev-stub', status: 'skipped' as const };
   }
   const { data, error } = await getResend().emails.send({
-    from: opts.from ?? `${process.env.RESEND_FROM_NAME ?? 'Collectly'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app'}>`,
+    // Prefer RESEND_FROM_EMAIL if it already contains a full "Name <email>"
+    // formatted string (the most common Resend integration pattern). Fall
+    // back to combining RESEND_FROM_NAME + RESEND_FROM_EMAIL. The previous
+    // unconditional combination produced nested angle brackets when
+    // RESEND_FROM_EMAIL was a full string, causing Resend to reject every
+    // dunning email with "Invalid `from` field".
+    from: opts.from ?? (process.env.RESEND_FROM_EMAIL && /<.*>/.test(process.env.RESEND_FROM_EMAIL)
+      ? process.env.RESEND_FROM_EMAIL
+      : `${process.env.RESEND_FROM_NAME ?? 'Collectly'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app'}>`),
     to: opts.to,
     subject: opts.subject,
     html: opts.html,
