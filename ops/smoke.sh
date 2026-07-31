@@ -111,16 +111,23 @@ done
 if [[ -n "${CID:-}" ]]; then
   code=$(http "$BASE/dashboard/dunning?customerId=$CID&tone=final&channel=email")
   check "GET /dashboard/dunning?customerId=...&tone=final&channel=email returns 200" "200" "$code"
-  grep -q "Draft reminder for\|Cannot draft reminder" /tmp/smoke.html
-  check "Dunning composer mounts for customer" "Draft reminder for\|Cannot draft reminder" "$(cat /tmp/smoke.html | grep -oE 'Draft reminder for|Cannot draft reminder' | head -1)"
+  cp /tmp/smoke.html /tmp/comp.html  # preserve before later checks clobber /tmp/smoke.html
+  HIT=$(grep -oE 'Draft reminder for|Cannot draft reminder' /tmp/comp.html | head -1)
+  if [[ -n "$HIT" ]]; then
+    echo "✅ Dunning composer mounts for customer ($HIT)"
+    PASS=$((PASS+1))
+  else
+    echo "❌ Dunning composer mounts for customer  (no 'Draft reminder for' / 'Cannot draft reminder' in HTML)"
+    FAIL=$((FAIL+1))
+  fi
   # Tone/channel should appear in the panel header
-  grep -qE "final.*email|email.*final" /tmp/smoke.html
-  check "Dunning composer shows tone (final) and channel (email)" "final" "$(cat /tmp/smoke.html | grep -oE 'final' | head -1)"
+  grep -qE "final.*email|email.*final" /tmp/comp.html
+  check "Dunning composer shows tone (final) and channel (email)" "final" "$(grep -oE 'final' /tmp/comp.html | head -1)"
   # The actual DunningPreview UI ("Generate reminder" button) is client-side,
   # so we don't see it in SSR HTML — but the wrapper card with the header
   # text and 'Back to customer' link must be there.
-  grep -q "Back to customer" /tmp/smoke.html
-  check "Dunning composer shows 'Back to customer' link" "Back to customer" "$(cat /tmp/smoke.html)"
+  grep -q "Back to customer" /tmp/comp.html
+  check "Dunning composer shows 'Back to customer' link" "Back to customer" "$(cat /tmp/comp.html)"
 fi
 
 # 11. Dunning composer empty state (no open invoices): hit a non-existent customer
