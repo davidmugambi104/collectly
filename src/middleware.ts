@@ -11,7 +11,7 @@ const isPublicRoute = createRouteMatcher([
   // Public marketing APIs
   '/api/waitlist', '/api/lead-notify', '/api/interview', '/api/ar-audit',
   // Public demo / preview / seed flows (no auth needed)
-  '/api/cron/dunning', '/api/webhooks/stripe',
+  '/api/cron/dunning', '/api/webhooks/stripe', '/api/webhooks/clerk',
   '/api/quickbooks/callback', '/api/quickbooks/connect',
   '/api/xero/callback', '/api/xero/connect',
   '/api/stripe-connect/callback', '/api/stripe-connect/connect',
@@ -22,10 +22,14 @@ const isPublicRoute = createRouteMatcher([
   '/api/exec-summary', '/api/forecast',
   // Sample data + dev seed (dev shim returns synthetic session anyway)
   '/api/seed', '/api/seed-sample',
+  '/api/reset-data',
+  '/api/support',
   // Lead capture + admin read-only
   '/api/admin/interviews/(.*)', '/api/playbook/download',
   // Unsubscribe (CAN-SPAM/PECR compliance) and one-shot migration endpoints
   '/api/unsubscribe', '/api/migrate/(.*)',
+  // Outreach inbound reply webhook
+  '/api/inbound',
 ]);
 
 // In dev mode without Clerk keys, fall through (no-op).
@@ -56,6 +60,9 @@ export default hasClerk
   ? clerkMiddleware(async (auth, req) => {
       if (!isPublicRoute(req)) {
         await auth.protect();
+        // MFA enforcement removed for free-tier dev builds. The helper
+        // `src/lib/mfa.ts` is still available for when the workspace
+        // upgrades to Pro and Clerk Multi-factor is flipped on.
       }
     })
   : (req: any) => {
