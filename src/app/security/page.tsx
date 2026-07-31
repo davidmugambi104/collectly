@@ -95,7 +95,7 @@ export default function SecurityPage() {
           </li>
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-            <span><b>We never train AI models on your data.</b> When we call OpenAI or Anthropic to generate dunning copy, we send the minimum context needed and never ask providers to retain it.</span>
+            <span><b>We never train AI models on your data.</b> When we call Google Gemini to generate dunning copy, we send the minimum context needed and never ask the provider to retain it.</span>
           </li>
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
@@ -161,9 +161,10 @@ export default function SecurityPage() {
         <p className="eyebrow">Compliance</p>
         <h2 className="mt-3 h2">Where the data lives, who can see it.</h2>
         <p className="mt-4 text-ink-600 leading-relaxed">
-          Collectly is built for small businesses in the US, UK, EU, Australia, and Canada. Your data is processed
-          in the region you select at signup (US or EU). We act as the data processor for your customer data; you
-          remain the data controller. Our Data Processing Agreement is available below.
+          Collectly is built for small businesses in the US, UK, EU, Australia, and Canada. Self-serve accounts are
+          currently processed in a single region (US); EU-only data residency is available for enterprise
+          agreements on request. We act as the data processor for your customer data; you remain the data
+          controller. Our Data Processing Agreement is available below.
         </p>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <div className="card text-center">

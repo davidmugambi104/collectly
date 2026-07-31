@@ -4,7 +4,7 @@ import { CheckCircle2, Download, Mail, Globe2, Server, Users } from 'lucide-reac
 
 export const metadata = {
   title: 'Data Processing Agreement',
-  description: 'The contract that governs how Collectly processes customer data on your behalf. GDPR-compliant, EU and US data residency, and Standard Contractual Clauses.',
+  description: 'The contract that governs how Collectly processes customer data on your behalf. GDPR-compliant, US data residency with EU available on enterprise request, and Standard Contractual Clauses.',
 };
 
 const sections = [
@@ -37,7 +37,7 @@ const sections = [
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
           <li>Syncing invoices, customers, and payments from connected systems (QuickBooks, Xero, Stripe, Square, Plaid).</li>
-          <li>Generating dunning messages and cash-flow forecasts using AI providers under strict no-retention terms.</li>
+          <li>Generating dunning messages and cash-flow forecasts using Google Gemini under strict no-retention terms.</li>
           <li>Sending emails and SMS on your behalf through Resend and Twilio.</li>
           <li>Storing Customer Data encrypted at rest for as long as your account is active.</li>
         </ul>
@@ -54,13 +54,14 @@ const sections = [
           <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a>.
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
-          <li><b>Vercel</b> — application hosting (US, EU region available).</li>
-          <li><b>Neon / Supabase</b> — managed Postgres (US, EU region available).</li>
+          <li><b>Vercel</b> — application hosting.</li>
+          <li><b>DigitalOcean</b> — managed Postgres database.</li>
           <li><b>Clerk</b> — authentication and identity.</li>
           <li><b>Resend</b> — transactional email delivery.</li>
           <li><b>Twilio</b> — SMS delivery.</li>
-          <li><b>OpenAI, Anthropic</b> — AI message generation under no-retention API terms.</li>
+          <li><b>Google (Gemini)</b> — AI message generation under no-retention API terms.</li>
           <li><b>PostHog</b> — product analytics (no customer data sent).</li>
+          <li><b>Upstash</b> — Redis-backed rate limiting and caching.</li>
         </ul>
       </>
     ),
@@ -71,10 +72,11 @@ const sections = [
     body: (
       <>
         <p>
-          You may select a data residency region (US or EU) at signup. For transfers from the EEA, UK, or
-          Switzerland to a third country, Collectly relies on the European Commission's 2021 Standard
-          Contractual Clauses (Module 2: Controller-to-Processor) and the UK International Data Transfer Addendum.
-          A copy of the executed SCCs is available on request.
+          Self-serve accounts are currently processed in a single region (US). EU-only data residency is
+          available for enterprise agreements on request. For transfers from the EEA, UK, or Switzerland to a
+          third country, Collectly relies on the European Commission's 2021 Standard Contractual Clauses
+          (Module 2: Controller-to-Processor) and the UK International Data Transfer Addendum. A copy of the
+          executed SCCs is available on request.
         </p>
       </>
     ),
@@ -102,7 +104,7 @@ const sections = [
           Collectly will assist you in responding to data-subject requests (access, rectification, deletion,
           portability, objection) within 10 business days. You can also export or delete your data at any time
           from <a href="/dashboard/settings" className="link">Settings → Data</a>, and we provide a one-click
-          full-account deletion that purges all Customer Data within 30 days (90-day soft-delete window for backup rotation).
+          full-account deletion that purges all Customer Data within 30 days, with backups rotating out on the same 30-day cycle.
         </p>
       </>
     ),
@@ -158,8 +160,8 @@ export default function DPAPage() {
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="card text-center">
             <Globe2 className="mx-auto h-6 w-6 text-brand-600" />
-            <div className="mt-2 text-sm font-semibold text-ink-900">EU + US residency</div>
-            <div className="text-xs text-ink-500">Pick at signup</div>
+            <div className="mt-2 text-sm font-semibold text-ink-900">US residency</div>
+            <div className="text-xs text-ink-500">EU on enterprise request</div>
           </div>
           <div className="card text-center">
             <Server className="mx-auto h-6 w-6 text-brand-600" />
@@ -168,7 +170,7 @@ export default function DPAPage() {
           </div>
           <div className="card text-center">
             <Users className="mx-auto h-6 w-6 text-brand-600" />
-            <div className="mt-2 text-sm font-semibold text-ink-900">7 sub-processors</div>
+            <div className="mt-2 text-sm font-semibold text-ink-900">8 sub-processors</div>
             <div className="text-xs text-ink-500">Listed below</div>
           </div>
         </div>

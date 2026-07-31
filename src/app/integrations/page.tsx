@@ -138,12 +138,12 @@ const categories = [
         ],
       },
       {
-        name: 'OpenAI',
-        slug: 'openai',
+        name: 'Google Gemini',
+        slug: 'gemini',
         status: 'live',
         bullets: [
           'Powers tone-aware dunning message generation',
-          'No customer financial data is sent to the model',
+          'Sends invoice number, amount, due date, contact name, and payment-history summary — never account credentials or full payment details',
           'Prompts are versioned and reviewable',
         ],
       },

@@ -217,9 +217,9 @@ If you want to try it: https://getcollectly.app — 14-day free trial, no credit
     slug: 'best-dunning-templates-2026',
     title: 'The 7 dunning email templates that actually get invoices paid',
     date: '2026-07-05', read: '5 min',
-    excerpt: 'Tested across 4,200 small businesses. The data on what works, what flops, and what to never write.',
+    excerpt: 'Patterns from what typically works in dunning emails — and what to avoid. Illustrative benchmarks, not a Collectly-run study.',
     tags: ['dunning', 'templates', 'collections'],
-    body: `We analyzed 4,200 small businesses' dunning emails and measured which ones got invoices paid. Here's what we found.
+    body: `These are illustrative benchmarks based on common collections-industry patterns, not a formal Collectly study — we're a small beta and don't have a dataset that size yet. Here's what tends to work.
 
 ## The numbers
 
@@ -458,7 +458,7 @@ The full 32-page playbook goes deeper:
 
 Pick one of the 5 steps above and do it this week. Don't try to implement all 5 at once. If you do nothing else, do Step 1 (the Monday morning aging audit). It costs you 5 minutes and surfaces 80% of your problems.
 
-If you want help implementing the rest — that's what Collectly does. 14-day free trial, no card required. → https://collectly.com/sign-up
+If you want help implementing the rest — that's what Collectly does. 14-day free trial, no card required. → https://getcollectly.app/sign-up
 
 — Davie
 `,

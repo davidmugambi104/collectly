@@ -13,7 +13,7 @@ export default function SignUpPage() {
           <div className="flex items-center gap-2.5"><Logo className="h-7 w-7 text-white" /> <span className="text-lg font-display font-bold">Collectly</span></div>
           <div>
             <h2 className="text-4xl font-display font-bold leading-tight">Start your<br/>14-day free trial.</h2>
-            <p className="mt-4 text-ink-300 max-w-md">No credit card. No setup fees. Connect QuickBooks or Xero in 60 seconds. Get paid 3× faster.</p>
+            <p className="mt-4 text-ink-300 max-w-md">No credit card. No setup fees. Connect QuickBooks or Xero in 60 seconds.</p>
             <ul className="mt-8 space-y-2 text-sm text-ink-200">
               <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> AI dunning across email + SMS</li>
               <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Branded payment portal</li>

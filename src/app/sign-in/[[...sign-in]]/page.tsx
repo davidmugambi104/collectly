@@ -13,12 +13,7 @@ export default function SignInPage() {
           <div className="flex items-center gap-2.5"><Logo className="h-7 w-7 text-white" /> <span className="text-lg font-display font-bold">Collectly</span></div>
           <div>
             <h2 className="text-4xl font-display font-bold leading-tight">Stop chasing invoices.<br/>Start collecting them.</h2>
-            <p className="mt-4 text-ink-300 max-w-md">Join hundreds of small businesses getting paid 3× faster with AI-native accounts receivable.</p>
-            <div className="mt-8 grid grid-cols-3 gap-4 max-w-md">
-              <div><div className="text-2xl font-bold">12</div><div className="text-xs text-ink-400">avg days to pay</div></div>
-              <div><div className="text-2xl font-bold">$28K</div><div className="text-xs text-ink-400">recovered / mo</div></div>
-              <div><div className="text-2xl font-bold">74</div><div className="text-xs text-ink-400">NPS</div></div>
-            </div>
+            <p className="mt-4 text-ink-300 max-w-md">Built with 10 design partners in B2B services who were tired of chasing invoices themselves.</p>
           </div>
           <p className="text-xs text-ink-500">© 2026 Collectly, Inc.</p>
         </div>
