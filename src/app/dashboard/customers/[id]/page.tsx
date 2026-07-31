@@ -1,212 +1,400 @@
 import { AppShell } from '@/components/app/shell';
-import { getAuth } from '@/lib/auth-helper';
+import { db } from '@/db';
+import { customers, invoices, payments, timelineEvents, promisesToPay, disputes } from '@/db/schema';
+import { eq, and, desc } from 'drizzle-orm';
+import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
-import { db, schema } from '@/db';
-import { customers, invoices, payments, dunningRuns } from '@/db/schema';
-import { eq, desc, sum, sql } from 'drizzle-orm';
-import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { getCustomerInsights } from '@/lib/analytics';
-import { ArrowLeft, Mail, Phone, MessageSquare, TrendingUp, AlertCircle, DollarSign, Clock, CheckCircle2, Sparkles, Zap, Target, Send, Activity, Building2 } from 'lucide-react';
-import Link from 'next/link';
+import {
+  Mail, MessageSquare, AlertCircle, CheckCircle2, Clock,
+  FileText, DollarSign, Pause, Play, X, Bell, Phone, Sparkles, TrendingUp,
+} from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CustomerDetail({ params }: { params: Promise<{ id: string }> }) {
-  const { userId, orgId } = await getAuth();
-  if (!userId) redirect('/sign-in');
-  if (!orgId) redirect('/sign-in');
+export default async function CustomerStatementPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const session = await auth();
+  if (!session?.userId) redirect('/sign-in');
+  const orgId = session.orgId;
   const { id } = await params;
 
-  const [cust] = await db.select().from(customers).where(eq(customers.id, id)).limit(1);
-  if (!cust || cust.orgId !== orgId) notFound();
+  // Fetch customer
+  const customer = await db
+    .select()
+    .from(customers)
+    .where(and(eq(customers.id, id), eq(customers.orgId, orgId)))
+    .limit(1);
 
-  // Use the new insights engine for richer risk + action
-  const allInsights = await getCustomerInsights(orgId, 100);
-  const insight = allInsights.find((c) => c.customerId === id);
+  if (customer.length === 0) notFound();
 
-  const invs = await db.select().from(invoices).where(eq(invoices.customerId, id)).orderBy(desc(invoices.issueDate)).limit(50);
-  const [{ outstanding }] = await db.select({ outstanding: sum(sql<string>`${invoices.amount} - ${invoices.amountPaid}`) }).from(invoices).where(sql`${invoices.customerId} = ${id} AND ${invoices.status} NOT IN ('paid', 'written_off')`);
-  const [{ paid }] = await db.select({ paid: sum(payments.amount) }).from(payments).where(eq(payments.customerId, id));
-  const [{ paidCount }] = await db.select({ paidCount: sql<number>`COUNT(*)::int` }).from(invoices).where(sql`${invoices.customerId} = ${id} AND ${invoices.status} = 'paid'`);
-  const [{ totalCount }] = await db.select({ totalCount: sql<number>`COUNT(*)::int` }).from(invoices).where(eq(invoices.customerId, id));
-  const runs = await db.select().from(dunningRuns).where(eq(dunningRuns.invoiceId, id)).orderBy(desc(dunningRuns.createdAt)).limit(20);
+  const cust = customer[0];
 
-  const paidRate = totalCount > 0 ? Math.round((paidCount / totalCount) * 100) : 100;
-  const avgDays = cust.paymentBehavior?.avgDaysToPay ?? 30;
+  // Fetch all related data
+  const [customerInvoices, customerPayments, customerTimeline, customerPromises, customerDisputes] = await Promise.all([
+    db.select().from(invoices).where(eq(invoices.customerId, cust.id)).orderBy(desc(invoices.dueDate)),
+    db.select().from(payments).where(eq(payments.customerId, cust.id)).orderBy(desc(payments.paidAt)).limit(20),
+    db.select().from(timelineEvents).where(eq(timelineEvents.customerId, cust.id)).orderBy(desc(timelineEvents.occurredAt)).limit(100),
+    db.select().from(promisesToPay).where(eq(promisesToPay.customerId, cust.id)).orderBy(desc(promisesToPay.createdAt)),
+    db.select().from(disputes).where(eq(disputes.customerId, cust.id)).orderBy(desc(disputes.createdAt)),
+  ]);
+
+  // Calculate totals
+  const totalOwed = customerInvoices.reduce((sum: number, inv: typeof invoices.$inferSelect) => {
+    return sum + (parseFloat(inv.amount.toString()) - parseFloat(inv.amountPaid?.toString() || '0'));
+  }, 0);
+
+  const totalOverdue = customerInvoices
+    .filter((inv: typeof invoices.$inferSelect) => new Date(inv.dueDate) < new Date() && inv.status !== 'paid' && inv.status !== 'written_off')
+    .reduce((sum: number, inv: typeof invoices.$inferSelect) => sum + (parseFloat(inv.amount.toString()) - parseFloat(inv.amountPaid?.toString() || '0')), 0);
+
+  const activePromiseCount = customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'active').length;
+  const brokenPromiseCount = customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'broken').length;
+  const openDisputeCount = customerDisputes.filter((d: typeof disputes.$inferSelect) => d.status === 'open' || d.status === 'in_progress').length;
+
+  // Follow-up engine: pull the insight for this customer specifically.
+  // getCustomerInsights returns a sorted list for the whole org; find ours.
+  const allInsights = await getCustomerInsights(orgId, 200);
+  const insight = allInsights.find((i) => i.customerId === cust.id) ?? null;
 
   return (
-    <AppShell title={cust.name} subtitle={cust.company ?? 'Customer'}>
-      <div className="mb-4">
-        <Link href="/dashboard/customers" className="inline-flex items-center gap-1 text-sm text-ink-600 hover:text-ink-900">
-          <ArrowLeft className="h-3.5 w-3.5" />All customers
-        </Link>
+    <AppShell
+      title={cust.name}
+      subtitle={`Customer statement · ${cust.email || 'no email'}`}
+    >
+      {/* Hero summary */}
+      <div className="grid lg:grid-cols-4 gap-4 mb-6">
+        <SummaryCard
+          icon={<DollarSign className="h-5 w-5" />}
+          label="Total owed"
+          value={formatCurrency(totalOwed)}
+          accent={totalOwed > 0 ? 'amber' : 'gray'}
+        />
+        <SummaryCard
+          icon={<Clock className="h-5 w-5" />}
+          label="Overdue"
+          value={formatCurrency(totalOverdue)}
+          accent={totalOverdue > 0 ? 'red' : 'gray'}
+        />
+        <SummaryCard
+          icon={<CheckCircle2 className="h-5 w-5" />}
+          label="Active promises"
+          value={activePromiseCount.toString()}
+          accent={activePromiseCount > 0 ? 'emerald' : 'gray'}
+        />
+        <SummaryCard
+          icon={<AlertCircle className="h-5 w-5" />}
+          label="Open disputes"
+          value={openDisputeCount.toString()}
+          accent={openDisputeCount > 0 ? 'red' : 'gray'}
+        />
       </div>
 
-      <div className="grid sm:grid-cols-4 gap-4 mb-5">
-        <Stat icon={<DollarSign className="h-4 w-4" />} label="Outstanding" value={formatCurrency(Number(outstanding ?? 0))} danger={Number(outstanding ?? 0) > 0} />
-        <Stat icon={<CheckCircle2 className="h-4 w-4" />} label="Lifetime paid" value={formatCurrency(Number(paid ?? 0))} />
-        <Stat icon={<TrendingUp className="h-4 w-4" />} label="Paid rate" value={`${paidRate}%`} sub={`${paidCount} of ${totalCount} invoices`} />
-        <Stat icon={<Clock className="h-4 w-4" />} label="Avg days to pay" value={`${avgDays}d`} />
-      </div>
-
-      {/* AI Recommendation */}
-      {insight && insight.openInvoices > 0 && (
-        <div className="mb-5 card overflow-hidden">
+      {/* AI follow-up engine — risk + recommended next action. Pulled from
+          the same getCustomerInsights() the customers list uses, so the
+          recommendation is consistent across both views. */}
+      {insight ? (
+        <FollowUpPanel insight={insight} />
+      ) : totalOwed <= 0 ? (
+        <div className="card mb-6 bg-emerald-50/30 border-emerald-200">
           <div className="flex items-start gap-3">
-            <div className={`h-9 w-9 rounded-lg grid place-items-center shrink-0 ${insight.riskLevel === 'critical' ? 'bg-red-100 text-red-700' : insight.riskLevel === 'high' ? 'bg-red-50 text-red-600' : insight.riskLevel === 'medium' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
-              <Sparkles className="h-4 w-4" />
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <div className="font-semibold text-ink-900">No open balance</div>
+              <p className="text-sm text-ink-700 mt-0.5">This customer is paid up. No follow-up needed.</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="font-semibold text-ink-900">AI recommendation</h2>
-                <span className={`badge text-[10px] ${insight.riskLevel === 'critical' ? 'badge-danger' : insight.riskLevel === 'high' ? 'badge-danger' : insight.riskLevel === 'medium' ? 'badge-warn' : 'badge-success'}`}>{insight.riskLevel} risk</span>
-                <span className="text-xs text-ink-500">score {insight.riskScore}/100</span>
-              </div>
-              <p className="mt-2 text-sm text-ink-700 leading-relaxed">{insight.recommendedAction}</p>
-              <div className="mt-3 flex items-center gap-4 text-xs">
-                <span className="inline-flex items-center gap-1.5 text-ink-600">
-                  <Target className="h-3.5 w-3.5" />
-                  <span>Predicted payment in 7d: <b className="text-ink-900">{Math.round(insight.predictedPayment7d * 100)}%</b></span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-ink-600">
-                  <Activity className="h-3.5 w-3.5" />
-                  <span>Suggested channel: <b className="text-ink-900 capitalize">{insight.recommendedChannel}</b></span>
-                </span>
-              </div>
-              {invs.filter((i: typeof invs[number]) => i.status !== 'paid').length > 0 && (
-                <div className="mt-3 pt-3 border-t border-ink-100">
-                  <div className="text-xs font-semibold text-ink-700 mb-2">Send a {insight.riskLevel === 'critical' ? 'final' : insight.riskLevel === 'high' ? 'firm' : 'friendly'} reminder:</div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {invs.filter((i: typeof invs[number]) => i.status !== 'paid').slice(0, 3).map((inv: typeof invs[number]) => (
-                      <Link
-                        key={inv.id}
-                        href={`/dashboard/invoices/${inv.id}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-700 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-2.5 py-1.5 rounded-md border border-brand-200"
-                      >
-                        <Send className="h-3 w-3" />
-                        {inv.number} · {formatCurrency(Number(inv.amount) - Number(inv.amountPaid), inv.currency)}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Relationship trust indicators */}
+      {(brokenPromiseCount > 0 || cust.paymentBehavior?.paidRate < 0.8) && (
+        <div className="card border-amber-200 bg-amber-50/30 mb-6">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <div className="font-semibold text-ink-900 mb-1">Relationship flags</div>
+              <ul className="text-sm text-ink-700 space-y-1">
+                {brokenPromiseCount > 0 && (
+                  <li>· {brokenPromiseCount} broken promise{brokenPromiseCount === 1 ? '' : 's'} in history</li>
+                )}
+                {cust.paymentBehavior && cust.paymentBehavior.paidRate < 0.8 && (
+                  <li>· Historical paid rate: {Math.round(cust.paymentBehavior.paidRate * 100)}%</li>
+                )}
+                {cust.paymentBehavior && cust.paymentBehavior.avgDaysToPay > 45 && (
+                  <li>· Average {cust.paymentBehavior.avgDaysToPay} days to pay</li>
+                )}
+              </ul>
             </div>
           </div>
         </div>
       )}
 
-      <div className="grid lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 space-y-5">
-          <div className="card">
-            <h2 className="h3">Invoices</h2>
-            <div className="mt-3 overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-ink-500 text-xs uppercase tracking-wider">
-                    <th className="pb-2 pr-4">Invoice</th>
-                    <th className="pb-2 px-4">Status</th>
-                    <th className="pb-2 px-4">Due</th>
-                    <th className="pb-2 px-4 text-right">Amount</th>
-                    <th className="pb-2 pl-4 text-right">Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {invs.length === 0 && <tr><td colSpan={5} className="py-6 text-center text-ink-500">No invoices yet.</td></tr>}
-                  {invs.map((inv: typeof invs[number]) => {
-                    const days = daysOverdue(inv.dueDate);
-                    const bal = Number(inv.amount) - Number(inv.amountPaid);
-                    return (
-                      <tr key={inv.id} className="border-t border-ink-100 hover:bg-ink-50">
-                        <td className="py-2.5 pr-4"><Link href={`/dashboard/invoices/${inv.id}`} className="font-mono text-xs text-brand-600 hover:text-brand-700">{inv.number}</Link></td>
-                        <td className="py-2.5 px-4">{inv.status === 'paid' ? <span className="badge-success">Paid</span> : days > 0 ? <span className="badge-danger">{days}d</span> : <span className="badge-neutral capitalize">{inv.status}</span>}</td>
-                        <td className="py-2.5 px-4 text-ink-700">{formatDate(inv.dueDate)}</td>
-                        <td className="py-2.5 px-4 text-right font-mono">{formatCurrency(inv.amount, inv.currency)}</td>
-                        <td className="py-2.5 pl-4 text-right font-mono font-semibold">{formatCurrency(bal, inv.currency)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+      {/* Active promises */}
+      {customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'active').length > 0 && (
+        <div className="card mb-6">
+          <h2 className="h3 mb-4">Active promises to pay</h2>
+          <div className="space-y-2">
+            {customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'active').map((p: typeof promisesToPay.$inferSelect) => (
+              <div key={p.id} className="flex items-center justify-between border border-emerald-200 bg-emerald-50/30 rounded-lg p-3">
+                <div>
+                  <div className="font-semibold text-ink-900">
+                    {formatCurrency(parseFloat(p.promisedAmount.toString()))} by {formatDate(p.promisedDate)}
+                  </div>
+                  {p.sourceText && (
+                    <div className="text-xs text-ink-600 mt-1 italic">"{p.sourceText}"</div>
+                  )}
+                </div>
+                <span className="badge bg-emerald-100 text-emerald-700 border-emerald-200">
+                  Active
+                </span>
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
-        <div className="space-y-4">
-          <div className="card">
-            <h2 className="font-semibold text-ink-900">Contact</h2>
-            <div className="mt-3 space-y-1.5 text-sm">
-              {cust.email && <div className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-ink-500" /><a href={`mailto:${cust.email}`} className="text-ink-700 hover:text-brand-600">{cust.email}</a></div>}
-              {cust.phone && <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-ink-500" /><a href={`tel:${cust.phone}`} className="text-ink-700 hover:text-brand-600">{cust.phone}</a></div>}
-              {cust.company && <div className="flex items-center gap-2"><Building2 className="h-3.5 w-3.5 text-ink-500" /><span className="text-ink-700">{cust.company}</span></div>}
-            </div>
-            <div className="mt-3 pt-3 border-t border-ink-100 text-sm">
-              <div className="text-xs text-ink-500">Preferred channel</div>
-              <div className="mt-1 flex items-center gap-1.5 font-medium capitalize">
-                {cust.preferredChannel === 'sms' ? <MessageSquare className="h-3.5 w-3.5" /> : <Mail className="h-3.5 w-3.5" />}
-                {cust.preferredChannel}
+      {/* Open disputes */}
+      {customerDisputes.filter((d: typeof disputes.$inferSelect) => d.status === 'open' || d.status === 'in_progress').length > 0 && (
+        <div className="card mb-6">
+          <h2 className="h3 mb-4">Open disputes</h2>
+          <div className="space-y-2">
+            {customerDisputes.filter((d: typeof disputes.$inferSelect) => d.status === 'open' || d.status === 'in_progress').map((d: typeof disputes.$inferSelect) => (
+              <div key={d.id} className="border border-red-200 bg-red-50/30 rounded-lg p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="font-semibold text-ink-900">
+                      {d.reason.replace(/_/g, ' ')}
+                    </div>
+                    {d.customerMessage && (
+                      <div className="text-sm text-ink-700 mt-1 italic">"{d.customerMessage}"</div>
+                    )}
+                    {d.internalNotes && (
+                      <div className="text-xs text-ink-600 mt-2">Note: {d.internalNotes}</div>
+                    )}
+                  </div>
+                  <span className="badge bg-red-100 text-red-700 border-red-200 whitespace-nowrap">
+                    {d.status}
+                  </span>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
+        </div>
+      )}
 
-          {insight && (
-            <div className="card">
-              <h2 className="font-semibold text-ink-900">Risk score</h2>
-              <div className="mt-3 flex items-center gap-2">
-                <div className="flex-1 h-2 rounded-full bg-ink-100 overflow-hidden">
-                  <div className={`h-full transition-all ${insight.riskLevel === 'critical' ? 'bg-red-500' : insight.riskLevel === 'high' ? 'bg-red-400' : insight.riskLevel === 'medium' ? 'bg-amber-400' : 'bg-emerald-400'}`} style={{ width: `${insight.riskScore}%` }} />
-                </div>
-                <span className="text-sm font-mono text-ink-700 font-semibold">{insight.riskScore}</span>
-              </div>
-              <p className="mt-2 text-xs text-ink-600">
-                {insight.riskLevel === 'critical' ? 'High risk — invoice may need write-off. Call the customer directly.' :
-                 insight.riskLevel === 'high' ? 'High risk — send a firm reminder today.' :
-                 insight.riskLevel === 'medium' ? 'Moderate risk — friendly nudge recommended.' :
-                 'Low risk — customer is a reliable payer.'}
-              </p>
-              <div className="mt-3 pt-3 border-t border-ink-100 grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <div className="text-ink-500">7d payment prob.</div>
-                  <div className="mt-0.5 font-mono font-semibold">{Math.round(insight.predictedPayment7d * 100)}%</div>
-                </div>
-                <div>
-                  <div className="text-ink-500">Open invoices</div>
-                  <div className="mt-0.5 font-mono font-semibold">{insight.openInvoices}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {runs.length > 0 && (
-            <div className="card">
-              <h2 className="font-semibold text-ink-900">Recent reminders</h2>
-              <div className="mt-3 space-y-2 max-h-80 overflow-y-auto">
-                {runs.slice(0, 5).map((r: typeof runs[number]) => (
-                  <div key={r.id} className="text-xs flex items-start gap-1.5">
-                    {r.channel === 'sms' ? <MessageSquare className="h-3 w-3 text-ink-500 mt-0.5" /> : <Mail className="h-3 w-3 text-ink-500 mt-0.5" />}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1"><span className={`badge text-[9px] ${r.status === 'sent' ? 'badge-success' : 'badge-neutral'}`}>{r.status}</span><span className="text-ink-500">{r.sentAt ? formatDate(r.sentAt) : 'queued'}</span></div>
-                      {r.subject && <div className="text-ink-700 truncate mt-0.5">{r.subject}</div>}
+      {/* Invoices */}
+      <div className="card mb-6">
+        <h2 className="h3 mb-4">All invoices ({customerInvoices.length})</h2>
+        {customerInvoices.length === 0 ? (
+          <p className="text-sm text-ink-500">No invoices yet</p>
+        ) : (
+          <div className="space-y-2">
+            {customerInvoices.map((inv: typeof invoices.$inferSelect) => {
+              const amount = parseFloat(inv.amount.toString());
+              const paid = parseFloat(inv.amountPaid?.toString() || '0');
+              const remaining = amount - paid;
+              const isOverdue = new Date(inv.dueDate) < new Date() && inv.status !== 'paid';
+              return (
+                <div key={inv.id} className="flex items-center justify-between border border-ink-200 rounded-lg p-3">
+                  <div className="flex-1">
+                    <div className="font-medium text-ink-900">Invoice {inv.number}</div>
+                    <div className="text-xs text-ink-500 mt-0.5">
+                      Issued {formatDate(inv.issueDate)} · Due {formatDate(inv.dueDate)}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+                  <div className="text-right">
+                    <div className="font-mono font-semibold text-ink-900">{formatCurrency(remaining)}</div>
+                    {amount > paid && (
+                      <div className="text-xs text-ink-500">of {formatCurrency(amount)}</div>
+                    )}
+                    <span className={`badge mt-1 ${
+                      inv.status === 'paid' ? 'bg-emerald-100 text-emerald-700' :
+                      inv.status === 'disputed' ? 'bg-red-100 text-red-700' :
+                      isOverdue ? 'bg-amber-100 text-amber-700' :
+                      'bg-ink-100 text-ink-700'
+                    }`}>
+                      {inv.status}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Activity timeline */}
+      <div className="card">
+        <h2 className="h3 mb-4">Activity timeline</h2>
+        {customerTimeline.length === 0 ? (
+          <p className="text-sm text-ink-500">No activity recorded yet</p>
+        ) : (
+          <div className="space-y-3">
+            {customerTimeline.map((event: typeof timelineEvents.$inferSelect) => (
+              <TimelineRow key={event.id} event={event} />
+            ))}
+          </div>
+        )}
       </div>
     </AppShell>
   );
 }
 
-function Stat({ icon, label, value, sub, danger }: { icon: React.ReactNode; label: string; value: string; sub?: string; danger?: boolean }) {
+function SummaryCard({
+  icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  accent: 'emerald' | 'amber' | 'red' | 'gray';
+}) {
+  const accentClasses = {
+    emerald: 'bg-emerald-50 text-emerald-700',
+    amber: 'bg-amber-50 text-amber-700',
+    red: 'bg-red-50 text-red-700',
+    gray: 'bg-ink-100 text-ink-600',
+  };
   return (
     <div className="card">
-      <div className="flex items-center justify-between">
-        <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">{label}</div>
-        <div className={danger ? 'text-red-500' : 'text-ink-400'}>{icon}</div>
+      <div className={`h-9 w-9 rounded-lg grid place-items-center mb-2 ${accentClasses[accent]}`}>
+        {icon}
       </div>
-      <div className={`mt-2 text-2xl font-display font-bold ${danger ? 'text-red-600' : 'text-ink-950'}`}>{value}</div>
-      {sub && <div className="mt-1 text-xs text-ink-500">{sub}</div>}
+      <div className="text-2xl font-display font-bold text-ink-950">{value}</div>
+      <div className="text-xs text-ink-500 mt-0.5">{label}</div>
+    </div>
+  );
+}
+
+function TimelineRow({ event }: { event: typeof timelineEvents.$inferSelect }) {
+  const iconMap: Record<string, React.ReactNode> = {
+    invoice_created: <FileText className="h-4 w-4" />,
+    invoice_sent: <Mail className="h-4 w-4" />,
+    reminder_scheduled: <Bell className="h-4 w-4" />,
+    reminder_sent: <Mail className="h-4 w-4" />,
+    reminder_opened: <Mail className="h-4 w-4" />,
+    reminder_clicked: <Mail className="h-4 w-4" />,
+    customer_reply: <MessageSquare className="h-4 w-4" />,
+    promise_made: <CheckCircle2 className="h-4 w-4" />,
+    promise_fulfilled: <CheckCircle2 className="h-4 w-4" />,
+    promise_broken: <AlertCircle className="h-4 w-4" />,
+    dispute_opened: <AlertCircle className="h-4 w-4" />,
+    dispute_resolved: <CheckCircle2 className="h-4 w-4" />,
+    payment_received: <DollarSign className="h-4 w-4" />,
+    payment_plan_created: <Clock className="h-4 w-4" />,
+    manual_pause: <Pause className="h-4 w-4" />,
+    manual_resume: <Play className="h-4 w-4" />,
+    note_added: <FileText className="h-4 w-4" />,
+  };
+
+  const colorMap: Record<string, string> = {
+    promise_fulfilled: 'text-emerald-600 bg-emerald-50',
+    promise_made: 'text-emerald-600 bg-emerald-50',
+    promise_broken: 'text-red-600 bg-red-50',
+    dispute_opened: 'text-red-600 bg-red-50',
+    payment_received: 'text-emerald-600 bg-emerald-50',
+    dispute_resolved: 'text-emerald-600 bg-emerald-50',
+  };
+
+  return (
+    <div className="flex items-start gap-3 pb-3 border-b border-ink-100 last:border-0">
+      <div className={`h-8 w-8 rounded-lg grid place-items-center flex-shrink-0 ${
+        colorMap[event.eventType] || 'text-ink-600 bg-ink-100'
+      }`}>
+        {iconMap[event.eventType] || <FileText className="h-4 w-4" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-ink-900 text-sm">{event.title}</div>
+        {event.description && (
+          <div className="text-xs text-ink-600 mt-0.5">{event.description}</div>
+        )}
+      </div>
+      <div className="text-xs text-ink-500 whitespace-nowrap">
+        {formatDate(event.occurredAt)}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * AI follow-up engine — risk + recommended next action for this customer.
+ * Backed by the same getCustomerInsights() the customers list page uses, so
+ * both views agree on risk level and recommended channel/tone.
+ */
+function FollowUpPanel({ insight }: { insight: import('@/lib/analytics').CustomerInsight }) {
+  const riskPalette: Record<typeof insight.riskLevel, { bg: string; border: string; text: string; label: string }> = {
+    low:      { bg: 'bg-emerald-50/40', border: 'border-emerald-200', text: 'text-emerald-700', label: 'Low risk' },
+    medium:   { bg: 'bg-amber-50/40',   border: 'border-amber-200',   text: 'text-amber-700',   label: 'Medium risk' },
+    high:     { bg: 'bg-orange-50/40',  border: 'border-orange-200',  text: 'text-orange-700',  label: 'High risk' },
+    critical: { bg: 'bg-red-50/40',     border: 'border-red-200',     text: 'text-red-700',     label: 'Critical risk' },
+  };
+  const pal = riskPalette[insight.riskLevel];
+  const ChannelIcon =
+    insight.recommendedChannel === 'phone' ? Phone :
+    insight.recommendedChannel === 'sms'   ? MessageSquare : Mail;
+  const predictedPct = Math.round(insight.predictedPayment7d * 100);
+
+  return (
+    <div className={`card mb-6 ${pal.bg} ${pal.border}`}>
+      <div className="flex items-start gap-3 mb-4">
+        <Sparkles className={`h-5 w-5 ${pal.text} mt-0.5 flex-shrink-0`} />
+        <div className="flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-ink-900">AI follow-up</span>
+            <span className={`badge ${pal.bg} ${pal.text} border ${pal.border}`}>{pal.label} · {insight.riskScore}/100</span>
+            <span className="badge bg-white text-ink-700 border-ink-200">
+              <ChannelIcon className="h-3 w-3 mr-1" /> {insight.recommendedChannel}
+            </span>
+          </div>
+          <p className="text-sm text-ink-800 mt-2 font-medium">{insight.recommendedAction}</p>
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-4 gap-3 text-sm">
+        <div className="bg-white/60 rounded-lg p-3">
+          <div className="text-xs text-ink-500">Open balance</div>
+          <div className="font-display font-bold text-ink-950 mt-0.5">{formatCurrency(insight.openBalance)}</div>
+        </div>
+        <div className="bg-white/60 rounded-lg p-3">
+          <div className="text-xs text-ink-500">Oldest invoice</div>
+          <div className="font-display font-bold text-ink-950 mt-0.5">{insight.oldestInvoiceDays}d ago</div>
+        </div>
+        <div className="bg-white/60 rounded-lg p-3">
+          <div className="text-xs text-ink-500">Likely to pay in 7d</div>
+          <div className="font-display font-bold text-ink-950 mt-0.5 flex items-center gap-1">
+            <TrendingUp className="h-3.5 w-3.5" /> {predictedPct}%
+          </div>
+        </div>
+        <div className="bg-white/60 rounded-lg p-3">
+          <div className="text-xs text-ink-500">Historical paid rate</div>
+          <div className="font-display font-bold text-ink-950 mt-0.5">
+            {Math.round(insight.paidRate * 100)}% · avg {insight.avgDaysToPay}d
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mt-4">
+        {insight.email && (
+          <a
+            href={`/dashboard/dunning?customerId=${insight.customerId}&tone=${insight.riskLevel === 'critical' ? 'final' : insight.riskLevel === 'high' ? 'firm' : 'friendly'}&channel=${insight.recommendedChannel === 'phone' ? 'email' : insight.recommendedChannel}`}
+            className="btn-primary text-sm"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Draft a {insight.riskLevel === 'critical' ? 'final' : insight.riskLevel === 'high' ? 'firm' : 'friendly'} message
+          </a>
+        )}
+        <a href={`/dashboard/dunning/sequence`} className="btn-secondary text-sm">View dunning sequence</a>
+        {insight.riskLevel === 'critical' && (
+          <a href={`/dashboard/customers/${insight.customerId}/pause`} className="btn-secondary text-sm">Pause new work</a>
+        )}
+      </div>
     </div>
   );
 }
