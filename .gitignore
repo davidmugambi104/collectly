@@ -47,6 +47,15 @@ logs
 .pglite/
 github.md
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# backups
+*.bak
+**/.archive/
+
 # Local secrets (never commit)
 .creds
 .env.local.save
