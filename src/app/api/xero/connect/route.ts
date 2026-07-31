@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { xeroAuthUrl } from '@/lib/integrations/xero';
+import { getAuth } from '@/lib/auth-helper';
+import { mintOAuthState } from '@/lib/oauth-state';
 
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
-  const orgId = url.searchParams.get('orgId');
-  if (!orgId) {
-    return NextResponse.json({ error: 'missing orgId' }, { status: 400 });
+/** SECURITY (audit C-1): see quickbooks/connect — org comes from the session,
+ * state is server-bound and expiring. */
+export async function GET(_req: NextRequest) {
+  const session = await getAuth();
+  const orgId = session?.orgId;
+  const userId = session?.userId;
+  if (!orgId || !userId) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
+
   if (!process.env.XERO_CLIENT_ID) {
     return NextResponse.json(
       { error: 'Xero not configured', hint: 'Set XERO_CLIENT_ID and XERO_CLIENT_SECRET in .env.local' },
-      { status: 503 }
+      { status: 503 },
     );
   }
-  return NextResponse.redirect(xeroAuthUrl(orgId));
+
+  try {
+    const state = await mintOAuthState(orgId, userId);
+    return NextResponse.redirect(xeroAuthUrl(state));
+  } catch (e: any) {
+    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+  }
 }

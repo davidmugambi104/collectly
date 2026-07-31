@@ -343,13 +343,16 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
             : 'sent';
 
       const existing = await db
-        .select({ id: invoicesTbl.id, status: invoicesTbl.status })
+        .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
         .from(invoicesTbl)
         .where(and(eq(invoicesTbl.orgId, orgId), eq(invoicesTbl.externalId, externalId)))
         .limit(1);
 
       if (existing[0]) {
         const wasUnpaid = existing[0].status !== 'paid';
+        // See quickbooks.ts — paidAt must not be re-stamped on every sync or
+        // DSO inflates by a day per day. Preserve the original payment date.
+        const preservedPaidAt = status === 'paid' ? (existing[0].paidAt ?? new Date()) : null;
         await db.update(invoicesTbl).set({
           number,
           amount: String(total),
@@ -358,7 +361,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
           issueDate,
           dueDate,
           status,
-          paidAt: status === 'paid' ? new Date() : null,
+          paidAt: preservedPaidAt,
           updatedAt: new Date(),
         }).where(eq(invoicesTbl.id, existing[0].id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;

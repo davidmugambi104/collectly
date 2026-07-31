@@ -387,13 +387,19 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
             : 'sent';
 
       const existing = await db
-        .select({ id: invoicesTbl.id, status: invoicesTbl.status })
+        .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
         .from(invoicesTbl)
         .where(and(eq(invoicesTbl.orgId, orgId), eq(invoicesTbl.externalId, externalId)))
         .limit(1);
 
       if (existing[0]) {
         const wasUnpaid = existing[0].status !== 'paid';
+        // IMPORTANT: paidAt records WHEN the invoice was paid, not when we
+        // last synced. Overwriting it with new Date() on every sync inflates
+        // DSO by one day per day and poisons customer.paymentBehavior,
+        // which feeds the dunning AI. Only stamp a date on the unpaid →
+        // paid transition; preserve the original payment date thereafter.
+        const paidAt = status === 'paid' ? (existing[0].paidAt ?? new Date()) : null;
         await db.update(invoicesTbl).set({
           number,
           amount: String(total),
@@ -402,7 +408,7 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
           issueDate,
           dueDate,
           status,
-          paidAt: status === 'paid' ? new Date() : null,
+          paidAt,
           updatedAt: new Date(),
         }).where(eq(invoicesTbl.id, existing[0].id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;
