@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { ArCostCalculator } from './client';
@@ -32,6 +33,16 @@ export default function ArCostCalculatorPage() {
           <p className="mt-10 text-center text-sm text-ink-500 max-w-xl mx-auto">
             Methodology: revenue at risk is estimated using a conservative 8% annual cost of capital on the cash tied up in late invoices. Time cost is based on your hourly rate × hours spent chasing per week.
           </p>
+          <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <Link href="/tools/ar-roi" className="card hover:border-brand-300 transition-colors text-center">
+              <div className="text-sm font-semibold text-ink-900">See your A/R ROI →</div>
+              <p className="mt-1 text-xs text-ink-600">How much faster collections would free up.</p>
+            </Link>
+            <Link href="/ar-audit" className="card hover:border-brand-300 transition-colors text-center">
+              <div className="text-sm font-semibold text-ink-900">Get a free audit →</div>
+              <p className="mt-1 text-xs text-ink-600">We'll reply with 3 specific cash-flow fixes.</p>
+            </Link>
+          </div>
         </section>
       </main>
       <MarketingFooter />

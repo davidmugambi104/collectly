@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { RoiCalculator } from './client';
@@ -32,6 +33,11 @@ export default function ArRoiPage() {
           <p className="mt-10 text-center text-sm text-ink-500 max-w-xl mx-auto">
             Methodology: we use your A/R balance × the difference between your current DSO and a 14-day target, multiplied by your cost of capital (estimated 8% APR for an SMB line of credit). Conservative. Verified against 3 published studies from U.S. Bank, Intuit, and Atradius.
           </p>
+          <div className="mt-10 max-w-2xl mx-auto text-center">
+            <Link href="/tools/ar-cost-calculator" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+              Or: see how much late payments are costing you in hours → <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </section>
       </main>
       <MarketingFooter />

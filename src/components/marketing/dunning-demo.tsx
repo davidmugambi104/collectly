@@ -34,9 +34,9 @@ export function DunningDemo() {
     <div className="grid lg:grid-cols-2 gap-6 items-start">
       <div className="card">
         <div className="flex items-center gap-2 text-sm font-semibold text-ink-700">
-          <Sparkles className="h-4 w-4 text-brand-600" /> Try our AI
+          <Sparkles className="h-4 w-4 text-brand-600" /> Sample reminder
         </div>
-        <p className="mt-1 text-sm text-ink-600">Pick a tone. See what we send. No signup.</p>
+        <p className="mt-1 text-sm text-ink-600">Pick a tone. See a sample message. No signup, no tracking.</p>
         <div className="mt-5 space-y-4">
           <div>
             <label className="text-xs font-semibold text-ink-700 uppercase tracking-wider">Invoice amount (USD)</label>

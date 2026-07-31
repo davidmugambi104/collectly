@@ -7,16 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Menu, X, Sparkles } from 'lucide-react';
 
 const NAV_LINKS = [
+  { href: '/tour', label: 'Demo' },
   { href: '/features', label: 'Features' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/playbook', label: 'Free playbook' },
-  { href: '/tools/ar-roi', label: 'ROI calculator' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/changelog', label: 'Changelog' },
+  { href: '/compare', label: 'Compare' },
+  { href: '/about', label: 'Founder' },
 ];
 
-const HIGHLIGHT_LINK = { href: '/ar-audit', label: 'Free A/R audit' };
+const HIGHLIGHT_LINK = { href: '/contact', label: 'Contact' };
 
 export function MarketingHeader() {
   const [open, setOpen] = useState(false);

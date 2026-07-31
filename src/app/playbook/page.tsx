@@ -95,14 +95,20 @@ export default function PlaybookPage() {
         <section className="container-page py-14 sm:py-20">
           <div className="max-w-3xl mx-auto card-lg bg-gradient-to-br from-brand-600 to-emerald-600 text-white text-center">
             <TrendingDown className="h-8 w-8 mx-auto text-brand-200" />
+            {/* No real customer testimonials yet (founding-customer program
+                still open). A fabricated quote with a made-up name + company
+                was previously here — that's the single fastest way to lose
+                trust with a sharp prospect who Googles "Lumen & Co" and gets
+                nothing. Replaced with a factual statement of where the
+                product is today. */}
             <blockquote className="mt-4 text-2xl sm:text-3xl font-display leading-snug">
-              "We were 47 days late on average. After 30 days on Collectly, we're at 14. That single shift gave us a $90K line of credit we couldn't get before."
+              "We're early. Founding-customer program is open for the first 20 agencies and bookkeepers, with lifetime $49/mo pricing and direct founder onboarding."
             </blockquote>
             <div className="mt-6 flex items-center justify-center gap-3">
               <div className="h-10 w-10 rounded-full bg-white/20" />
               <div className="text-left">
-                <div className="font-semibold">Sarah K.</div>
-                <div className="text-sm text-brand-100">Founder, Lumen & Co (design agency, 8 people)</div>
+                <div className="font-semibold">Davie Mugambi</div>
+                <div className="text-sm text-brand-100">Founder, Collectly · building in public</div>
               </div>
             </div>
           </div>

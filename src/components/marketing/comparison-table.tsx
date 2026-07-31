@@ -1,25 +1,32 @@
 'use client';
 import { Check, X } from 'lucide-react';
 
-type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb';
-type Row = [string, string, string, string, string, string];
+// Scope note: this table compares Collectly to the AR/invoicing tools SMBs
+// actually evaluate (Chaser, BILL, Melio, QuickBooks AR, FreshBooks). We
+// deliberately exclude enterprise AR platforms (Gaviti, Growfin,
+// HighRadius) — they target $50M+ ARR NetSuite/ERP-first orgs, not the
+// 5–50 person agency we sell to. If you're an enterprise buyer, see the
+// per-page comparisons under /compare.
 
-const ROWS: Array<[string, string, string, string, string, string]> = [
-  ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic'],
-  ['Public starting price', '$49/mo flat', '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees'],
-  ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees'],
-  ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min'],
-  ['Built for 1–50 person teams', '✓', '✓', '✓', '✓', '✓'],
-  ['Multi-currency', '✓', '✓', '✓', '✓', '—'],
-  ['Multi-entity', 'Growth+', 'Core+', 'Corporate+', '—', '—'],
-  ['Cash-flow forecast', '✓', 'Complete+', 'QBO only', '—', 'Basic'],
-  ['Customer risk scoring', '✓', '✓', '—', '—', '—'],
-  ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓'],
-  ['Free trial / self-serve', '14-day free', 'Demo-first', 'Free trial', 'Free forever', 'Within QBO'],
-  ['Time-to-value', '< 1 day', '1–2 weeks', '1–2 weeks', '< 1 day', '< 1 day'],
-  ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic'],
-  ['Payment plans / subscriptions', 'Growth+', '✓', '✓', '—', '✓'],
-  ['Support model', 'Email + chat', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help'],
+type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
+type Row = [string, string, string, string, string, string, string];
+
+const ROWS: Array<[string, string, string, string, string, string, string]> = [
+  ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
+  ['Public starting price', '$49/mo flat', '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
+  ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees', 'ACH fees'],
+  ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min', '< 10 min'],
+  ['Built for 1–50 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
+  ['Multi-currency', '✓', '✓', '✓', '✓', '—', '✓'],
+  ['Multi-entity', 'Growth+', 'Core+', 'Corporate+', '—', '—', '—'],
+  ['Cash-flow forecast', '✓', 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
+  ['Customer risk scoring', '✓', '✓', '—', '—', '—', '—'],
+  ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓', '✓'],
+  ['Free trial / self-serve', '14-day free', 'Demo-first', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
+  ['Time-to-value', '< 1 day', '1–2 weeks', '1–2 weeks', '< 1 day', '< 1 day', '< 1 day'],
+  ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
+  ['Payment plans / subscriptions', 'Growth+', '✓', '✓', '—', '✓', '—'],
+  ['Support model', 'Email + chat', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
 ];
 
 const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolean }> = [
@@ -28,9 +35,10 @@ const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolea
   { key: 'bill', label: 'BILL' },
   { key: 'melio', label: 'Melio' },
   { key: 'qb', label: 'QuickBooks AR' },
+  { key: 'freshbooks', label: 'FreshBooks' },
 ];
 
-const COMPETITOR_INDEX: Record<CompetitorKey, number> = { us: 1, chaser: 2, bill: 3, melio: 4, qb: 5 };
+const COMPETITOR_INDEX: Record<CompetitorKey, number> = { us: 1, chaser: 2, bill: 3, melio: 4, qb: 5, freshbooks: 6 };
 
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   const isYes = value === '✓';
@@ -104,6 +112,29 @@ export function ComparisonTable() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Sourcing + scope note. Competitor pricing and feature claims
+          change frequently; this stamp exists so prospects can tell whether
+          the comparison is stale. We re-verify quarterly against each
+          vendor's public pricing page. */}
+      <div className="mt-6 text-xs text-ink-500 leading-relaxed">
+        <p>
+          <b>Scope:</b> Compared against AR/invoicing tools evaluated by 5–50 person service
+          businesses. Enterprise AR platforms (Gaviti, Growfin, HighRadius) are excluded —
+          they target $50M+ ARR ERP-first orgs. See <a href="/vs-freshbooks" className="underline">vs FreshBooks</a> or
+          the <a href="/compare" className="underline">full comparison list</a> for the others.
+        </p>
+        <p className="mt-2">
+          <b>Last verified:</b> 2026-07-31 against public pricing pages
+          (<a href="https://www.chaserhq.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">Chaser</a>,
+          {' '}<a href="https://www.bill.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">BILL</a>,
+          {' '}<a href="https://www.melio.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">Melio</a>,
+          {' '}<a href="https://quickbooks.intuit.com/pricing/" target="_blank" rel="noopener noreferrer" className="underline">QuickBooks</a>,
+          {' '}<a href="https://www.freshbooks.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">FreshBooks</a>).
+          Pricing/features change; if you spot something stale,{' '}
+          <a href="mailto:hello@getcollectly.app" className="underline">tell us</a>.
+        </p>
       </div>
     </>
   );

@@ -1,14 +1,13 @@
 import Link from 'next/link';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
-import { Button } from '@/components/ui/button';
-import { WaitlistForm } from '@/components/marketing/waitlist';
+
 import { DunningDemo } from '@/components/marketing/dunning-demo';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import { Logo } from '@/components/brand/logo';
 import {
   ArrowRight, Sparkles, ShieldCheck, Clock, TrendingUp, MessageSquare, Mail, Bell,
-  Bot, DollarSign, BarChart3, CheckCircle2, Globe2, Zap, Users, FileText, Wallet,
+  Bot, DollarSign, BarChart3, CheckCircle2, Globe2, Zap, Users, FileText, Wallet, Calculator,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -24,61 +23,69 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7">
               <div className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white/80 backdrop-blur px-3 py-1 text-xs font-medium text-ink-700">
-                <Sparkles className="h-3.5 w-3.5 text-brand-600" /> YC-style speed · Built in Nairobi · Used globally
+                <Sparkles className="h-3.5 w-3.5 text-brand-600" /> YC-style speed · Built in Nairobi · Used in 🇺🇸 🇬🇧 🇪🇺 🇦🇺 🇨🇦 🇰🇪 🇳🇬
               </div>
               <h1 className="mt-5 h1">
-                Chasing late invoices is <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">awkward</span>.
-                <br />You shouldn't be the one doing it.
+                Stop chasing late invoices.
+                <br />
+                <span className="text-2xl sm:text-3xl font-normal text-ink-700">AI follow-ups for marketing agencies, consultancies, IT firms, and bookkeepers on QuickBooks or Xero.</span>
               </h1>
               <p className="mt-5 lead max-w-xl">
-                Collectly follows up on overdue invoices the way a thoughtful operations person would —
-                adapting tone to context, escalating when appropriate, tracking promises to pay, and keeping
-                you out of the uncomfortable parts. Built for small B2B service businesses on QBO or Xero.
+                Collectly connects to QuickBooks or Xero, identifies overdue invoices, and sends tone-aware
+                email and SMS follow-ups. It pauses when customers reply or pay. You review and approve,
+                or let it run on autopilot. Built for local-service agencies (5–50 people) and the
+                fractional bookkeepers who serve them.
               </p>
 
-              <div className="mt-6 inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/60 px-3 py-2 text-xs text-emerald-800">
-                <span className="font-semibold">$49/mo</span>
-                <span className="text-emerald-700">· 14-day free trial · No per-invoice fees · </span>
-                <Link href="/tools/ar-roi" className="hidden sm:inline text-emerald-700 hover:text-emerald-900 font-medium underline-offset-2 hover:underline">See your ROI →</Link>
+              <div className="mt-6 inline-flex flex-col sm:flex-row items-start sm:items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 backdrop-blur px-4 py-3 text-sm text-emerald-900 shadow-sm">
+                <span className="font-bold">$49/mo · 14-day free trial · No per-invoice fees</span>
+                <span className="hidden sm:inline text-emerald-300">|</span>
+                <span className="text-emerald-700">Chaser starts at ~$259/mo · BILL charges per user + transaction fees</span>
               </div>
+              <p className="mt-2 text-xs text-ink-500">First 20 customers lock in $49/mo forever. Cancel anytime.</p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
-                <WaitlistForm />
-              </div>
-
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-ink-600">
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> 14-day free trial</span>
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> No credit card</span>
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Cancel anytime</span>
-                <Link href="/tools/ar-roi" className="inline-flex items-center gap-1 font-semibold text-brand-700 hover:text-brand-800">
-                  See your ROI <ArrowRight className="h-3 w-3" />
+                <Link href="/sign-up" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
+                  Start free 14-day trial <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/tour" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-ink-200 bg-white px-5 py-3 text-sm font-semibold text-ink-900 hover:bg-ink-50 transition-colors">
+                  See the dashboard demo
                 </Link>
               </div>
 
-              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-500">
+              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-ink-600">
+                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> 10-minute setup</span>
+                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> No credit card required</span>
+                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Cancel anytime</span>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-2 text-xs text-ink-600">
+                <span className="font-medium">Accepts</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇺🇸 USD</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇬🇧 GBP</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇪🇺 EUR</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇦🇺 AUD</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇨🇦 CAD</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇰🇪 KES</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇳🇬 NGN</span>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-500">
                 <span>Integrates with</span>
                 <LogoMark label="QuickBooks" />
                 <LogoMark label="Xero" />
                 <LogoMark label="Plaid" />
                 <LogoMark label="Paystack" />
-                <LogoMark label="Stripe*" />
-                <LogoMark label="Square*" />
-                <span className="text-ink-400">*test/sandbox for US/UK/AU/CA</span>
+                <span className="text-ink-400">Stripe / Square coming with your production keys</span>
               </div>
             </div>
 
             <div className="lg:col-span-5">
               <HeroDashboardMock />
+              <p className="mt-3 text-xs text-ink-500 text-center">Demo data shown · Real dashboard after connect</p>
             </div>
           </div>
 
-          {/* Stats strip */}
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatTile label="Avg. days to payment" value="12" suffix="days" />
-            <StatTile label="Open invoices auto-handled" value="94%" />
-            <StatTile label="Avg. AR recovered / month" value="$28.4K" />
-            <StatTile label="Net Promoter Score" value="74" />
-          </div>
         </div>
       </section>
 
@@ -87,12 +94,15 @@ export default function HomePage() {
         <div className="container-page py-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Free 2-minute audit</div>
-              <h3 className="mt-1 text-xl font-display font-bold">How much cash is stuck in your A/R right now?</h3>
-              <p className="mt-1 text-sm text-brand-100 max-w-xl">Plug in your A/R balance, DSO, and revenue. See exactly how much faster collections would free up — and how Collectly stacks up against Chaser, BILL, Melio, and QuickBooks.</p>
+              <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Live product status</div>
+              <h3 className="mt-1 text-xl font-display font-bold">What's live today — and what's next.</h3>
+              <p className="mt-1 text-sm text-brand-100 max-w-xl">
+                Live: AI dunning, AR aging dashboard, Plaid bank feeds, Paystack payments, Resend email, 4-week cash forecast.
+                QuickBooks, Xero, Stripe, Square, and Twilio are wired and tested; we swap in your production credentials on the first setup call.
+              </p>
             </div>
-            <Link href="/tools/ar-roi" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white text-brand-700 px-5 py-3 text-sm font-semibold hover:bg-brand-50 transition-colors shrink-0">
-              Run the numbers <ArrowRight className="h-4 w-4" />
+            <Link href="/integrations" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white text-brand-700 px-5 py-3 text-sm font-semibold hover:bg-brand-50 transition-colors shrink-0">
+              See all integrations <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -102,12 +112,12 @@ export default function HomePage() {
       <section className="border-y border-ink-200 bg-white">
         <div className="container-page py-10">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ink-500">Built in Nairobi · Serving small B2B services worldwide</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink-500">Built in Nairobi · Honest about what ships when</p>
             <p className="mt-3 text-sm text-ink-700">
-              No Fortune 500 case studies yet. Just a founder who got tired of awkward invoice follow-ups, and a tool built for businesses that want AR automation without enterprise price tags.
+              No invented case studies. No fake metrics. Just a founder building the A/R tool he wished he'd had, and a small group of beta partners helping shape it.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-600">
-              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2-grade security</span>
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2 preparation in progress</span>
               <span className="inline-flex items-center gap-1.5"><Globe2 className="h-3.5 w-3.5 text-emerald-600" /> Global payment rails</span>
               <span className="inline-flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-emerald-600" /> 10-minute setup</span>
             </div>
@@ -119,8 +129,8 @@ export default function HomePage() {
       <section className="container-page py-20 sm:py-28">
         <div className="max-w-2xl">
           <p className="eyebrow">How it works</p>
-          <h2 className="mt-2 h2">From signed contract to paid invoice — on autopilot.</h2>
-          <p className="mt-4 lead">Three steps. Ten minutes to set up. You get back your Saturdays.</p>
+          <h2 className="mt-2 h2">Understands the conversation, not just the invoice.</h2>
+          <p className="mt-4 lead">Collectly pauses when customers reply, tracks promises, separates disputes from cash flow problems, and tells you why each dollar is expected.</p>
         </div>
         <div className="mt-12 grid md:grid-cols-3 gap-6">
           <HowItWorksCard
@@ -153,15 +163,15 @@ export default function HomePage() {
             <p className="mt-4 lead">Designed for businesses with 1–50 employees. Priced for the long tail. Built for speed.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="AI dunning engine" body="Tone-aware email and SMS reminders, written by Gemini, optimized for the probability of payment. Pause on reply, pause on payment, fully editable." />
-            <FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="Branded payment portal" body="Customers click, pay, settle. ACH, card, wire, and local payment methods (GoCardless, SEPA, BACS) out of the box." />
-            <FeatureCard icon={<BarChart3 className="h-5 w-5 text-brand-600" />} title="Cash-flow forecast" body="Four-week projection of incoming cash, based on payment history, age of invoice, and customer risk score. Tells you when you can make payroll." />
-            <FeatureCard icon={<Clock className="h-5 w-5 text-brand-600" />} title="AR aging dashboard" body="Real-time buckets — Current, 1–30, 31–60, 61–90, 90+. Drill into a customer, see exactly who owes what and how overdue." />
-            <FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Cash application AI" body="Auto-matches incoming payments to the right invoices. Cleans up the 200-miscategorized-transactions-at-month-end problem for good." />
-            <FeatureCard icon={<Globe2 className="h-5 w-5 text-brand-600" />} title="Multi-currency" body="USD, GBP, AUD, CAD, EUR on day one. Local payment integrations for UK, EU, AU, CA, US, KE, NG, ZA." />
-            <FeatureCard icon={<Bell className="h-5 w-5 text-brand-600" />} title="Slack & email alerts" body="Big invoices, big overdue, big new customers — ping your team on the channel they actually read." />
-            <FeatureCard icon={<TrendingUp className="h-5 w-5 text-brand-600" />} title="Customer risk scoring" body="Predictive score for every customer. Know which clients are most likely to pay late. Prioritize the high-value, high-risk ones." />
-            <FeatureCard icon={<Users className="h-5 w-5 text-brand-600" />} title="Multi-user + roles" body="Owners, admins, members, viewers. Audit log for everything. SOC 2-ready permissions model." />
+            <FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="Stop writing awkward follow-ups" body="AI writes tone-aware email and SMS reminders that sound like you, not a robot. Pause on reply. Pause on payment. Fully editable before send." />
+            <FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="One payment link. One place to pay." body="Customers click your branded portal, see every outstanding invoice, and settle with their preferred method. ACH, card, wire, and local rails." />
+            <FeatureCard icon={<BarChart3 className="h-5 w-5 text-brand-600" />} title="Know if you can make payroll" body="Four-week cash forecast based on invoice age, customer payment history, and promised pay dates. See exactly when dollars are expected to land." />
+            <FeatureCard icon={<Clock className="h-5 w-5 text-brand-600" />} title="See who owes what, right now" body="Live buckets: current, 1-30, 31-60, 61-90, 90+. Drill into any customer and see every overdue invoice without opening QuickBooks or Xero." />
+            <FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Stop matching mystery payments" body="Incoming cash is auto-matched to the right invoice. No more 200 uncategorized transactions at month-end." />
+            <FeatureCard icon={<Globe2 className="h-5 w-5 text-brand-600" />} title="Get paid in any major currency" body="USD, GBP, AUD, CAD, EUR, KES, NGN and more. Local payment methods for US, UK, EU, AU, CA, KE, NG, ZA." />
+            <FeatureCard icon={<Bell className="h-5 w-5 text-brand-600" />} title="Alert the team where they work" body="Big invoices, big overdue, big new customers — ping Slack or email so nothing falls through the cracks." />
+            <FeatureCard icon={<TrendingUp className="h-5 w-5 text-brand-600" />} title="Spot late-payers before they pay late" body="Risk score per customer based on history, disputes, and delays. Prioritize the high-value accounts that actually need attention." />
+            <FeatureCard icon={<Users className="h-5 w-5 text-brand-600" />} title="Control who sees what" body="Owners, admins, members, viewers. Audit log for every action. Built for small teams with SOC 2-ready permissions." />
           </div>
         </div>
       </section>
@@ -169,9 +179,15 @@ export default function HomePage() {
       {/* AI DUNNING DEMO */}
       <section className="container-page py-20 sm:py-28">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="eyebrow">Try the AI</p>
+          <p className="eyebrow">Try it now</p>
           <h2 className="mt-2 h2">See exactly what we'd send your customer.</h2>
-          <p className="mt-4 lead">No signup. No data stored. Pick a tone, pick a channel, click generate. This is the same engine we ship in production — running in your browser right now.</p>
+          <p className="mt-4 lead">
+            No signup. No data stored. Pick a tone, pick a channel, click generate.
+            You'll see a sample message in our three voices. The production composer
+            (in the dashboard) generates real, customer-specific copy with Gemini,
+            then lets you edit before sending — this demo shows the structure and
+            tone only, with placeholder names.
+          </p>
         </div>
         <div className="mt-10 max-w-5xl mx-auto">
           <DunningDemo />
@@ -246,6 +262,16 @@ export default function HomePage() {
               Get your free audit →
             </Link>
           </div>
+          <div className="card">
+            <div className="h-9 w-9 rounded-lg bg-brand-50 flex items-center justify-center mb-4">
+              <Calculator className="h-5 w-5 text-brand-600" />
+            </div>
+            <h3 className="font-semibold text-ink-900 mb-1.5">How much are late payments costing you?</h3>
+            <p className="text-sm text-ink-600">2-minute calculator. Plug in your numbers and see what slow-paying customers are really costing your agency each year.</p>
+            <Link href="/tools/ar-cost-calculator" className="mt-3 inline-flex text-sm font-semibold text-brand-700 hover:text-brand-800">
+              Run the calculator →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -258,37 +284,171 @@ export default function HomePage() {
             <p className="mt-4 text-lg text-ink-300">Start free for 14 days. Upgrade when you're hooked. Cancel anytime.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-3 gap-5">
-            <PricingCard name="Starter" price="$49" period="/mo" audience="Solo ops, <$1M revenue" features={['AR aging dashboard', 'AI dunning (email only)', '1 integration', '1 user', 'Up to 50 invoices']} cta="Start free" />
-            <PricingCard name="Growth" price="$99" period="/mo" popular audience="$1M–$5M revenue" features={['Everything in Starter', 'SMS dunning', 'Payment portal', 'Cash-flow forecast', '3 users', 'Unlimited invoices', 'Multi-currency']} cta="Start free" />
-            <PricingCard name="Scale" price="$199" period="/mo" audience="$5M–$20M revenue" features={['Everything in Growth', 'AI collections concierge', 'Custom workflows', 'API access', 'Unlimited users', 'Priority support']} cta="Start free" />
+            <PricingCard name="Founding Customer" price="$49" period="/mo" popular audience="First 20 customers · lifetime price lock" features={['All features unlocked', 'Founder onboarding call', 'Email + SMS dunning', 'Payment portal', 'Cash-flow forecast', 'Unlimited invoices', 'Priority support']} cta="Start free" />
+            <PricingCard name="Growth" price="$99" period="/mo" audience="After founding cohort" features={['Everything in Founding', 'Multi-currency (USD, GBP, AUD, CAD, EUR, KES, NGN)', 'Up to 10 users', 'Advanced reporting', 'Custom workflows']} cta="Start free" />
           </div>
-          <p className="mt-6 text-sm text-ink-400">All plans include unlimited email support, SOC 2-grade security, and zero hidden fees. Annual plans save 20%.</p>
+          <p className="mt-6 text-sm text-ink-400">Payment methods, SMS, and accounting integrations depend on region, provider approval, and production credentials. Availability will be confirmed before billing. Annual plans save 20%.</p>
         </div>
       </section>
 
-      {/* TESTIMONIAL */}
+      {/* COMPETITOR COST CALCULATOR */}
+      <section className="container-page py-20 sm:py-28">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="eyebrow">The math speaks for itself</p>
+          <h2 className="mt-2 h2">What you're probably paying today.</h2>
+          <p className="mt-4 lead">Compare your current AR tool against a flat $49/mo. No per-user fees. No hidden transaction cuts.</p>
+        </div>
+        <div className="mt-12 overflow-x-auto rounded-2xl border border-ink-200 shadow-sm">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-ink-50 text-ink-600">
+              <tr>
+                <th className="px-6 py-4 font-semibold">Cost at 1 year</th>
+                <th className="px-6 py-4 font-semibold text-center">Collectly</th>
+                <th className="px-6 py-4 font-semibold text-center">Chaser</th>
+                <th className="px-6 py-4 font-semibold text-center">BILL</th>
+                <th className="px-6 py-4 font-semibold text-center">Melio + manual work</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-ink-100">
+              <tr className="bg-white">
+                <td className="px-6 py-4 font-medium text-ink-900">Annual platform cost</td>
+                <td className="px-6 py-4 text-center font-bold text-emerald-700">$588</td>
+                <td className="px-6 py-4 text-center">~$3,108+</td>
+                <td className="px-6 py-4 text-center">$588 + per-user fees</td>
+                <td className="px-6 py-4 text-center">$0 (AP-only)</td>
+              </tr>
+              <tr className="bg-ink-50">
+                <td className="px-6 py-4 font-medium text-ink-900">Hidden transaction fees</td>
+                <td className="px-6 py-4 text-center text-emerald-700">None ✅</td>
+                <td className="px-6 py-4 text-center">None ✅</td>
+                <td className="px-6 py-4 text-center">2.9% + 49¢ per payment ❌</td>
+                <td className="px-6 py-4 text-center">ACH/card fees apply ❌</td>
+              </tr>
+              <tr className="bg-white">
+                <td className="px-6 py-4 font-medium text-ink-900">Time to collect cash</td>
+                <td className="px-6 py-4 text-center text-emerald-700">&lt; 1 day ✅</td>
+                <td className="px-6 py-4 text-center">1–2 weeks ⚠️</td>
+                <td className="px-6 py-4 text-center">1–2 weeks ⚠️</td>
+                <td className="px-6 py-4 text-center">Manual reminders ⚠️</td>
+              </tr>
+              <tr className="bg-ink-50">
+                <td className="px-6 py-4 font-medium text-ink-900">Built for 1–50 person service businesses</td>
+                <td className="px-6 py-4 text-center text-emerald-700">✅ Yes</td>
+                <td className="px-6 py-4 text-center">SMB-friendly ✅</td>
+                <td className="px-6 py-4 text-center">Mid-market+ ❌</td>
+                <td className="px-6 py-4 text-center">Freelancers only ⚠️</td>
+              </tr>
+              <tr className="bg-white">
+                <td className="px-6 py-4 font-medium text-ink-900">Year 1 total (3 users, 100 invoices/mo)</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-emerald-700">$588 ✅</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$3,108+</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$1,500–$2,500+</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">Unpredictable</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-6 text-center text-sm text-ink-500">Pricing estimates based on publicly listed tiers. Your actual costs may vary.</p>
+      </section>
+
+      {/* TESTIMONIAL — HONEST VERSION */}
       <section className="container-page py-20 sm:py-28">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="eyebrow">From our beta</p>
-          <blockquote className="mt-4 text-2xl sm:text-3xl font-display text-ink-900 leading-snug">
-            "We were 47 days late on average. After 30 days on Collectly, we're at 14. That single shift gave us a $90K line of credit we couldn't get before."
-          </blockquote>
-          <div className="mt-6 flex items-center justify-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-brand-500 to-emerald-500" />
-            <div className="text-left">
-              <div className="font-semibold text-ink-900">Sarah K.</div>
-              <div className="text-sm text-ink-600">Founder, Lumen & Co (design agency, 8 people)</div>
-            </div>
+          <p className="eyebrow">Case studies</p>
+          <h2 className="mt-2 h2">We don't have polished case studies yet.</h2>
+          <p className="mt-4 lead">
+            We're building Collectly with our first 20 customers. Real results, real screenshots, and real company names are coming in Q3 2026 — once beta partners have a full quarter of data.
+          </p>
+          <p className="mt-4 text-ink-600">
+            Want to be one of the first case studies? We work closely with founding customers and your feedback shapes the product.
+          </p>
+          <div className="mt-6">
+            <a href="mailto:founders@getcollectly.app?subject=Founding%20customer%20case%20study" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
+              Join the founding customer cohort <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* FOUNDER TRUST */}
+      <section className="container-page py-20 sm:py-28">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="eyebrow">From the founder</p>
+          <h2 className="mt-2 h2">I built this because I was tired of being the one who had to ask.</h2>
+          <p className="mt-4 lead">
+            I'm Davie, the founder of Collectly. I spent years building software and watching small teams lose hours every week to awkward invoice follow-ups, spreadsheets, and "just checking in" emails. Collectly is the tool I wish I'd had: honest pricing, fast setup, and follow-ups that don't make your customers hate you.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm">
+            <a href="https://www.linkedin.com/in/davie-mugambi/" target="_blank" rel="noopener noreferrer" className="link">LinkedIn →</a>
+            <a href="https://x.com/daviemugambi" target="_blank" rel="noopener noreferrer" className="link">X / Twitter →</a>
+            <a href="mailto:hello@getcollectly.app" className="link">hello@getcollectly.app →</a>
+          </div>
+        </div>
+      </section>
+
+      {/* RELATIONSHIP-AWARE FEATURES — THE DIFFERENTIATION */}
+      <section className="bg-gradient-to-b from-ink-50 to-white border-y border-ink-200">
+        <div className="container-page py-20 sm:py-28">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Why Collectly is different</p>
+            <h2 className="mt-2 h2">Five things Collectly understands that other tools miss.</h2>
+            <p className="mt-4 lead">Most AR tools treat every overdue invoice the same. Real service businesses know that customers, relationships, and reasons for late payment are different every time.</p>
+          </div>
+          <div className="mt-12 grid md:grid-cols-2 gap-6">
+            <DifferentiatorCard
+              icon="📥"
+              title="AI Collections Inbox"
+              body="Every customer reply lands in one place. AI classifies replies: will pay on a date, already paid, disputed, missing PO, needs a plan, or no action. Then recommends the next step so you never wonder what to do."
+            />
+            <DifferentiatorCard
+              icon="🤝"
+              title="Promise-to-pay tracking"
+              body={`When a customer says "we'll pay next Friday," Collectly extracts the date, pauses reminders, adds it to your forecast, and automatically restarts the sequence if payment doesn't arrive.`}
+            />
+            <DifferentiatorCard
+              icon="⚠️"
+              title="Dispute and blocker management"
+              body="Give customers a way to flag 'I already paid,' 'need an invoice copy,' 'amount is wrong,' or 'waiting for approval.' The invoice automatically leaves the normal dunning and enters a resolution workflow."
+            />
+            <DifferentiatorCard
+              icon="📊"
+              title="Explainable cash forecast"
+              body="See exactly why each dollar is expected: $14K from confirmed promises, $12K from customers who always pay on time, $8K is uncertain because two invoices are disputed. Switch between conservative, expected, and optimistic."
+            />
+            <DifferentiatorCard
+              icon="🎯"
+              title="Relationship-aware dunning"
+              body="Set tone, channel, account-manager sender, and sensitivity per customer. A strategic account gets gentle handling. A high-risk account gets firm follow-up. Collectly never treats every overdue invoice as ordinary debt."
+            />
+            <DifferentiatorCard
+              icon="⏸️"
+              title="Approval-before-send"
+              body="Nervous about automated emails? Turn on approval mode. Collectly drafts every reminder, you review and approve. Build confidence, then graduate to autopilot when ready."
+            />
           </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="container-page pb-20">
-        <div className="card-lg grad-mesh text-center">
-          <h2 className="h2">Stop being the one who has to ask.</h2>
-          <p className="mt-4 lead max-w-xl mx-auto">14-day free trial. No credit card. Set up in 10 minutes. Get back to running the business.</p>
-          <div className="mt-6"><WaitlistForm variant="dark" /></div>
+        <div className="card-lg grad-mesh text-center overflow-hidden">
+          <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-6 py-3">
+            <p className="text-sm sm:text-base font-semibold text-emerald-800">
+              ✅ No credit card required · ✅ 14-day free trial · ✅ Cancel anytime · ✅ Setup in 10 minutes
+            </p>
+          </div>
+          <div className="px-6 py-12">
+            <h2 className="h2">Stop being the one who has to ask.</h2>
+            <p className="mt-4 lead max-w-xl mx-auto">
+              Join 20 founding customers and stop wasting hours every week chasing invoices. If Collectly doesn't show you a clear path to faster payments in 14 days, walk away.
+            </p>
+            <div className="mt-6 max-w-md mx-auto">
+              <Link href="/sign-up" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
+                Start free 14-day trial <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <p className="mt-3 text-xs text-ink-500">Founding customer price locks at $49/mo forever. After 20 customers, the Growth plan is $99/mo.</p>
+          </div>
         </div>
       </section>
 
@@ -339,6 +499,16 @@ function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: stri
   );
 }
 
+function DifferentiatorCard({ icon, title, body }: { icon: string; title: string; body: string }) {
+  return (
+    <div className="card-lg">
+      <div className="text-3xl mb-3">{icon}</div>
+      <h3 className="font-display font-bold text-lg text-ink-950 mb-2">{title}</h3>
+      <p className="text-sm text-ink-700 leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
 function PricingCard({ name, price, period, audience, features, cta, popular }: { name: string; price: string; period: string; audience: string; features: string[]; cta: string; popular?: boolean }) {
   return (
     <div className={popular ? 'rounded-2xl border-2 border-emerald-500 bg-ink-900/60 p-7 ring-4 ring-emerald-500/20' : 'rounded-2xl border border-ink-800 bg-ink-900/40 p-7'}>
@@ -382,11 +552,11 @@ function HeroDashboardMock() {
 
           <div className="space-y-2">
             {[
-              { c: 'Brightline Legal', a: '$24,500', d: 4, b: '1-30' },
-              { c: 'Harbor Painting', a: '$8,200', d: 12, b: '1-30' },
-              { c: 'Westgate Advisory', a: '$42,000', d: 38, b: '31-60' },
-              { c: 'Northstar Marketing', a: '$15,750', d: 67, b: '61-90' },
-              { c: 'Acme Studios', a: '$93,800', d: 95, b: '90+' },
+              { c: 'Acme Corp', a: '$24,500', d: 4, b: '1-30' },
+              { c: 'Design Studio LLC', a: '$8,200', d: 12, b: '1-30' },
+              { c: 'Consulting Group', a: '$42,000', d: 38, b: '31-60' },
+              { c: 'Tech Partners Inc', a: '$15,750', d: 67, b: '61-90' },
+              { c: 'Global Services Ltd', a: '$93,800', d: 95, b: '90+' },
             ].map((row, i) => (
               <div key={i} className="flex items-center justify-between text-sm py-1.5 px-2 rounded hover:bg-ink-50">
                 <div className="flex items-center gap-2">
@@ -411,7 +581,7 @@ function HeroDashboardMock() {
           <div className="text-xs font-semibold">Auto-collected</div>
         </div>
         <div className="text-lg font-display font-bold">$2,840</div>
-        <div className="text-[11px] text-ink-500">From Westgate Advisory — 12 min ago</div>
+        <div className="text-[11px] text-ink-500">From Consulting Group — 12 min ago</div>
       </div>
     </div>
   );

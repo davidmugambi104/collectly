@@ -203,19 +203,19 @@ function makeCtaPage(pageNum: number): string {
 0 -28 Td
 /F2 12 Tf
 (https://getcollectly.app) Tj
+// Real testimonials don't exist yet (no paying customers in production). The
+// previous fake "Sarah K., Lumen & Co" quote was removed because shipping
+// fabricated testimonials in a downloadable PDF is a real trust-breaker —
+// prospects in the same niche will recognize the pattern. The "what our
+// customers say" section is now a placeholder framed as forward-looking.
 0 -180 Td
 /F1 14 Tf
-(What our customers say:) Tj
+(What early users are saying:) Tj
 0 -22 Td
-/F3 12 Tf
-(\\042We were 47 days late on average. After 30 days on Collectly,) Tj
-0 -18 Td
-(\\042we're at 14. That single shift gave us a $90K line of credit) Tj
-0 -18 Td
-(\\042we couldn't get before.\\042) Tj
-0 -22 Td
-/F2 12 Tf
-(\\226 Sarah K., Lumen & Co \\050design agency, 8 people\\051) Tj
+/F2 11 Tf
+(Founding-customer program open. The first 20 agencies and bookkeepers lock) Tj
+0 -16 Td
+(in $49/mo for life. Email hello@getcollectly.app to apply.) Tj
 ET`;
   return `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792]
    /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F3 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique >> >> >>

@@ -7,7 +7,7 @@ import { ArrowRight, Search } from 'lucide-react';
 export const metadata = {
   title: 'Compare Collectly vs AR automation competitors',
   description:
-    'Side-by-side comparisons of Collectly vs Chaser, BILL, Melio, QuickBooks, Gaviti, Growfin, HighRadius, FreshBooks, and more. Built for small B2B service businesses on QBO or Xero.',
+    'Side-by-side comparisons of Collectly vs Chaser, BILL, Melio, QuickBooks, Zoho Books, Gaviti, Growfin, HighRadius, FreshBooks, and more. Built for small B2B service businesses on QBO or Xero.',
 };
 
 const COMPARISONS = [
@@ -15,6 +15,7 @@ const COMPARISONS = [
   { href: '/vs-bill', name: 'BILL', pitch: 'All-in-one AP + AR + spend platform with per-user pricing.' },
   { href: '/vs-melio', name: 'Melio', pitch: 'Free AP-first B2B payments with light invoicing.' },
   { href: '/vs-quickbooks', name: 'QuickBooks', pitch: 'The default SMB invoicing and payments stack.' },
+  { href: '/vs-zohobooks', name: 'Zoho Books', pitch: 'All-in-one accounting with light AR — built for the Zoho ecosystem.' },
   { href: '/vs-gaviti', name: 'Gaviti', pitch: 'AI-powered invoice-to-cash for mid-market and enterprise.' },
   { href: '/vs-growfin', name: 'Growfin', pitch: 'Behavioral AI AR automation for NetSuite/ERP-first enterprises.' },
   { href: '/vs-highradius', name: 'HighRadius', pitch: 'Autonomous finance for the Office of the CFO.' },
