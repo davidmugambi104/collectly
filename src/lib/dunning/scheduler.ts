@@ -122,13 +122,27 @@ export async function processDunning() {
             }
           } else if (lastStep.channel === 'sms' && customer.phone) {
             const sms = await sendSms({ to: customer.phone, body: result.body });
-            await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
-            sent += 1;
-            await recordEvent({
-              orgId: seq.orgId,
-              type: 'dunning.run.sent',
-              payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', customer: customer.phone, days },
-            });
+            // sendSms returns { sid: 'dev-stub' } when Twilio is not configured.
+            // Mirror the email 'skipped' guard: treat stub sends as a config
+            // failure so operators don't read 'sent' rows that never reached
+            // the carrier. (P0 audit fix 2026-07-31.)
+            if ((sms as any)?.sid === 'dev-stub') {
+              await db.update(dunningRuns).set({ status: 'failed', error: 'twilio not configured' }).where(eq(dunningRuns.id, run.id));
+              errors += 1;
+              await recordEvent({
+                orgId: seq.orgId,
+                type: 'dunning.run.failed',
+                payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', error: 'twilio not configured' },
+              });
+            } else {
+              await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
+              sent += 1;
+              await recordEvent({
+                orgId: seq.orgId,
+                type: 'dunning.run.sent',
+                payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', customer: customer.phone, days },
+              });
+            }
           } else {
             // No channel available for this customer — cancel, don't mark 'sent'
             await db.update(dunningRuns).set({ status: 'cancelled', error: 'no email/phone on file' }).where(eq(dunningRuns.id, run.id));

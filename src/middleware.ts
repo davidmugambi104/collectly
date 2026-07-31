@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   // Marketing pages
-  '/', '/pricing', '/features', '/blog', '/customers', '/about', '/contact', '/changelog', '/privacy', '/terms', '/security',
+  '/', '/pricing', '/features', '/blog', '/blog/(.*)', '/customers', '/about', '/contact', '/changelog', '/privacy', '/terms', '/security',
   '/dpa', '/integrations', '/tools/(.*)', '/compare', '/ar-roi', '/ar-audit', '/tour',
   '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
   '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
@@ -13,6 +13,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/waitlist', '/api/lead-notify', '/api/interview', '/api/ar-audit',
   // Public demo / preview / seed flows (no auth needed)
   '/api/cron/dunning', '/api/webhooks/stripe', '/api/webhooks/clerk',
+  '/api/webhooks/resend-inbound',
   '/api/quickbooks/callback', '/api/quickbooks/connect',
   '/api/xero/callback', '/api/xero/connect',
   '/api/stripe-connect/callback', '/api/stripe-connect/connect',

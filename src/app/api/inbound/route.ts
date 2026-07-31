@@ -1,20 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Webhook } from 'svix';
 import { pool } from '@/db';
 
 /**
  * Resend inbound webhook handler for outreach replies.
  *
- * Resend POSTs a JSON payload when someone replies to davie@getcollectly.app.
- * We classify the reply and update the outreach contact state in Postgres.
+ * Resend POSTs a JSON payload (Svix-signed) when someone replies to
+ * davie@getcollectly.app. We verify the Svix signature, then classify the
+ * reply and update the outreach contact state in Postgres.
  *
- * Expected payload shape:
+ * Expected Resend payload shape:
  * {
- *   "from": "prospect@example.com",
- *   "to": ["davie@getcollectly.app"],
- *   "subject": "Re: AR follow-up...",
- *   "text": "Plain text body",
- *   "html": "<p>HTML body</p>",
- *   "headers": { ... }
+ *   "type": "email.received",
+ *   "data": {
+ *     "from": "prospect@example.com",
+ *     "to": ["davie@getcollectly.app"],
+ *     "subject": "Re: AR follow-up...",
+ *     "text": "Plain text body",
+ *     "html": "<p>HTML body</p>",
+ *     "headers": { ... }
+ *   }
  * }
  */
 
@@ -97,20 +102,31 @@ async function ensureTables(client: any) {
 }
 
 export async function POST(req: NextRequest) {
-  // Optional: verify Resend webhook secret via a signature header if available.
-  // Resend inbound webhooks currently authenticate by the URL secret; if you
-  // want header verification, add it here later.
-
-  let payload: any;
+  // Verify Svix signature on Resend inbound events. Refuse unsigned requests
+  // so external callers cannot create outreach_contacts rows or trigger
+  // founder notification emails. (P0 audit fix 2026-07-31.)
+  const secret = process.env.RESEND_INBOUND_WEBHOOK_SECRET;
+  if (!secret) {
+    return NextResponse.json({ error: 'inbound webhook not configured' }, { status: 503 });
+  }
+  const rawBody = await req.text();
+  const wh = new Webhook(secret);
+  let event: any;
   try {
-    payload = await req.json();
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    event = wh.verify(rawBody, {
+      'svix-id': req.headers.get('svix-id') || '',
+      'svix-timestamp': req.headers.get('svix-timestamp') || '',
+      'svix-signature': req.headers.get('svix-signature') || '',
+    }) as any;
+  } catch (e: any) {
+    return NextResponse.json({ error: `signature verification failed: ${e?.message ?? e}` }, { status: 400 });
   }
 
-  const fromAddress = String(payload.from || '').toLowerCase().trim();
-  const subject = String(payload.subject || '');
-  const text = String(payload.text || payload.html || '');
+  // Resend inbound wraps the actual fields under .data
+  const data = event?.data ?? {};
+  const fromAddress = String(data.from || '').toLowerCase().trim();
+  const subject = String(data.subject || '');
+  const text = String(data.text || data.html || '');
 
   if (!fromAddress) {
     return NextResponse.json({ error: 'Missing from address' }, { status: 400 });
@@ -145,7 +161,7 @@ export async function POST(req: NextRequest) {
       INSERT INTO outreach_replies (contact_id, subject, body, from_address, raw_payload, classification, next_step, status)
       VALUES ($1, $2, $3, $4, $5, $6, $7, 'new')
       `,
-      [contactId, subject, text, fromAddress, payload, classification.state, classification.nextStep]
+      [contactId, subject, text, fromAddress, event, classification.state, classification.nextStep]
     );
 
     // Notify founder
