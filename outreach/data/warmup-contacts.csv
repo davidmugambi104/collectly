@@ -1,8 +1,57 @@
 day,email,first_name,relationship,template,notes
-1,,,,template_1,closest warm contact — e.g. friend or family member
-1,,,,template_2,second closest warm contact
-1,,,,template_5,past colleague or mentor
-2,,,,,fill before Day 2 send
-3,,,,,fill before Day 3 send
-4,,,,,fill before Day 4 send
-5,,,,,fill before Day 5 send
+1,sharonkarendi8@gmail.com,Sharon,friend,template_1,existing personal contact
+1,faithmugendi22@gmail.com,Faith,friend,template_2,existing personal contact
+1,faithntinyari36@gmail.com,Faith,friend,template_5,existing personal contact
+2,david.mugambi@student.moringaschool.com,David,colleague,template_1,existing personal contact
+2,ngugicollins6965@gmail.com,Collins,friend,template_2,existing personal contact
+1,sale@novaluna.io,,agency_contact,template_a1,Nova Luna | https://www.novaluna.io | US
+2,webelieve@charleysignature.com,,agency_contact,template_a2,Charley Signature | https://charleysignature.com | US
+3,howdy@forefrontweb.com,,agency_contact,template_a3,ForeFront Web | https://forefrontweb.com | US
+4,alicia@38andkip.com,,agency_contact,template_a1,38th & Kip Studio | https://38andkip.com | US
+5,martelli.simone@albesteiner.edu.it,,agency_contact,template_a2,Orizon | https://www.orizon.co | CA
+6,luke@joinamply.com,,agency_contact,template_a3,Amply | https://www.joinamply.com | US
+7,hi@sheikhshadi.com,,agency_contact,template_a1,Sheikh Shadi | https://sheikhshadi.com | US
+1,projects@rubyonyx.com.au,,agency_contact,template_a2,RubyOnyx Marketing & Creative | https://www.rubyonyx.com.au | AU
+2,ar@iknowpromo.com,,agency_contact,template_a3,Identity Marketing Group | https://id.marketing | US
+3,bruce@dynamicwaveconsulting.com,,agency_contact,template_a1,Dynamic Wave Consulting | http://www.dynamicwaveconsulting.com | US
+4,nwargo@s2designgroup.com,,agency_contact,template_a2,S² Design Group | https://www.s2designgroup.com | US
+5,success@dev.family,,agency_contact,template_a3,dev.family | https://dev.family | US
+6,jl@johnluke.com,,agency_contact,template_a1,John Luke Studio | https://johnluke.com | US
+7,admissions@schoolofthought.com,,agency_contact,template_a2,School of Thought | https://www.schoolofthought.com | US
+1,tangela@robotcreative.com,,agency_contact,template_a3,Robot Creative | https://robotcreative.com | US
+2,lina@onlychildesign.com,,agency_contact,template_a1,Onlychild Design | https://onlychildesign.com | US
+3,jessie@bopdesign.com,,agency_contact,template_a2,Bop Design | https://www.bopdesign.com | US
+4,michael@brandforce5.com,,agency_contact,template_a3,Brand Force 5 | https://www.brandforce5.com | US
+5,success@sagefrog.com,,agency_contact,template_a1,Sagefrog Marketing Group | https://www.sagefrog.com | US
+6,adam@5plus8.com,,agency_contact,template_a2,5+8 | https://www.5plus8.com | US
+7,marc@marcposchdesign.com,,agency_contact,template_a3,Marc Posch + Partner | https://marcposchdesign.com | US
+1,talent@mcvotalent.com,,agency_contact,template_a1,MCVO Talent Outsourcing | https://www.mcvotalent.com | US
+2,liz@lizlainereps.com,,agency_contact,template_a2,BluBlu Studios | https://www.blublustudios.com | US
+3,paul@depersico.com,,agency_contact,template_a3,DePersico Creative | http://depersico.com | US
+4,raz@zeevmedia.com,,agency_contact,template_a1,Zeev Media | https://www.zeevmedia.com | US
+5,stanley@metisse.studio,,agency_contact,template_a2,BeCurious Studio | https://becurious.co | US
+6,jordin@unicaformo.com,,agency_contact,template_a3,Unica Formo | https://unicaformo.com | US
+7,liam@meanpug.com,,agency_contact,template_a1,MeanPug | https://www.meanpug.com | US
+1,kristina@designinggig.com,,agency_contact,template_a2,Designing Gig | https://designinggig.com | US
+2,mslk@mslk.com,,agency_contact,template_a3,MSLK | https://mslk.com | US
+3,nl@bambukstudio.com,,agency_contact,template_a1,Bambuk Studio | https://www.bambukstudio.com | UK
+4,louis@altitudemarketing.com,,agency_contact,template_a2,Altitude Marketing | https://www.altitudemarketing.com | US
+5,pr@tenxpr.com,,agency_contact,template_a3,TenXPR | https://tenxpr.com | US
+6,accounts@impro-email.agency,,agency_contact,template_a1,IMPRO Email Agency | https://impro.email | UK
+7,maria@p-and-w.com,,agency_contact,template_a2,Pemberton & Whitefoord | https://www.p-and-w.com | UK
+1,talktous@wearespoton.com,,agency_contact,template_a3,Spot On | https://www.thespotonagency.com | US
+2,paul@paulgregorymedia.com,,agency_contact,template_a1,Paul Gregory Media | https://paulgregorymedia.com | US
+3,parker@wallmandesign.com,,agency_contact,template_a2,Wallman Design | https://www.wallmandesign.com | US
+4,robert@roberthebertmedia.com,,agency_contact,template_a3,Robert Hebert Media | https://www.roberthebertmedia.com | US
+5,inquire@courtneycreativedesigns.com,,agency_contact,template_a1,Courtney Monday | https://courtneycreativedesigns.com | US
+6,collaborate@mantellbrands.com,,agency_contact,template_a2,Mantell | https://www.mantellbrands.com | US
+7,steve@mail.com,,agency_contact,template_a3,Betlace | https://www.betlace.com | UK
+1,hi@deka.agency,,agency_contact,template_a1,Deka Agency | https://www.deka.agency | UK
+2,maciej.kurleto@kartsdesign.com,,agency_contact,template_a2,Karts Design | https://kartsdesign.com | UK
+8,,,,,fill before send
+9,,,,,fill before send
+10,,,,,fill before send
+11,,,,,fill before send
+12,,,,,fill before send
+13,,,,,fill before send
+14,,,,,fill before send

@@ -1,0 +1,2 @@
+id,requested_at,first_name,email,company,accounting_software,estimated_revenue,pain_point,source,qbo_connected,xero_connected,status,audit_sent_at,audit_video_url,next_step,notes
+INB-D6AFD766,2026-07-30T12:05:34.905159+00:00,Test,test@example.com,TestCo,QBO,,,landing_page,false,false,new,,,record audit video,

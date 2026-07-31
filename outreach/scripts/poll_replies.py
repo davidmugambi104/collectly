@@ -38,7 +38,7 @@ import csv
 import os
 import re
 import shutil
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from imapclient import IMAPClient
 import email
 from email.header import decode_header
@@ -121,13 +121,19 @@ def main():
         server.select_folder("INBOX")
 
         criteria = ["UNSEEN"] if UNSEEN_ONLY else ["ALL"]
+        # Optional: only scan recent mail to avoid huge mailboxes
+        days = int(os.environ.get("IMAP_DAYS", "0") or "0")
+        if days > 0:
+            since = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%d-%b-%Y")
+            criteria = criteria + ["SENTSINCE", since]
         message_uids = server.search(criteria)
 
         print(f"Found {len(message_uids)} messages to scan")
 
         for uid in message_uids:
-            raw = server.fetch([uid], ["RFC822"])[uid][b"RFC822"]
-            msg = email.message_from_bytes(raw)
+            # Fetch headers first; only pull full body if we have a match.
+            header_data = server.fetch([uid], ["RFC822.HEADER"])[uid][b"RFC822.HEADER"]
+            msg = email.message_from_bytes(header_data)
 
             referenced_ids = extract_message_id_refs(msg)
             match_id = next((rid for rid in referenced_ids if rid in known_ids), None)
@@ -138,6 +144,8 @@ def main():
                 rows[row_idx]["replied_at"] = datetime.now(timezone.utc).isoformat()
 
                 # grab a short snippet of the reply body for the daily digest
+                full = server.fetch([uid], ["RFC822"])[uid][b"RFC822"]
+                msg = email.message_from_bytes(full)
                 body = ""
                 if msg.is_multipart():
                     for part in msg.walk():

@@ -1,0 +1,10 @@
+Pending gog OAuth re-auth for davidmugambi104@gmail.com
+Generated: 2026-07-29 11:43 UTC
+
+Step 1 URL:
+https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=409636203155-puv60e7llar32ggisr1sdf1ifnfqmepf.apps.googleusercontent.com&code_challenge=_oHrJc_UaY5SQLNS6RQG9Y2EwmiX4hFoG5FLaQdIUYE&code_challenge_method=S256&include_granted_scopes=true&prompt=consent&redirect_uri=http%3A%2F%2F127.0.0.1%3A44171%2Foauth2%2Fcallback&response_type=code&scope=email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.modify+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.settings.basic+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.settings.sharing+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&state=4nrhrpyA47jddvFMA9QHirTBIX0kObcBjYVteY_35zA
+
+Step 2 command (run after you paste the redirect URL from the browser):
+source /home/davie/.openclaw/secrets/gog_keyring.env && export GOG_KEYRING_PASSWORD && gog auth add davidmugambi104@gmail.com --remote --step 2 --auth-url "<PASTE_REDIRECT_URL_HERE>" --services gmail --force-consent
+
+Then rerun daily_outreach_v2.py.

@@ -95,12 +95,7 @@
 
 ## Tier 3: Optional, only if you have a reason
 
-### OpenAI key — 3 min
-**Why:** Currently using Gemini. OpenAI is a backup or A/B for AI features.
-
-1. Go to **https://platform.openai.com/api-keys**
-2. Create new secret key (needs phone-verified account)
-3. Add to `.env.local`: `OPENAI_API_KEY="***"`
+_(Empty — Gemini is the only AI provider. Revisit if you add a second.)_
 
 ---
 
@@ -141,6 +136,6 @@ What's missing for **real production**:
 - Upstash — required before public launch (rate limiting is a security concern)
 
 What's **purely improvement**:
-- Xero, PostHog, OpenAI, more Apollo credits
+- Xero, PostHog, more Apollo credits
 
 **Don't let perfect block good.** Ship with email-only if you have to, add SMS in week 2.

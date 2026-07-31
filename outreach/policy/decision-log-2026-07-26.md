@@ -17,3 +17,8 @@
 ### Uncertain calls
 - none
 
+## Reply-check cron — 2026-07-26T18:18:00+00:00
+- **Blocked:** `gog gmail search` returned `invalid_grant` "Token has been expired or revoked."
+- **Result:** No replies fetched; no triage; no follow-ups sent.
+- **Next step:** Re-authorize `davidmugambi104@gmail.com` in `gog` before the next reply check.
+

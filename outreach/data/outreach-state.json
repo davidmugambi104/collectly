@@ -1,0 +1,115 @@
+{
+  "contacts": {
+    "dan@ascentcfo.com": {
+      "state": "t1_sent",
+      "first_name": "Dan",
+      "last_name": "Degolier",
+      "prospect_id": "6a6b115b96b7e90001b5e07a",
+      "created_at": "2026-07-30T14:44:24.128468+00:00",
+      "last_contact": "2026-07-30T14:44:24.128468+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-07-30T14:44:24.128468+00:00",
+          "message_id": "68c4890f-a511-4cce-9d62-9d0d6653ce28",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e07a"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply"
+    },
+    "lana@hill-bookkeeping.com": {
+      "state": "replied",
+      "first_name": "Lana",
+      "last_name": "Hill",
+      "prospect_id": "6a6b115b96b7e90001b5e084",
+      "created_at": "2026-07-30T14:44:24.128468+00:00",
+      "last_contact": "2026-07-30T14:44:45.392584+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-07-30T14:44:24.128468+00:00",
+          "message_id": "869ca218-cea1-4c17-a082-555b3192d0ac",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e084"
+        }
+      ],
+      "replies": [
+        {
+          "received_at": "2026-07-30T14:44:45.392584+00:00",
+          "source": "manual_test",
+          "subject": "Re: Workflow automation",
+          "reply_text": "Thanks, this sounds interesting. Can we schedule a 15-min call next week?"
+        }
+      ],
+      "next_step": "human_review_priority",
+      "note": "Positive reply / buying signal"
+    },
+    "shetu@divergefinance.com": {
+      "state": "t1_sent",
+      "first_name": "Shetu",
+      "last_name": "Rose",
+      "prospect_id": "6a6b115b96b7e90001b5e06d",
+      "created_at": "2026-07-30T14:44:24.128468+00:00",
+      "last_contact": "2026-07-30T14:44:24.128468+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-07-30T14:44:24.128468+00:00",
+          "message_id": "9114f1a2-e199-40bc-9037-d04fcaddc6c9",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e06d"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply"
+    },
+    "ambrose.lo@chiefaccounting.ca": {
+      "state": "t1_sent",
+      "first_name": "Ambrose",
+      "last_name": "Lo",
+      "prospect_id": "6a6b115b96b7e90001b5e076",
+      "created_at": "2026-07-30T14:44:24.128468+00:00",
+      "last_contact": "2026-07-30T14:44:24.128468+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-07-30T14:44:24.128468+00:00",
+          "message_id": "390e4f9e-5b79-4f7b-98f9-95d215fad4f3",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e076"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply"
+    },
+    "cenk.tukel@tukelinc.com": {
+      "state": "t1_sent",
+      "first_name": "Cenk",
+      "last_name": "Tukel",
+      "prospect_id": "6a6b115b96b7e90001b5e06e",
+      "created_at": "2026-07-30T14:44:24.128468+00:00",
+      "last_contact": "2026-07-30T14:44:24.128468+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-07-30T14:44:24.128468+00:00",
+          "message_id": "2265260b-6db0-4602-b55f-0a3fe328e084",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e06e"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply"
+    }
+  },
+  "emails": {
+    "dan@ascentcfo.com:t1": "2026-07-30T14:44:24.128468+00:00",
+    "lana@hill-bookkeeping.com:t1": "2026-07-30T14:44:24.128468+00:00",
+    "shetu@divergefinance.com:t1": "2026-07-30T14:44:24.128468+00:00",
+    "ambrose.lo@chiefaccounting.ca:t1": "2026-07-30T14:44:24.128468+00:00",
+    "cenk.tukel@tukelinc.com:t1": "2026-07-30T14:44:24.128468+00:00"
+  },
+  "notes": []
+}

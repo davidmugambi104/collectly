@@ -1,0 +1,4 @@
+sent_at,to_email,from_email,status_code,message_id,response_body,inbox_folder,notes
+2026-07-30T12:27:38.127547+00:00,sharonkarendi8@gmail.com,davidmugambi104@gmail.com,403,,"{""statusCode"":403,""message"":""The gmail.com domain is not verified. Please, add and verify your domain on https://resend.com/domains"",""name"":""validation_error""}",,script bug: loaded wrong from_email from shell env; fixed and resent
+2026-07-30T12:27:57.125872+00:00,sharonkarendi8@gmail.com,Davie Mugambi <davie@getcollectly.app>,200,527b8fa4-6ad1-4e95-af19-0131707def6f,"{""id"":""527b8fa4-6ad1-4e95-af19-0131707def6f""}",Gmail Primary,awaiting inbox folder report from recipient
+2026-07-30T12:32:13.966059+00:00,bit202544716@mylife.mku.ac.ke,Davie Mugambi <davie@getcollectly.app>,200,4e590006-4b9a-4c9e-bca7-1568311b3610,"{""id"":""4e590006-4b9a-4c9e-bca7-1568311b3610""}",Outlook Primary,

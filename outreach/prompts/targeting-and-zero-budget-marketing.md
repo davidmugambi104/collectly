@@ -15,7 +15,7 @@ Current product state:
 - QuickBooks / Xero sync
 - Risk scoring
 - Live at getcollectly.app
-- Real customers blocked by 5 user-owned actions (Vercel deploy, Resend domain verify, Stripe webhook secret, OpenAI key, Twilio triplet)
+- Real customers blocked by 4 user-owned actions (Vercel deploy, Resend domain verify, Stripe webhook secret, Twilio triplet). AI is already wired (Gemini).
 
 Current traction:
 - 30 hand-picked agency prospects contacted

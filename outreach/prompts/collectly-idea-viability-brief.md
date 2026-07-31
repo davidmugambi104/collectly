@@ -8,7 +8,7 @@ Paste this into any assistant when you want sharp, context-aware evaluation of C
 Collectly — AI-native accounts-receivable dunning tool for small B2B service businesses.
 
 ## STAGE
-Live product, 0 paying customers. Blocked by 5 founder-owned setup actions: Vercel deploy, Resend domain verify, Stripe webhook secret, OpenAI key, Twilio triplet.
+Live product, 0 paying customers. Blocked by 4 founder-owned setup actions: Vercel deploy, Resend domain verify, Stripe webhook secret, Twilio triplet. AI is already wired (Gemini).
 
 ## WEDGE (v1)
 Local-service marketing agencies (SEO / PPC / web design) serving blue-collar and healthcare SMB clients — HVAC, plumbing, dental, med-spa, roofing, landscaping. 10–25 employees, retainer + project mix, already on QuickBooks or Xero.
