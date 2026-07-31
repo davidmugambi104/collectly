@@ -26,7 +26,12 @@ export async function GET(_req: NextRequest) {
     // TEMP DEBUG (remove after Xero identity-error investigation): client_id
     // is a public OAuth identifier, not a secret — safe to log. Helps confirm
     // exactly what's being sent to Xero without exposing XERO_CLIENT_SECRET.
-    console.log('[xero/connect] client_id=%s redirect_uri=%s', process.env.XERO_CLIENT_ID, process.env.XERO_REDIRECT_URI);
+    const cid = process.env.XERO_CLIENT_ID ?? '';
+    const ruri = process.env.XERO_REDIRECT_URI ?? '';
+    console.log(
+      '[xero/connect] client_id=%s (len=%d) redirect_uri=%s (len=%d)',
+      JSON.stringify(cid), cid.length, JSON.stringify(ruri), ruri.length,
+    );
     return NextResponse.redirect(authUrl);
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
