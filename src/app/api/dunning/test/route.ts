@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const result = await generateDunningMessage({
+      invoiceId: row.invoice.id,
       businessName: row.org.name,
       contactName: row.customer.name,
       invoiceNumber: row.invoice.number,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
 
 export async function GET(req: NextRequest) {
   if (!PAYSTACK_SECRET) {
@@ -25,15 +26,25 @@ export async function GET(req: NextRequest) {
 
     const data = await res.json();
     if (!data.status) {
-      return NextResponse.json({ error: data.message || 'Verification failed' }, { status: 400 });
+      // Redirect back to the portal with a failure flag. The portal reads
+      // ?cancelled=1 and shows a "Payment didn't complete" message — no
+      // auth gate, no dead route.
+      const invoiceId = (data.data?.metadata as any)?.invoiceId;
+      const back = invoiceId ? `${APP_URL}/pay/${invoiceId}?cancelled=1` : `${APP_URL}/pay?cancelled=1`;
+      return NextResponse.redirect(back);
     }
 
-    // Redirect or return JSON depending on use case
+    // Redirect to the actual payment portal page (unauthenticated), not to
+    // /dashboard/payment/* which is auth-gated. Previously this redirected
+    // to a route that didn't exist at all.
+    const invoiceId = (data.data?.metadata as any)?.invoiceId;
     const status = data.data?.status;
     if (status === 'success') {
-      return NextResponse.redirect(new URL('/dashboard/payment/success', req.url));
+      const back = invoiceId ? `${APP_URL}/pay/${invoiceId}?paid=1&reference=${encodeURIComponent(reference)}` : `${APP_URL}/pay?paid=1`;
+      return NextResponse.redirect(back);
     }
-    return NextResponse.redirect(new URL('/dashboard/payment/failed', req.url));
+    const back = invoiceId ? `${APP_URL}/pay/${invoiceId}?cancelled=1` : `${APP_URL}/pay?cancelled=1`;
+    return NextResponse.redirect(back);
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
   }

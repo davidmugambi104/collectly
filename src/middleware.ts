@@ -9,6 +9,11 @@ const isPublicRoute = createRouteMatcher([
   '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
   // Public auth flow
   '/sign-in(.*)', '/sign-up(.*)', '/sso-callback(.*)',
+  // Payment portal — the customer's customer needs to hit this without an account.
+  // Without these entries, Clerk's auth check returns 404 on /pay/... and the
+  // dunning-email pay link silently breaks (the conversion funnel dead-ends).
+  // /api/webhooks/* must remain public (webhooks can't carry Clerk tokens).
+  '/pay/(.*)', '/api/payment/(.*)', '/api/paystack/(.*)',
   // Public marketing APIs
   '/api/waitlist', '/api/lead-notify', '/api/interview', '/api/ar-audit',
   // Public demo / preview / seed flows (no auth needed)

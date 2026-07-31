@@ -33,6 +33,8 @@ function getModel(): GenerativeModel {
 export type DunningTone = 'friendly' | 'firm' | 'final';
 
 export interface DunningContext {
+  /** nanoid PK — used to build the payment portal link. Required. */
+  invoiceId: string;
   businessName: string;
   contactName: string | null;
   invoiceNumber: string;
@@ -178,7 +180,11 @@ Write the message.`;
 }
 
 export function fallbackDunningMessage(ctx: DunningContext): { subject?: string; body: string } {
-  const link = `https://getcollectly.app/pay/${ctx.invoiceNumber}`;
+  // The payment portal resolves by invoice.id (nanoid PK), NOT invoice.number
+  // (a human-readable display string). Building the URL from invoiceNumber
+  // was a bug — it shipped broken links to every paying customer. See
+  // src/app/pay/[id]/page.tsx:21 which does `eq(invoices.id, id)`.
+  const link = `https://getcollectly.app/pay/${ctx.invoiceId}`;
   const linkFragment = ctx.channel === 'email' ? `\n\nPay here: ${link}` : ` ${link}`;
   let body: string;
   if (ctx.tone === 'friendly') {

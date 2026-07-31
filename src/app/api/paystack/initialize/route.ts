@@ -15,6 +15,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'email and amount are required' }, { status: 400 });
     }
 
+    // The Paystack webhook (src/app/api/paystack/webhook/route.ts) keys DB
+    // writes off metadata.invoiceId — without it the charge is logged but
+    // never applied to the invoice. Refuse early rather than silently
+    // producing a transaction the system can't reconcile.
+    if (!metadata?.invoiceId) {
+      return NextResponse.json({ error: 'metadata.invoiceId is required' }, { status: 400 });
+    }
+
     const txRef = reference || `collectly-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
     const payload = {
