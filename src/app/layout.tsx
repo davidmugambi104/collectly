@@ -7,15 +7,15 @@ import { Suspense } from 'react';
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
   title: { default: 'Collectly — stop being the one who has to ask', template: '%s · Collectly' },
-  description: 'Collectly follows up on overdue invoices the way a thoughtful operations person would — adapting tone to context, escalating when appropriate, tracking promises to pay, and keeping you out of the uncomfortable parts. Built for local-service marketing agencies, consultancies, IT firms, and the fractional bookkeepers who serve them. QBO or Xero.',
-  keywords: ['accounts receivable','AR automation','invoice collection','cash flow','AI dunning','small business','late invoice follow-up','payment chasing','agency','bookkeeper'],
+  description: 'Collectly follows up on overdue invoices the way a thoughtful operations person would — adapting tone to context, escalating when appropriate, tracking promises to pay, and keeping you out of the uncomfortable parts. Built for 5-30 person agencies and consultancies on Xero.',
+  keywords: ['accounts receivable','AR automation','invoice collection','cash flow','AI dunning','small business','late invoice follow-up','payment chasing','agency','Xero'],
   openGraph: {
     type: 'website',
     title: 'Collectly — stop being the one who has to ask',
-    description: 'AI-native accounts receivable for local-service agencies and bookkeepers. Tone-aware email + SMS dunning on QBO or Xero. From $49/mo flat.',
+    description: 'AI-native accounts receivable for 5-30 person agencies and consultancies. Tone-aware email + SMS dunning on Xero. From $49/mo flat.',
     siteName: 'Collectly',
   },
-  twitter: { card: 'summary_large_image', title: 'Collectly — stop being the one who has to ask', description: 'AI-native accounts receivable for local-service agencies and bookkeepers on QBO or Xero. From $49/mo flat.' },
+  twitter: { card: 'summary_large_image', title: 'Collectly — stop being the one who has to ask', description: 'AI-native accounts receivable for 5-30 person agencies and consultancies on Xero. From $49/mo flat.' },
   robots: { index: true, follow: true },
   icons: { icon: '/icon.svg' },
 };

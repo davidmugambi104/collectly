@@ -23,9 +23,9 @@ export default function AboutPage() {
           <li><b>Honest pricing wins.</b> No per-invoice fees. No setup costs. No annual contracts. No "premium" support tiers.</li>
         </ul>
         <h2 className="h3 mt-10">Where we are</h2>
-        <p>Collectly is built in Nairobi, used globally. The team is small, distributed, and shipping fast. We're backed by design partners in the US, UK, AU, and CA.</p>
+        <p>Collectly is built in Nairobi. The team is small and shipping fast. We're pre-launch, recruiting our first founding cohort from agencies and consultancies in the US, UK, AU, and CA.</p>
         <h2 className="h3 mt-10">Who we serve</h2>
-        <p>B2B service businesses with $500K-$20M revenue, 1-50 employees, and 5+ open invoices at any time. Agencies, consultancies, B2B SaaS, law firms, accounting practices, design studios, software companies, and similar.</p>
+        <p>5-30 person agencies and consultancies on Xero with 5+ open invoices at any time and no full-time credit controller. We're starting narrow on purpose — accountants and bookkeepers are a future distribution channel, not today's primary customer.</p>
       </section>
       <MarketingFooter />
     </div>

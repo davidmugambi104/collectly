@@ -33,7 +33,7 @@ export default function PricingPage() {
 
       <section className="container-page pb-20">
         <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
-          {(['founding','growth'] as const).map((k) => {
+          {(['starter','growth'] as const).map((k) => {
             const p = PLAN_PRICING[k];
             if (!p) return null;
             return (
@@ -42,8 +42,8 @@ export default function PricingPage() {
                 <div className="text-sm text-ink-500">{p.name}</div>
                 <div className="mt-1 text-5xl font-display font-bold text-ink-950">${p.monthly}<span className="text-base font-normal text-ink-500">/mo</span></div>
                 <div className="mt-1 text-sm text-ink-600">
-                  {k === 'founding' && 'First 20 agencies or bookkeepers · all features unlocked · founder onboarding'}
-                  {k === 'growth' && 'For agencies and bookkeepers on multiple client books after founding cohort'}
+                  {k === 'starter' && 'First 20 agencies and consultancies · all features unlocked · founder onboarding'}
+                  {k === 'growth' && 'For agencies and consultancies scaling past the founding cohort'}
                 </div>
                 <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
                   {p.features.map((f) => (

@@ -20,8 +20,8 @@ export default function ChangelogPage() {
             },
             {
               date: '2026-07-05',
-              title: 'Beta: 10 design partners',
-              body: 'Onboarded 10 B2B service businesses for the closed beta. Iterating on dunning tone, cash-flow forecast, and payment portal.',
+              title: 'Beta: opening the founding cohort',
+              body: 'Opened signups for the first 20 founding customers. No customers onboarded yet — this is day one of outreach.',
             },
             {
               date: '2026-06-20',

@@ -28,13 +28,13 @@ export default function HomePage() {
               <h1 className="mt-5 h1">
                 Stop chasing late invoices.
                 <br />
-                <span className="text-2xl sm:text-3xl font-normal text-ink-700">AI follow-ups for marketing agencies, consultancies, IT firms, and bookkeepers on QuickBooks or Xero.</span>
+                <span className="text-2xl sm:text-3xl font-normal text-ink-700">AI follow-ups for 5–30 person agencies and consultancies on Xero.</span>
               </h1>
               <p className="mt-5 lead max-w-xl">
-                Collectly connects to QuickBooks or Xero, identifies overdue invoices, and sends tone-aware
-                email and SMS follow-ups. It pauses when customers reply or pay. You review and approve,
-                or let it run on autopilot. Built for local-service agencies (5–50 people) and the
-                fractional bookkeepers who serve them.
+                Collectly connects to Xero (QuickBooks in beta), identifies overdue invoices, and sends
+                tone-aware email and SMS follow-ups. It pauses when customers reply or pay. You review and
+                approve, or let it run on autopilot. Built for agencies and consultancies with no full-time
+                credit controller.
               </p>
 
               <div className="mt-6 inline-flex flex-col sm:flex-row items-start sm:items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 backdrop-blur px-4 py-3 text-sm text-emerald-900 shadow-sm">
@@ -114,7 +114,7 @@ export default function HomePage() {
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-ink-500">Built in Nairobi · Honest about what ships when</p>
             <p className="mt-3 text-sm text-ink-700">
-              No invented case studies. No fake metrics. Just a founder building the A/R tool he wished he'd had, and a small group of beta partners helping shape it.
+              No invented case studies. No fake metrics. Just a founder building the A/R tool he wished he'd had, pre-launch and recruiting the first founding cohort.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-600">
               <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2 preparation in progress</span>
@@ -160,7 +160,7 @@ export default function HomePage() {
           <div className="max-w-2xl">
             <p className="eyebrow">Features</p>
             <h2 className="mt-2 h2">Everything you need. Nothing you don't.</h2>
-            <p className="mt-4 lead">Designed for businesses with 1–50 employees. Priced for the long tail. Built for speed.</p>
+            <p className="mt-4 lead">Designed for 5–30 person agencies and consultancies on Xero. Priced for the long tail. Built for speed.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             <FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="Stop writing awkward follow-ups" body="AI writes tone-aware email and SMS reminders that sound like you, not a robot. Pause on reply. Pause on payment. Fully editable before send." />
