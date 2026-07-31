@@ -1,0 +1,19 @@
+name: Daily funnel check
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 13:00 UTC daily — mid-morning US, afternoon UK/EU
+  workflow_dispatch: {}     # allow manual trigger from the Actions tab
+
+jobs:
+  public-funnel-smoke:
+    name: Public funnel smoke test (production)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run public funnel smoke test against production
+        env:
+          BASE: ${{ vars.PROD_URL }}
+        run: |
+          BASE="${BASE:-https://getcollectly.app}"
+          BASE="$BASE" bash ops/smoke-prod.sh

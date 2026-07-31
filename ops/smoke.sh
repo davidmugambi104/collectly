@@ -38,6 +38,10 @@ check "GET / returns 200" "200" "$code"
 code=$(http "$BASE/sign-in")
 check "GET /sign-in returns 200" "200" "$code"
 
+# 2b. Sign-up page loads — the actual funnel entry point every homepage CTA points to
+code=$(http "$BASE/sign-up")
+check "GET /sign-up returns 200" "200" "$code"
+
 # 3. Invoice list page (auth-gated — Clerk returns 200 with the sign-in UI in dev)
 code=$(http "$BASE/dashboard/invoices")
 check "GET /dashboard/invoices returns 200" "200" "$code"
@@ -101,8 +105,11 @@ else
   echo "⚠️  CRON_SECRET not found in .env.local — skipping dunning cron check"
 fi
 
-# 9. Cash flow, dunning page, relationships — basic 200s
-for path in /dashboard /dashboard/dunning /dashboard/dunning/sequence /dashboard/cash-flow /dashboard/relationships; do
+# 9. Cash flow, dunning page — basic 200s
+# (/dashboard/relationships is intentionally excluded: it's an empty,
+# un-routed directory not linked from the nav — see shell.tsx NAV — so
+# testing it just produces a false failure for a page no user can reach.)
+for path in /dashboard /dashboard/dunning /dashboard/dunning/sequence /dashboard/cash-flow; do
   code=$(http "$BASE$path")
   check "GET $path returns 200" "200" "$code"
 done
@@ -192,13 +199,13 @@ else
   PASS=$((PASS+1))
 fi
 
-# 17. Homepage copy names the actual ICP (agencies + bookkeepers)
+# 17. Homepage copy names the actual ICP (agencies and consultancies on Xero)
 code=$(http "$BASE/")
-if grep -qiE "marketing agencies|bookkeeper" /tmp/smoke.html; then
-  echo "✅ Homepage mentions agencies and bookkeepers by name"
+if grep -qiE "agencies and consultancies" /tmp/smoke.html; then
+  echo "✅ Homepage mentions agencies and consultancies by name"
   PASS=$((PASS+1))
 else
-  echo "❌ Homepage doesn't name the actual ICP (agencies / bookkeepers)"
+  echo "❌ Homepage doesn't name the actual ICP (agencies and consultancies)"
   FAIL=$((FAIL+1))
 fi
 
