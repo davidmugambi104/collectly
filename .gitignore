@@ -56,6 +56,11 @@ __pycache__/
 *.bak
 **/.archive/
 
+# Internal audit notes (may contain redacted secret-shaped strings
+# that trigger GitHub's secret-scanner; they're working files, not
+# source of truth for the product).
+.audit/
+
 # Local secrets (never commit)
 .creds
 .env.local.save

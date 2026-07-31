@@ -27,7 +27,7 @@ export function getTwilio() {
   return _twilio;
 }
 export function getStripe() {
-  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? 'sk_test_placeholder', { apiVersion: '2025-02-24.acacia' });
+  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? 'PLACEHOLDER_FROM_ENV', { apiVersion: '2025-02-24.acacia' });
   return _stripe;
 }
 
