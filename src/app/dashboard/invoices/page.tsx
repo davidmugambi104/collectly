@@ -6,8 +6,7 @@ import { getAuth as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { invoices, customers } from '@/db/schema';
-import { eq, sql, and } from 'drizzle-orm';
-import { formatCurrency, daysOverdue, formatDate } from '@/lib/utils';
+import { eq, sql, and, or, ilike } from 'drizzle-orm';
 import Link from 'next/link';
 import { Search, Filter, Download, Plus } from 'lucide-react';
 
@@ -18,29 +17,46 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
 
   const sp = await searchParams;
   const filter = sp.filter ?? 'all';
-  const q = (sp.q ?? '').toLowerCase().trim();
-  const where = filter === 'overdue'
-    ? and(eq(invoices.orgId, orgId), sql`${invoices.dueDate} < NOW()`)
-    : filter === 'paid'
-    ? and(eq(invoices.orgId, orgId), eq(invoices.status, 'paid'))
-    : eq(invoices.orgId, orgId);
+  const q = (sp.q ?? '').trim();
 
+  // Build the base WHERE clause for the active filter
+  const filterCond =
+    filter === 'overdue'
+      ? and(eq(invoices.orgId, orgId), sql`${invoices.dueDate} < NOW()`)
+      : filter === 'paid'
+      ? and(eq(invoices.orgId, orgId), eq(invoices.status, 'paid'))
+      : eq(invoices.orgId, orgId);
+
+  // Push the search query into SQL so it searches the *entire* org, not just
+  // the first 100 rows. ilike is case-insensitive in Postgres. When `q` is
+  // present we use ILIKE across invoice number, customer name/email/company
+  // and amount (so "1,200" or "1200.50" still matches). When absent we keep
+  // the original 100-row recent-invoices cap.
+  const where = q
+    ? and(
+        filterCond,
+        or(
+          ilike(invoices.number, `%${q}%`),
+          ilike(customers.name, `%${q}%`),
+          ilike(customers.email, `%${q}%`),
+          ilike(customers.company, `%${q}%`),
+          // numeric search: strip common formatting
+          sql`${invoices.amount}::text ILIKE ${`%${q.replace(/[,\s$]/g, '')}%`}`,
+        ),
+      )
+    : filterCond;
+
+  const limit = q ? 500 : 100;
   const rows = await db
     .select({ invoice: invoices, customer: customers })
     .from(invoices)
     .innerJoin(customers, eq(customers.id, invoices.customerId))
     .where(where)
     .orderBy(invoices.dueDate)
-    .limit(100);
+    .limit(limit);
 
-  const filtered = q
-    ? rows.filter((r: typeof rows[number]) =>
-        r.invoice.number.toLowerCase().includes(q) ||
-        r.customer.name.toLowerCase().includes(q) ||
-        (r.customer.email ?? '').toLowerCase().includes(q) ||
-        (r.customer.company ?? '').toLowerCase().includes(q)
-      )
-    : rows;
+  // No more post-fetch JS filter — the SQL already handled it.
+  const filtered = rows;
 
   return (
     <AppShell title="Invoices" subtitle={`${filtered.length} invoice${filtered.length === 1 ? '' : 's'}${q ? ` matching "${q}"` : ''}`}>
