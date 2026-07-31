@@ -13,9 +13,9 @@ export default function AboutPage() {
         <h1 className="mt-3 h1">We're building the A/R tool we wish we had.</h1>
       </section>
       <section className="container-page pb-20 max-w-3xl prose prose-ink">
-        <p className="lead">Collectly is an AI-native accounts-receivable platform built for the long tail of small businesses. The 5-50 person teams that account for the majority of the global economy, and the majority of overdue invoices.</p>
+        <p className="lead">Collectly is being built for 5–30 person agencies and consultancies using Xero, where a founder or operations lead still manages overdue invoices manually.</p>
         <h2 className="h3 mt-10">Why we exist</h2>
-        <p>The A/R automation market is $4-6B and growing. It's also dominated by tools priced for 500-person companies, plus a QuickBooks AR module so broken its own users call it "of no use." The 5-50 person segment — the heart of the SMB economy — has no good option.</p>
+        <p>The A/R automation market is $4-6B and growing. It's also dominated by tools priced for 500-person companies. QuickBooks and Xero now cover the invoicing and reminders basics — what's missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
         <h2 className="h3 mt-10">What we believe</h2>
         <ul>
           <li><b>Small business owners are not stupid.</b> They're under-resourced, under-tooled, and overwhelmed. The right tool respects their time.</li>

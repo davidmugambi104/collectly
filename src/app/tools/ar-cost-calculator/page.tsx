@@ -6,7 +6,7 @@ import { ArCostCalculator } from './client';
 
 export const metadata: Metadata = {
   title: 'Late Payment Cost Calculator — How much is your agency losing?',
-  description: 'Free 2-minute calculator: see how much late invoices and manual chasing are costing your agency every year. Built for 5-50 person service businesses.',
+  description: 'Free 2-minute calculator: see how much late invoices and manual chasing are costing your agency every year. Built for 5-30 person agencies and consultancies.',
   keywords: ['late payment cost', 'agency cash flow', 'invoice chasing cost', 'AR calculator', 'accounts receivable calculator'],
   openGraph: {
     title: 'Late Payment Cost Calculator — Collectly',

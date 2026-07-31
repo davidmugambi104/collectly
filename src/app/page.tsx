@@ -117,7 +117,7 @@ export default function HomePage() {
               No invented case studies. No fake metrics. Just a founder building the A/R tool he wished he'd had, pre-launch and recruiting the first founding cohort.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-600">
-              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2 preparation in progress</span>
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2 Type II preparation in progress</span>
               <span className="inline-flex items-center gap-1.5"><Globe2 className="h-3.5 w-3.5 text-emerald-600" /> Global payment rails</span>
               <span className="inline-flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-emerald-600" /> 10-minute setup</span>
             </div>
@@ -332,7 +332,7 @@ export default function HomePage() {
                 <td className="px-6 py-4 text-center">Manual reminders ⚠️</td>
               </tr>
               <tr className="bg-ink-50">
-                <td className="px-6 py-4 font-medium text-ink-900">Built for 1–50 person service businesses</td>
+                <td className="px-6 py-4 font-medium text-ink-900">Built for 5-30 person agencies and consultancies</td>
                 <td className="px-6 py-4 text-center text-emerald-700">✅ Yes</td>
                 <td className="px-6 py-4 text-center">SMB-friendly ✅</td>
                 <td className="px-6 py-4 text-center">Mid-market+ ❌</td>

@@ -6,7 +6,7 @@ import { RoiCalculator } from './client';
 
 export const metadata: Metadata = {
   title: 'A/R ROI Calculator — How much is slow invoicing costing you?',
-  description: 'Free calculator: see exactly how much cash faster invoicing would free up for your service business. Built for 5-50 person teams on net-30 / net-60 terms.',
+  description: 'Free calculator: see exactly how much cash faster invoicing would free up for your service business. Built for 5-30 person agencies and consultancies on net-30 / net-60 terms.',
   keywords: ['AR calculator', 'DSO calculator', 'days sales outstanding', 'cash flow calculator', 'small business AR'],
   openGraph: {
     title: 'A/R ROI Calculator — Collectly',
@@ -26,7 +26,7 @@ export default function ArRoiPage() {
               How much is slow invoicing costing you?
             </h1>
             <p className="mt-4 text-lg text-ink-600">
-              Most 5–50 person service businesses are leaving <b>$15,000–$90,000</b> on the table every year in late payments. Punch in your numbers and see what faster collections would actually do for you.
+              Most 5–30 person agencies and consultancies are leaving <b>$15,000–$90,000</b> on the table every year in late payments. Punch in your numbers and see what faster collections would actually do for you.
             </p>
           </div>
           <RoiCalculator />

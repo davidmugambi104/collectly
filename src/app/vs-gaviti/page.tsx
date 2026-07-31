@@ -20,7 +20,7 @@ const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: '$49/mo flat, public pricing', competitor: 'Custom pricing, request a quote' },
   { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', competitor: 'Implementation-led, weeks' },
   { icon: ShieldCheck, label: 'Focus', collectly: 'AR dunning + cashflow for SMBs', competitor: 'Full invoice-to-cash + credit + deductions' },
-  { icon: Target, label: 'Best for', collectly: '1–50 person B2B services', competitor: 'Mid-market / enterprise finance teams' },
+  { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Mid-market / enterprise finance teams' },
 ];
 
 const STRATEGY = [

@@ -20,7 +20,7 @@ const DIFFS = [
   { icon: Bot, label: 'AI approach', collectly: 'Tone-aware Gemini dunning + risk scoring', competitor: 'Behavioral AI for enterprise collections CRM' },
   { icon: Clock, label: 'Time to value', collectly: '< 1 day, self-serve', competitor: 'Months (ERP implementation)' },
   { icon: Building2, label: 'Integrations', collectly: 'Xero, Plaid, Paystack (live); QuickBooks (beta); Stripe/Square (test/sandbox)', competitor: 'NetSuite, Salesforce, major ERPs' },
-  { icon: Target, label: 'Best for', collectly: 'Small B2B services (1–50 people)', competitor: 'Enterprise AR managers / controllers' },
+  { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Enterprise AR managers / controllers' },
 ];
 
 const STRATEGY = [

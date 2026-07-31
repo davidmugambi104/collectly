@@ -7,7 +7,7 @@ export const POSTS: Post[] = [
     date: '2026-07-10', read: '8 min',
     excerpt: 'QuickBooks AR is unusable. HighRadius is $3K/mo. Gaviti, Growfin, Chaser skip the long tail. Here\'s the gap we\'re building to close.',
     tags: ['A/R automation', 'small business', 'market analysis'],
-    body: `The 5-50 person business segment is the most underserved part of the $4-6B accounts-receivable automation market. Here's the data, the gap, and what we're doing about it.
+    body: `The 5-30 person business segment is the most underserved part of the $4-6B accounts-receivable automation market. Here's the data, the gap, and what we're doing about it.
 
 ## The pain is real, quantified, and getting worse
 
@@ -18,11 +18,11 @@ Three numbers tell the story:
 
 And the late-payment crisis is global. In the UK, **£26 billion is owed to small businesses at any time**, and late payments shut down roughly 14,000 UK businesses last year. The pattern repeats in every market that publishes the data.
 
-For a 5-50 person business, the working capital locked up in unpaid invoices isn't a finance problem. It's a hiring problem, a payroll problem, a "can we take that big new client" problem. It determines whether the business grows or stalls.
+For a 5-30 person business, the working capital locked up in unpaid invoices isn't a finance problem. It's a hiring problem, a payroll problem, a "can we take that big new client" problem. It determines whether the business grows or stalls.
 
 ## The tools don't fit
 
-We spent the first 6 weeks of building Collectly auditing every A/R tool we could find. The market splits into four buckets, and only one of them actually fits the 5-50 person segment.
+We spent the first 6 weeks of building Collectly auditing every A/R tool we could find. The market splits into four buckets, and only one of them actually fits the 5-30 person segment.
 
 ### 1. Enterprise (HighRadius, YayPay, Rimilia)
 - Price: $3,000-$30,000/month
@@ -30,13 +30,13 @@ We spent the first 6 weeks of building Collectly auditing every A/R tool we coul
 - Requires a finance ops team to run
 - Built for the Fortune 500
 
-**Not for the 5-50 person segment. Period.**
+**Not for the 5-30 person segment. Period.**
 
 ### 2. Mid-market (Gaviti, Growfin, Chaser, Tesorio, Kolleno)
 - Price: $500-$2,000/month
 - Implementation: 1-2 weeks
 - Built for 50-200 person teams
-- Real products, but the floor is way above what a 5-50 person business can pay
+- Real products, but the floor is way above what a 5-30 person business can pay
 
 **The closest to viable for some, but still too expensive for most.**
 
@@ -45,7 +45,7 @@ We spent the first 6 weeks of building Collectly auditing every A/R tool we coul
 - Implementation: 0 minutes (it's already there)
 - Quality: unusable
 
-QuickBooks' own community is full of posts like "accounts receivable module is of no use" and "AR module is broken." It's a glorified invoice list. No automation, no dunning, no forecasting, no risk scoring. Just rows.
+QuickBooks now covers invoicing, reminders, payment tracking, aging reports, and even a cash-flow planner. What it doesn't do is relationship-aware follow-up — reading a reply, tracking a promise to pay, routing a dispute, or knowing when to pause because a customer already responded. That's a different workflow, not a missing feature list.
 
 ### 4. Micro-SaaS attempts (ChaserX, Bloomerang, etc.)
 - Price: $19-$99/month
@@ -56,8 +56,8 @@ QuickBooks' own community is full of posts like "accounts receivable module is o
 
 ## The wedge: AI-native, SMB-priced
 
-The gap is clear. Nobody is building for the 5-50 person business with:
-- **Tone-aware AI dunning** (email + SMS, written by GPT-4o)
+The gap is clear. Nobody is building for the 5-30 person business with:
+- **Tone-aware AI dunning** (email + SMS, written by Gemini)
 - **Cash-flow forecasting** (4-week prediction based on aging + history)
 - **Multi-currency** (USD, GBP, AUD, CAD, EUR)
 - **Customer risk scoring**
@@ -70,7 +70,7 @@ That's the wedge. That's what we're building at Collectly.
 
 Three forces are converging:
 
-**1. AI is finally good enough.** GPT-4o writes better dunning copy than most humans. The "polite but firm" tone is hard to get right manually. AI does it in 200ms.
+**1. AI is finally good enough.** Modern LLMs write better dunning copy than most humans. The "polite but firm" tone is hard to get right manually. AI does it in seconds.
 
 **2. SMBs are finally ready.** QuickBooks Online has 7M+ subscribers. Xero has 4M+. The accounting data is in the cloud for the first time in history. The integrations exist.
 
@@ -92,12 +92,11 @@ All of it at **$49-149/mo**. 14-day free trial, no credit card.
 ## Who we serve (and who we don't)
 
 **Best fit:**
-- 5-50 person B2B service businesses
-- $500K-$20M annual revenue
+- 5-30 person agencies and consultancies
+- Xero users (QuickBooks in beta)
 - US, UK, AU, CA for day one (more markets later)
-- QuickBooks Online or Xero users
 - Sells on net-30 or net-60 terms
-- Founder/owner does AR today (or has 1 part-time person)
+- Founder/owner does AR today, with no full-time credit controller
 
 **Not for:**
 - 1-2 person businesses (use Wave or spreadsheets)
@@ -108,7 +107,7 @@ All of it at **$49-149/mo**. 14-day free trial, no credit card.
 
 ## What we'd love to hear from you
 
-We're doing 10 customer interviews in the next 2 weeks. If you run a 5-50 person B2B service business and have thoughts on AR, cash flow, or late payments, we'd love to talk.
+We're doing 10 customer interviews in the next 2 weeks. If you run a 5-30 person B2B service business and have thoughts on AR, cash flow, or late payments, we'd love to talk.
 
 Reply to this email or book a 15-min call: https://cal.com/davie-collectly/15min
 
@@ -153,12 +152,11 @@ If you treat them the same, your forecast is wrong by 30-50%.
 
 ## Weighted aging: a better model
 
-The improvement is straightforward: weight each invoice by its probability of payment, based on its age and the customer's payment history.
+The improvement is straightforward: weight each invoice by its probability of having paid by a given point, based on its age and the customer's payment history. This is a simplified heuristic, not a backtested predictive model — treat it as a way to prioritize, not a number to plan payroll around.
 
-For each invoice, the probability of paying in week N is:
+The probability an invoice is *still unpaid* at day N should decay as N grows past the customer's typical payment day:
 
-**P(pay in week N) = 1 - P(still unpaid at end of week N)**
-**P(still unpaid at week N) = 1 / (1 + e^-(k(N - N0)))**
+**P(still unpaid at day N) = 1 / (1 + e^(k(N - N0)))**
 
 Where:
 - N = days past due (or until due, if not yet due)
@@ -346,7 +344,7 @@ To avoid this, settle the full balance here within 7 days: {{payment_link}}
 
 {{business_name}}
 
-**Why it works:** It states the consequence plainly. The 15-30% fee math is real — most customers will pay to avoid it.
+**Why it works:** It states the consequence plainly. Note: only send this if it's true — collection-referral fees, timing, and reporting rules depend on your contract terms, the collections partner you actually use, and your jurisdiction. Don't send this template unless you have a real collections arrangement behind it.
 
 ## What doesn't work
 
@@ -382,7 +380,7 @@ If you want to test these templates without building the system: getcollectly.ap
     date: '2026-07-14', read: '7 min',
     excerpt: 'A field-tested playbook for cutting days-sales-outstanding. No enterprise software, no consultants. Just 5 things you can do this quarter to get paid faster.',
     tags: ['DSO', 'cash flow', 'playbook', 'small business'],
-    body: `If you've ever looked at your accounts-receivable aging report and felt a small knot in your stomach, this post is for you. We wrote a free 32-page playbook on cutting DSO, and this is the executive summary.
+    body: `If you've ever looked at your accounts-receivable aging report and felt a small knot in your stomach, this post is for you. We wrote a free 7-page playbook on cutting DSO, and this is the executive summary.
 
 ## What DSO actually means (and why it matters)
 
@@ -390,7 +388,7 @@ DSO — Days Sales Outstanding — is the average number of days it takes you to
 
 **(Total accounts receivable ÷ total credit sales) × number of days**
 
-A 5-50 person service business with $3M ARR and a 45-day DSO has roughly **$370k locked up in unpaid invoices at any given time**. Cut that to 18 days and you free up **$222k of working capital**. That's not a finance metric. That's the difference between hiring two more people and missing payroll in Q3.
+A 5-30 person service business with $3M ARR and a 45-day DSO has roughly **$370k locked up in unpaid invoices at any given time**. Cut that to 18 days and you free up **$222k of working capital**. That's not a finance metric. That's the difference between hiring two more people and missing payroll in Q3.
 
 ## Why your DSO is high (the real reason)
 
@@ -444,7 +442,7 @@ The 14-week cash buffer is the one that actually changes the business. They can 
 
 ## Get the full playbook (free)
 
-The full 32-page playbook goes deeper:
+The full 7-page playbook goes deeper:
 
 - The exact email templates for friendly / firm / final tones (with subject line A/B variants)
 - How to negotiate payment terms upfront (with the script)
@@ -524,7 +522,7 @@ Four actions, in order of leverage:
 
 1. **Move from "send and pray" to automated dunning.** One dunning email at 7 days. Another at 14. A final at 30. Most founders do zero of these. Even basic automation cuts DSO by 5-10 days.
 2. **Tighten payment terms upfront.** Net-15 is the new default for service businesses that take this seriously. If your customers are on Net-60, every term you negotiate down to Net-30 is roughly **half your DSO** off the top.
-3. **Require deposits on new customers.** A 25-50% deposit on the first invoice eliminates the worst-case: doing the work and never getting paid. This is the single most under-used tactic in the 5-50 person segment.
+3. **Require deposits on new customers.** A 25-50% deposit on the first invoice eliminates the worst-case: doing the work and never getting paid. This is the single most under-used tactic in the 5-30 person segment.
 4. **Use a frictionless payment link.** Every email reminder should include a pay link. Customers who can pay in 30 seconds pay 6-9 days faster than customers who have to log into a portal they forgot the password to.
 
 You don't need a $3K/month enterprise AR tool to do any of these. You need 30 minutes and the discipline to do them every week.

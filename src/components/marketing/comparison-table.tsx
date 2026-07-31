@@ -5,7 +5,7 @@ import { Check, X } from 'lucide-react';
 // actually evaluate (Chaser, BILL, Melio, QuickBooks AR, FreshBooks). We
 // deliberately exclude enterprise AR platforms (Gaviti, Growfin,
 // HighRadius) — they target $50M+ ARR NetSuite/ERP-first orgs, not the
-// 5–50 person agency we sell to. If you're an enterprise buyer, see the
+// 5–30 person agency we sell to. If you're an enterprise buyer, see the
 // per-page comparisons under /compare.
 
 type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
@@ -16,7 +16,7 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Public starting price', '$49/mo flat', '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees', 'ACH fees'],
   ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min', '< 10 min'],
-  ['Built for 1–50 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
+  ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
   ['Multi-currency', '✓', '✓', '✓', '✓', '—', '✓'],
   ['Multi-entity', 'Growth+', 'Core+', 'Corporate+', '—', '—', '—'],
   ['Cash-flow forecast', '✓', 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
@@ -120,8 +120,8 @@ export function ComparisonTable() {
           vendor's public pricing page. */}
       <div className="mt-6 text-xs text-ink-500 leading-relaxed">
         <p>
-          <b>Scope:</b> Compared against AR/invoicing tools evaluated by 5–50 person service
-          businesses. Enterprise AR platforms (Gaviti, Growfin, HighRadius) are excluded —
+          <b>Scope:</b> Compared against AR/invoicing tools evaluated by 5–30 person agencies and
+          consultancies. Enterprise AR platforms (Gaviti, Growfin, HighRadius) are excluded —
           they target $50M+ ARR ERP-first orgs. See <a href="/vs-freshbooks" className="underline">vs FreshBooks</a> or
           the <a href="/compare" className="underline">full comparison list</a> for the others.
         </p>

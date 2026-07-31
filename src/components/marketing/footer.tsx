@@ -11,13 +11,13 @@ export function MarketingFooter() {
               <Logo className="h-7 w-7" />
               <span>Collectly</span>
             </Link>
-            <p className="mt-3 max-w-sm text-sm text-ink-600">Honest AR automation for small B2B service businesses. Built in Nairobi. Used globally.</p>
+            <p className="mt-3 max-w-sm text-sm text-ink-600">Honest AR automation for 5-30 person agencies and consultancies on Xero. Built in Nairobi.</p>
             <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-ink-500">
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">🇺🇸 🇬🇧 🇪🇺 🇦🇺 🇨🇦 🇰🇪 🇳🇬</span>
-              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">1–50 person teams</span>
-              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">QBO + Xero</span>
+              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">5–30 person teams</span>
+              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Xero (QuickBooks beta)</span>
             </div>
-            <p className="mt-6 text-xs text-ink-500">© 2026 Collectly, Inc. · Built in Nairobi. Used globally.</p>
+            <p className="mt-6 text-xs text-ink-500">© 2026 Collectly, Inc. · Built in Nairobi.</p>
           </div>
           <div>
             <h4 className="text-sm font-semibold text-ink-900">Product</h4>

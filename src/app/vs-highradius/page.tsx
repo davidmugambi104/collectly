@@ -20,7 +20,7 @@ const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR dunning, portal, forecast, risk scoring', competitor: 'O2C + AP + Treasury + Close/Reconciliation' },
   { icon: Clock, label: 'Deployment', collectly: '10-minute self-serve setup', competitor: 'Enterprise implementation + change management' },
   { icon: Globe2, label: 'Integrations', collectly: 'Xero, Plaid, Paystack (live); QuickBooks (beta); Stripe/Square (test/sandbox)', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
-  { icon: Target, label: 'Best for', collectly: '1–50 person B2B services', competitor: 'Large enterprises / Office of the CFO' },
+  { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Large enterprises / Office of the CFO' },
 ];
 
 const STRATEGY = [

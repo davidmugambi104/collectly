@@ -67,7 +67,7 @@ export default function PricingPage() {
         <div className="container-page py-16 max-w-4xl">
           <h2 className="h2 text-center">What you will never pay for</h2>
           <div className="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-ink-700">
-            {['Per-invoice fees', 'Per-email or per-SMS fees', 'Implementation consulting', 'Required onboarding calls', 'Annual contracts', 'Hidden transaction fees (other than 0.4% payment processing)', 'Cancellation fees', '"Premium" support tiers'].map((item) => (
+            {['Per-invoice fees', 'Per-email or per-SMS fees', 'Implementation consulting', 'Required onboarding calls', 'Annual contracts', "Hidden fees (you pay your payment provider's own ~0.4% processing cost, passed through at cost)", 'Cancellation fees', '"Premium" support tiers'].map((item) => (
               <div key={item} className="flex items-center gap-2 py-1.5"><X className="h-3.5 w-3.5 text-red-500" />{item}</div>
             ))}
           </div>

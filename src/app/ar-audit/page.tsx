@@ -33,7 +33,7 @@ const TRIGGERS = [
   'You dread sending payment reminders',
   'Cash flow feels unpredictable month to month',
   'You use QuickBooks, Xero, FreshBooks, or spreadsheets',
-  'Your team is 1–50 people and B2B service-focused',
+  'Your team is 5-30 people, an agency or consultancy',
 ];
 
 export default function ArAuditPage() {
