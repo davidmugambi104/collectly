@@ -13,13 +13,13 @@ import { Bot, Clock, Building2, Target } from 'lucide-react';
 export const metadata = {
   title: 'Collectly vs Growfin — Behavioral AI AR for the rest of us',
   description:
-    'Growfin uses behavioral AI for enterprise order-to-cash on NetSuite. Collectly brings AI tone-aware dunning, cash-flow forecasting, and risk scoring to small B2B service businesses on QBO/Xero at $49/mo.',
+    'Growfin uses behavioral AI for enterprise order-to-cash on NetSuite. Collectly brings AI tone-aware dunning, cash-flow forecasting, and risk scoring to small agencies and consultancies on Xero at $49/mo.',
 };
 
 const DIFFS = [
   { icon: Bot, label: 'AI approach', collectly: 'Tone-aware Gemini dunning + risk scoring', competitor: 'Behavioral AI for enterprise collections CRM' },
   { icon: Clock, label: 'Time to value', collectly: '< 1 day, self-serve', competitor: 'Months (ERP implementation)' },
-  { icon: Building2, label: 'Integrations', collectly: 'QBO, Xero, Plaid, Paystack (live); Stripe/Square (test/sandbox)', competitor: 'NetSuite, Salesforce, major ERPs' },
+  { icon: Building2, label: 'Integrations', collectly: 'Xero, Plaid, Paystack (live); QuickBooks (beta); Stripe/Square (test/sandbox)', competitor: 'NetSuite, Salesforce, major ERPs' },
   { icon: Target, label: 'Best for', collectly: 'Small B2B services (1–50 people)', competitor: 'Enterprise AR managers / controllers' },
 ];
 
@@ -31,7 +31,7 @@ const STRATEGY = [
 ];
 
 const CHOOSE_US = [
-  { label: 'You run on QBO or Xero, not NetSuite' },
+  { label: 'You run on Xero (QuickBooks in beta), not NetSuite' },
   { label: 'You want AI-written follow-ups in minutes, not model deployments' },
   { label: 'You need a 4-week cash-flow forecast for planning payroll' },
   { label: 'You prefer flat monthly pricing to enterprise negotiation' },

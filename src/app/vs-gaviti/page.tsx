@@ -32,7 +32,7 @@ const STRATEGY = [
 
 const CHOOSE_US = [
   { label: 'You want transparent, public pricing' },
-  { label: 'You use QBO or Xero, not NetSuite/SAP' },
+  { label: 'You use Xero (QuickBooks in beta), not NetSuite/SAP' },
   { label: 'You need tone-aware AI dunning, not just workflows' },
   { label: 'You want self-serve setup, not a sales cycle' },
 ];
@@ -64,7 +64,7 @@ export default function VsGavitiPage() {
       <WhenToChoose competitorName="Gaviti" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Enterprise power without enterprise pain"
-        body="Start your 14-day free trial. No credit card. Connect QBO or Xero and see Collectly run in under a minute."
+        body="Start your 14-day free trial. No credit card. Connect Xero and see Collectly run in under a minute (QuickBooks integration is in beta)."
       />
       <MarketingFooter />
     </div>

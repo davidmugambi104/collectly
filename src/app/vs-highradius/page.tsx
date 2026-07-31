@@ -13,13 +13,13 @@ import { Layers, Clock, Globe2, Target } from 'lucide-react';
 export const metadata = {
   title: 'Collectly vs HighRadius — SMB AR automation vs autonomous enterprise finance',
   description:
-    'HighRadius builds autonomous finance for the Office of the CFO. Collectly is the simple, AR-native alternative for small B2B service businesses on QBO/Xero starting at $49/mo.',
+    'HighRadius builds autonomous finance for the Office of the CFO. Collectly is the simple, AR-native alternative for small agencies and consultancies on Xero starting at $49/mo.',
 };
 
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR dunning, portal, forecast, risk scoring', competitor: 'O2C + AP + Treasury + Close/Reconciliation' },
   { icon: Clock, label: 'Deployment', collectly: '10-minute self-serve setup', competitor: 'Enterprise implementation + change management' },
-  { icon: Globe2, label: 'Integrations', collectly: 'QBO, Xero, Plaid, Paystack (live); Stripe/Square (test/sandbox)', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
+  { icon: Globe2, label: 'Integrations', collectly: 'Xero, Plaid, Paystack (live); QuickBooks (beta); Stripe/Square (test/sandbox)', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
   { icon: Target, label: 'Best for', collectly: '1–50 person B2B services', competitor: 'Large enterprises / Office of the CFO' },
 ];
 
@@ -33,7 +33,7 @@ const STRATEGY = [
 const CHOOSE_US = [
   { label: 'You want AR automation, not a full finance transformation' },
   { label: 'You need to go live this week, not next quarter' },
-  { label: 'You use QBO/Xero and want a plug-in collections layer' },
+  { label: 'You use Xero (or QuickBooks in beta) and want a plug-in collections layer' },
   { label: 'You want transparent flat pricing' },
 ];
 

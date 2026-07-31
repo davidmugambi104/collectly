@@ -7,7 +7,7 @@ import { ArrowRight, Search } from 'lucide-react';
 export const metadata = {
   title: 'Compare Collectly vs AR automation competitors',
   description:
-    'Side-by-side comparisons of Collectly vs Chaser, BILL, Melio, QuickBooks, Zoho Books, Gaviti, Growfin, HighRadius, FreshBooks, and more. Built for small B2B service businesses on QBO or Xero.',
+    'Side-by-side comparisons of Collectly vs Chaser, BILL, Melio, QuickBooks, Zoho Books, Gaviti, Growfin, HighRadius, FreshBooks, and more. Built for 5-30 person agencies and consultancies on Xero.',
 };
 
 const COMPARISONS = [
