@@ -8,14 +8,14 @@ import { Check, X, ArrowRight, DollarSign, Clock, Zap, Users } from 'lucide-reac
 
 export const metadata = {
   title: 'Collectly vs Chaser — Better AR automation for small B2B services',
-  description: 'Compare Collectly and Chaser for accounts receivable automation. Collectly starts at $49/mo with AI tone-aware dunning, no per-invoice fees, and 10-minute setup. Built for 1–50 person teams on QBO or Xero.',
+  description: 'Compare Collectly and Chaser for accounts receivable automation. Collectly starts at $49/mo with AI tone-aware dunning, no per-invoice fees, and 10-minute setup. Built for 5-30 person agencies and consultancies on Xero.',
 };
 
 const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: '$49/mo flat, no per-invoice fees', chaser: '~$259/mo entry plan' },
   { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', chaser: 'Hours to days' },
   { icon: Zap, label: 'AI dunning', collectly: 'Tone-aware email + SMS out of the box', chaser: 'Email/SMS/call, AI email generator' },
-  { icon: Users, label: 'Best for', collectly: 'Small B2B services (1–50 people)', chaser: 'SMB to mid-market ($5M–$120M revenue)' },
+  { icon: Users, label: 'Best for', collectly: '5-30 person agencies and consultancies', chaser: 'SMB to mid-market ($5M–$120M revenue)' },
 ];
 
 export default function VsChaserPage() {
@@ -100,9 +100,9 @@ export default function VsChaserPage() {
             <div className="card">
               <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Collectly if...</div>
               <ul className="space-y-2 text-sm text-ink-700">
-                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You're a 1–50 person B2B service business</li>
+                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You're a 5-30 person agency or consultancy</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want transparent, flat pricing</li>
-                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You use QuickBooks or Xero</li>
+                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You use Xero (QuickBooks in beta)</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want empathetic, tone-aware follow-up</li>
               </ul>
             </div>

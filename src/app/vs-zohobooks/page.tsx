@@ -20,7 +20,7 @@ const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', competitor: 'Basic invoice reminders' },
   { icon: Layers, label: 'AR depth', collectly: 'Aging, forecast, risk score, branded portal', competitor: 'Invoicing + payment tracking inside Zoho suite' },
   { icon: DollarSign, label: 'Pricing', collectly: '$49/mo flat, no hidden fees', competitor: 'Tiered accounting plans, per-org pricing' },
-  { icon: Target, label: 'Best for', collectly: 'B2B services focused on reducing DSO', competitor: 'Small businesses that want one Zoho suite' },
+  { icon: Target, label: 'Best for', collectly: 'Agencies and consultancies focused on reducing DSO', competitor: 'Small businesses that want one Zoho suite' },
 ];
 
 const STRATEGY = [

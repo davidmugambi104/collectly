@@ -20,7 +20,7 @@ const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', competitor: 'Manual payment reminders' },
   { icon: FileText, label: 'AR depth', collectly: 'Aging, forecast, risk score, portal', competitor: 'Invoicing + basic payment tracking' },
   { icon: Clock, label: 'Time to value', collectly: '< 10 min setup', competitor: 'Already inside FreshBooks, but shallow AR' },
-  { icon: Target, label: 'Best for', collectly: 'B2B services serious about cash flow', competitor: 'Freelancers and small service businesses' },
+  { icon: Target, label: 'Best for', collectly: 'Agencies and consultancies serious about cash flow', competitor: 'Freelancers and small service businesses' },
 ];
 
 const STRATEGY = [

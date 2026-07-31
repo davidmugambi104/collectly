@@ -14,7 +14,7 @@ export const metadata = {
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR-only — deep dunning, forecasting, risk scoring', bill: 'AP + AR + spend/expense platform' },
   { icon: DollarSign, label: 'Pricing', collectly: '$49/mo flat, no per-invoice fees', bill: '$49/user/mo + ACH/card/wire fees' },
-  { icon: Target, label: 'Best for', collectly: 'Small B2B service businesses', bill: 'SMBs and accounting firms needing broad FinOps' },
+  { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', bill: 'SMBs and accounting firms needing broad FinOps' },
   { icon: Receipt, label: 'AR depth', collectly: 'Tone-aware AI dunning + AR aging + cashflow forecast', bill: 'Invoicing, reminders, payment acceptance' },
 ];
 
@@ -29,7 +29,7 @@ export default function VsBillPage() {
         <p className="mt-5 lead">
           BILL is a powerful all-in-one financial operations platform: AP, AR, cards, spend, and credit lines.
           But if your main pain point is overdue invoices, Collectly is the simpler, AR-native choice:
-          flat $49/mo, no per-user charges, no per-invoice fees, and follow-up engineered for small B2B services.
+          flat $49/mo, no per-user charges, no per-invoice fees, and follow-up engineered for agencies and consultancies.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/sign-up">
