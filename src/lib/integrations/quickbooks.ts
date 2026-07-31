@@ -53,12 +53,33 @@ async function getFreshQboToken(orgId: string) {
   }
   const json: any = await res.json();
   const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
+  // P1.6 audit fix 2026-07-31: capture refresh-token expiry.
+  // Intuit sends it in the `x_refresh_token_expires_in` response header
+  // (HTTP/2 canonical name) or `refresh_token_expires_in` in the body
+  // depending on endpoint version. Default to 100 days if absent — that
+  // was the historical cap before Intuit's new policy rolled out.
+  const refreshExpiresInSec = Number(
+    res.headers.get('x_refresh_token_expires_in')
+    ?? json.refresh_token_expires_in
+    ?? json.x_refresh_token_expires_in
+    ?? (100 * 24 * 60 * 60)
+  );
+  const newRefreshExpiresAt = Number.isFinite(refreshExpiresInSec) && refreshExpiresInSec > 0
+    ? new Date(now + refreshExpiresInSec * 1000)
+    : null;
+  if (newRefreshExpiresAt && newRefreshExpiresAt.getTime() - now < 7 * 24 * 60 * 60 * 1000) {
+    console.warn(`[qbo] refresh token for orgId=${orgId} expires in <7 days (${newRefreshExpiresAt.toISOString()}). User must reconnect before expiry.`);
+  }
   await db.update(integrations).set({
     accessToken: json.access_token,
     refreshToken: json.refresh_token ?? integ.refreshToken,
     expiresAt: newExpiresAt,
     status: 'connected',
     updatedAt: new Date(),
+    metadata: {
+      ...((integ.metadata as Record<string, any>) ?? {}),
+      refreshExpiresAt: newRefreshExpiresAt ? newRefreshExpiresAt.toISOString() : null,
+    },
   }).where(eq(integrations.id, integ.id));
   return { ...integ, accessToken: json.access_token, refreshToken: json.refresh_token ?? integ.refreshToken, expiresAt: newExpiresAt };
 }
@@ -412,4 +433,28 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks')));
 
   return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors };
+}
+
+/**
+ * Stubs added in P1.6 audit fix 2026-07-31 so that callers (e.g.
+ * /api/integrations/sync) can reference reconnect-required semantics
+ * without the QBO refresh-token-expiry migration depending on the
+ * larger QBO refactor (which is still in dirty tree).
+ *
+ * `QboReconnectRequiredError` — thrown when the cached refresh token
+ * has reached its `metadata.refreshExpiresAt`. Caller surfaces to UI.
+ *
+ * `getQboReconnectUrl(orgId)` — returns the OAuth reconnect URL for
+ * the org. Uses QBO_CONNECT_URL or returns the connect route as fallback.
+ */
+export class QboReconnectRequiredError extends Error {
+  constructor(message = 'QuickBooks reconnect required', public readonly orgId?: string) {
+    super(message);
+    this.name = 'QboReconnectRequiredError';
+  }
+}
+
+export function getQboReconnectUrl(orgId: string): string {
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  return `${base}/api/quickbooks/connect?orgId=${encodeURIComponent(orgId)}`;
 }
