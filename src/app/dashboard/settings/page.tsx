@@ -7,6 +7,7 @@ import { db } from '@/db';
 import { organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { DeleteAccountCard } from './delete-account-card';
 
 export default async function SettingsPage() {
   const { userId, orgId } = await auth();
@@ -62,6 +63,10 @@ export default async function SettingsPage() {
           <button className="btn-primary">Save changes</button>
         </div>
       </form>
+
+      <div className="mt-8">
+        <DeleteAccountCard orgName={org?.name ?? ''} />
+      </div>
     </AppShell>
   );
 }

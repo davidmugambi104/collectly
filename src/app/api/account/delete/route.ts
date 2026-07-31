@@ -6,6 +6,7 @@ import { organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { recordEvent } from '@/lib/events';
+import { clerkClient } from '@clerk/nextjs/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,9 +24,10 @@ export const dynamic = 'force-dynamic';
  * `references(() => organizations.id, { onDelete: 'cascade' })`, so removing
  * the organization row removes the tenant's data in one transaction.
  *
- * NOTE: this deletes application data only. Deleting the Clerk user/org is a
- * separate call against Clerk's API and should be wired before GA — see the
- * TODO below. Until then the operator must also remove the Clerk org.
+ * We also delete the Clerk organization so the user's auth record doesn't
+ * outlive their application data. The Clerk delete is best-effort — if it
+ * fails (e.g. transient Clerk API outage), the application data is already
+ * gone, so we surface the failure to the operator rather than to the user.
  */
 const schema = z.object({ confirm: z.string().min(1) });
 
@@ -74,7 +76,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'deletion failed' }, { status: 500 });
   }
 
-  // TODO(before GA): also delete the Clerk organization + memberships via the
-  // Clerk Backend API so auth records don't outlive the application data.
+  // Also remove the Clerk organization so the user's auth record doesn't
+  // outlive the application data. Best-effort: application data is already
+  // gone, so a Clerk API failure is logged but does not roll back the
+  // user-visible success. The operator must reconcile via Clerk dashboard.
+  try {
+    const client = await clerkClient();
+    await client.organizations.deleteOrganization(orgId);
+  } catch (e: any) {
+    console.error(
+      '[account.delete] Clerk org delete failed (app data already removed):',
+      e?.errors?.[0]?.message ?? e?.message ?? e,
+    );
+  }
+
   return NextResponse.json({ ok: true, deleted: orgId });
 }
