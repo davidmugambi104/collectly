@@ -69,15 +69,23 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
 }
 
 export async function sendSms(opts: { to: string; body: string }) {
-  const client = getTwilio();
-  if (!client) { console.warn('[sms] twilio not configured — skipping send'); return { sid: 'dev-stub' }; }
+  if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_FROM_NUMBER) {
+    // Symmetric with sendEmail's missing-key path. The dunning scheduler
+    // (src/lib/dunning/scheduler.ts) checks status === 'skipped' to mark
+    // a run as failed rather than 'sent' — otherwise the dashboard would
+    // log an SMS as delivered when nothing left the box. Without this,
+    // a missing Twilio config silently becomes a lie to the user.
+    console.warn('[sms] twilio not configured — skipping send');
+    return { sid: 'dev-stub', status: 'skipped' as const };
+  }
+  const client = getTwilio()!;
   // Twilio client.messages.create throws on transport errors but returns
   // { sid, error_code, error_message } on API errors. Surface both.
-  const msg = await client.messages.create({ from: process.env.TWILIO_FROM_NUMBER ?? '', to: opts.to, body: opts.body });
+  const msg = await client.messages.create({ from: process.env.TWILIO_FROM_NUMBER, to: opts.to, body: opts.body });
   if ((msg as any).errorCode || (msg as any).errorMessage) {
     throw new Error(`twilio: ${(msg as any).errorCode ?? 'error'}: ${(msg as any).errorMessage}`);
   }
-  return msg;
+  return { sid: msg.sid, status: 'sent' as const };
 }
 
 /**

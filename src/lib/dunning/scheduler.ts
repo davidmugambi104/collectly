@@ -68,6 +68,7 @@ export async function processDunning() {
 
       try {
         const result = await generateDunningMessage({
+          invoiceId: invoice.id,
           businessName,
           contactName: customer.name,
           invoiceNumber: invoice.number,
@@ -146,11 +147,13 @@ export async function processDunning() {
             }
           } else if (lastStep.channel === 'sms' && customer.phone) {
             const sms = await sendSms({ to: customer.phone, body: result.body });
-            // sendSms returns { sid: 'dev-stub' } when Twilio is not configured.
-            // Mirror the email 'skipped' guard: treat stub sends as a config
-            // failure so operators don't read 'sent' rows that never reached
-            // the carrier. (P0 audit fix 2026-07-31.)
-            if ((sms as any)?.sid === 'dev-stub') {
+            // sendSms returns { sid: 'dev-stub', status: 'skipped' as const }
+            // when Twilio isn't configured, mirroring sendEmail's contract.
+            // Without this check, every SMS dunning step gets recorded as
+            // 'sent' in the dashboard while zero messages actually go out.
+            // P0 audit fix 2026-07-31 — mirrors the email-branch guard three
+            // lines above (lines 109–110).
+            if ((sms as any).status === 'skipped') {
               await db.update(dunningRuns).set({ status: 'failed', error: 'twilio not configured' }).where(eq(dunningRuns.id, run.id));
               errors += 1;
               await recordEvent({
