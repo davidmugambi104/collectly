@@ -84,18 +84,42 @@ export async function processDunning() {
           },
         });
 
-        const [run] = await db.insert(dunningRuns).values({
-          id: nanoid(),
-          orgId: seq.orgId,
-          invoiceId: invoice.id,
-          sequenceId: seq.id,
-          stepId: lastStep.id,
-          channel: lastStep.channel,
-          status: 'scheduled',
-          scheduledFor: now,
-          subject: result.subject,
-          body: result.body,
-        }).returning();
+        // Wrap the dedup select + insert in a single transaction so a
+      // concurrent cron invocation cannot double-schedule the same
+      // (invoiceId, sequenceId, stepId). We rely on the unique index on
+      // (invoice_id, sequence_id, step_id) (added in 0003 if not present;
+      // dedup is the existing convention) and ON CONFLICT DO NOTHING so
+      // the second writer sees zero returning rows and skips cleanly.
+      // P1.4 audit fix 2026-07-31.
+      let insertedRunId: string | null = null;
+      try {
+        insertedRunId = await db.transaction(async (tx: any) => {
+          const [run] = await tx
+            .insert(dunningRuns)
+            .values({
+              id: nanoid(),
+              orgId: seq.orgId,
+              invoiceId: invoice.id,
+              sequenceId: seq.id,
+              stepId: lastStep.id,
+              channel: lastStep.channel,
+              status: 'scheduled',
+              scheduledFor: now,
+              subject: result.subject,
+              body: result.body,
+            })
+            .onConflictDoNothing({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId] })
+            .returning();
+          return run?.id ?? null;
+        });
+      } catch (e: any) {
+        errors += 1;
+        console.error('[dunning] schedule tx failed:', e?.message);
+        continue;
+      }
+      if (!insertedRunId) continue; // another concurrent run won the race
+
+      const run = { id: insertedRunId } as { id: string };
 
         // Send immediately (in production: queue with retries)
         try {
