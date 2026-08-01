@@ -2,18 +2,22 @@
  * OAuth state store for CSRF protection on authorization-code callbacks.
  *
  * Why this exists: the OAuth 2.0 `state` parameter is the canonical defense
- * against CSRF on the redirect-back-to-app flow. Intuit passes whatever we
- * put in the URL through unchanged, so we own the full lifecycle:
+ * against CSRF on the redirect-back-to-app flow. Both Intuit (QuickBooks)
+ * and Xero pass whatever we put in the URL through unchanged, so we own the
+ * full lifecycle. This module is shared by both integrations:
  *
- *   1. /api/quickbooks/connect generates a 32-byte random `nonce`.
- *   2. We bind `{ nonce → orgId, userId }` server-side with a short TTL.
- *   3. We send `nonce` to Intuit as `state`.
- *   4. /api/quickbooks/callback looks up the nonce, checks the binding,
+ *   1. /api/{quickbooks,xero}/connect generates a 32-byte random `nonce`.
+ *   2. We bind `{ nonce → orgId, userId, provider }` server-side with a short TTL.
+ *   3. We send `nonce` to the provider as `state`.
+ *   4. /api/{quickbooks,xero}/callback looks up the nonce, checks the binding,
  *      and DELETES the row (single-use).
  *
- * Storage: Upstash Redis when configured (multi-instance safe). Falls back
- * to a signed+encrypted HTTP-only cookie when Redis is unavailable, so dev
- * environments without Redis still get the same CSRF protection.
+ * Storage: Upstash Redis when configured (multi-instance safe; keyed only by
+ * nonce, so it's provider-agnostic). Falls back to a signed+encrypted
+ * HTTP-only cookie when Redis is unavailable, so dev environments without
+ * Redis still get the same CSRF protection — the cookie name and path are
+ * namespaced per `provider` (see stateCookieName/stateCookiePath below) so
+ * the QuickBooks and Xero flows never clobber each other's pending state.
  *
  * `state` MUST NOT be guessable. Using the orgId (or any client-supplied
  * value) defeats the whole point — an attacker who knows the victim is a
@@ -35,14 +39,24 @@ async function readCookieJar(): Promise<CookieJar | null> {
   }
 }
 
-const STATE_COOKIE = 'qbo_oauth_state';
+export type OAuthProvider = 'quickbooks' | 'xero';
+
 const STATE_TTL_SECONDS = 10 * 60; // 10 min — long enough for user to auth, short enough to limit replay.
 const COOKIE_SECRET = process.env.OAUTH_STATE_SECRET ?? process.env.CRON_SECRET ?? 'collectly-dev-fallback';
+
+// Cookie name + path are per-provider so QuickBooks and Xero flows (which
+// share this module) never read/overwrite each other's pending state.
+function stateCookieName(provider: OAuthProvider): string {
+  return `${provider}_oauth_state`;
+}
+function stateCookiePath(provider: OAuthProvider): string {
+  return `/api/${provider}`;
+}
 
 interface PendingState {
   orgId: string;
   userId: string;
-  provider: 'quickbooks';
+  provider: OAuthProvider;
   createdAt: number;
 }
 
@@ -86,9 +100,9 @@ function decryptCookie(payload: string): string | null {
  * binding in Redis (preferred) or a signed encrypted cookie (fallback).
  * Returns the nonce to put in the `state` query param.
  */
-export async function mintOAuthState(orgId: string, userId: string): Promise<string> {
+export async function mintOAuthState(orgId: string, userId: string, provider: OAuthProvider = 'quickbooks'): Promise<string> {
   const nonce = newNonce();
-  const binding: PendingState = { orgId, userId, provider: 'quickbooks', createdAt: Date.now() };
+  const binding: PendingState = { orgId, userId, provider, createdAt: Date.now() };
 
   const redis = getRedis();
   if (redis) {
@@ -97,16 +111,27 @@ export async function mintOAuthState(orgId: string, userId: string): Promise<str
     // Fallback: signed+encrypted cookie, single-use via a "consumed" flag
     // we set in a second cookie after consumption. For dev/PGlite without
     // Redis, this is acceptable; for prod we expect UPSTASH env to be set.
+    // NOTE: cookie name/path are namespaced per provider (see stateCookieName/
+    // stateCookiePath) — previously this was hardcoded to the QuickBooks
+    // cookie name and to path '/api/quickbooks', which meant that on any
+    // deployment without Redis configured, the Xero connect flow would set
+    // a state cookie the browser would never send back on
+    // /api/xero/callback (wrong path), so consumeOAuthState would always
+    // see "missing" and the Xero connection would fail after a successful
+    // Xero login. Redis-backed environments were unaffected since provider
+    // wasn't part of the lookup key there — but the mismatch still made the
+    // in-memory PendingState.provider field permanently (and misleadingly)
+    // report 'quickbooks' for Xero connections too.
     const payload = encryptCookie(JSON.stringify({ nonce, binding }));
     const jar = await readCookieJar();
     if (!jar) {
       throw new Error('OAuth state store unavailable: no Redis and no request cookie context');
     }
-    jar.set(STATE_COOKIE, payload, {
+    jar.set(stateCookieName(provider), payload, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      path: '/api/quickbooks',
+      path: stateCookiePath(provider),
       maxAge: STATE_TTL_SECONDS,
     });
   }
@@ -122,7 +147,7 @@ export type ConsumeResult =
  * Single-use: the binding is deleted after consumption so a replayed
  * callback cannot succeed.
  */
-export async function consumeOAuthState(nonce: string, expected: { orgId: string; userId: string }): Promise<ConsumeResult> {
+export async function consumeOAuthState(nonce: string, expected: { orgId: string; userId: string }, provider: OAuthProvider = 'quickbooks'): Promise<ConsumeResult> {
   if (!nonce || nonce.length < 16) return { ok: false, reason: 'malformed' };
 
   const redis = getRedis();
@@ -144,12 +169,14 @@ export async function consumeOAuthState(nonce: string, expected: { orgId: string
   }
 
   // Cookie fallback — read the encrypted payload, verify, clear cookie.
+  // Cookie name is namespaced per provider (see mintOAuthState) so the
+  // QuickBooks and Xero flows don't collide when Redis isn't configured.
   const jar = await readCookieJar();
-  const raw = jar?.get(STATE_COOKIE)?.value;
+  const raw = jar?.get(stateCookieName(provider))?.value;
   if (!raw) return { ok: false, reason: 'missing' };
   const plain = decryptCookie(raw);
   if (!plain) return { ok: false, reason: 'malformed' };
-  jar!.delete(STATE_COOKIE);
+  jar!.delete(stateCookieName(provider));
   let parsed: { nonce: string; binding: PendingState };
   try {
     parsed = JSON.parse(plain);

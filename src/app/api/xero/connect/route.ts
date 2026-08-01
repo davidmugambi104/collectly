@@ -21,7 +21,7 @@ export async function GET(_req: NextRequest) {
   }
 
   try {
-    const state = await mintOAuthState(orgId, userId);
+    const state = await mintOAuthState(orgId, userId, 'xero');
     const authUrl = xeroAuthUrl(state);
     // TEMP DEBUG (remove after Xero identity-error investigation): client_id
     // is a public OAuth identifier, not a secret — safe to log. Helps confirm

@@ -26,7 +26,7 @@ export async function GET(_req: NextRequest) {
   }
 
   try {
-    const state = await mintOAuthState(orgId, userId);
+    const state = await mintOAuthState(orgId, userId, 'quickbooks');
     return NextResponse.redirect(qboAuthUrl(state));
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });

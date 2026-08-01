@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   if (!session?.orgId || !session?.userId) {
     return NextResponse.redirect(new URL('/dashboard/integrations?err=quickbooks&reason=invalid_state', req.url));
   }
-  const consumed = await consumeOAuthState(state, { orgId: session.orgId, userId: session.userId });
+  const consumed = await consumeOAuthState(state, { orgId: session.orgId, userId: session.userId }, 'quickbooks');
   if (!consumed.ok) {
     return NextResponse.redirect(new URL(`/dashboard/integrations?err=quickbooks&reason=${encodeURIComponent(consumed.reason)}`, req.url));
   }
