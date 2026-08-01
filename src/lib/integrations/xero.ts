@@ -97,7 +97,16 @@ export function xeroAuthUrl(state: string) {
     response_type: 'code',
     client_id: process.env.XERO_CLIENT_ID ?? '',
     redirect_uri: process.env.XERO_REDIRECT_URI ?? '',
-    scope: 'openid profile email accounting.transactions accounting.contacts offline_access',
+    // Xero split the broad `accounting.transactions` scope into granular
+    // scopes; apps created on/after 2026-03-02 are rejected outright at the
+    // authorize step if they request the deprecated broad scope (this is the
+    // leading hypothesis for the identity/error page seen in production).
+    // accounting.invoices.read covers invoices/credit notes/purchase orders
+    // (read-only — we never write invoices). accounting.payments is
+    // read/write since createPayment() POSTs to /Payments. accounting.contacts
+    // was not part of the split and is unchanged.
+    // Source: https://developer.xero.com/documentation/guides/oauth2/scopes/
+    scope: 'openid profile email accounting.invoices.read accounting.contacts accounting.payments offline_access',
     state,
   });
   return `https://login.xero.com/identity/connect/authorize?${params.toString()}`;
