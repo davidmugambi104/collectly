@@ -24,7 +24,12 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm test
-      - run: npx next lint --quiet || true   # warn-only for now; tighten later
+      # `next lint` is deprecated on Next 15 and had no config until this commit,
+      # so this step silently did nothing before. Real config now exists (see
+      # eslint.config.mjs) but surfaces ~490 pre-existing findings across the
+      # codebase — kept warn-only so this commit doesn't retroactively fail CI
+      # on unrelated debt. Tighten to a hard failure once that backlog is triaged.
+      - run: npx eslint . --max-warnings=99999 || true   # warn-only for now; tighten later
 
   # 2. Build — full Next.js production build
   build:

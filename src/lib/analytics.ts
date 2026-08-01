@@ -151,7 +151,7 @@ export async function getCashFlowSnapshot(orgId: string): Promise<CashFlowSnapsh
 
   // Naive forecast: scale by the average paid-rate, with a floor.
   // If we have no paid history yet, fall back to 70% — but flag as unreliable.
-  let forecastReliable = paidRows.length >= 5;
+  const forecastReliable = paidRows.length >= 5;
   let forecast30d: number;
   if (avgDaysToPay !== null && avgDaysToPay > 0) {
     // Weight forecast by 1 - (avgDaysToPay / 45) to capture the "fraction of A/R we expect to collect in 30 days"
