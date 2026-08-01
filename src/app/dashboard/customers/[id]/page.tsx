@@ -391,9 +391,6 @@ function FollowUpPanel({ insight }: { insight: import('@/lib/analytics').Custome
           </a>
         )}
         <a href={`/dashboard/dunning/sequence`} className="btn-secondary text-sm">View dunning sequence</a>
-        {insight.riskLevel === 'critical' && (
-          <a href={`/dashboard/customers/${insight.customerId}/pause`} className="btn-secondary text-sm">Pause new work</a>
-        )}
       </div>
     </div>
   );
