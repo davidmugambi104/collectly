@@ -9,8 +9,9 @@ import { eq, and, sql, desc } from 'drizzle-orm';
 import { nanoid, daysOverdue, formatCurrency } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
-import { Sparkles, Mail, MessageSquare, Pause, Play, Edit2, BarChart3, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Sparkles, Mail, MessageSquare, Pause, Play, BarChart3, AlertCircle, ArrowLeft } from 'lucide-react';
 import { DunningPreview } from '@/components/dunning/preview';
+import { SequenceEditor } from '@/components/dunning/sequence-editor';
 
 const DEFAULT_STEPS = [
   { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
@@ -82,13 +83,16 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     }
   }
 
-  const [seq] = await db.select().from(dunningSequences).where(eq(dunningSequences.orgId, orgId)).limit(1);
+  let [seq] = await db.select().from(dunningSequences).where(eq(dunningSequences.orgId, orgId)).limit(1);
   if (!seq) {
-    // First-time setup: create the default sequence. The page will re-render
-    // on the next request and pick it up — no revalidatePath needed in render.
-    await db.insert(dunningSequences).values({
+    // First-time setup: create the default sequence and use the returned row
+    // directly. Previously this didn't capture the insert, leaving `seq`
+    // undefined until a future request -- harmless when this page only read
+    // seq?.steps for a static display, but SequenceEditor needs a real
+    // sequenceId to save against on the very first render, not next time.
+    [seq] = await db.insert(dunningSequences).values({
       id: nanoid(), orgId, name: 'Default', isActive: true, steps: DEFAULT_STEPS as any, pauseOnReply: true, pauseOnPayment: true,
-    });
+    }).returning();
   }
 
   const recentRuns = await db
@@ -175,27 +179,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
             </form>
           </div>
 
-          <div className="mt-5 space-y-2.5">
-            {(seq?.steps ?? DEFAULT_STEPS).map((step: any, i: number) => (
-              <div key={step.id ?? i} className="flex items-start gap-3 rounded-lg border border-ink-200 p-3.5 hover:border-ink-300">
-                <div className="h-8 w-8 rounded-md bg-ink-100 grid place-items-center text-xs font-semibold text-ink-700">{i + 1}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-medium text-ink-900">Day {step.daysFromDue}</span>
-                    <span className="badge-neutral capitalize">{step.channel}</span>
-                    <span className={`badge capitalize ${step.tone === 'final' ? 'badge-danger' : step.tone === 'firm' ? 'badge-warn' : 'badge-success'}`}>{step.tone}</span>
-                  </div>
-                  {step.subject && <div className="mt-1 text-xs text-ink-700 truncate"><b>Subject:</b> {step.subject}</div>}
-                  <div className="mt-1 text-xs text-ink-600 line-clamp-2">{step.template}</div>
-                </div>
-                <button className="btn-ghost text-xs"><Edit2 className="h-3 w-3" />Edit</button>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5 flex items-center gap-2">
-            <button className="btn-secondary text-sm">+ Add step</button>
-            <button className="btn-ghost text-sm">Reset to default</button>
+          <div className="mt-5">
+            <SequenceEditor initialSteps={(seq?.steps ?? DEFAULT_STEPS) as any} sequenceId={seq!.id} />
           </div>
         </div>
 
