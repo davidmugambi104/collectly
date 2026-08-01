@@ -3,12 +3,20 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { ArrowRight, Search } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Compare Collectly vs AR automation competitors',
   description:
-    'Side-by-side comparisons of Collectly vs Chaser, BILL, Melio, QuickBooks, Zoho Books, Gaviti, Growfin, HighRadius, FreshBooks, and more. Built for 5-30 person agencies and consultancies on Xero.',
-};
+    'Side-by-side comparisons of Collectly vs Chaser, BILL, Melio, ' +
+    'QuickBooks, Zoho Books, Gaviti, Growfin, HighRadius, FreshBooks, and ' +
+    'more. Built for 5-30 person agencies and consultancies on Xero.',
+  path: '/compare',
+  keywords: [
+    'Collectly vs Chaser', 'Collectly vs BILL', 'Collectly vs Melio',
+    'Collectly vs QuickBooks', 'AR automation comparison',
+  ],
+});
 
 const COMPARISONS = [
   { href: '/vs-chaser', name: 'Chaser', pitch: 'SMB receivables automation starting at ~$259/mo.' },

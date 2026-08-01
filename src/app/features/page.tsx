@@ -2,8 +2,78 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { Bot, FileText, BarChart3, Clock, ShieldCheck, Globe2, Bell, TrendingUp, Users, Sparkles, Mail, MessageSquare, Wallet, Zap } from 'lucide-react';
+import { pageMetadata, faqJsonLd } from '@/lib/seo';
 
-export const metadata = { title: 'Features' };
+export const metadata = pageMetadata({
+  title: 'Features — tone-aware AR automation for small agencies',
+  description:
+    'All of Collectly\'s features: tone-aware AI reminders, reply-or-pay ' +
+    'pause, promise-to-pay tracking, dispute classification, approval ' +
+    'workflow, audit trail, Xero + QuickBooks sync, SMS in beta, and the ' +
+    'AR worklist. Built for 5-30 person agencies and consultancies.',
+  path: '/features',
+  image: '/og-features.png',
+  keywords: [
+    'AR automation features',
+    'Xero dunning',
+    'tone-aware email',
+    'promise to pay tracking',
+    'invoice dispute workflow',
+    'approval-based automation',
+  ],
+});
+
+// FAQ JSON-LD: 5 questions people search before clicking a Features page.
+// Targets 'Xero AR features', 'AI dunning features', 'promise-to-pay
+// tracking' patterns.
+const featuresJsonLd = JSON.stringify(
+  faqJsonLd([
+    {
+      q: 'Does Collectly stop sending reminders when a customer replies?',
+      a: 'Yes. Collectly detects replies via inbound email parsing, pauses the ' +
+         'sequence immediately, and asks you (or a human on the team) to confirm ' +
+         'what the customer said before resuming. Reply pause typically completes ' +
+         'in under 5 minutes from when the reply hits your inbox.',
+    },
+    {
+      q: 'Does Collectly track promises to pay automatically?',
+      a: 'Yes. When a customer says "we will pay next Friday" or "net 30 from ' +
+         'the invoice date," Collectly extracts the date and pauses future ' +
+         'reminders until that date. If payment arrives, the sequence is ' +
+         'cancelled. If it does not, the next reminder is queued (not auto-sent) ' +
+         'on the day after, for your review.',
+    },
+    {
+      q: 'Can I approve every message before it goes out?',
+      a: 'Yes, in approval mode. Approval mode is on by default for every new ' +
+         'Collectly account. Autopilot unlocks only after 25 reviewed messages ' +
+         'with no unedited-send rate over a 14-day window. You can switch back ' +
+         'to approval mode at any time from the dashboard.',
+    },
+    {
+      q: 'How does Collectly classify disputes?',
+      a: 'When a customer replies with phrases like "missing PO," "wrong ' +
+         'amount," "invoice not received," or "pricing dispute," Collectly ' +
+         'classifies the reply as a blocker and pauses reminders on that ' +
+         'specific invoice. The blocker shows up in your disputes worklist for ' +
+         'human follow-up. The customer does not receive another embarrassing ' +
+         'generic chase.',
+    },
+    {
+      q: 'Does Collectly integrate with QuickBooks as well as Xero?',
+      a: 'Both are supported. Xero is in production today. QuickBooks Online ' +
+         'OAuth is wired and tested in sandbox; production credentials pending ' +
+         'the Intuit App Assessment Questionnaire review. Same workflow, same ' +
+         'feature surface on both platforms.',
+    },
+    {
+      q: 'Does Collectly send SMS as well as email?',
+      a: 'Yes, SMS dunning is offered to founding customers as a pass-through ' +
+         'add-on. Each SMS is sent via Twilio (pass-through cost). We do not ' +
+         'mark up SMS; you see the carrier cost line-item on your invoice.',
+    },
+  ]),
+);
 
 const FEATURES = [
   { icon: Bot, color: 'text-brand-600', bg: 'bg-brand-50', title: 'AI dunning engine', body: 'Tone-aware email and SMS reminders, written by Gemini, optimized for probability of payment. Pause on reply. Pause on payment. Fully editable before send.', bullets: ['Friendly → Firm → Final tones', 'Per-customer timing rules', 'Gemini-written, regex-customizable', 'Auto-pause on reply or payment', 'A/B test subject lines'] },
@@ -17,11 +87,12 @@ const FEATURES = [
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: featuresJsonLd }} />
       <MarketingHeader />
       <section className="container-page pt-16 pb-12 text-center max-w-3xl mx-auto">
         <p className="eyebrow">Features</p>
-        <h1 className="mt-3 h1">Everything you need.<br/>Nothing you don't.</h1>
-        <p className="mt-5 lead">A focused toolset for small businesses. No 200-feature enterprise bloat. No "AI inside" stickers. Just the things that actually move the needle on cash.</p>
+        <h1 className="mt-3 h1">Six things. Each one aimed at getting you paid faster.</h1>
+        <p className="mt-5 lead">No 200-feature enterprise bloat. No "AI inside" stickers on things that don't need AI. Here's exactly what each one does, below — no marketing fog.</p>
       </section>
 
       <section className="container-page pb-20">
@@ -50,7 +121,7 @@ export default function FeaturesPage() {
 
       <section className="container-page pb-20">
         <div className="card-lg grad-mesh text-center">
-          <h2 className="h2">See it in action</h2>
+          <h2 className="h2">Try it on your actual invoices, not a demo.</h2>
           <p className="mt-4 lead">14-day free trial. No credit card. Set up in 10 minutes.</p>
           <div className="mt-6 max-w-md mx-auto"><WaitlistForm /></div>
         </div>

@@ -1,7 +1,22 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'Customers' };
+export const metadata = pageMetadata({
+  title: 'Customer outcomes — agencies and consultancies on Collectly',
+  description:
+    'We don\'t publish polished case studies until we have enough customers ' +
+    'to mean something. Here\'s how the founding cohort is using Collectly ' +
+    'on Xero and QuickBooks — what they\'re trying to do, what we expect ' +
+    'to see, and what we will and won\'t claim.',
+  path: '/customers',
+  keywords: [
+    'Collectly customers',
+    'Xero customer outcomes',
+    'small agency AR results',
+    'founding cohort results',
+  ],
+});
 
 const SCENARIOS = [
   { industry: 'Design agency · 8 people · Xero', target: 'Cut average days-late from 47 toward 14 within 30 days of consistent approve-and-send follow-up.' },

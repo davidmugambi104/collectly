@@ -2,11 +2,17 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { Logo } from '@/components/brand/logo';
 import { ShieldCheck, Lock, Server, KeyRound, Eye, FileCheck2, AlertTriangle, Globe2, CheckCircle2 } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Security',
-  description: 'How Collectly protects your data, your customers, and your money. Encryption, infrastructure, access control, and compliance posture.',
-};
+export const metadata = pageMetadata({
+  title: 'Security — encryption, infrastructure, and access control',
+  description:
+    'How Collectly protects your data, your customers, and your money. ' +
+    'Encryption in transit + at rest, audit log, role-based access, and ' +
+    'the compliance posture we hold today and what we are building toward.',
+  path: '/security',
+  keywords: ['Collectly security', 'encryption at rest', 'SOC 2', 'data security', 'GDPR'],
+});
 
 const principles = [
   {

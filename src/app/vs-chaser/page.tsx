@@ -5,11 +5,20 @@ import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { Check, X, ArrowRight, DollarSign, Clock, Zap, Users } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
-  title: 'Collectly vs Chaser — Better AR automation for small B2B services',
-  description: 'Compare Collectly and Chaser for accounts receivable automation. Collectly starts at $49/mo with AI tone-aware dunning, no per-invoice fees, and 10-minute setup. Built for 5-30 person agencies and consultancies on Xero.',
-};
+export const metadata = pageMetadata({
+  title: 'Collectly vs Chaser — better AR automation for small B2B services',
+  description:
+    'Side-by-side of Collectly and Chaser. Chaser starts around $259/mo ' +
+    'with templated reminders. Collectly starts at $49/mo with tone-aware ' +
+    'AI dunning, no per-invoice fees, 10-minute setup, and reply-or-pay ' +
+    'pause — built for 5-30 person agencies and consultancies on Xero.',
+  path: '/vs-chaser',
+  image: '/og-vs-chaser.png',
+  keywords: ['Collectly vs Chaser', 'Chaser alternative', 'Xero invoice reminder', 'Chaser vs Collectly'],
+});
 
 const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: '$49/mo flat, no per-invoice fees', chaser: '~$259/mo entry plan' },
@@ -21,6 +30,13 @@ const DIFFS = [
 export default function VsChaserPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs Chaser', path: '/vs-chaser' },
+        ]}
+      />
       <MarketingHeader />
 
       <section className="container-page pt-16 pb-12 max-w-3xl">

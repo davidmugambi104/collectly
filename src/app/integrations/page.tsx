@@ -2,11 +2,47 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Database, Banknote, ReceiptText, MessageSquare, BarChart3, Lock, Server } from 'lucide-react';
+import { pageMetadata, faqJsonLd } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Integrations',
-  description: 'Connect your books, payments, and communications in 60 seconds. QuickBooks, Xero, Stripe, Square, Plaid, Resend, Twilio, and Paystack integration statuses.',
-};
+export const metadata = pageMetadata({
+  title: 'Integrations — Xero, QuickBooks, Stripe, Square, Twilio, Plaid',
+  description:
+    'Live integrations status for Collectly: which accounting systems, ' +
+    'payment rails, and messaging channels are live, in beta, or queued. ' +
+    'Xero is in production. QuickBooks, Square, Stripe and Twilio run on ' +
+    'test keys until customer demand unlocks the production swap.',
+  path: '/integrations',
+  keywords: [
+    'Collectly integrations',
+    'Xero integration',
+    'QuickBooks integration',
+    'Stripe AR tool',
+    'Twilio SMS dunning',
+    'Plaid cash flow forecast',
+    'Paystack integrations',
+  ],
+});
+
+const integrationsJsonLd = JSON.stringify(
+  faqJsonLd([
+    {
+      q: 'Which accounting platforms does Collectly integrate with?',
+      a: 'Xero is in production (live OAuth sync). QuickBooks Online is built and tested in sandbox; production credentials pending the Intuit App Assessment Questionnaire review.',
+    },
+    {
+      q: 'Do you integrate with Stripe?',
+      a: 'Stripe is wired and in test mode. Payment links and branded checkout work end-to-end; live keys are swapped in alongside the production rollout.',
+    },
+    {
+      q: 'Do you integrate with Twilio for SMS?',
+      a: 'Twilio is wired and in test mode. SMS is offered to founding customers as a pass-through-cost add-on until we unlock the production tier.',
+    },
+    {
+      q: 'Do you integrate with Plaid?',
+      a: 'Plaid integration is built for cash-flow forecasting but not yet enabled by default for founding customers. Will roll out in a later tier once we have signal on demand.',
+    },
+  ]),
+);
 
 const categories = [
   {
@@ -172,6 +208,7 @@ const statusLabel: Record<string, string> = {
 export default function IntegrationsPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: integrationsJsonLd }} />
       <MarketingHeader />
 
       <section className="container-page pt-16 pb-12 max-w-3xl">

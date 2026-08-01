@@ -4,12 +4,60 @@ import { WaitlistForm } from '@/components/marketing/waitlist';
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, Sparkles, X } from 'lucide-react';
 import { PLAN_PRICING } from '@/lib/utils';
+import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
 
-export const metadata = { title: 'Pricing' };
+export const metadata = pageMetadata({
+  title: 'Pricing — flat-rate A/R automation, from $49/mo',
+  description:
+    'Honest pricing for Collectly. Founding-customer rate is $49/mo flat ' +
+    '(locked for life for the first 20 customers). After that, plans start ' +
+    'at $99/mo per organization with practice plans available. No per-invoice ' +
+    'fees, no setup fees, no hidden costs. Cancel anytime.',
+  path: '/pricing',
+  image: '/og-pricing.png',
+  keywords: [
+    'Collectly pricing',
+    'Xero AR tool pricing',
+    'Chaser alternative cost',
+    'invoice automation flat rate',
+    'small business AR software',
+    'BILL alternative pricing',
+  ],
+});
+
+// Combining FAQ + Product+Offer schema. Product drives the price-card
+// rich result; FAQ drives the "questions people also ask" rich result.
+// Both are emitted in one array so neither blocks the other.
+const pricingJsonLd = JSON.stringify([
+  pricingProductJsonLd(),
+  faqJsonLd([
+    {
+      q: 'How much does Collectly cost?',
+      a: 'Founding customers pay $49/mo flat. After the founding tier closes, plans start at $99/mo per organization, $199/mo for up to three organizations, and $499/mo for accounting practices managing ten client orgs. No per-invoice fees.',
+    },
+    {
+      q: 'Is there a free trial?',
+      a: 'Yes. 14 days, no credit card required, founder-assisted setup. Founding-customer pricing ($49/mo) auto-applies at trial conversion.',
+    },
+    {
+      q: 'What does Collectly charge per invoice?',
+      a: 'Nothing. No per-invoice fees, no per-reminder fees. SMS is pass-through; payment processors charge their standard processing fees.',
+    },
+    {
+      q: 'What is included in the founding $49/mo price?',
+      a: 'One Xero (or QuickBooks) organization, up to three users, up to 150 monitored invoices, email sequences, approval mode, reply detection, promise-to-pay tracking, dispute classification, founder-assisted setup, and direct support for the founding period.',
+    },
+    {
+      q: 'Can I cancel anytime?',
+      a: 'Yes. Monthly billing, cancel from the dashboard. No annual contract required.',
+    },
+  ]),
+]);
 
 export default function PricingPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: pricingJsonLd }} />
       <MarketingHeader />
       <section className="container-page pt-16 pb-12 text-center">
         <p className="eyebrow">Pricing</p>

@@ -1,4 +1,15 @@
-export const metadata = { title: 'Privacy' };
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'Privacy Policy — plain English, not legalese',
+  description:
+    'How Collectly handles data: what we collect, how we use it, ' +
+    'what we never do, and what choices you have. Plain-English privacy ' +
+    'policy for a B2B accounts-receivable tool. Last updated July 13, 2026.',
+  path: '/privacy',
+  keywords: ['privacy policy', 'data handling', 'GDPR privacy', 'B2B SaaS privacy'],
+});
+
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-ink-50">

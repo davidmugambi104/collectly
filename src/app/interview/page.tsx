@@ -1,8 +1,17 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { InterviewForm } from '@/components/marketing/interview-form';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'Customer interview · Collectly' };
+export const metadata = pageMetadata({
+  title: 'Customer interview — share your A/R workflow',
+  description:
+    '15-minute customer-interview call about how you currently chase ' +
+    'overdue invoices, what works, and what does not. Founding-cohort ' +
+    'participants get 3 months free.',
+  path: '/interview',
+  keywords: ['Collectly customer interview', 'AR workflow interview', 'founding cohort'],
+});
 
 export default function InterviewPage() {
   return (

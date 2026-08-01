@@ -3,16 +3,58 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { PlaybookForm } from './playbook-form';
 import { Sparkles, CheckCircle2, Clock, Mail, TrendingDown } from 'lucide-react';
+import { pageMetadata, faqJsonLd, howToJsonLd } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Free guide: a 5-step method to cut DSO from 45 days to 18',
-  description: 'A free 7-page PDF with a 5-step method to help 5-30 person agencies and consultancies cut DSO from 45 days to 18 in 90 days. No fluff, no upsell.',
-  keywords: ['DSO', 'days sales outstanding', 'AR playbook', 'cash flow', 'small business', 'accounts receivable', 'B2B services'],
-  openGraph: {
-    title: 'Cut your DSO from 45 to 18 days — free 5-step playbook',
-    description: 'A 7-page PDF with a 5-step method to help 5-30 person agencies and consultancies cut DSO from 45 days to 18 in 90 days.',
-  },
-};
+export const metadata: Metadata = pageMetadata({
+  title: 'Free guide — 5-step method to cut DSO from 45 days to 18',
+  description:
+    'A free 7-page PDF with a 5-step method to help 5-30 person agencies ' +
+    'and consultancies cut DSO from 45 days to 18 in 90 days. Built for ' +
+    'Xero and QuickBooks businesses with no full-time credit controller. ' +
+    'No fluff, no upsell.',
+  path: '/playbook',
+  image: '/og-playbook.png',
+  keywords: ['DSO', 'days sales outstanding', 'AR playbook', 'cash flow', 'small business', 'accounts receivable', 'B2B services', 'Xero'],
+});
+
+// Combined HowTo + FAQ JSON-LD. HowTo drives rich "5 steps" results for
+// queries like "how to cut DSO"; FAQ drives question-rich-result snippets.
+// Plus a small FAQ because people ask the same 4 things about a lead
+// magnet before they sign up.
+const playbookJsonLd = JSON.stringify([
+  howToJsonLd({
+    name: 'How to cut DSO from 45 days to 18',
+    description:
+      'A 5-step method for 5-30 person agencies and consultancies on Xero to ' +
+      'cut DSO from 45 days to 18 days in 90 days. Audit, automate, portal, ' +
+      'risk-score, measure.',
+    steps: [
+      { name: 'Audit your A/R aging every Monday morning', text: 'A 10-minute Monday ritual that recovers an average of $4,200 in forgotten invoices in the first week alone.' },
+      { name: 'Set up a 3-step dunning sequence that auto-fires', text: 'Friendly email at day 1. Firmer email at day 7. SMS or phone at day 30. Auto-pause on payment or reply. Most teams save 5+ hours/week within the first month.' },
+      { name: 'Give every customer a frictionless pay link', text: 'One-click pay portals cut DSO by an average of 12 days. ACH for US, BACS for UK, SEPA for EU, Direct Debit for AU. Card as fallback.' },
+      { name: 'Risk-score your customers and focus on the top 5', text: 'Score every customer on paid rate, average days to pay, and oldest unpaid invoice. Spend your collection time on the high-balance × high-risk ones. Ignore the rest.' },
+      { name: 'Measure DSO weekly, not monthly', text: 'Track DSO every Monday. Catch trends early. A typical 5-person services business takes DSO from 45 to 18 days in 90 days. That\'s $90K+ freed up for the same revenue.' },
+    ],
+  }),
+  faqJsonLd([
+    {
+      q: 'Is this playbook free?',
+      a: 'Yes, fully free — no email gate, no upsell. We ask for an email address in exchange so we can send the 7-page PDF.',
+    },
+    {
+      q: 'Do I need a full-time credit controller to follow it?',
+      a: 'No. The 5 steps are designed for founders, operations leads, and finance managers who handle A/R alongside other work. Most steps take less than 30 minutes per week after the initial setup.',
+    },
+    {
+      q: 'Does this work for non-Xero businesses?',
+      a: 'Yes — the methods apply to any small B2B services business. Step 2 references Xero and QuickBooks because that is where most 5-30 person agencies and consultancies keep their books, but the principles are platform-neutral.',
+    },
+    {
+      q: 'What is DSO and why does it matter?',
+      a: 'Days Sales Outstanding (DSO) is the average number of days between sending an invoice and receiving payment. Lower DSO means less working capital locked up in unpaid invoices. For a 5-30 person agency on a 30-day payment cycle, cutting DSO from 45 to 18 frees up roughly $90K of working capital on $1M annual revenue.',
+    },
+  ]),
+]);
 
 const STEPS = [
   {
@@ -45,6 +87,7 @@ const STEPS = [
 export default function PlaybookPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: playbookJsonLd }} />
       <MarketingHeader />
       <main className="min-h-screen bg-gradient-to-b from-white to-brand-50">
         {/* Hero */}

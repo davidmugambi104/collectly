@@ -9,12 +9,18 @@ import {
   ComparisonCta,
 } from '@/components/marketing/comparison-section';
 import { Bot, Clock, FileText, Target } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
-  title: 'Collectly vs FreshBooks — From simple invoicing to real AR automation',
+export const metadata = pageMetadata({
+  title: 'Collectly vs FreshBooks — from simple invoicing to real AR automation',
   description:
-    'FreshBooks is easy invoicing for freelancers and small agencies. Collectly adds AI tone-aware dunning, AR aging, cash-flow forecasting, and risk scoring for businesses that have outgrown basic reminders.',
-};
+    'FreshBooks is easy invoicing for freelancers and small agencies. ' +
+    'Collectly adds AI tone-aware dunning, AR aging, cash-flow forecasting, ' +
+    'and risk scoring for businesses that have outgrown basic reminders.',
+  path: '/vs-freshbooks',
+  keywords: ['Collectly vs FreshBooks', 'FreshBooks alternative', 'AR automation', 'FreshBooks vs Collectly'],
+});
 
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', competitor: 'Manual payment reminders' },
@@ -47,6 +53,13 @@ const CHOOSE_THEM = [
 export default function VsFreshbooksPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs FreshBooks', path: '/vs-freshbooks' },
+        ]}
+      />
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs FreshBooks"

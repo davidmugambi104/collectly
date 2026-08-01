@@ -1,0 +1,22 @@
+{
+  "name": "Collectly — AR automation for small agencies",
+  "short_name": "Collectly",
+  "description": "Accounts-receivable automation for 5-30 person agencies and consultancies on Xero and QuickBooks. AI tone-aware dunning, reply-or-pay pause, promise-to-pay tracking.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0b0f",
+  "theme_color": "#0a0b0f",
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity", "finance"],
+  "orientation": "portrait",
+  "id": "/?source=pwa"
+}

@@ -4,8 +4,33 @@ import { POSTS_BY_SLUG } from '@/lib/posts';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Clock, Calendar, Tag } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { pageMetadata, articleJsonLd, breadcrumbJsonLd, truncate } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
+// Pre-render every known post at build time. New posts get picked up on the
+// next deploy — we don't need ISR for a publication cadence this slow.
+export async function generateStaticParams() {
+  return Object.keys(POSTS_BY_SLUG).map((slug) => ({ slug }));
+}
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> },
+): Promise<Metadata> {
+  const { slug } = await params;
+  const post = POSTS_BY_SLUG[slug];
+  if (!post) return { title: 'Not found' };
+  const path = `/blog/${post.slug}`;
+  return pageMetadata({
+    title: post.title,
+    description: truncate(post.excerpt, 158),
+    path,
+    type: 'article',
+    keywords: post.tags,
+    publishedTime: new Date(post.date).toISOString(),
+  });
+}
+
+export const dynamic = 'force-static';
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -13,9 +38,27 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   if (!post) notFound();
 
   const otherPosts = Object.values(POSTS_BY_SLUG).filter((p) => p.slug !== post.slug).slice(0, 3);
+  const path = `/blog/${post.slug}`;
+
+  // Article + BreadcrumbList JSON-LD. Built-in blog index schema (Blog) would
+  // be redundant since the index page already declares Blog.
+  const jsonLd = JSON.stringify([
+    articleJsonLd({
+      title: post.title,
+      description: post.excerpt,
+      path,
+      datePublished: new Date(post.date).toISOString(),
+    }),
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Blog', path: '/blog' },
+      { name: post.title, path },
+    ]),
+  ]);
 
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <MarketingHeader />
       <article className="container-tight py-16">
         <Link href="/blog" className="inline-flex items-center gap-1 text-sm text-ink-600 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" />Back to blog</Link>

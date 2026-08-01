@@ -9,12 +9,18 @@ import {
   ComparisonCta,
 } from '@/components/marketing/comparison-section';
 import { Layers, Clock, Globe2, Target } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
-  title: 'Collectly vs HighRadius — SMB AR automation vs autonomous enterprise finance',
+export const metadata = pageMetadata({
+  title: 'Collectly vs HighRadius — SMB AR vs autonomous enterprise finance',
   description:
-    'HighRadius builds autonomous finance for the Office of the CFO. Collectly is the simple, AR-native alternative for small agencies and consultancies on Xero starting at $49/mo.',
-};
+    'HighRadius builds autonomous finance for the Office of the CFO. ' +
+    'Collectly is the simple, AR-native alternative for small agencies ' +
+    'and consultancies on Xero starting at $49/mo flat.',
+  path: '/vs-highradius',
+  keywords: ['Collectly vs HighRadius', 'HighRadius alternative', 'enterprise AR alternative', 'HighRadius vs Collectly'],
+});
 
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR dunning, portal, forecast, risk scoring', competitor: 'O2C + AP + Treasury + Close/Reconciliation' },
@@ -47,6 +53,13 @@ const CHOOSE_THEM = [
 export default function VsHighradiusPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs HighRadius', path: '/vs-highradius' },
+        ]}
+      />
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs HighRadius"

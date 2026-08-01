@@ -5,11 +5,20 @@ import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { Check, X, ArrowRight, DollarSign, Layers, Target, Receipt } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
-  title: 'Collectly vs BILL — Dedicated AR automation vs all-in-one FinOps',
-  description: 'Compare Collectly and BILL for accounts receivable. BILL bundles AP, AR, and spend at $49/user/mo plus transaction fees. Collectly is AR-native, flat $49/mo, no per-invoice fees, built for small B2B services.',
-};
+export const metadata = pageMetadata({
+  title: 'Collectly vs BILL — dedicated AR automation vs all-in-one FinOps',
+  description:
+    'Side-by-side of Collectly and BILL for accounts-receivable automation. ' +
+    'BILL bundles AP, AR, and spend at $49 per user/month plus transaction ' +
+    'fees. Collectly is AR-native, flat $49/mo for the founding tier, no ' +
+    'per-invoice fees, built for 5-30 person agencies and consultancies.',
+  path: '/vs-bill',
+  image: '/og-vs-bill.png',
+  keywords: ['Collectly vs BILL', 'BILL alternative', 'AR automation', 'BILL vs Collectly'],
+});
 
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR-only — deep dunning, forecasting, risk scoring', bill: 'AP + AR + spend/expense platform' },
@@ -21,6 +30,13 @@ const DIFFS = [
 export default function VsBillPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs BILL', path: '/vs-bill' },
+        ]}
+      />
       <MarketingHeader />
 
       <section className="container-page pt-16 pb-12 max-w-3xl">

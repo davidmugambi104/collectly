@@ -5,11 +5,19 @@ import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { Check, ArrowRight, DollarSign, RefreshCw, Target, CreditCard } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Collectly vs Melio — AR automation beyond payment links',
-  description: 'Melio is free for AP-first B2B payments with light invoicing. Collectly is AR-native: AI tone-aware dunning, cash-flow forecast, risk scoring, and a branded payment portal for $49/mo.',
-};
+  description:
+    'Side-by-side of Collectly and Melio. Melio is free for AP-first B2B ' +
+    'payments with light invoicing. Collectly is AR-native: AI tone-aware ' +
+    'dunning, cash-flow forecast, risk scoring, and a branded payment ' +
+    'portal for $49/mo flat with no per-invoice fees.',
+  path: '/vs-melio',
+  keywords: ['Collectly vs Melio', 'Melio alternative', 'AR automation for agencies', 'Melio vs Collectly'],
+});
 
 const DIFFS = [
   { icon: RefreshCw, label: 'Primary focus', collectly: 'AR automation and collections', melio: 'AP-first bill pay + light invoicing' },
@@ -21,6 +29,13 @@ const DIFFS = [
 export default function VsMelioPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs Melio', path: '/vs-melio' },
+        ]}
+      />
       <MarketingHeader />
 
       <section className="container-page pt-16 pb-12 max-w-3xl">

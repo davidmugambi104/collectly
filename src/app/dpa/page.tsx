@@ -1,11 +1,17 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { CheckCircle2, Download, Mail, Globe2, Server, Users } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Data Processing Agreement',
-  description: 'The contract that governs how Collectly processes customer data on your behalf. GDPR-compliant, US data residency with EU available on enterprise request, and Standard Contractual Clauses.',
-};
+export const metadata = pageMetadata({
+  title: 'Data Processing Agreement (DPA) — GDPR + UK GDPR compliant',
+  description:
+    'The contract that governs how Collectly processes customer data on ' +
+    'your behalf. GDPR-compliant, US data residency with EU available on ' +
+    'enterprise request, and Standard Contractual Clauses available.',
+  path: '/dpa',
+  keywords: ['GDPR DPA', 'data processing agreement', 'UK GDPR', 'Standard Contractual Clauses'],
+});
 
 const sections = [
   {

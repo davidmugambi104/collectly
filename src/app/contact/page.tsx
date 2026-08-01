@@ -1,11 +1,32 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { WaitlistForm } from '@/components/marketing/waitlist';
+import { pageMetadata, webPageJsonLd } from '@/lib/seo';
 
-export const metadata = { title: 'Contact' };
+export const metadata = pageMetadata({
+  title: 'Contact — sales, support, partnerships, press',
+  description:
+    'Talk to the team behind Collectly. Sales inquiries, customer support, ' +
+    'Xero + QuickBooks partnerships, and press. Replies within one business day.',
+  path: '/contact',
+  keywords: ['Collectly contact', 'small business AR support', 'partnerships'],
+});
+
+const contactJsonLd = JSON.stringify(
+  webPageJsonLd({
+    title: 'Contact Collectly',
+    description:
+      'Sales, support, partnerships, and press inquiries for Collectly. ' +
+      'Replies within one business day.',
+    path: '/contact',
+    kind: 'ContactPage',
+  }),
+);
+
 export default function ContactPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: contactJsonLd }} />
       <MarketingHeader />
       <section className="container-page pt-16 pb-20 max-w-xl">
         <p className="eyebrow">Contact</p>

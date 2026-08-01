@@ -7,6 +7,11 @@ const isPublicRoute = createRouteMatcher([
   '/dpa', '/integrations', '/tools/(.*)', '/compare', '/ar-roi', '/ar-audit', '/tour',
   '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
   '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
+  // Industry landing pages — keyword-targeted long-tail entry points.
+  // Keep these in front of Clerk so anonymous users can read them (and we
+  // can index the URLs in GSC). The CTAs land on /ar-audit, which is also
+  // public, so there's no auth-gate here at all.
+  '/for/(.*)',
   // Public auth flow
   '/sign-in(.*)', '/sign-up(.*)', '/sso-callback(.*)',
   // Payment portal — the customer's customer needs to hit this without an account.

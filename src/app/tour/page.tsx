@@ -3,11 +3,18 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { DunningDemo } from '@/components/marketing/dunning-demo';
 import { ArrowRight, Mail, Wallet, BarChart3, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Product tour · Collectly',
-  description: 'Watch how Collectly follows up on overdue invoices, collects payments through a branded portal, and forecasts cash flow — without the awkward chase.',
-};
+export const metadata = pageMetadata({
+  title: 'Product tour — how Collectly follows up on overdue invoices',
+  description:
+    'Watch a 2-minute tour of how Collectly follows up on overdue ' +
+    'invoices, collects payments through a branded portal, and forecasts ' +
+    'cash flow — without the awkward chase. Built for small agencies and ' +
+    'consultancies on Xero.',
+  path: '/tour',
+  keywords: ['Collectly tour', 'AR product demo', 'Xero dunning demo', 'invoice reminder demo'],
+});
 
 export default function TourPage() {
   return (
@@ -52,7 +59,7 @@ export default function TourPage() {
           to a contact page with no booking calendar. */}
       <section className="container-page pb-24">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="h2 mb-4">See Collectly in action</h2>
+          <h2 className="h2 mb-4">Want a walkthrough now, not later?</h2>
           <p className="text-ink-600 mb-8">
             Product videos are being recorded. For now, email the founder directly and we'll find a time —
             we'll show you exactly how Collectly works for your business and answer your questions.
@@ -65,7 +72,7 @@ export default function TourPage() {
               Request a founder walkthrough
             </a>
             <Link href="/sign-up" className="btn-ghost">
-              Start founding trial
+              Or just start the trial
             </Link>
           </div>
           <p className="mt-6 text-xs text-ink-500">
@@ -74,22 +81,20 @@ export default function TourPage() {
         </div>
       </section>
 
-      {/* Quick feature strip */}
+      {/* Quick feature strip — an inline list, not a fifth icon-card grid on the site */}
       <section className="border-y border-ink-200 bg-ink-50">
-        <div className="container-page py-14 max-w-5xl">
-          <h2 className="h3 mb-6 text-center">What you will see in the videos</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="container-page py-10 max-w-4xl">
+          <p className="text-xs font-semibold uppercase tracking-widest text-ink-500 text-center mb-5">What you'll see in the videos</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm">
             {[
-              { icon: Mail, label: 'Tone-aware dunning', desc: 'Friendly → firm → final, automatically.' },
-              { icon: Wallet, label: 'Branded payment portal', desc: 'Customers pay without calling you.' },
-              { icon: BarChart3, label: '4-week cash forecast', desc: 'Know if you can make payroll.' },
-              { icon: Clock, label: '10-minute setup', desc: 'Connect QBO/Xero and go.' },
-            ].map(({ icon: Icon, label, desc }) => (
-              <div key={label} className="rounded-xl border border-ink-200 bg-white p-4">
-                <Icon className="h-5 w-5 text-brand-600 mb-2" />
-                <div className="text-sm font-semibold text-ink-900">{label}</div>
-                <p className="mt-1 text-xs text-ink-600">{desc}</p>
-              </div>
+              { icon: Mail, label: 'Tone-aware dunning — friendly → firm → final, automatically' },
+              { icon: Wallet, label: 'Branded payment portal — customers pay without calling you' },
+              { icon: BarChart3, label: '4-week cash forecast — know if you can make payroll' },
+              { icon: Clock, label: '10-minute setup — connect QBO/Xero and go' },
+            ].map(({ icon: Icon, label }) => (
+              <span key={label} className="inline-flex items-center gap-2 text-ink-700">
+                <Icon className="h-4 w-4 text-brand-600 shrink-0" />{label}
+              </span>
             ))}
           </div>
         </div>

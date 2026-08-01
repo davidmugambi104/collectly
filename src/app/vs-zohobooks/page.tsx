@@ -9,12 +9,19 @@ import {
   ComparisonCta,
 } from '@/components/marketing/comparison-section';
 import { Bot, DollarSign, Layers, Target } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Collectly vs Zoho Books — AR automation beyond bookkeeping',
   description:
-    'Zoho Books is a solid accounting suite with light invoicing and payment reminders. Collectly adds AI tone-aware dunning, AR aging, cash-flow forecasting, and risk scoring for businesses that need real collections automation.',
-};
+    'Zoho Books is a solid accounting suite with light invoicing and ' +
+    'payment reminders. Collectly adds AI tone-aware dunning, AR aging, ' +
+    'cash-flow forecasting, and risk scoring for businesses that need ' +
+    'real collections automation.',
+  path: '/vs-zohobooks',
+  keywords: ['Collectly vs Zoho Books', 'Zoho Books alternative', 'Zoho AR', 'Zoho Books vs Collectly'],
+});
 
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', competitor: 'Basic invoice reminders' },
@@ -47,6 +54,13 @@ const CHOOSE_THEM = [
 export default function VsZohobooksPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs Zoho Books', path: '/vs-zohobooks' },
+        ]}
+      />
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs Zoho Books"

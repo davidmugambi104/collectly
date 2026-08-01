@@ -9,12 +9,18 @@ import {
   ComparisonCta,
 } from '@/components/marketing/comparison-section';
 import { Bot, Clock, Building2, Target } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
-  title: 'Collectly vs Growfin — Behavioral AI AR for the rest of us',
+export const metadata = pageMetadata({
+  title: 'Collectly vs Growfin — behavioral AI AR for the rest of us',
   description:
-    'Growfin uses behavioral AI for enterprise order-to-cash on NetSuite. Collectly brings AI tone-aware dunning, cash-flow forecasting, and risk scoring to small agencies and consultancies on Xero at $49/mo.',
-};
+    'Growfin uses behavioral AI for enterprise order-to-cash on NetSuite. ' +
+    'Collectly brings AI tone-aware dunning, cash-flow forecasting, and ' +
+    'risk scoring to small agencies and consultancies on Xero at $49/mo.',
+  path: '/vs-growfin',
+  keywords: ['Collectly vs Growfin', 'Growfin alternative', 'NetSuite AR alternative', 'Growfin vs Collectly'],
+});
 
 const DIFFS = [
   { icon: Bot, label: 'AI approach', collectly: 'Tone-aware Gemini dunning + risk scoring', competitor: 'Behavioral AI for enterprise collections CRM' },
@@ -47,6 +53,13 @@ const CHOOSE_THEM = [
 export default function VsGrowfinPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs Growfin', path: '/vs-growfin' },
+        ]}
+      />
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs Growfin"

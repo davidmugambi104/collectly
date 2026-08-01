@@ -6,10 +6,19 @@ import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { Check, ArrowRight, Bot, DollarSign, Target, LineChart } from 'lucide-react';
 
-export const metadata = {
-  title: 'Collectly vs QuickBooks — Smarter AR automation for QBO users',
-  description: 'QuickBooks handles invoicing and payments, but not smart collections. Collectly adds AI tone-aware dunning, AR aging, cash-flow forecasting, and a branded payment portal while keeping your QBO data in sync.',
-};
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+
+export const metadata = pageMetadata({
+  title: 'Collectly vs QuickBooks — smarter AR automation for QBO users',
+  description:
+    'QuickBooks handles invoicing and payments but not smart collections. ' +
+    'Collectly adds AI tone-aware AI dunning, AR aging, cash-flow forecasting, ' +
+    'and a branded payment portal while keeping your QuickBooks data in sync.',
+  path: '/vs-quickbooks',
+  image: '/og-vs-quickbooks.png',
+  keywords: ['Collectly vs QuickBooks', 'QuickBooks AR', 'QuickBooks invoice reminder', 'QBO dunning'],
+});
 
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'Basic payment reminders' },
@@ -21,6 +30,13 @@ const DIFFS = [
 export default function VsQuickbooksPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs QuickBooks', path: '/vs-quickbooks' },
+        ]}
+      />
       <MarketingHeader />
 
       <section className="container-page pt-16 pb-12 max-w-3xl">

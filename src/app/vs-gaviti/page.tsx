@@ -9,12 +9,18 @@ import {
   ComparisonCta,
 } from '@/components/marketing/comparison-section';
 import { DollarSign, Clock, ShieldCheck, Target } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
+import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Collectly vs Gaviti — SMB AR automation without enterprise complexity',
   description:
-    'Gaviti is AI-powered invoice-to-cash for mid-market and enterprise. Collectly is the simple, transparent, self-serve alternative for small B2B service businesses starting at $49/mo.',
-};
+    'Gaviti is AI-powered invoice-to-cash for mid-market and enterprise. ' +
+    'Collectly is the simple, transparent, self-serve alternative for ' +
+    'small B2B service businesses starting at $49/mo flat.',
+  path: '/vs-gaviti',
+  keywords: ['Collectly vs Gaviti', 'Gaviti alternative', 'AR automation', 'Gaviti vs Collectly'],
+});
 
 const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: '$49/mo flat, public pricing', competitor: 'Custom pricing, request a quote' },
@@ -47,6 +53,13 @@ const CHOOSE_THEM = [
 export default function VsGavitiPage() {
   return (
     <div className="min-h-screen">
+      <StructuredBreadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Compare', path: '/compare' },
+          { name: 'vs Gaviti', path: '/vs-gaviti' },
+        ]}
+      />
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs Gaviti"

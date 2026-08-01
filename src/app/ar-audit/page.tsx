@@ -3,12 +3,60 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { AuditForm } from '@/components/marketing/audit-form';
 import { CheckCircle2, ShieldCheck, Clock, Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { pageMetadata, faqJsonLd } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Free A/R health audit · Collectly',
+export const metadata = pageMetadata({
+  title: 'Free A/R health audit — find what\'s slowing your cash flow',
   description:
-    'Get a free A/R health audit in 24 hours. No sales call, no pitch. We analyze your outstanding invoices, DSO, and collections workflow and reply with 3 specific things slowing your cash flow.',
-};
+    'Get a free A/R health audit in 24 hours. No sales call, no pitch. ' +
+    'We analyze your outstanding invoices, DSO, and collections workflow ' +
+    'and reply with 3 specific things slowing your cash flow. Built for ' +
+    '5-30 person agencies and consultancies on Xero.',
+  path: '/ar-audit',
+  image: '/og-ar-audit.png',
+  keywords: [
+    'AR audit', 'A/R health check', 'small business cash flow audit',
+    'Xero collections review', 'cash flow analysis',
+  ],
+});
+
+// FAQ JSON-LD captures the 5 questions people always ask before handing
+// over their accounting data. Aimed at the "people also ask" rich result
+// for "free AR audit" / "AR audit template" type queries.
+const arAuditJsonLd = JSON.stringify(
+  faqJsonLd([
+    {
+      q: 'Is the A/R audit really free?',
+      a: 'Yes, no obligation. We send a one-page report with 3 specific findings ' +
+         'and the single highest-ROI action you can take this week.',
+    },
+    {
+      q: 'Do I need to share my Xero login?',
+      a: 'No. The audit needs aging and outstanding-invoice totals, which are ' +
+         'collectable from your own records without sharing credentials. We do ' +
+         'not request screen-sharing access as part of the audit.',
+    },
+    {
+      q: 'How long does the audit take?',
+      a: 'You spend 10 minutes filling in the form. We reply within 24 business ' +
+         'hours with the one-page report.',
+    },
+    {
+      q: 'Will you try to sell me Collectly after the audit?',
+      a: 'Only if we have a credible case study or product behaviour that ' +
+         'matches what your audit reveals. If the report says the right move ' +
+         'is a different tool, or no tool at all, we say so. We do not run a ' +
+         'follow-up nurture sequence.',
+    },
+    {
+      q: 'What do you do with the data you collect?',
+      a: 'We use it once, to produce the audit, then delete the source data ' +
+         'within 30 days. If you opt into a Collectly trial during the audit, ' +
+         'your data is reused under the Collectly privacy policy. Otherwise, ' +
+         'it is purged.',
+    },
+  ]),
+);
 
 const PROMISES = [
   {
@@ -39,6 +87,7 @@ const TRIGGERS = [
 export default function ArAuditPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: arAuditJsonLd }} />
       <MarketingHeader />
 
       <section className="container-tight py-16">

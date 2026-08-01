@@ -2,19 +2,51 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { POSTS } from '@/lib/posts';
+import { pageMetadata, breadcrumbJsonLd, SITE } from '@/lib/seo';
 import Link from 'next/link';
-import { Clock, Tag } from 'lucide-react';
+import { Clock, Tag, Rss } from 'lucide-react';
 
-export const metadata = { title: 'Blog' };
+export const metadata = pageMetadata({
+  title: 'Blog — notes on A/R, cash flow & small-business finance',
+  description:
+    'Real essays on accounts-receivable automation, Xero + QuickBooks workflows, ' +
+    'cash-flow forecasting, and small-agency operations. Published by the team ' +
+    'building Collectly.',
+  path: '/blog',
+  keywords: [
+    'accounts receivable blog',
+    'Xero blog',
+    'small business cash flow',
+    'AR automation insights',
+    'agency operations',
+  ],
+});
+
+const jsonLd = JSON.stringify(
+  breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Blog', path: '/blog' },
+  ]),
+);
 
 export default function BlogPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <MarketingHeader />
       <section className="container-page pt-16 pb-12">
         <p className="eyebrow">Blog</p>
         <h1 className="mt-3 h1">Notes on A/R, cash flow,<br/>and small-business finance.</h1>
         <p className="mt-5 lead max-w-2xl">Real essays, not marketing content. Based on the data we've collected building Collectly and the conversations we've had with hundreds of small business owners.</p>
+        <a
+          href="/rss.xml"
+          className="mt-4 inline-flex items-center gap-1.5 text-sm text-ink-600 hover:text-ink-900"
+          rel="alternate"
+          type="application/rss+xml"
+          aria-label="Collectly blog RSS feed"
+        >
+          <Rss className="h-3.5 w-3.5" /> RSS feed
+        </a>
       </section>
       <section className="container-page pb-20">
         <div className="grid md:grid-cols-2 gap-5 max-w-5xl">

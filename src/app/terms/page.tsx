@@ -1,4 +1,15 @@
-export const metadata = { title: 'Terms' };
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'Terms of Service — plain-English version of the legal bits',
+  description:
+    'The terms that govern your use of Collectly. Plain-English summary ' +
+    'of the legal agreements between us. Account rules, billing, refunds, ' +
+    'and acceptable use.',
+  path: '/terms',
+  keywords: ['terms of service', 'SaaS terms', 'refund policy'],
+});
+
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-ink-50">

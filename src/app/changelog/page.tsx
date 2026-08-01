@@ -1,4 +1,15 @@
 export const dynamic = 'force-dynamic';
+import { pageMetadata } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: 'Changelog — what we shipped, and when',
+  description:
+    'What we shipped, and when. Updates weekly. Real entries from a ' +
+    'small product team, not a marketing roundup.',
+  path: '/changelog',
+  keywords: ['Collectly changelog', 'product updates', 'release notes'],
+});
+
 export default function ChangelogPage() {
   return (
     <div className="min-h-screen bg-ink-50">

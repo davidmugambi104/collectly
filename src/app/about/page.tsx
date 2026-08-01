@@ -1,12 +1,38 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { Logo } from '@/components/brand/logo';
+import { pageMetadata, personJsonLd, webPageJsonLd } from '@/lib/seo';
 
-export const metadata = { title: 'About' };
+export const metadata = pageMetadata({
+  title: 'About — built by a founder, not a Series-B committee',
+  description:
+    'Collectly is built by Davie in Nairobi for small agencies and ' +
+    'consultancies on Xero and QuickBooks. Read about the founding story, ' +
+    'why we focus on the 5-30 person business long tail, and what we\'re ' +
+    'not doing.',
+  path: '/about',
+  keywords: ['Collectly team', 'Collectly founder', 'AR automation story', 'Nairobi startup'],
+});
+
+// E-E-A-T page: Person schema for the founder + AboutPage schema. Helps
+// Google build a Knowledge Panel for the founder / company and rank the
+// about page for branded query "Collectly founder" / "who built Collectly".
+const aboutJsonLd = JSON.stringify([
+  webPageJsonLd({
+    title: 'About Collectly — built in Nairobi for small agencies',
+    description:
+      'The founding story behind Collectly: a small SaaS built for the ' +
+      '5-30 person agency and consultancy long tail on Xero and QuickBooks.',
+    path: '/about',
+    kind: 'AboutPage',
+  }),
+  personJsonLd(),
+]);
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: aboutJsonLd }} />
       <MarketingHeader />
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">About</p>
