@@ -242,6 +242,21 @@ else
   FAIL=$((FAIL+1))
 fi
 
+# /api/webhooks/stripe is the real Stripe money webhook (subscription billing
+# + one-time invoice payments both flow through handleStripeEvent in
+# billing.ts). It must never redirect to /sign-in — Stripe can't carry a
+# Clerk session, so a redirect here means webhooks silently stop delivering.
+# No signature header -> the route itself returns 400 "missing signature",
+# which is the expected non-redirect response.
+code=$(curl -sS -o /tmp/stripe-webhook.json -w "%{http_code}" -X POST "$BASE/api/webhooks/stripe" -H 'content-type: application/json' -d '{}')
+if [[ "$code" != "307" && "$code" != "302" ]]; then
+  echo "✅ /api/webhooks/stripe is reachable without auth (HTTP $code)"
+  PASS=$((PASS+1))
+else
+  echo "❌ /api/webhooks/stripe redirected (HTTP $code) — Stripe webhooks can't deliver"
+  FAIL=$((FAIL+1))
+fi
+
 # 19. Paystack verify route redirects to /pay/[id], NOT /dashboard/payment/*
 if grep -q "APP_URL.*pay" src/app/api/paystack/verify/route.ts; then
   echo "✅ Paystack verify redirects to /pay/[id] (public portal), not /dashboard/*"

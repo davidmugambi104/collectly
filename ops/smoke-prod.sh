@@ -89,6 +89,19 @@ for path in /api/payment/smoke_test /api/paystack/smoke_test; do
   fi
 done
 
+# 17. /api/webhooks/stripe — the real Stripe money webhook — must be
+# reachable without auth. Stripe can't carry a Clerk session, so any
+# redirect here means subscription billing + invoice payments silently
+# stop reconciling. No signature header -> route returns 400, not a redirect.
+code=$(curl -sS -o /tmp/smoke-stripe-webhook.json -w "%{http_code}" --max-time 15 -X POST "$BASE/api/webhooks/stripe" -H 'content-type: application/json' -d '{}')
+if [[ "$code" != "307" && "$code" != "302" ]]; then
+  echo "✅ /api/webhooks/stripe is reachable without auth (HTTP $code)"
+  PASS=$((PASS+1))
+else
+  echo "❌ /api/webhooks/stripe redirected (HTTP $code) — Stripe webhooks can't deliver"
+  FAIL=$((FAIL+1))
+fi
+
 echo
 echo "=== $PASS passed, $FAIL failed ==="
 exit $FAIL
