@@ -39,7 +39,7 @@ async function readCookieJar(): Promise<CookieJar | null> {
   }
 }
 
-export type OAuthProvider = 'quickbooks' | 'xero';
+export type OAuthProvider = 'quickbooks' | 'xero' | 'square' | 'stripe';
 
 const STATE_TTL_SECONDS = 10 * 60; // 10 min — long enough for user to auth, short enough to limit replay.
 const COOKIE_SECRET = process.env.OAUTH_STATE_SECRET ?? process.env.CRON_SECRET ?? 'collectly-dev-fallback';
@@ -100,7 +100,7 @@ function decryptCookie(payload: string): string | null {
  * binding in Redis (preferred) or a signed encrypted cookie (fallback).
  * Returns the nonce to put in the `state` query param.
  */
-export async function mintOAuthState(orgId: string, userId: string, provider: OAuthProvider = 'quickbooks'): Promise<string> {
+export async function mintOAuthState(orgId: string, userId: string, provider: OAuthProvider): Promise<string> {
   const nonce = newNonce();
   const binding: PendingState = { orgId, userId, provider, createdAt: Date.now() };
 
@@ -147,7 +147,7 @@ export type ConsumeResult =
  * Single-use: the binding is deleted after consumption so a replayed
  * callback cannot succeed.
  */
-export async function consumeOAuthState(nonce: string, expected: { orgId: string; userId: string }, provider: OAuthProvider = 'quickbooks'): Promise<ConsumeResult> {
+export async function consumeOAuthState(nonce: string, expected: { orgId: string; userId: string }, provider: OAuthProvider): Promise<ConsumeResult> {
   if (!nonce || nonce.length < 16) return { ok: false, reason: 'malformed' };
 
   const redis = getRedis();
