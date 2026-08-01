@@ -62,18 +62,33 @@ function mockGeminiThrows(t: import('node:test').TestContext, err: unknown) {
 }
 
 describe('generateDunningMessage — happy path (valid Gemini response)', () => {
-  test('email: returns the parsed subject + body verbatim', async (t) => {
+  test('email: returns the parsed subject verbatim; body is passed through unchanged when it already has no placeholder to fix', async (t) => {
     mockGeminiText(t, JSON.stringify({ subject: 'Quick reminder', body: 'Hi Jane, invoice INV-2370 is due.' }));
     const result = await generateDunningMessage(ctx({ channel: 'email' }));
     assert.equal(result.subject, 'Quick reminder');
-    assert.equal(result.body, 'Hi Jane, invoice INV-2370 is due.');
+    // ensurePaymentLink() appends the real pay link whenever the model's
+    // body doesn't already contain it -- this mocked body has none, so a
+    // link is appended. This is the fix for the reported production bug
+    // (Gemini shipping literal "[payment_link]" placeholder text because
+    // it was never given a real link to use).
+    assert.ok(result.body.startsWith('Hi Jane, invoice INV-2370 is due.'));
+    assert.ok(result.body.includes('https://getcollectly.app/pay/inv_nanoid_abc123'));
   });
 
-  test('sms: returns only a body, no subject', async (t) => {
+  test('sms: returns only a body, no subject, with the real pay link appended', async (t) => {
     mockGeminiText(t, JSON.stringify({ body: 'Invoice INV-2370 is due, please pay.' }));
     const result = await generateDunningMessage(ctx({ channel: 'sms' }));
     assert.equal(result.subject, undefined);
-    assert.equal(result.body, 'Invoice INV-2370 is due, please pay.');
+    assert.ok(result.body.startsWith('Invoice INV-2370 is due, please pay.'));
+    assert.ok(result.body.includes('https://getcollectly.app/pay/inv_nanoid_abc123'));
+    assert.ok(result.body.length <= 320);
+  });
+
+  test('email: a literal placeholder from the model is replaced with the real link, not left in the message', async (t) => {
+    mockGeminiText(t, JSON.stringify({ subject: 'Quick reminder', body: 'Hi Jane, please settle it here: [payment_link]. Thanks.' }));
+    const result = await generateDunningMessage(ctx({ channel: 'email' }));
+    assert.ok(!/\[payment_link\]/i.test(result.body), `placeholder should have been replaced, got: ${result.body}`);
+    assert.ok(result.body.includes('https://getcollectly.app/pay/inv_nanoid_abc123'));
   });
 });
 

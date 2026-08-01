@@ -369,7 +369,11 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         customersUpserted++;
       }
 
-      const number = inv.InvoiceNumber ?? externalId;
+      // `||` not `??` -- Xero sometimes returns InvoiceNumber as '' (not
+      // null/undefined), which `??` lets through, producing an invoice with
+      // no visible number anywhere it's displayed (e.g. dunning emails
+      // rendering "Invoice #" with nothing after it).
+      const number = inv.InvoiceNumber || externalId;
       const total = Number(inv.Total ?? 0);
       const amountDue = Number(inv.AmountDue ?? 0);
       const amountPaid = Math.max(0, total - amountDue);

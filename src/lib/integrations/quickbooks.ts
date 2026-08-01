@@ -370,7 +370,10 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
         customersUpserted++;
       }
 
-      const number = inv.DocNumber ?? externalId;
+      // `||` not `??` -- QuickBooks can return DocNumber as '' (not
+      // null/undefined), which `??` lets through. See matching fix in
+      // xero.ts (same bug class, same symptom: blank invoice number).
+      const number = inv.DocNumber || externalId;
       const total = Number(inv.TotalAmount ?? 0);
       const balance = Number(inv.Balance ?? 0);
       const amountPaid = Math.max(0, total - balance);

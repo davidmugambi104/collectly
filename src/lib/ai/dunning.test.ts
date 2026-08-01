@@ -44,6 +44,19 @@ describe('fallbackDunningMessage — payment link correctness', () => {
   }
 });
 
+describe('fallbackDunningMessage — blank invoice number', () => {
+  // Regression test: real Xero/QuickBooks-synced invoices can have an
+  // empty-string invoice number (upstream data quality + a `??` vs `||`
+  // bug at the sync layer), which previously rendered as "Invoice #" with
+  // nothing after it in real customer-facing emails.
+  test('falls back to an id fragment instead of rendering a bare "#"', () => {
+    const { body, subject } = fallbackDunningMessage(ctx({ invoiceNumber: '', invoiceId: 'abc123456789' }));
+    assert.ok(!/invoice #?\s*(for|is|,|$)/i.test(body), `body should not render a blank invoice number, got: ${body}`);
+    assert.ok(body.includes('ABC12345'), `expected id-fragment fallback in body, got: ${body}`);
+    assert.ok(subject && !/invoice\s*$/i.test(subject.trim()), `subject should not end with a blank invoice number, got: ${subject}`);
+  });
+});
+
 describe('fallbackDunningMessage — channel-specific formatting', () => {
   test('email includes a subject line', () => {
     const { subject } = fallbackDunningMessage(ctx({ channel: 'email' }));

@@ -70,6 +70,35 @@ async function callGeminiJSON<T>(systemPrompt: string, userPrompt: string): Prom
   return JSON.parse(text) as T;
 }
 
+// Same portal link builder used everywhere else in the codebase (see
+// infra.ts, quickbooks.ts) -- keeps NEXT_PUBLIC_APP_URL as the single
+// source of truth instead of hardcoding the domain here too.
+function buildPaymentLink(invoiceId: string): string {
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  return `${base}/pay/${invoiceId}`;
+}
+
+// Real invoices synced from Xero/QuickBooks can have an empty-string
+// invoice number (upstream data quality issue, partially fixed at the sync
+// layer but old rows may still have it). Falling back to a short id
+// fragment beats handing the model (and the customer) a message that says
+// "Invoice #" with nothing after it.
+function resolveInvoiceLabel(ctx: DunningContext): string {
+  return ctx.invoiceNumber?.trim() || ctx.invoiceId.slice(0, 8).toUpperCase();
+}
+
+// The reported failure mode: Gemini was told "include a payment link if
+// natural" with no actual link in its context, so it invented placeholder
+// syntax like "[payment_link]" and shipped that verbatim to a customer.
+// This is a pure string fix, not another model call -- deliberately kept
+// that way so fixing correctness doesn't cost extra tokens.
+function ensurePaymentLink(body: string, paymentLink: string, channel: 'email' | 'sms'): string {
+  const cleaned = body.replace(/\[?\{{0,2}\s*payment[_ ]?link\s*\}{0,2}\]?/gi, paymentLink);
+  if (cleaned.includes(paymentLink)) return cleaned;
+  const withLink = `${cleaned}${channel === 'email' ? '\n\n' : ' '}Pay here: ${paymentLink}`;
+  return channel === 'sms' ? withLink.slice(0, 320) : withLink;
+}
+
 // Pre-format currency once, in code, so the model never gets to choose
 // ordering or symbols. P2.3 audit fix 2026-07-31.
 function formatAmount(amount: string | number, currency: string): string {
@@ -137,6 +166,8 @@ export async function generateDunningMessage(ctx: DunningContext): Promise<{ sub
   const toneGuide = TONE_GUIDANCE[ctx.tone];
   const maxBody = MAX_BODY[ctx.channel];
   const formattedAmount = formatAmount(ctx.amount, ctx.currency);
+  const paymentLink = buildPaymentLink(ctx.invoiceId);
+  const invoiceLabel = resolveInvoiceLabel(ctx);
 
   const systemPrompt = `You are the collections copywriter for ${ctx.businessName}. Write a ${ctx.tone} ${ctx.channel === 'email' ? 'email' : 'SMS'} reminder about an unpaid invoice. Tone: ${toneGuide}
 Output rules:
@@ -144,7 +175,7 @@ Output rules:
 - Never invent details not given in the context. Use only the invoice number, amount, currency, due date, and contact name provided.
 - Reference payment history only if it's relevant to the tone (e.g. "We usually get this settled within a few days — wanted to make sure this didn't slip through.")
 - No exclamation points. No emoji. No all-caps. No pleading.
-- Include a clear next step and a payment link if natural ("Click here to pay" or "Reply with any questions").
+- Include a clear next step. Use the exact payment link given below, verbatim — never write a placeholder like "[payment link]" or invent your own URL.
 - Currency formatting: the amount is pre-formatted for you as "${formattedAmount}". Use it verbatim.
 - Sound like a thoughtful operations person, not a debt collector.
 - Output as ${ctx.channel === 'email' ? 'JSON: {"subject": "...", "body": "..."}' : 'JSON: {"body": "..."}'}`;
@@ -152,7 +183,7 @@ Output rules:
   const userPrompt = `Context:
 - Business: ${ctx.businessName}
 - Contact: ${ctx.contactName ?? 'Customer'}
-- Invoice #${ctx.invoiceNumber}
+- Invoice #${invoiceLabel}
 - Amount: ${formattedAmount}
 - Due date: ${ctx.dueDate}
 - Days overdue: ${ctx.daysOverdue}
@@ -160,6 +191,7 @@ Output rules:
 - Customer history: avg ${ctx.customerPaymentHistory.avgDaysToPay} days to pay, ${Math.round(ctx.customerPaymentHistory.paidRate * 100)}% paid rate
 - Channel: ${ctx.channel}
 - Tone: ${ctx.tone}
+- Payment link: ${paymentLink}
 ${ctx.brandVoice ? `- Brand voice: ${ctx.brandVoice}` : ''}
 
 Write the message.`;
@@ -167,10 +199,10 @@ Write the message.`;
   try {
     if (ctx.channel === 'email') {
       const parsed = await callGeminiValidated(systemPrompt, userPrompt, emailMsgSchema);
-      return { subject: parsed.subject, body: parsed.body };
+      return { subject: parsed.subject, body: ensurePaymentLink(parsed.body, paymentLink, 'email') };
     } else {
       const parsed = await callGeminiValidated(systemPrompt, userPrompt, smsMsgSchema);
-      return { body: parsed.body };
+      return { body: ensurePaymentLink(parsed.body, paymentLink, 'sms') };
     }
   } catch (e) {
     // Gemini unavailable / invalid key / schema mismatch — fall back to a deterministic template.
@@ -184,26 +216,27 @@ export function fallbackDunningMessage(ctx: DunningContext): { subject?: string;
   // (a human-readable display string). Building the URL from invoiceNumber
   // was a bug — it shipped broken links to every paying customer. See
   // src/app/pay/[id]/page.tsx:21 which does `eq(invoices.id, id)`.
-  const link = `https://getcollectly.app/pay/${ctx.invoiceId}`;
+  const link = buildPaymentLink(ctx.invoiceId);
+  const num = resolveInvoiceLabel(ctx);
   const linkFragment = ctx.channel === 'email' ? `\n\nPay here: ${link}` : ` ${link}`;
   let body: string;
   if (ctx.tone === 'friendly') {
-    body = `Hi ${ctx.contactName ?? 'there'},\n\nJust a quick nudge — invoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} was due on ${ctx.dueDate}. No rush, but if you can settle it today, that'd help us out.${linkFragment}\n\nThanks for being a great customer.\n\n${ctx.businessName}`;
+    body = `Hi ${ctx.contactName ?? 'there'},\n\nJust a quick nudge — invoice ${num} for ${ctx.currency} ${ctx.amount} was due on ${ctx.dueDate}. No rush, but if you can settle it today, that'd help us out.${linkFragment}\n\nThanks for being a great customer.\n\n${ctx.businessName}`;
   } else if (ctx.tone === 'firm') {
-    body = `Hi ${ctx.contactName ?? 'there'},\n\nInvoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} is now ${ctx.daysOverdue} day${ctx.daysOverdue === 1 ? '' : 's'} past due (originally due ${ctx.dueDate}).\n\nPlease review and settle at your earliest convenience. If there's an issue with the work, just reply and we'll sort it out.${linkFragment}\n\n${ctx.businessName}`;
+    body = `Hi ${ctx.contactName ?? 'there'},\n\nInvoice ${num} for ${ctx.currency} ${ctx.amount} is now ${ctx.daysOverdue} day${ctx.daysOverdue === 1 ? '' : 's'} past due (originally due ${ctx.dueDate}).\n\nPlease review and settle at your earliest convenience. If there's an issue with the work, just reply and we'll sort it out.${linkFragment}\n\n${ctx.businessName}`;
   } else {
-    body = `Final notice: invoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue} days overdue. After 60 days unpaid, we will need to refer this to collections.${linkFragment}\n\nIf you'd like to discuss payment arrangements, please reply today.\n\n${ctx.businessName}`;
+    body = `Final notice: invoice ${num} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue} days overdue. After 60 days unpaid, we will need to refer this to collections.${linkFragment}\n\nIf you'd like to discuss payment arrangements, please reply today.\n\n${ctx.businessName}`;
   }
   if (ctx.channel === 'sms') {
     // SMS: shorter, no newlines
-    const short = `${ctx.contactName ?? 'Hi'} — invoice ${ctx.invoiceNumber} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue}d overdue.${linkFragment} — ${ctx.businessName}`;
+    const short = `${ctx.contactName ?? 'Hi'} — invoice ${num} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue}d overdue.${linkFragment} — ${ctx.businessName}`;
     return { body: short.slice(0, 320) };
   }
   const subject = ctx.tone === 'friendly'
-    ? `Quick reminder — invoice ${ctx.invoiceNumber}`
+    ? `Quick reminder — invoice ${num}`
     : ctx.tone === 'firm'
-    ? `Invoice ${ctx.invoiceNumber} — ${ctx.daysOverdue} days overdue`
-    : `Final notice — invoice ${ctx.invoiceNumber}`;
+    ? `Invoice ${num} — ${ctx.daysOverdue} days overdue`
+    : `Final notice — invoice ${num}`;
   return { subject, body };
 }
 
