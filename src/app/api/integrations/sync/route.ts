@@ -8,6 +8,12 @@ import { syncQboForOrg, disconnectQbo } from '@/lib/integrations/quickbooks';
 import { syncXeroForOrg, disconnectXero } from '@/lib/integrations/xero';
 
 export const dynamic = 'force-dynamic';
+// syncXeroForOrg/syncQboForOrg do sequential, unbatched per-row DB upserts on
+// top of the provider API calls -- easily exceeds Vercel's low default
+// function timeout (10s) for a real org, producing a bare 502 with no
+// application-level error (the function is killed before our own try/catch
+// can log or respond). This is a real observed failure, not speculative.
+export const maxDuration = 60;
 
 async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xero') {
   const [row] = await db
