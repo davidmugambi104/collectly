@@ -169,7 +169,11 @@ export const dunningSequences = pgTable('dunning_sequences', {
   pauseOnPayment: boolean('pause_on_payment').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => ({
+  // Matches dunning_sequences_org_id_idx added in drizzle/0003 (raw SQL).
+  // Declared here so drizzle-kit's schema diff doesn't drift from the DB.
+  orgIdx: index('dunning_sequences_org_id_idx').on(t.orgId),
+}));
 
 export const dunningRuns = pgTable('dunning_runs', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
@@ -188,6 +192,11 @@ export const dunningRuns = pgTable('dunning_runs', {
 }, (t) => ({
   schedIdx: index('dunning_sched_idx').on(t.status, t.scheduledFor),
   invIdx: index('dunning_inv_idx').on(t.invoiceId),
+  // The following three match indexes added in drizzle/0003 (raw SQL) —
+  // declared here so drizzle-kit's schema diff doesn't drift from the DB.
+  orgIdx: index('dunning_runs_org_id_idx').on(t.orgId),
+  seqIdx: index('dunning_runs_sequence_id_idx').on(t.sequenceId),
+  invoiceSeqStepUniq: uniqueIndex('dunning_runs_invoice_seq_step_uniq').on(t.invoiceId, t.sequenceId, t.stepId),
 }));
 
 /* ----------------------------- SUBSCRIPTIONS / BILLING ----------------------------- */

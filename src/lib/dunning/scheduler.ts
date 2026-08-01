@@ -4,7 +4,7 @@
  */
 import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations } from '@/db/schema';
-import { eq, and, sql, lte, isNull, gt } from 'drizzle-orm';
+import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
@@ -42,6 +42,27 @@ export async function processDunning() {
         lte(invoices.dueDate, now),
       ));
 
+    // Batch-fetch every dunning_runs row already recorded for this sequence
+    // across all of this sequence's overdue invoices in one query, instead
+    // of one SELECT per invoice inside the loop below (N+1). Keyed by
+    // `${invoiceId}:${stepId}` so the per-invoice dedup check becomes an
+    // in-memory Set lookup. Correctness is still guaranteed by the DB-level
+    // unique index + onConflictDoNothing on the insert further down — this
+    // is purely to avoid a wasted AI-generation call for steps that are
+    // already scheduled/sent.
+    const invoiceIds = overdueInvoices.map(({ invoice }: typeof overdueInvoices[number]) => invoice.id);
+    const existingRunKeys = new Set<string>();
+    if (invoiceIds.length > 0) {
+      const existingRuns = await db
+        .select({ invoiceId: dunningRuns.invoiceId, stepId: dunningRuns.stepId })
+        .from(dunningRuns)
+        .where(and(
+          eq(dunningRuns.sequenceId, seq.id),
+          inArray(dunningRuns.invoiceId, invoiceIds),
+        ));
+      for (const r of existingRuns) existingRunKeys.add(`${r.invoiceId}:${r.stepId}`);
+    }
+
     for (const { invoice, customer } of overdueInvoices) {
       // Respect customer's do-not-disturb preference (set via /api/unsubscribe
       // with includeDnd=1). Skips email + SMS for this customer entirely.
@@ -55,16 +76,8 @@ export async function processDunning() {
       const lastStep = dueSteps[dueSteps.length - 1];
 
       // Check if this exact step was already executed for this invoice
-      const existing = await db
-        .select()
-        .from(dunningRuns)
-        .where(and(
-          eq(dunningRuns.invoiceId, invoice.id),
-          eq(dunningRuns.sequenceId, seq.id),
-          eq(dunningRuns.stepId, lastStep.id),
-        ))
-        .limit(1);
-      if (existing[0]) continue;
+      // (batched lookup computed once above, not a per-invoice query).
+      if (existingRunKeys.has(`${invoice.id}:${lastStep.id}`)) continue;
 
       try {
         const result = await generateDunningMessage({
