@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from '@/lib/auth-helper';
+import { requireAdminEmail } from '@/lib/auth-helper';
 import { db } from '@/db';
 import { waitlist } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -13,8 +13,12 @@ const schema = z.object({
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   await ensureBootstrapped();
-  const { orgId } = await getAuth();
-  if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  // SECURITY: waitlist/interview rows aren't org-scoped — they belong to the
+  // whole business, not any one customer's org. Gate with the same admin
+  // allowlist as the export route / /admin/upgrade-requests instead of just
+  // "is a signed-in member of some org".
+  const admin = await requireAdminEmail();
+  if (!admin.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const { id } = await params;
   const data = schema.parse(await req.json());
 

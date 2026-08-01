@@ -11,6 +11,16 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { clerkClient } from '@clerk/nextjs/server';
 import { getDevAuth } from '@/db/dev-auth';
+import { db } from '@/db';
+import { users } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+
+// Admin emails allowed to hit internal/admin-only routes (lead exports,
+// upgrade-request review, etc). Same allowlist as src/app/admin/upgrade-requests.
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? 'davie@getcollectly.app')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
 
 // SECURITY: refuse to enable the dev shim in production. We check this
 // lazily (on first call) rather than at module load, because Next.js
@@ -97,4 +107,22 @@ export async function getAuthWithOrg() {
     });
     return { userId: session.userId, orgId: org.id, user: null };
   }
+}
+
+/**
+ * SECURITY: gate for internal/admin-only routes (waitlist + interview lead
+ * exports, upgrade-request review, etc). `getAuth()`/`getAuthWithOrg()` only
+ * prove the caller is *a* signed-in member of *some* org — every paying
+ * customer satisfies that. These routes return cross-tenant data (all
+ * interview leads, all upgrade requests) that belongs to the Collectly team
+ * only, so they need a real allowlist check, not just "is logged in".
+ * Mirrors the check already used by src/app/admin/upgrade-requests.
+ */
+export async function requireAdminEmail(): Promise<{ ok: true; email: string } | { ok: false }> {
+  const { userId } = await getAuth();
+  if (!userId) return { ok: false };
+  const [u] = await db.select({ email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
+  const email = u?.email?.toLowerCase();
+  if (!email || !ADMIN_EMAILS.includes(email)) return { ok: false };
+  return { ok: true, email };
 }

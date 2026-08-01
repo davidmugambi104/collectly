@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from '@/lib/auth-helper';
+import { requireAdminEmail } from '@/lib/auth-helper';
 import { db } from '@/db';
 import { waitlist } from '@/db/schema';
 import { desc, like } from 'drizzle-orm';
@@ -7,8 +7,13 @@ import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
 export async function GET(req: NextRequest) {
   await ensureBootstrapped();
-  const { orgId } = await getAuth();
-  if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  // SECURITY: this exports every interview lead ever collected (name,
+  // email, company, DSO, pain points) across the whole business — not
+  // scoped to any org. Any signed-in customer previously satisfied the
+  // old `orgId` check; now gated by the same admin allowlist as
+  // /admin/upgrade-requests.
+  const admin = await requireAdminEmail();
+  if (!admin.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const sp = new URL(req.url).searchParams;
   const tag = sp.get('tag') ?? 'all';
 
