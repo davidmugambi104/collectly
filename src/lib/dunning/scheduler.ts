@@ -96,6 +96,14 @@ export async function processDunning() {
             avgDaysToPay: customer.paymentBehavior?.avgDaysToPay ?? 30,
             paidRate: customer.paymentBehavior?.paidRate ?? 1,
           },
+          // The step's editable text (still called `template` in stored
+          // sequence JSON for backward compat) was previously collected in
+          // the UI but never passed anywhere -- generateDunningMessage()
+          // always ignored it and wrote a message from tone/channel alone.
+          // Wired through as brandVoice (a field the AI context already
+          // supports but nothing populated) so what a user configures here
+          // actually shapes the real, scheduled message, not just a look.
+          brandVoice: lastStep.template || undefined,
         });
 
         // Wrap the dedup select + insert in a single transaction so a
