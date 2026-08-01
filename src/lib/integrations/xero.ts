@@ -18,6 +18,27 @@ import { nanoid } from '@/lib/utils';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 const XERO_API = 'https://api.xero.com/api.xro/2.0';
+
+/**
+ * Xero's Accounting API returns date fields (Invoice.Date, Invoice.DueDate,
+ * UpdatedDateUTC, etc.) in the legacy Microsoft/.NET JSON date format —
+ * "/Date(1670716800000+0000)/" — not ISO 8601, regardless of Accept header.
+ * `new Date(rawValue)` silently produces an Invalid Date for this format
+ * (confirmed against a live sync: every real-org invoice's issue/due date
+ * would have come through as Invalid Date, corrupting every days-overdue
+ * and aging calculation downstream). Handles both this format and plain
+ * ISO strings, since some fields/API versions do return ISO directly.
+ */
+function parseXeroDate(value: unknown): Date | null {
+  if (!value || typeof value !== 'string') return null;
+  const msMatch = value.match(/\/Date\((\d+)([+-]\d{4})?\)\//);
+  if (msMatch) {
+    const d = new Date(Number(msMatch[1]));
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
+}
 const XERO_CONNECTIONS = 'https://api.xero.com/Connections';
 
 // Auto-refresh access token if within 5 min of expiry.
@@ -341,8 +362,8 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
       const amountDue = Number(inv.AmountDue ?? 0);
       const amountPaid = Math.max(0, total - amountDue);
       const currency = inv.CurrencyCode ?? 'USD';
-      const issueDate = inv.Date ? new Date(inv.Date) : new Date();
-      const dueDate = inv.DueDate ? new Date(inv.DueDate) : issueDate;
+      const issueDate = parseXeroDate(inv.Date) ?? new Date();
+      const dueDate = parseXeroDate(inv.DueDate) ?? issueDate;
       const status: 'draft' | 'sent' | 'viewed' | 'partial' | 'paid' | 'overdue' = amountDue === 0
         ? 'paid'
         : amountPaid > 0
