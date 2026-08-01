@@ -26,11 +26,11 @@ const categories = [
       {
         name: 'Xero',
         slug: 'xero',
-        status: 'needs-credentials',
+        status: 'live',
         bullets: [
-          'OAuth 2.0 callback and token-refresh flow ready',
-          'Sync contacts, invoices, and credit notes',
-          'Production app credentials present but first connection must be verified',
+          'OAuth 2.0 callback and token-refresh flow, verified against a real external Xero organization',
+          'Sync contacts, invoices, and payments',
+          'Granular API scopes only — read-only on invoices, no access beyond what dunning requires',
         ],
       },
     ],
