@@ -5,6 +5,7 @@ import { subscriptions, organizations, invoices, payments, events } from '@/db/s
 import { eq } from 'drizzle-orm';
 import { nanoid, PLAN_PRICING } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
+import { applyPayment, applyRefund } from '@/lib/billing-math';
 
 export type PlanKey = keyof typeof PLAN_PRICING;
 
@@ -177,9 +178,8 @@ async function reversePaymentForInvoice({ invoiceId, refundAmount, reason }: { i
     return;
   }
   const priorPaid = Number(inv.amountPaid ?? 0);
-  const newAmountPaid = Math.max(0, priorPaid - refundAmount);
   const totalDue = Number(inv.amount);
-  const newStatus = newAmountPaid + 0.005 >= totalDue ? 'paid' : newAmountPaid > 0 ? 'partial' : 'sent';
+  const { newAmountPaid, status: newStatus } = applyRefund(priorPaid, refundAmount, totalDue);
 
   await db.insert(payments).values({
     id: nanoid(),
@@ -250,10 +250,9 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
   // the transaction (for the events row) and after (for the pushback +
   // receipt email best-effort work).
   const priorPaid = Number(inv.amountPaid ?? 0);
-  const newAmountPaid = priorPaid + args.amount;
   const totalDue = Number(inv.amount);
-  const isPaidInFull = newAmountPaid + 0.005 >= totalDue; // half-cent tolerance for rounding
-  const newStatus = isPaidInFull ? 'paid' : 'partial';
+  const { newAmountPaid, status: newStatus } = applyPayment(priorPaid, args.amount, totalDue);
+  const isPaidInFull = newStatus === 'paid';
 
   await db.transaction(async (tx: typeof db) => {
     await tx.insert(payments).values({
