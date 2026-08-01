@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw, User } from 'lucide-react';
 
 type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
-type Preview = { subject?: string; body: string; sample: boolean };
+type Recipient = { name: string; email: string | null; phone: string | null; invoiceNumber: string };
+type Preview = { subject?: string; body: string; sample: boolean; recipient: Recipient | null };
 
 export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Step[]; sequenceId: string }) {
   const router = useRouter();
@@ -60,7 +61,7 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? 'preview failed');
-      setPreview({ subject: data.subject, body: data.body, sample: !!data.sample });
+      setPreview({ subject: data.subject, body: data.body, sample: !!data.sample, recipient: data.recipient ?? null });
     } catch (e: any) {
       setPreviewError(e?.message ?? 'Preview failed');
     } finally {
@@ -123,11 +124,23 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
               {previewError && <div className="text-xs text-red-600">{previewError}</div>}
               {preview && (
                 <div className="rounded-lg border border-ink-200 bg-ink-50 p-3 space-y-2">
+                  {preview.recipient && (
+                    <div className="flex items-center gap-2 text-xs font-medium text-ink-800 bg-white border border-ink-200 rounded-md px-2.5 py-1.5">
+                      <User className="h-3.5 w-3.5 text-ink-400 shrink-0" />
+                      <span>To: {preview.recipient.name}</span>
+                      <span className="text-ink-400">·</span>
+                      <span className="text-ink-600">
+                        {active.channel === 'email' ? (preview.recipient.email ?? 'no email on file') : (preview.recipient.phone ?? 'no phone on file')}
+                      </span>
+                      <span className="text-ink-400">·</span>
+                      <span className="text-ink-600">Invoice {preview.recipient.invoiceNumber}</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 text-xs text-ink-500">
                     {active.channel === 'email' ? <Mail className="h-3.5 w-3.5" /> : <MessageSquare className="h-3.5 w-3.5" />}
                     {preview.sample
                       ? <span>Sample data — connect your books and sync invoices to preview against a real overdue invoice.</span>
-                      : <span>Generated from one of your actual overdue invoices.</span>}
+                      : <span>Generated from one of your actual overdue invoices — this is a real customer, shown above.</span>}
                   </div>
                   {preview.subject && <div className="text-sm font-medium text-ink-900">{preview.subject}</div>}
                   <div className="text-sm text-ink-800 whitespace-pre-wrap">{preview.body}</div>

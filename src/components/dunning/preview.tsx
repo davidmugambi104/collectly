@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw, User } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 interface PreviewProps {
@@ -11,6 +11,8 @@ interface PreviewProps {
   daysOverdue: number;
   channel: 'email' | 'sms';
   tone: 'friendly' | 'firm' | 'final';
+  email?: string | null;
+  phone?: string | null;
   onSent?: () => void;
   onCancel?: () => void;
 }
@@ -78,6 +80,15 @@ export function DunningPreview(props: PreviewProps) {
         <button onClick={props.onCancel} className="btn-ghost text-xs"><X className="h-3.5 w-3.5" /></button>
       </div>
 
+      <div className="flex items-center gap-2 text-xs font-medium text-ink-800 bg-ink-50 border border-ink-200 rounded-md px-2.5 py-1.5">
+        <User className="h-3.5 w-3.5 text-ink-400 shrink-0" />
+        <span>To: {props.customerName}</span>
+        <span className="text-ink-400">·</span>
+        <span className={props.channel === 'email' ? (props.email ? 'text-ink-600' : 'text-red-600') : (props.phone ? 'text-ink-600' : 'text-red-600')}>
+          {props.channel === 'email' ? (props.email ?? 'no email on file') : (props.phone ?? 'no phone on file')}
+        </span>
+      </div>
+
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div>
           <div className="text-xs text-ink-500 mb-1">Channel</div>
@@ -122,7 +133,7 @@ export function DunningPreview(props: PreviewProps) {
             <button onClick={generate} disabled={loading} className="btn-secondary text-sm flex-1">
               {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}Regenerate
             </button>
-            <button onClick={send} disabled={sending} className="btn-primary text-sm flex-1">
+            <button onClick={send} disabled={sending || !(props.channel === 'email' ? props.email : props.phone)} className="btn-primary text-sm flex-1">
               {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}Send reminder
             </button>
           </div>

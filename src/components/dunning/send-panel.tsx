@@ -75,6 +75,8 @@ export function DunningSendPanel({
         daysOverdue={daysOverdue}
         channel={channel}
         tone={tone}
+        email={email}
+        phone={phone}
         onSent={() => setTimeout(() => setOpen(false), 1500)}
         onCancel={() => setOpen(false)}
       />

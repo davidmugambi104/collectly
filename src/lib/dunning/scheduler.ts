@@ -3,7 +3,7 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users } from '@/db/schema';
 import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
@@ -21,10 +21,67 @@ async function getOrgName(orgId: string): Promise<string> {
   return name;
 }
 
+const ownerEmailCache = new Map<string, string | null>();
+async function getOwnerEmail(orgId: string): Promise<string | null> {
+  if (ownerEmailCache.has(orgId)) return ownerEmailCache.get(orgId)!;
+  const [row] = await db
+    .select({ email: users.email })
+    .from(organizations)
+    .innerJoin(users, eq(users.id, organizations.ownerId))
+    .where(eq(organizations.id, orgId))
+    .limit(1);
+  const email = row?.email ?? null;
+  ownerEmailCache.set(orgId, email);
+  return email;
+}
+
+type DigestEntry = { customerName: string; channel: 'email' | 'sms'; invoiceNumber: string; amount: string; currency: string };
+
+// Sends the operator ("founder") a summary of what just went out on their
+// behalf, since automatic sends otherwise happen with no human in the loop
+// -- the recipient list is otherwise only visible by checking the dashboard.
+// Best-effort: a notification failure must never fail the cron run itself.
+async function notifyOwnerOfSends(orgId: string, entries: DigestEntry[]) {
+  if (!entries.length) return;
+  try {
+    const [ownerEmail, businessName] = await Promise.all([getOwnerEmail(orgId), getOrgName(orgId)]);
+    if (!ownerEmail) return;
+    const rows = entries
+      .map(
+        (e) =>
+          `<tr><td style="padding:6px 10px;border-bottom:1px solid #eeeef0;">${e.customerName}</td>` +
+          `<td style="padding:6px 10px;border-bottom:1px solid #eeeef0;text-transform:capitalize;">${e.channel}</td>` +
+          `<td style="padding:6px 10px;border-bottom:1px solid #eeeef0;">${e.invoiceNumber}</td>` +
+          `<td style="padding:6px 10px;border-bottom:1px solid #eeeef0;">${e.currency} ${e.amount}</td></tr>`,
+      )
+      .join('');
+    await sendEmail({
+      to: ownerEmail,
+      subject: `Collectly sent ${entries.length} dunning reminder${entries.length === 1 ? '' : 's'} just now`,
+      html: `
+        <!doctype html>
+        <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 600px; margin: 0 auto; padding: 24px;">
+          <p style="font-size: 15px; line-height: 1.6;">Your automatic dunning sequence sent ${entries.length} reminder${entries.length === 1 ? '' : 's'} for ${businessName} just now:</p>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;">
+            <thead><tr style="text-align:left;color:#6c6e76;text-transform:uppercase;font-size:11px;">
+              <th style="padding:6px 10px;">Customer</th><th style="padding:6px 10px;">Channel</th><th style="padding:6px 10px;">Invoice</th><th style="padding:6px 10px;">Amount</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <p style="font-size:12px;color:#6c6e76;margin-top:20px;">You can review or pause this at any time from the dunning dashboard.</p>
+        </body></html>
+      `,
+    });
+  } catch (e: any) {
+    console.error('[dunning] owner notification failed:', e?.message);
+  }
+}
+
 export async function processDunning() {
   const now = new Date();
   const sequences = await db.select().from(dunningSequences).where(eq(dunningSequences.isActive, true));
   let scheduled = 0, sent = 0, errors = 0;
+  const orgDigest = new Map<string, DigestEntry[]>();
 
   for (const seq of sequences) {
     const businessName = await getOrgName(seq.orgId);
@@ -165,6 +222,9 @@ export async function processDunning() {
                 type: 'dunning.run.sent',
                 payload: { runId: run.id, invoiceId: invoice.id, channel: 'email', customer: customer.email, days },
               });
+              const digest = orgDigest.get(seq.orgId) ?? [];
+              digest.push({ customerName: customer.name, channel: 'email', invoiceNumber: invoice.number, amount: invoice.amount, currency: invoice.currency });
+              orgDigest.set(seq.orgId, digest);
             }
           } else if (lastStep.channel === 'sms' && customer.phone) {
             const sms = await sendSms({ to: customer.phone, body: result.body });
@@ -190,6 +250,9 @@ export async function processDunning() {
                 type: 'dunning.run.sent',
                 payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', customer: customer.phone, days },
               });
+              const digest = orgDigest.get(seq.orgId) ?? [];
+              digest.push({ customerName: customer.name, channel: 'sms', invoiceNumber: invoice.number, amount: invoice.amount, currency: invoice.currency });
+              orgDigest.set(seq.orgId, digest);
             }
           } else {
             // No channel available for this customer — cancel, don't mark 'sent'
@@ -221,6 +284,11 @@ export async function processDunning() {
       }
     }
   }
+
+  for (const [orgId, entries] of orgDigest) {
+    await notifyOwnerOfSends(orgId, entries);
+  }
+
   return { scheduled, sent, errors };
 }
 

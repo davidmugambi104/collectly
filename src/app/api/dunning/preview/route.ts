@@ -85,14 +85,26 @@ export async function POST(req: NextRequest) {
 
   const fullCtx = { ...ctx, tone: data.tone, channel: data.channel, brandVoice: data.brandVoice || undefined };
 
+  // Surfaced in the UI so no one previews or approves a message referencing
+  // a real customer's real balance without seeing exactly who it's for and
+  // where it would go -- the "who is this actually being sent to" gap.
+  const recipient = row
+    ? {
+        name: row.customer.name,
+        email: row.customer.email ?? null,
+        phone: row.customer.phone ?? null,
+        invoiceNumber: row.invoice.number,
+      }
+    : null;
+
   try {
     const result = await generateDunningMessage(fullCtx);
-    return NextResponse.json({ ...result, sample: !row });
+    return NextResponse.json({ ...result, sample: !row, recipient });
   } catch (e: any) {
     // generateDunningMessage() already falls back internally on Gemini
     // failure -- this catch is defense-in-depth for anything else (e.g.
     // a malformed context) so the preview never hard-errors in the UI.
     const fallback = fallbackDunningMessage(fullCtx);
-    return NextResponse.json({ ...fallback, sample: !row });
+    return NextResponse.json({ ...fallback, sample: !row, recipient });
   }
 }

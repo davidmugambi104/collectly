@@ -49,6 +49,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     amount: string;
     currency: string;
     daysOverdue: number;
+    email: string | null;
+    phone: string | null;
   } | null = null;
   let composerError: string | null = null;
 
@@ -79,6 +81,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         amount: remaining,
         currency: inv.invoice.currency ?? 'USD',
         daysOverdue: Math.max(0, daysOverdue(inv.invoice.dueDate)),
+        email: inv.customer.email,
+        phone: inv.customer.phone,
       };
     }
   }
@@ -96,8 +100,14 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   }
 
   const recentRuns = await db
-    .select()
+    .select({
+      run: dunningRuns,
+      customerName: customers.name,
+      invoiceNumber: invoices.number,
+    })
     .from(dunningRuns)
+    .innerJoin(invoices, eq(invoices.id, dunningRuns.invoiceId))
+    .innerJoin(customers, eq(customers.id, invoices.customerId))
     .where(eq(dunningRuns.orgId, orgId))
     .orderBy(desc(dunningRuns.createdAt))
     .limit(20);
@@ -150,6 +160,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
               daysOverdue={composer!.daysOverdue}
               channel={targetChannel}
               tone={targetTone}
+              email={composer!.email}
+              phone={composer!.phone}
               onSent={() => {
                 // After a successful send, the user still sees the sequence
                 // editor below. No router push needed — the panel collapses
@@ -165,6 +177,16 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           <BarChart3 className="h-3.5 w-3.5" />View performance
         </Link>
       </div>
+      <div className={`mb-4 flex items-center gap-2 rounded-lg border px-3.5 py-2.5 text-sm ${active ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
+        <span className={`h-2 w-2 rounded-full shrink-0 ${active ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+        <span className="font-medium">{active ? 'Automatic sending is ON' : 'Automatic sending is OFF'}</span>
+        <span className="text-ink-600">
+          {active
+            ? '— steps below fire on their own, by days overdue. No one has to click send.'
+            : '— nothing sends on its own right now. You can still send one-off reminders manually below.'}
+        </span>
+      </div>
+
       <div className="grid lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 card">
           <div className="flex items-center justify-between">
@@ -189,7 +211,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           <p className="text-sm text-ink-600 mt-1">Last 20 dunning actions.</p>
           <div className="mt-4 space-y-2 max-h-[480px] overflow-y-auto">
             {recentRuns.length === 0 && <div className="text-sm text-ink-500 text-center py-8">No activity yet. Connect an integration and turn on a sequence to start.</div>}
-            {recentRuns.map((run: typeof recentRuns[number]) => (
+            {recentRuns.map(({ run, customerName, invoiceNumber }: typeof recentRuns[number]) => (
               <div key={run.id} className="flex items-start gap-2 text-sm">
                 {run.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-500 mt-0.5" /> : <Mail className="h-3.5 w-3.5 text-ink-500 mt-0.5" />}
                 <div className="flex-1 min-w-0">
@@ -197,6 +219,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
                     <span className={`badge text-[10px] ${run.status === 'sent' || run.status === 'delivered' ? 'badge-success' : run.status === 'failed' ? 'badge-danger' : 'badge-neutral'}`}>{run.status}</span>
                     <span className="text-xs text-ink-500">{run.sentAt ? new Date(run.sentAt).toLocaleString() : 'queued'}</span>
                   </div>
+                  <div className="text-xs font-medium text-ink-900 truncate">To: {customerName} · Invoice {invoiceNumber}</div>
                   <div className="text-xs text-ink-700 truncate">{run.subject ?? 'SMS reminder'}</div>
                 </div>
               </div>
