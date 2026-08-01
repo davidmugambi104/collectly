@@ -5,7 +5,7 @@ import { db } from '@/db';
 import { organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
-import { recordEvent } from '@/lib/events';
+import { cascadeDeleteOrgData } from '@/lib/account-deletion';
 import { clerkClient } from '@clerk/nextjs/server';
 
 export const dynamic = 'force-dynamic';
@@ -56,21 +56,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Best-effort audit trail written BEFORE the cascade removes the events rows,
-  // so at minimum the deletion intent is visible in logs.
+  // App-data cascade delete — shared with the /api/webhooks/clerk
+  // `organization.deleted` handler (see src/lib/account-deletion.ts) so
+  // both entry points (in-app delete, org deleted directly in Clerk's
+  // dashboard) behave identically.
   try {
-    await recordEvent({
-      orgId,
-      type: 'account.deleted',
-      payload: { orgName: org.name, at: new Date().toISOString() },
-    });
-  } catch {
-    // Never block a deletion request on analytics.
-  }
-  console.warn('[account.delete] deleting org', orgId, org.name);
-
-  try {
-    await db.delete(organizations).where(eq(organizations.id, orgId));
+    await cascadeDeleteOrgData(orgId, { reason: 'user_requested' });
   } catch (e: any) {
     console.error('[account.delete] failed:', e?.message ?? e);
     return NextResponse.json({ error: 'deletion failed' }, { status: 500 });
