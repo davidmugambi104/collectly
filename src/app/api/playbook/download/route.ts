@@ -56,6 +56,18 @@ export async function POST(req: NextRequest) {
 
 /** GET endpoint for direct download (e.g. /playbook link in a footer). */
 export async function GET(req: NextRequest) {
+  // SECURITY: this is a public, unauthenticated GET (unlike POST above, it
+  // was missing rate limiting entirely) — without it, a caller could hammer
+  // it to spam waitlist inserts via ?email= or just to burn CPU regenerating
+  // the PDF on every request.
+  const rl = await rateLimit(getIp(req), { max: 10 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Try again in a minute.' },
+      { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } },
+    );
+  }
+
   const sp = new URL(req.url).searchParams;
   const email = sp.get('email');
   if (email) {
