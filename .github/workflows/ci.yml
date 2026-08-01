@@ -23,6 +23,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npx tsc --noEmit
+      - run: npm test
       - run: npx next lint --quiet || true   # warn-only for now; tighten later
 
   # 2. Build — full Next.js production build
