@@ -91,10 +91,22 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
   });
   if (!res.ok) throw new Error(`Xero connections failed: ${res.status}`);
   const json: any = await res.json();
-  const first = json?.[0];
-  if (!first?.tenantId) throw new Error('Xero: no tenant found for this connection');
-  await db.update(integrations).set({ tenantId: first.tenantId, updatedAt: new Date() }).where(eq(integrations.id, integrationId));
-  return first.tenantId as string;
+  // /connections returns EVERY org this Xero user has ever authorized for
+  // this app, not just the one from the auth flow just completed --
+  // disconnecting in our app only deletes our local row, it never revokes
+  // on Xero's side (see disconnectXero()'s comment). Blindly taking index 0
+  // silently re-selected a stale, previously-authorized org after a user
+  // disconnected and reconnected to a *different* one (observed directly:
+  // reconnecting to Xero's Demo Company kept syncing an old, empty org
+  // instead). updatedDateUtc reflects the most recent (re)authorization per
+  // Xero's own docs, so sort on that and take the most recent.
+  const sorted = [...(json ?? [])].sort((a: any, b: any) =>
+    new Date(b.updatedDateUtc ?? b.createdDateUtc ?? 0).getTime() - new Date(a.updatedDateUtc ?? a.createdDateUtc ?? 0).getTime(),
+  );
+  const mostRecent = sorted[0];
+  if (!mostRecent?.tenantId) throw new Error('Xero: no tenant found for this connection');
+  await db.update(integrations).set({ tenantId: mostRecent.tenantId, updatedAt: new Date() }).where(eq(integrations.id, integrationId));
+  return mostRecent.tenantId as string;
 }
 
 async function xeroFetch(orgId: string, path: string, init?: RequestInit) {
