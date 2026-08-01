@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw, User } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
+import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw } from 'lucide-react';
+import { RecipientCard } from './recipient-card';
 
 interface PreviewProps {
   invoiceId: string;
@@ -80,35 +80,21 @@ export function DunningPreview(props: PreviewProps) {
         <button onClick={props.onCancel} className="btn-ghost text-xs"><X className="h-3.5 w-3.5" /></button>
       </div>
 
-      <div className="flex items-center gap-2 text-xs font-medium text-ink-800 bg-ink-50 border border-ink-200 rounded-md px-2.5 py-1.5">
-        <User className="h-3.5 w-3.5 text-ink-400 shrink-0" />
-        <span>To: {props.customerName}</span>
-        <span className="text-ink-400">·</span>
-        <span className={props.channel === 'email' ? (props.email ? 'text-ink-600' : 'text-red-600') : (props.phone ? 'text-ink-600' : 'text-red-600')}>
-          {props.channel === 'email' ? (props.email ?? 'no email on file') : (props.phone ?? 'no phone on file')}
-        </span>
-      </div>
+      <RecipientCard
+        name={props.customerName}
+        channel={props.channel}
+        contact={props.channel === 'email' ? props.email : props.phone}
+        amount={props.amount}
+        currency={props.currency}
+        daysOverdue={props.daysOverdue}
+      />
 
-      <div className="grid grid-cols-2 gap-3 text-sm">
-        <div>
-          <div className="text-xs text-ink-500 mb-1">Channel</div>
-          <div className="flex items-center gap-2 font-medium text-ink-900">
-            {props.channel === 'email' ? <Mail className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
-            <span className="capitalize">{props.channel}</span>
-          </div>
-        </div>
-        <div>
-          <div className="text-xs text-ink-500 mb-1">Tone</div>
-          <div className="font-medium text-ink-900 capitalize">{props.tone}</div>
-        </div>
-        <div>
-          <div className="text-xs text-ink-500 mb-1">Days overdue</div>
-          <div className="font-medium text-ink-900">{props.daysOverdue}d</div>
-        </div>
-        <div>
-          <div className="text-xs text-ink-500 mb-1">Amount</div>
-          <div className="font-mono font-medium text-ink-900">{formatCurrency(props.amount, props.currency)}</div>
-        </div>
+      <div className="flex items-center gap-4 text-xs text-ink-600">
+        <span className="inline-flex items-center gap-1.5">
+          {props.channel === 'email' ? <Mail className="h-3.5 w-3.5 text-ink-400" /> : <MessageSquare className="h-3.5 w-3.5 text-ink-400" />}
+          <span className="capitalize font-medium text-ink-900">{props.channel}</span>
+        </span>
+        <span className={`badge text-[10px] capitalize ${props.tone === 'final' ? 'badge-danger' : props.tone === 'firm' ? 'badge-warn' : 'badge-success'}`}>{props.tone}</span>
       </div>
 
       {!content ? (
@@ -117,18 +103,35 @@ export function DunningPreview(props: PreviewProps) {
           Generate with AI
         </button>
       ) : (
-        <div className="space-y-3">
-          {content.subject && (
-            <div>
-              <label className="label">Subject</label>
-              <input value={content.subject} onChange={(e) => setContent({ ...content, subject: e.target.value })} className="input" />
+        <div className="space-y-3 animate-fade-in">
+          <div className={`rounded-xl border border-ink-200 overflow-hidden shadow-[0_8px_24px_-10px_rgba(16,17,20,0.18)] ${props.channel === 'sms' ? 'bg-gradient-to-b from-ink-50 to-ink-100/60' : 'bg-white'}`}>
+            <div className="flex items-center gap-1.5 px-3.5 py-2 bg-ink-50 border-b border-ink-200">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+              <span className="ml-2 flex items-center gap-1 text-[11px] text-ink-400">
+                {props.channel === 'sms' ? <MessageSquare className="h-3 w-3" /> : <Mail className="h-3 w-3" />}
+                Editing what {props.customerName.split(' ')[0]} will see
+              </span>
             </div>
-          )}
-          <div>
-            <label className="label">Body</label>
-            <textarea value={content.body} onChange={(e) => setContent({ ...content, body: e.target.value })} rows={props.channel === 'sms' ? 4 : 8} className="input font-mono text-xs" />
-            <div className="text-xs text-ink-500 mt-1 text-right">{content.body.length} chars</div>
+            <div className="p-3.5 space-y-2.5">
+              {content.subject && (
+                <input
+                  value={content.subject}
+                  onChange={(e) => setContent({ ...content, subject: e.target.value })}
+                  className="w-full text-sm font-semibold text-ink-900 bg-transparent border-0 border-b border-ink-100 pb-2 focus:outline-none focus:border-brand-400"
+                  placeholder="Subject"
+                />
+              )}
+              <textarea
+                value={content.body}
+                onChange={(e) => setContent({ ...content, body: e.target.value })}
+                rows={props.channel === 'sms' ? 4 : 8}
+                className="w-full text-sm text-ink-800 bg-transparent border-0 resize-none focus:outline-none leading-relaxed"
+              />
+            </div>
           </div>
+          <div className="text-xs text-ink-500 text-right">{content.body.length} chars</div>
           <div className="flex gap-2">
             <button onClick={generate} disabled={loading} className="btn-secondary text-sm flex-1">
               {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}Regenerate

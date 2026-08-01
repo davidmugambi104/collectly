@@ -94,6 +94,9 @@ export async function POST(req: NextRequest) {
         email: row.customer.email ?? null,
         phone: row.customer.phone ?? null,
         invoiceNumber: row.invoice.number,
+        amount: ctx.amount,
+        currency: ctx.currency,
+        daysOverdue: ctx.daysOverdue,
       }
     : null;
 

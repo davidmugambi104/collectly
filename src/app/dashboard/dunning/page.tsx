@@ -9,9 +9,10 @@ import { eq, and, sql, desc } from 'drizzle-orm';
 import { nanoid, daysOverdue, formatCurrency } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
-import { Sparkles, Mail, MessageSquare, Pause, Play, BarChart3, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Sparkles, Mail, MessageSquare, Pause, Play, BarChart3, AlertCircle, ArrowLeft, ShieldAlert, TrendingUp, Send, Target, ChevronRight } from 'lucide-react';
 import { DunningPreview } from '@/components/dunning/preview';
 import { SequenceEditor } from '@/components/dunning/sequence-editor';
+import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
 
 const DEFAULT_STEPS = [
   { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
@@ -102,6 +103,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   const recentRuns = await db
     .select({
       run: dunningRuns,
+      customerId: customers.id,
       customerName: customers.name,
       invoiceNumber: invoices.number,
     })
@@ -114,8 +116,58 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
 
   const active = seq?.isActive ?? true;
 
+  // Impact strip: the numbers that make dunning feel like it's working (or
+  // like it needs attention), computed once so the page opens with "here's
+  // what's at stake and what this has already recovered" instead of a bare
+  // sequence editor.
+  const [[riskRow], [recoveredRow], [sentRow], [dunnedRow], [dunnedPaidRow], [failedCountRow], [latestFailure]] = await Promise.all([
+    db.select({ total: sql<string>`coalesce(sum(${invoices.amount} - ${invoices.amountPaid}), 0)` })
+      .from(invoices)
+      .where(and(eq(invoices.orgId, orgId), sql`${invoices.status} NOT IN ('paid', 'written_off')`)),
+    db.select({ total: sql<string>`coalesce(sum(${invoices.amount}), 0)` })
+      .from(invoices)
+      .where(and(
+        eq(invoices.orgId, orgId),
+        eq(invoices.status, 'paid'),
+        sql`${invoices.id} IN (SELECT ${dunningRuns.invoiceId} FROM ${dunningRuns} WHERE ${dunningRuns.orgId} = ${orgId})`,
+      )),
+    db.select({ count: sql<string>`count(*)` })
+      .from(dunningRuns)
+      .where(and(
+        eq(dunningRuns.orgId, orgId),
+        sql`${dunningRuns.status} IN ('sent', 'delivered')`,
+        sql`${dunningRuns.sentAt} >= now() - interval '7 days'`,
+      )),
+    db.select({ count: sql<string>`count(distinct ${dunningRuns.invoiceId})` })
+      .from(dunningRuns)
+      .where(eq(dunningRuns.orgId, orgId)),
+    db.select({ count: sql<string>`count(distinct ${invoices.id})` })
+      .from(invoices)
+      .innerJoin(dunningRuns, eq(dunningRuns.invoiceId, invoices.id))
+      .where(and(eq(invoices.orgId, orgId), eq(invoices.status, 'paid'))),
+    // Failures are the thing a green "ON" status can otherwise hide — a
+    // misconfigured sender domain fails every email silently unless this
+    // is surfaced explicitly, badge-only wasn't enough to notice it.
+    db.select({ count: sql<string>`count(*)` })
+      .from(dunningRuns)
+      .where(and(eq(dunningRuns.orgId, orgId), eq(dunningRuns.status, 'failed'))),
+    db.select({ error: dunningRuns.error, createdAt: dunningRuns.createdAt })
+      .from(dunningRuns)
+      .where(and(eq(dunningRuns.orgId, orgId), eq(dunningRuns.status, 'failed')))
+      .orderBy(desc(dunningRuns.createdAt))
+      .limit(1),
+  ]);
+  const revenueAtRisk = parseFloat(riskRow?.total ?? '0');
+  const recoveredTotal = parseFloat(recoveredRow?.total ?? '0');
+  const sentLast7d = parseInt(sentRow?.count ?? '0', 10);
+  const dunnedCount = parseInt(dunnedRow?.count ?? '0', 10);
+  const dunnedPaidCount = parseInt(dunnedPaidRow?.count ?? '0', 10);
+  const recoveryRate = dunnedCount > 0 ? Math.round((dunnedPaidCount / dunnedCount) * 100) : null;
+  const failedTotal = parseInt(failedCountRow?.count ?? '0', 10);
+
   return (
     <AppShell title="AI Dunning" subtitle="Automated, tone-aware reminders — written by Gemini, sent on your schedule.">
+      <DunningTour />
       {/* Composer: when the page is opened from a per-customer follow-up
           recommendation (?customerId=...&tone=...&channel=...) we pre-fill
           the Gemini-backed preview for the customer's oldest unpaid invoice
@@ -172,33 +224,97 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         </div>
       )}
 
-      <div className="mb-4 flex justify-end">
-        <Link href="/dashboard/dunning/performance" className="btn-secondary text-sm">
-          <BarChart3 className="h-3.5 w-3.5" />View performance
-        </Link>
+      {/* Impact strip — leads with what's at stake (loss aversion) and what
+          automation has already recovered (progress), before asking the
+          operator to configure anything. */}
+      <div data-tour="impact" className="mb-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <ImpactTile
+          delay={0}
+          icon={<ShieldAlert className="h-4 w-4" />}
+          tone="amber"
+          label="Revenue at risk"
+          value={formatCurrency(revenueAtRisk)}
+          sub="Open balance, unpaid invoices"
+        />
+        <ImpactTile
+          delay={60}
+          icon={<TrendingUp className="h-4 w-4" />}
+          tone="emerald"
+          label="Recovered via dunning"
+          value={formatCurrency(recoveredTotal)}
+          sub="All time, invoices paid after a reminder"
+        />
+        <ImpactTile
+          delay={120}
+          icon={<Send className="h-4 w-4" />}
+          tone="brand"
+          label="Reminders sent"
+          value={String(sentLast7d)}
+          sub="Last 7 days"
+        />
+        <ImpactTile
+          delay={180}
+          icon={<Target className="h-4 w-4" />}
+          tone="ink"
+          label="Recovery rate"
+          value={recoveryRate === null ? '—' : `${recoveryRate}%`}
+          sub={dunnedCount > 0 ? `${dunnedPaidCount} of ${dunnedCount} invoices dunned` : 'No dunning history yet'}
+        />
       </div>
-      <div className={`mb-4 flex items-center gap-2 rounded-lg border px-3.5 py-2.5 text-sm ${active ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
-        <span className={`h-2 w-2 rounded-full shrink-0 ${active ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-        <span className="font-medium">{active ? 'Automatic sending is ON' : 'Automatic sending is OFF'}</span>
-        <span className="text-ink-600">
-          {active
-            ? '— steps below fire on their own, by days overdue. No one has to click send.'
-            : '— nothing sends on its own right now. You can still send one-off reminders manually below.'}
-        </span>
+
+      {/* Failures don't show up in the on/off status above — "Automatic
+          sending is ON" is still true even if every send is bouncing off a
+          misconfigured provider. Surface that explicitly, with the real
+          reason, instead of leaving it buried in a "failed" badge below. */}
+      {failedTotal > 0 && (
+        <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm">
+          <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            <span className="font-medium text-red-900">
+              {failedTotal} reminder{failedTotal === 1 ? '' : 's'} failed to send
+            </span>
+            {latestFailure?.error && (
+              <span className="text-red-800"> — {latestFailure.error}</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Control panel — the one switch that matters on this page, plus a
+          secondary route to the deeper report so it doesn't compete for
+          attention with the primary on/off decision. */}
+      <div data-tour="control" className="mb-5 card !py-4 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className={`relative h-9 w-9 shrink-0 rounded-full grid place-items-center ${active ? 'bg-emerald-50' : 'bg-amber-50'}`}>
+            <span className={`h-2.5 w-2.5 rounded-full ${active ? 'bg-emerald-500 animate-pulse-soft' : 'bg-amber-500'}`} />
+          </span>
+          <div className="min-w-0">
+            <div className="font-semibold text-ink-900">{active ? 'Automatic sending is on' : 'Automatic sending is off'}</div>
+            <p className="text-xs text-ink-600 mt-0.5 truncate">
+              {active
+                ? 'Steps below fire on their own, by days overdue — no one has to click send.'
+                : 'Nothing sends on its own right now. One-off reminders below still work.'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <ReplayTourButton className="btn-ghost text-sm" />
+          <Link href="/dashboard/dunning/performance" className="btn-ghost text-sm">
+            <BarChart3 className="h-3.5 w-3.5" />Full report<ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+          <form action={async () => { 'use server'; if (seq) { await db.update(dunningSequences).set({ isActive: !active, updatedAt: new Date() }).where(eq(dunningSequences.id, seq.id)); revalidatePath('/dashboard/dunning'); } }}>
+            <button className={active ? 'btn-secondary text-sm' : 'btn-brand text-sm'} type="submit">
+              {active ? <><Pause className="h-3.5 w-3.5" />Pause</> : <><Play className="h-3.5 w-3.5" />Resume</>}
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 card">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="h3">Default sequence</h2>
-              <p className="text-sm text-ink-600 mt-1">Customers are sent reminders in this order, starting 1 day after the invoice is due.</p>
-            </div>
-            <form action={async () => { 'use server'; if (seq) { await db.update(dunningSequences).set({ isActive: !active, updatedAt: new Date() }).where(eq(dunningSequences.id, seq.id)); revalidatePath('/dashboard/dunning'); } }}>
-              <button className={active ? 'btn-secondary text-sm' : 'btn-brand text-sm'} type="submit">
-                {active ? <><Pause className="h-3.5 w-3.5" />Pause</> : <><Play className="h-3.5 w-3.5" />Resume</>}
-              </button>
-            </form>
+          <div>
+            <h2 className="h3">Default sequence</h2>
+            <p className="text-sm text-ink-600 mt-1">Customers are sent reminders in this order, starting 1 day after the invoice is due.</p>
           </div>
 
           <div className="mt-5">
@@ -207,26 +323,87 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         </div>
 
         <div className="card">
-          <h2 className="h3">Recent activity</h2>
-          <p className="text-sm text-ink-600 mt-1">Last 20 dunning actions.</p>
-          <div className="mt-4 space-y-2 max-h-[480px] overflow-y-auto">
-            {recentRuns.length === 0 && <div className="text-sm text-ink-500 text-center py-8">No activity yet. Connect an integration and turn on a sequence to start.</div>}
-            {recentRuns.map(({ run, customerName, invoiceNumber }: typeof recentRuns[number]) => (
-              <div key={run.id} className="flex items-start gap-2 text-sm">
-                {run.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-500 mt-0.5" /> : <Mail className="h-3.5 w-3.5 text-ink-500 mt-0.5" />}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className={`badge text-[10px] ${run.status === 'sent' || run.status === 'delivered' ? 'badge-success' : run.status === 'failed' ? 'badge-danger' : 'badge-neutral'}`}>{run.status}</span>
-                    <span className="text-xs text-ink-500">{run.sentAt ? new Date(run.sentAt).toLocaleString() : 'queued'}</span>
-                  </div>
-                  <div className="text-xs font-medium text-ink-900 truncate">To: {customerName} · Invoice {invoiceNumber}</div>
-                  <div className="text-xs text-ink-700 truncate">{run.subject ?? 'SMS reminder'}</div>
-                </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="h3">Recent activity</h2>
+              <p className="text-sm text-ink-600 mt-1">Last 20 dunning actions.</p>
+            </div>
+            {recentRuns.length > 0 && (
+              <Link href="/dashboard/dunning/performance" className="text-xs font-medium text-brand-600 hover:text-brand-700 shrink-0 inline-flex items-center gap-0.5">
+                See all<ChevronRight className="h-3 w-3" />
+              </Link>
+            )}
+          </div>
+          <div className="mt-4 space-y-1 max-h-[480px] overflow-y-auto">
+            {recentRuns.length === 0 && (
+              <div className="text-center py-8">
+                <Sparkles className="h-6 w-6 mx-auto text-ink-300" />
+                <p className="mt-2 text-sm text-ink-500">No activity yet.</p>
+                <Link href="/dashboard/integrations" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700">
+                  Connect an integration<ChevronRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
-            ))}
+            )}
+            {recentRuns.map(({ run, customerId, customerName, invoiceNumber }: typeof recentRuns[number]) => {
+              const failed = run.status === 'failed';
+              return (
+                <Link
+                  key={run.id}
+                  href={`/dashboard/customers/${customerId}`}
+                  className={`flex items-start gap-2 text-sm -mx-2 px-2 py-1.5 rounded-lg transition-colors ${failed ? 'bg-red-50/60 hover:bg-red-50' : 'hover:bg-ink-50'}`}
+                >
+                  {run.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-500 mt-0.5 shrink-0" /> : <Mail className="h-3.5 w-3.5 text-ink-500 mt-0.5 shrink-0" />}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className={`badge text-[10px] ${run.status === 'sent' || run.status === 'delivered' ? 'badge-success' : failed ? 'badge-danger' : 'badge-neutral'}`}>{run.status}</span>
+                      <span className={`text-xs ${failed ? 'text-red-700 font-medium' : 'text-ink-500'}`}>
+                        {run.sentAt ? new Date(run.sentAt).toLocaleString() : failed ? 'not sent' : 'queued'}
+                      </span>
+                    </div>
+                    <div className="text-xs font-medium text-ink-900 truncate">To: {customerName} · Invoice {invoiceNumber}</div>
+                    {failed && run.error ? (
+                      <div className="text-xs text-red-700 truncate" title={run.error}>{run.error}</div>
+                    ) : (
+                      <div className="text-xs text-ink-700 truncate">{run.subject ?? 'SMS reminder'}</div>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
     </AppShell>
+  );
+}
+
+function ImpactTile({
+  icon, label, value, sub, tone, delay = 0,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  sub: string;
+  tone: 'amber' | 'emerald' | 'brand' | 'ink';
+  delay?: number;
+}) {
+  const toneClasses: Record<'amber' | 'emerald' | 'brand' | 'ink', string> = {
+    amber: 'bg-amber-50 text-amber-600',
+    emerald: 'bg-emerald-50 text-emerald-600',
+    brand: 'bg-brand-50 text-brand-600',
+    ink: 'bg-ink-100 text-ink-600',
+  };
+  return (
+    <div
+      className="stat-tile animate-slide-up hover:shadow-md transition-shadow"
+      style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">{label}</div>
+        <span className={`h-7 w-7 rounded-lg grid place-items-center shrink-0 ${toneClasses[tone]}`}>{icon}</span>
+      </div>
+      <div className="mt-2 text-2xl font-display font-bold text-ink-950">{value}</div>
+      <div className="mt-1 text-xs text-ink-500">{sub}</div>
+    </div>
   );
 }
