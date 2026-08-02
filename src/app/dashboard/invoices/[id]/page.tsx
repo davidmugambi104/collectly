@@ -7,6 +7,7 @@ import { eq, desc } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
 import { DunningSendPanel } from '@/components/dunning/send-panel';
 import { MarkAsPaidButton } from '@/components/invoices/mark-paid-button';
+import { WriteOffButton } from '@/components/invoices/write-off-button';
 import { ArrowLeft, MessageSquare, Mail, ExternalLink, Clock, CheckCircle2 } from 'lucide-react';
 import { CopyButton } from '@/components/ui/copy-button';
 import Link from 'next/link';
@@ -63,8 +64,9 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
                 <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">Status</div>
                 <div className="mt-1 flex items-center gap-2 flex-wrap">
                   {invoice.status === 'paid' ? <span className="badge-success">Paid</span>
+                    : invoice.status === 'written_off' ? <span className="badge-neutral">Written off</span>
                     : isOverdue ? <span className="badge-danger">Overdue · {days}d</span>
-                    : <span className="badge-warn capitalize">{invoice.status}</span>}
+                    : <span className="badge-warn capitalize">{invoice.status.replace(/_/g, ' ')}</span>}
                   {invoice.lastReminderAt && <span className="text-xs text-ink-500">Last reminded {formatDate(invoice.lastReminderAt)}</span>}
                 </div>
               </div>
@@ -75,12 +77,13 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
               </div>
             </div>
 
-            {invoice.status !== 'paid' && (
+            {invoice.status !== 'paid' && invoice.status !== 'written_off' && (
               <div className="mt-4 pt-4 border-t border-ink-100 flex items-center gap-2 flex-wrap">
                 <MarkAsPaidButton invoiceId={invoice.id} />
                 <a href={portalUrl} target="_blank" rel="noopener" className="btn-secondary text-sm">
                   <ExternalLink className="h-3.5 w-3.5" />Customer pay portal
                 </a>
+                <WriteOffButton invoiceId={invoice.id} />
               </div>
             )}
 

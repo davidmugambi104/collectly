@@ -23,8 +23,9 @@ type Row = {
 
 function StatusBadge({ invoice, days }: { invoice: Row['invoice']; days: number }) {
   if (invoice.status === 'paid') return <span className="badge-success">Paid</span>;
+  if (invoice.status === 'written_off') return <span className="badge-neutral">Written off</span>;
   if (invoice.status === 'overdue' || days > 0) return <span className="badge-danger">Overdue</span>;
-  return <span className="badge-neutral capitalize">{invoice.status}</span>;
+  return <span className="badge-neutral capitalize">{invoice.status.replace(/_/g, ' ')}</span>;
 }
 
 export function InvoicesTable({ rows }: { rows: Row[] }) {
