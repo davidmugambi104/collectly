@@ -6,7 +6,7 @@ import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations, users } from '@/db/schema';
 import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, buildInboxReplyToAddress } from '@/lib/infra';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
 import { nanoid } from '@/lib/utils';
 
@@ -208,7 +208,7 @@ export async function processDunning() {
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
               html: withUnsubscribeFooter(renderEmailHtml({ body: result.body, invoice, businessName }), customer.email),
               headers: dunningListUnsubscribeHeaders(customer.email),
-              replyTo: buildInboxReplyToAddress(invoice.id),
+              replyTo: getDunningReplyToAddress(),
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns
             // status='skipped' only when the API key is missing (a config bug).
@@ -218,6 +218,18 @@ export async function processDunning() {
             } else {
               await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
               sent += 1;
+              // Best-effort: capture the real Message-ID so a reply to this
+              // email can be matched back to this run via In-Reply-To.
+              // Awaited (not fire-and-forget) — a serverless function's
+              // background work isn't guaranteed to run past the response,
+              // and a missed id here means that reply can never be matched.
+              // Failure here never fails the send that already succeeded.
+              try {
+                const msgId = await fetchResendMessageId((sendResult as any).id);
+                if (msgId) await db.update(dunningRuns).set({ externalMessageId: msgId }).where(eq(dunningRuns.id, run.id));
+              } catch (e) {
+                console.error('[dunning] fetchResendMessageId failed:', e instanceof Error ? e.message : e);
+              }
               await recordEvent({
                 orgId: seq.orgId,
                 type: 'dunning.run.sent',

@@ -22,7 +22,7 @@ const isPublicRoute = createRouteMatcher([
   // Public marketing APIs
   '/api/waitlist', '/api/lead-notify', '/api/interview', '/api/ar-audit',
   // Public demo / preview / seed flows (no auth needed)
-  '/api/cron/dunning', '/api/webhooks/stripe', '/api/webhooks/clerk',
+  '/api/cron/dunning', '/api/cron/inbox-poll', '/api/webhooks/stripe', '/api/webhooks/clerk',
   '/api/webhooks/resend-inbound',
   '/api/quickbooks/callback', '/api/quickbooks/connect',
   '/api/xero/callback', '/api/xero/connect',

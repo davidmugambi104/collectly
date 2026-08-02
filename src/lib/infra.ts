@@ -37,28 +37,40 @@ export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getT
 export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as any)[p] });
 export const redis = new Proxy({} as Redis, { get: (_t, p) => { const r = getRedis(); return r ? (r as any)[p] : undefined; } });
 
-// Plus-addressed reply-to for dunning sends: reply+{invoiceId}@{domain}.
-// The inbound webhook (src/lib/inbox-inbound.ts) parses this back out of
-// the "to" address on the reply to resolve which invoice/customer/org it
-// belongs to, without needing a lookup table of tokens.
-//
-// Deliberately NOT the same domain as RESEND_FROM_EMAIL (getcollectly.app),
-// whose MX records point at Zoho for real business email — pointing that
-// domain's MX at Resend for inbound receiving would break it. Set
-// INBOUND_REPLY_DOMAIN to a dedicated receiving subdomain (e.g.
-// reply.getcollectly.app) once it's configured in Resend + DNS. Until then
-// this falls back to the sending domain, which is harmless (Resend
-// receiving is disabled there, so replies just won't be classified —
-// same as before this feature existed).
-export function buildInboxReplyToAddress(invoiceId: string): string {
-  if (process.env.INBOUND_REPLY_DOMAIN) {
-    return `reply+${invoiceId}@${process.env.INBOUND_REPLY_DOMAIN}`;
+// Where dunning replies should go. Zoho already holds MX for
+// getcollectly.app (real business email), so a customer's reply lands
+// there naturally — no dedicated receiving domain or address tricks
+// needed. ZOHO_IMAP_USER doubles as both the Reply-To address and the
+// mailbox src/lib/inbox-imap-poll.ts logs into to read replies; matching
+// a reply back to its invoice is done via email thread headers
+// (In-Reply-To/References against dunning_runs.external_message_id), not
+// the address it was sent to. Falls back to RESEND_FROM_EMAIL if unset,
+// which still delivers correctly via Zoho — it just means the poller
+// needs to watch that mailbox instead.
+export function getDunningReplyToAddress(): string | undefined {
+  if (process.env.ZOHO_IMAP_USER) return process.env.ZOHO_IMAP_USER;
+  return undefined;
+}
+
+// Resend's send response only returns their own internal `id` (a UUID) —
+// NOT the RFC822 Message-ID header that ends up on the actual email
+// (confirmed live: id "b6a95935-..." vs message_id
+// "<0100019fbc69ae7f-...@email.amazonses.com>", built on SES under the
+// hood). Fetching it costs one extra API call but that's the only way to
+// get the value a reply's In-Reply-To header will reference.
+export async function fetchResendMessageId(resendId: string): Promise<string | null> {
+  if (!process.env.RESEND_API_KEY || resendId === 'dev-stub') return null;
+  try {
+    const res = await fetch(`https://api.resend.com/emails/${resendId}`, {
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.message_id ?? null;
+  } catch (e) {
+    console.error('[email] fetchResendMessageId failed:', e instanceof Error ? e.message : e);
+    return null;
   }
-  const raw = process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app';
-  const match = raw.match(/[^<\s]+@[^>\s]+/);
-  const address = match ? match[0] : 'hello@getcollectly.app';
-  const domain = address.split('@')[1] ?? 'getcollectly.app';
-  return `reply+${invoiceId}@${domain}`;
 }
 
 export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }) {

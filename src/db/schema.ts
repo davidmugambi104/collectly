@@ -188,6 +188,14 @@ export const dunningRuns = pgTable('dunning_runs', {
   subject: text('subject'),
   body: text('body').notNull(),
   error: text('error'),
+  // Resend's *email* Message-ID header (NOT the `id` Resend returns from
+  // the send call — those are different values; confirmed live: send
+  // returns a Resend UUID, this is the RFC822 id like
+  // "<...@email.amazonses.com>"). Captured via a follow-up GET /emails/{id}
+  // call right after sending. Used to match a customer's reply back to
+  // this run via the reply's In-Reply-To/References headers — see
+  // src/lib/inbox-imap-poll.ts.
+  externalMessageId: text('external_message_id'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({
   schedIdx: index('dunning_sched_idx').on(t.status, t.scheduledFor),
@@ -197,6 +205,7 @@ export const dunningRuns = pgTable('dunning_runs', {
   orgIdx: index('dunning_runs_org_id_idx').on(t.orgId),
   seqIdx: index('dunning_runs_sequence_id_idx').on(t.sequenceId),
   invoiceSeqStepUniq: uniqueIndex('dunning_runs_invoice_seq_step_uniq').on(t.invoiceId, t.sequenceId, t.stepId),
+  externalMsgIdx: index('dunning_runs_external_msg_idx').on(t.externalMessageId),
 }));
 
 /* ----------------------------- SUBSCRIPTIONS / BILLING ----------------------------- */
@@ -251,6 +260,17 @@ export const events = pgTable('events', {
 }, (t) => ({
   orgTypeIdx: index('events_org_type_idx').on(t.orgId, t.type),
 }));
+
+// Cursor for the IMAP inbox poller (src/lib/inbox-imap-poll.ts). Not
+// org-scoped — one shared Zoho mailbox is polled for the whole
+// deployment, so this just tracks "highest UID processed" per mailbox to
+// avoid re-fetching/re-classifying the same message on every poll and to
+// avoid ever bulk-processing the mailbox's pre-existing history.
+export const inboxPollState = pgTable('inbox_poll_state', {
+  mailbox: text('mailbox').primaryKey(),
+  lastUid: integer('last_uid').notNull().default(0),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
 
 /* ----------------------------- WAITLIST (marketing) ----------------------------- */
 

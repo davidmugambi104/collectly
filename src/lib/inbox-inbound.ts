@@ -4,30 +4,16 @@ import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { classifyInboundReply } from '@/lib/ai/inbox';
 
-const REPLY_TOKEN_RE = /reply\+([a-zA-Z0-9_-]+)@/;
-
-/**
- * Extract the invoice id from a dunning reply-to address
- * (reply+{invoiceId}@domain, stamped by buildInboxReplyToAddress in
- * src/lib/infra.ts) out of the inbound webhook's "to" list. Returns null
- * if none of the recipients match — meaning this inbound email isn't an
- * AR-customer reply and should fall through to the outreach-prospect flow.
- */
-export function parseInboxReplyToken(toAddresses: unknown): string | null {
-  const list = Array.isArray(toAddresses) ? toAddresses : typeof toAddresses === 'string' ? [toAddresses] : [];
-  for (const raw of list) {
-    const m = String(raw).match(REPLY_TOKEN_RE);
-    if (m) return m[1];
-  }
-  return null;
-}
-
 /**
  * Handle an inbound reply from an AR customer (someone who owes an
  * invoice) replying to a dunning email. Resolves the invoice -> customer
  * -> org, classifies the reply with AI, and records it as an
  * inbox_messages row plus a customer_reply timeline event so it shows up
  * on both the Inbox page and the customer detail page.
+ *
+ * Called by src/lib/inbox-imap-poll.ts once it's matched an inbound
+ * message's In-Reply-To/References header to a dunning_runs row and
+ * resolved the invoiceId from there.
  */
 export async function handleArCustomerReply(opts: {
   invoiceId: string;
