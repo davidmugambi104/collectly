@@ -6,6 +6,9 @@ import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { getCustomerInsights } from '@/lib/analytics';
+import { PromisePanel } from '@/components/customers/promise-panel';
+import { DisputePanel } from '@/components/customers/dispute-panel';
+import { AddNoteForm } from '@/components/customers/add-note-form';
 import {
   Mail, MessageSquare, AlertCircle, CheckCircle2, Clock,
   FileText, DollarSign, Pause, Play, X, Bell, Phone, Sparkles, TrendingUp,
@@ -51,6 +54,10 @@ export default async function CustomerStatementPage({
   const totalOverdue = customerInvoices
     .filter((inv: typeof invoices.$inferSelect) => new Date(inv.dueDate) < new Date() && inv.status !== 'paid' && inv.status !== 'written_off')
     .reduce((sum: number, inv: typeof invoices.$inferSelect) => sum + (parseFloat(inv.amount.toString()) - parseFloat(inv.amountPaid?.toString() || '0')), 0);
+
+  const eligibleInvoices = customerInvoices
+    .filter((inv: typeof invoices.$inferSelect) => inv.status !== 'paid' && inv.status !== 'written_off')
+    .map((inv: typeof invoices.$inferSelect) => ({ id: inv.id, number: inv.number, currency: inv.currency }));
 
   const activePromiseCount = customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'active').length;
   const brokenPromiseCount = customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'broken').length;
@@ -134,58 +141,35 @@ export default async function CustomerStatementPage({
         </div>
       )}
 
-      {/* Active promises */}
-      {customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'active').length > 0 && (
-        <div className="card mb-6">
-          <h2 className="h3 mb-4">Active promises to pay</h2>
-          <div className="space-y-2">
-            {customerPromises.filter((p: typeof promisesToPay.$inferSelect) => p.status === 'active').map((p: typeof promisesToPay.$inferSelect) => (
-              <div key={p.id} className="flex items-center justify-between border border-emerald-200 bg-emerald-50/30 rounded-lg p-3">
-                <div>
-                  <div className="font-semibold text-ink-900">
-                    {formatCurrency(parseFloat(p.promisedAmount.toString()))} by {formatDate(p.promisedDate)}
-                  </div>
-                  {p.sourceText && (
-                    <div className="text-xs text-ink-600 mt-1 italic">"{p.sourceText}"</div>
-                  )}
-                </div>
-                <span className="badge bg-emerald-100 text-emerald-700 border-emerald-200">
-                  Active
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Promises to pay + disputes — panels handle both display and the
+          create/act forms (log a promise, mark fulfilled/broken, open a
+          dispute, resolve). Eligible invoices are anything not already
+          paid or written off. */}
+      <PromisePanel
+        customerId={cust.id}
+        invoices={eligibleInvoices}
+        promises={customerPromises.map((p: typeof promisesToPay.$inferSelect) => ({
+          id: p.id,
+          invoiceId: p.invoiceId,
+          promisedAmount: p.promisedAmount.toString(),
+          promisedDate: p.promisedDate,
+          currency: p.currency,
+          status: p.status,
+          sourceText: p.sourceText,
+        }))}
+      />
 
-      {/* Open disputes */}
-      {customerDisputes.filter((d: typeof disputes.$inferSelect) => d.status === 'open' || d.status === 'in_progress').length > 0 && (
-        <div className="card mb-6">
-          <h2 className="h3 mb-4">Open disputes</h2>
-          <div className="space-y-2">
-            {customerDisputes.filter((d: typeof disputes.$inferSelect) => d.status === 'open' || d.status === 'in_progress').map((d: typeof disputes.$inferSelect) => (
-              <div key={d.id} className="border border-red-200 bg-red-50/30 rounded-lg p-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="font-semibold text-ink-900">
-                      {d.reason.replace(/_/g, ' ')}
-                    </div>
-                    {d.customerMessage && (
-                      <div className="text-sm text-ink-700 mt-1 italic">"{d.customerMessage}"</div>
-                    )}
-                    {d.internalNotes && (
-                      <div className="text-xs text-ink-600 mt-2">Note: {d.internalNotes}</div>
-                    )}
-                  </div>
-                  <span className="badge bg-red-100 text-red-700 border-red-200 whitespace-nowrap">
-                    {d.status}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <DisputePanel
+        customerId={cust.id}
+        invoices={eligibleInvoices}
+        disputes={customerDisputes.map((d: typeof disputes.$inferSelect) => ({
+          id: d.id,
+          reason: d.reason,
+          status: d.status,
+          customerMessage: d.customerMessage,
+          internalNotes: d.internalNotes,
+        }))}
+      />
 
       {/* Invoices */}
       <div className="card mb-6">
@@ -230,7 +214,10 @@ export default async function CustomerStatementPage({
 
       {/* Activity timeline */}
       <div className="card">
-        <h2 className="h3 mb-4">Activity timeline</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="h3">Activity timeline</h2>
+          <AddNoteForm customerId={cust.id} />
+        </div>
         {customerTimeline.length === 0 ? (
           <p className="text-sm text-ink-500">No activity recorded yet</p>
         ) : (

@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS dunning_runs (id text PRIMARY KEY, org_id text NOT NU
 CREATE TABLE IF NOT EXISTS subscriptions (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, stripe_customer_id text, stripe_subscription_id text, plan text NOT NULL DEFAULT 'starter', status text NOT NULL DEFAULT 'trialing', current_period_start timestamptz, current_period_end timestamptz, cancel_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS events (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, type text NOT NULL, payload jsonb, actor_id text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS waitlist (id text PRIMARY KEY, email text NOT NULL UNIQUE, name text, company text, country varchar(2), team_size text, pain_point text, source text, referrer text, unsubscribed_at timestamptz, unsubscribe_token text, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS timeline_events (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, customer_id text REFERENCES customers(id) ON DELETE CASCADE, invoice_id text REFERENCES invoices(id) ON DELETE CASCADE, actor_id text, event_type text NOT NULL DEFAULT 'note', title text, description text, occurred_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS promises_to_pay (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, invoice_id text NOT NULL REFERENCES invoices(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, promised_date timestamptz, promised_amount decimal(14,2) NOT NULL DEFAULT 0, currency varchar(3) DEFAULT 'USD', status text NOT NULL DEFAULT 'active', source_text text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS disputes (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, invoice_id text NOT NULL REFERENCES invoices(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, reason text NOT NULL DEFAULT 'other', status text NOT NULL DEFAULT 'open', customer_message text, internal_notes text, resolved_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS customers_org_idx ON customers(org_id);
 CREATE INDEX IF NOT EXISTS invoices_org_idx ON invoices(org_id);
 CREATE INDEX IF NOT EXISTS invoices_status_idx ON invoices(org_id, status);
@@ -28,6 +31,9 @@ CREATE INDEX IF NOT EXISTS payments_inv_idx ON payments(invoice_id);
 CREATE INDEX IF NOT EXISTS dunning_sched_idx ON dunning_runs(status, scheduled_for);
 CREATE INDEX IF NOT EXISTS dunning_inv_idx ON dunning_runs(invoice_id);
 CREATE UNIQUE INDEX IF NOT EXISTS subs_org_idx ON subscriptions(org_id);
+CREATE INDEX IF NOT EXISTS timeline_cust_idx ON timeline_events(customer_id);
+CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);
+CREATE INDEX IF NOT EXISTS disputes_cust_idx ON disputes(customer_id);
 `;
 
 let bootstrapped = false;

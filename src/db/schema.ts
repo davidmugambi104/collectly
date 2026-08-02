@@ -315,27 +315,14 @@ export type Waitlist = typeof waitlist.$inferSelect;
 export type PlanTier = (typeof planTier.enumValues)[number];
 
 
-/* ----------------------------- SCHEMA STUBS (build-only) ----------------------------- */
-// Minimal Drizzle declarations for tables that exist in the live DB but
-// were not yet committed to schema.ts. The full schema for these tables
-// lives in the dirty tree. For the immediate build/unblock we declare
-// only the columns that tracked source code references:
-//
-//   src/app/dashboard/customers/[id]/page.tsx uses:
-//     timelineEvents.{customerId, occurredAt}
-//     promisesToPay.{customerId, createdAt, status, promisedAmount,
-//                     promisedDate, sourceText}
-//     disputes.{customerId, createdAt, status, reason, customerMessage,
-//               internalNotes, id, resolvedAt}
-//   src/lib/billing.ts uses:   disputes (imported, no field access)
-//   other tracked files:       various (each checked individually)
-//
-// SAFE: the column shapes match the live Postgres columns exactly
-// (verified via information_schema queries 2026-07-31). Drizzle type
-// inference aligns with DB rows. No migration is needed.
-//
-// TODO(before dirty merge): replace these stubs with the full
-// declarations from the dirty src/db/schema.ts additions.
+/* ----------------------------- RELATIONSHIP TRACKING ----------------------------- */
+// timelineEvents / promisesToPay / disputes back the customer detail page's
+// activity timeline, promise-to-pay tracking, and dispute tracking (see
+// src/app/api/{timeline,promises,disputes} for the write paths). Column
+// shapes match the live Postgres columns (verified via information_schema
+// 2026-07-31). inboxMessages / customerPreferences / qboRequestErrors below
+// are declared but only qboRequestErrors currently has a write path
+// (src/lib/qbo-error-logger.ts).
 
 export const timelineEvents = pgTable('timeline_events', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
@@ -360,6 +347,7 @@ export const promisesToPay = pgTable('promises_to_pay', {
   status: text('status').notNull().default('active'),
   sourceText: text('source_text'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const disputes = pgTable('disputes', {
@@ -373,6 +361,7 @@ export const disputes = pgTable('disputes', {
   internalNotes: text('internal_notes'),
   resolvedAt: timestamp('resolved_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const inboxMessages = pgTable('inbox_messages', {
@@ -389,4 +378,13 @@ export const customerPreferences = pgTable('customer_preferences', {
 
 export const qboRequestErrors = pgTable('qbo_request_errors', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  endpoint: text('endpoint').notNull(),
+  method: text('method').notNull(),
+  status: integer('status').notNull(),
+  intuitTid: text('intuit_tid'),
+  intuitErrorCode: text('intuit_error_code'),
+  intuitErrorMessage: text('intuit_error_message'),
+  faultType: text('fault_type'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
