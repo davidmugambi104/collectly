@@ -26,7 +26,7 @@ Purpose: this file is the bot's brain for every decision it currently stops to a
 **Hung process rule:** if a build/typecheck/test command produces no output for >120 seconds on WSL, kill it and report. Do not let processes hang indefinitely. Validate via smaller checks instead.
 
 **Real sending caps (not the generic 30-50/day below — use these until infrastructure changes):**
-- Resend (getcollectly.app): ~15/day while reputation is unproven on a new domain-send pattern; raise after the pilot clears with clean bounce/spam rates
+- Resend (getcollectly.app): 100/day (raised from 15 on 2026-08-01 by founder override); monitor bounce/spam rate, pull back to 30 if either crosses 5%
 - Gmail fallback: 0/day until `invalid_grant` is fixed — do not route new sends here
 - LinkedIn: 5-10/day manual, not automated yet
 
@@ -82,7 +82,7 @@ Run these in parallel, track independently, don't wait for permission between th
 
 ## 4. DAILY OPERATING RULES (no asking, just execute)
 
-- **Volume cap:** 15/day Resend, 0/day Gmail fallback, 5–10/day LinkedIn manual (total across all variants)
+- **Volume cap:** 100/day Resend, 0/day Gmail fallback, 5–10/day LinkedIn manual (total across all variants) — raised from 15 on 2026-08-01; pull back to 30 if bounce/spam crosses 5%
 - **Send window:** 8am–11am recipient local time, Tue–Thu only (best B2B reply rates, avoid Mon/Fri)
 - **Follow-up cadence:** 3 touches total. Touch 2 at day+4 (different angle, not "just following up"), touch 3 at day+9 (short breakup email). Then stop — mark as cold, don't re-add for 90 days.
 - **Reply categorization (bot decides, doesn't ask):**
@@ -126,3 +126,18 @@ Bot sends one summary/day, not mid-run pings:
 ---
 
 **Rule for the bot itself:** if you're about to generate a question for the founder, check this file first. If the answer isn't here, make the closest reasonable decision using Section 1–4 as precedent, log it under "uncertain calls" in the daily digest, and continue. Do not pause execution to ask.
+
+---
+
+## 8. SCHEDULE OVERRIDE — 2026-08-01 (Davie, explicit)
+
+**Effective immediately and until further notice:**
+
+- **No rest days.** Bot sends daily, every day, no exceptions.
+- **No recipient-time-window gating.** Send at any hour that is operationally convenient; recipient-local time optimization is suspended.
+- **No "ask first" before sending.** Bot picks the next eligible Tier 1/Tier 2 prospect, generates the email, and sends. Logs the decision; does not ask permission.
+- **Per-day cap: 100/day Resend** (raised 2026-08-01 from 15; founder explicit instruction). Pull-back trigger: bounce rate or spam placement > 5% over rolling 7 days → revert to 30 and notify.
+- **Gmail fallback remains at 0/day** (Gmail token broken, still).
+- All other Section 0–7 rules still apply (ICP filtering, kill/scale, escalation list, FAQ bank, daily digest format).
+
+**Logged by:** Davie, 2026-08-01 11:20 EAT. Decision basis: founder override, daily cadence requested. Re-evaluate at next policy review.

@@ -102,6 +102,106 @@
       ],
       "replies": [],
       "next_step": "wait_for_reply"
+    },
+    "daniel@visionsdesign.co.uk": {
+      "state": "t1_sent",
+      "first_name": "Daniel",
+      "last_name": "Cordwell",
+      "prospect_id": "P040",
+      "created_at": "2026-08-01T08:21:15.762509+00:00",
+      "last_contact": "2026-08-01T08:21:15.762509+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-01T08:21:15.762509+00:00",
+          "message_id": "b6a95935-1df1-4128-b0aa-d807fd8a1873",
+          "campaign": "agency_channel",
+          "prospect_id": "P040"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply",
+      "note": "Policy override 2026-08-01 sent outside normal cadence."
+    },
+    "david@c42d.com": {
+      "state": "t1_sent",
+      "first_name": "David",
+      "last_name": "C42D",
+      "prospect_id": "P036",
+      "created_at": "2026-08-01T08:32:42.721976+00:00",
+      "last_contact": "2026-08-01T08:32:42.721976+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-01T08:32:42.721976+00:00",
+          "message_id": "8e577f6a-3e4f-4a93-af82-da68abfe8105",
+          "campaign": "agency_channel",
+          "prospect_id": "P036"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply",
+      "note": "Sent 2026-08-01 under schedule override + cap raise; mobile-data egress"
+    },
+    "brent@monikersf.com": {
+      "state": "t1_sent",
+      "first_name": "Brent",
+      "last_name": "Moniker",
+      "prospect_id": "P038",
+      "created_at": "2026-08-01T08:32:51.446837+00:00",
+      "last_contact": "2026-08-01T08:32:51.446837+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-01T08:32:51.446837+00:00",
+          "message_id": "fb98722f-e5d4-4b1d-bc22-38e6f00b96a8",
+          "campaign": "agency_channel",
+          "prospect_id": "P038"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply",
+      "note": "Sent 2026-08-01 under schedule override + cap raise; mobile-data egress"
+    },
+    "tom@superco.io": {
+      "state": "t1_sent",
+      "first_name": "Tom",
+      "last_name": "Superco",
+      "prospect_id": "P042",
+      "created_at": "2026-08-01T08:33:00.168136+00:00",
+      "last_contact": "2026-08-01T08:33:00.168136+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-01T08:33:00.168136+00:00",
+          "message_id": "c1f56894-431c-4360-9aa3-f64f5f112557",
+          "campaign": "agency_channel",
+          "prospect_id": "P042"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply",
+      "note": "Sent 2026-08-01 under schedule override + cap raise; mobile-data egress"
+    },
+    "josh@goldfront.com": {
+      "state": "t1_sent",
+      "first_name": "Josh",
+      "last_name": "Gold Front",
+      "prospect_id": "P050",
+      "created_at": "2026-08-01T08:33:08.881778+00:00",
+      "last_contact": "2026-08-01T08:33:08.881778+00:00",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-01T08:33:08.881778+00:00",
+          "message_id": "d895b931-cda3-4c81-937f-30e5c37e236b",
+          "campaign": "agency_channel",
+          "prospect_id": "P050"
+        }
+      ],
+      "replies": [],
+      "next_step": "wait_for_reply",
+      "note": "Sent 2026-08-01 under schedule override + cap raise; mobile-data egress"
     }
   },
   "emails": {

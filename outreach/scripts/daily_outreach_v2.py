@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Collectly daily outreach sender.
 
-Sends up to MAX_PER_RUN t1 emails to prospects that:
+Sends up to MAX_PER_RUN (currently 100) t1 emails to prospects that:
   - Have a verified email in the CSV
   - Are NOT in a skip-status (sent/replied/bounced/do_not_contact/unsubscribed/wrong_person_forward)
   - Match one of the 3 segments (web_design, marketing, branding)
 
-Respects the 40 emails/day hard cap. Outputs the daily report.
+Respects the 100 emails/day hard cap (raised 2026-08-01 from 40 by founder override). Pull-back trigger: bounce or spam > 5% over rolling 7 days → revert to 30.
 """
 import csv, os, subprocess, time, random, json
 from datetime import datetime, date
@@ -20,7 +20,7 @@ from state import (
 )
 
 YOUR_NAME = 'David Mugambi'
-MAX_PER_RUN = 40  # hard cap per spec
+MAX_PER_RUN = 100  # hard cap per spec (raised 2026-08-01 from 40 by founder override)
 TODAY = date.today().isoformat()
 
 # Industry label map (matches the v2 template)
