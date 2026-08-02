@@ -37,19 +37,22 @@ export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getT
 export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as any)[p] });
 export const redis = new Proxy({} as Redis, { get: (_t, p) => { const r = getRedis(); return r ? (r as any)[p] : undefined; } });
 
-// Where dunning replies should go. Zoho already holds MX for
-// getcollectly.app (real business email), so a customer's reply lands
-// there naturally — no dedicated receiving domain or address tricks
-// needed. ZOHO_IMAP_USER doubles as both the Reply-To address and the
-// mailbox src/lib/inbox-imap-poll.ts logs into to read replies; matching
-// a reply back to its invoice is done via email thread headers
-// (In-Reply-To/References against dunning_runs.external_message_id), not
-// the address it was sent to. Falls back to RESEND_FROM_EMAIL if unset,
-// which still delivers correctly via Zoho — it just means the poller
-// needs to watch that mailbox instead.
+// Where dunning replies should go.
+//
+// NOT ZOHO_IMAP_USER — that address is the cold-outreach mailbox (see
+// src/lib/outreach-imap-poll.ts), and pointing AR-dunning replies at the
+// same inbox would mix a customer disputing an invoice in with a sales
+// prospect replying to a cold email, which is exactly the kind of
+// same-mailbox ambiguity that already caused problems once this session.
+// AR-dunning reply capture (src/lib/inbox-imap-poll.ts,
+// dunning_runs.external_message_id) is built but intentionally dormant
+// until a dedicated address exists — set AR_DUNNING_IMAP_USER (the same
+// var the poller logs in with, see inbox-imap-poll.ts) once one does.
+// Until then this returns undefined, so dunning sends just fall back to
+// the From address (still delivers fine via Zoho — replies simply
+// aren't captured/classified yet).
 export function getDunningReplyToAddress(): string | undefined {
-  if (process.env.ZOHO_IMAP_USER) return process.env.ZOHO_IMAP_USER;
-  return undefined;
+  return process.env.AR_DUNNING_IMAP_USER || undefined;
 }
 
 // Resend's send response only returns their own internal `id` (a UUID) —

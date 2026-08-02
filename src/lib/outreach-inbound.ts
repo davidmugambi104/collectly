@@ -114,6 +114,77 @@ function escapeHtml(s: string): string {
   });
 }
 
+/**
+ * Classify an inbound outreach-prospect reply and persist it (upsert
+ * outreach_contacts, insert outreach_replies, notify the founder).
+ * Shared by handleResendInboundWebhook below and
+ * src/lib/outreach-imap-poll.ts — same processing regardless of whether
+ * the reply arrived via a Resend webhook or an IMAP poll of the mailbox
+ * outreach is actually sent from.
+ */
+export async function classifyAndPersistOutreachReply(opts: {
+  fromAddress: string;
+  subject: string;
+  text: string;
+  rawPayload: unknown;
+  source: string;
+}): Promise<{ classification: ReturnType<typeof classifyReply> }> {
+  const classification = classifyReply(opts.text, opts.subject);
+
+  const client = await pool().connect();
+  try {
+    await ensureTables(client);
+
+    // Upsert contact
+    const contactResult = await client.query(
+      `
+      INSERT INTO outreach_contacts (email, source, status, last_contact_at, notes)
+      VALUES ($1, $2, $3, NOW(), $4)
+      ON CONFLICT (email) DO UPDATE SET
+        status = EXCLUDED.status,
+        last_contact_at = EXCLUDED.last_contact_at,
+        notes = COALESCE(outreach_contacts.notes, '') || '\n' || EXCLUDED.notes,
+        updated_at = NOW()
+      RETURNING id
+      `,
+      [opts.fromAddress, opts.source, classification.state, classification.note]
+    );
+
+    const contactId = contactResult.rows[0].id;
+
+    // Insert reply
+    await client.query(
+      `
+      INSERT INTO outreach_replies (contact_id, subject, body, from_address, raw_payload, classification, next_step, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, 'new')
+      `,
+      [contactId, opts.subject, opts.text, opts.fromAddress, opts.rawPayload, classification.state, classification.nextStep]
+    );
+
+    // Notify founder
+    const notifyEmail = process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app';
+    try {
+      const { sendEmail } = await import('@/lib/infra');
+      await sendEmail({
+        to: notifyEmail,
+        subject: `Outreach reply: ${opts.fromAddress}`,
+        html: `<p><b>${opts.fromAddress}</b> replied to an outreach email.</p>
+<p><b>Subject:</b> ${escapeHtml(opts.subject)}</p>
+<p><b>Classification:</b> ${classification.state}</p>
+<p><b>Next step:</b> ${classification.nextStep}</p>
+<hr/>
+<pre style="white-space:pre-wrap">${escapeHtml(opts.text.slice(0, 2000))}</pre>`,
+      });
+    } catch (e: any) {
+      console.error('Failed to notify founder of reply:', e?.message);
+    }
+
+    return { classification };
+  } finally {
+    client.release();
+  }
+}
+
 export async function handleResendInboundWebhook(req: NextRequest): Promise<NextResponse> {
   // Verify Svix signature on Resend inbound events. Refuse unsigned requests
   // so external callers cannot create outreach_contacts rows or trigger
@@ -146,65 +217,15 @@ export async function handleResendInboundWebhook(req: NextRequest): Promise<Next
   }
 
   // Note: AR-customer replies (to a dunning email) are NOT handled here.
-  // Those go through Zoho (getcollectly.app's real mail provider) and are
-  // ingested by src/lib/inbox-imap-poll.ts via IMAP + reply-thread
-  // matching, not this Resend-inbound webhook.
-
-  const classification = classifyReply(text, subject);
-
-  const client = await pool().connect();
+  // Those go through a separate, dedicated mailbox once one is configured
+  // — see src/lib/inbox-imap-poll.ts.
   try {
-    await ensureTables(client);
-
-    // Upsert contact
-    const contactResult = await client.query(
-      `
-      INSERT INTO outreach_contacts (email, source, status, last_contact_at, notes)
-      VALUES ($1, $2, $3, NOW(), $4)
-      ON CONFLICT (email) DO UPDATE SET
-        status = EXCLUDED.status,
-        last_contact_at = EXCLUDED.last_contact_at,
-        notes = COALESCE(outreach_contacts.notes, '') || '\n' || EXCLUDED.notes,
-        updated_at = NOW()
-      RETURNING id
-      `,
-      [fromAddress, 'resend_inbound', classification.state, classification.note]
-    );
-
-    const contactId = contactResult.rows[0].id;
-
-    // Insert reply
-    await client.query(
-      `
-      INSERT INTO outreach_replies (contact_id, subject, body, from_address, raw_payload, classification, next_step, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, 'new')
-      `,
-      [contactId, subject, text, fromAddress, event, classification.state, classification.nextStep]
-    );
-
-    // Notify founder
-    const notifyEmail = process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app';
-    try {
-      const { sendEmail } = await import('@/lib/infra');
-      await sendEmail({
-        to: notifyEmail,
-        subject: `Outreach reply: ${fromAddress}`,
-        html: `<p><b>${fromAddress}</b> replied to an outreach email.</p>
-<p><b>Subject:</b> ${escapeHtml(subject)}</p>
-<p><b>Classification:</b> ${classification.state}</p>
-<p><b>Next step:</b> ${classification.nextStep}</p>
-<hr/>
-<pre style="white-space:pre-wrap">${escapeHtml(text.slice(0, 2000))}</pre>`,
-      });
-    } catch (e: any) {
-      console.error('Failed to notify founder of reply:', e?.message);
-    }
-
+    const { classification } = await classifyAndPersistOutreachReply({
+      fromAddress, subject, text, rawPayload: event, source: 'resend_inbound',
+    });
     return NextResponse.json({ ok: true, classification });
   } catch (e: any) {
     console.error('Inbound webhook error:', e);
     return NextResponse.json({ error: e.message }, { status: 500 });
-  } finally {
-    client.release();
   }
 }

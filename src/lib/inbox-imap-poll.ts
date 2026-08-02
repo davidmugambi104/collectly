@@ -5,7 +5,11 @@ import { dunningRuns, inboxPollState } from '@/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { handleArCustomerReply } from '@/lib/inbox-inbound';
 
-const MAILBOX = process.env.ZOHO_IMAP_MAILBOX || 'INBOX';
+const MAILBOX = process.env.AR_DUNNING_IMAP_MAILBOX || 'INBOX';
+// Namespaced separately from the outreach poller's cursor (see
+// src/lib/outreach-imap-poll.ts) so the two never clobber each other's
+// progress if they ever end up pointed at the same physical Zoho address.
+const CURSOR_KEY = `ar-dunning:${process.env.AR_DUNNING_IMAP_USER ?? MAILBOX}`;
 
 function extractCandidateMessageIds(parsed: ParsedMail): string[] {
   const ids: string[] = [];
@@ -22,29 +26,37 @@ function extractCandidateMessageIds(parsed: ParsedMail): string[] {
  * In-Reply-To/References headers against dunning_runs.external_message_id
  * (captured at send time via fetchResendMessageId in src/lib/infra.ts) —
  * standard email thread headers, independent of which address the
- * message was sent to, so this works whether the customer replied to the
- * dunning "From" address or something else entirely.
+ * message was sent to.
  *
- * Tracked by UID cursor (inbox_poll_state), not \Seen flags — this
- * mailbox is real business email the founder reads normally, and marking
+ * DORMANT by design: this is a distinct mailbox/credentials
+ * (AR_DUNNING_IMAP_*) from the cold-outreach poller
+ * (src/lib/outreach-imap-poll.ts, ZOHO_IMAP_*) on purpose — a customer
+ * disputing an invoice and a sales prospect replying to a cold email are
+ * unrelated reply streams and mixing them into one mailbox/classifier was
+ * an earlier mistake here. Nothing sets AR_DUNNING_IMAP_USER yet (see
+ * getDunningReplyToAddress in src/lib/infra.ts), so this cron effectively
+ * no-ops until a dedicated address is configured.
+ *
+ * Tracked by UID cursor (inbox_poll_state), not \Seen flags — if this
+ * ever polls a real inbox the founder also reads normally, marking
  * messages read as a side effect of polling would be actively harmful
- * (clearing their unread indicator on mail they haven't looked at). Only
- * a monotonically increasing "highest UID processed" is persisted, and
- * non-matching messages are left completely untouched.
+ * (clearing the unread indicator on mail they haven't looked at yet).
+ * Only a monotonically increasing "highest UID processed" is persisted,
+ * and non-matching messages are left completely untouched.
  *
  * First run bootstraps the cursor to the mailbox's current uidNext and
- * processes nothing, so pre-existing mailbox history never gets bulk
- * fed through AI classification.
+ * processes nothing, so pre-existing mailbox history never gets bulk fed
+ * through AI classification.
  */
 export async function pollInboxReplies(): Promise<{ scanned: number; matched: number; errors: number; skipped?: string }> {
-  const user = process.env.ZOHO_IMAP_USER;
-  const pass = process.env.ZOHO_IMAP_APP_PASSWORD;
+  const user = process.env.AR_DUNNING_IMAP_USER;
+  const pass = process.env.AR_DUNNING_IMAP_APP_PASSWORD;
   if (!user || !pass) {
-    return { scanned: 0, matched: 0, errors: 0, skipped: 'ZOHO_IMAP_USER/ZOHO_IMAP_APP_PASSWORD not configured' };
+    return { scanned: 0, matched: 0, errors: 0, skipped: 'AR_DUNNING_IMAP_USER/AR_DUNNING_IMAP_APP_PASSWORD not configured' };
   }
 
   const client = new ImapFlow({
-    host: process.env.ZOHO_IMAP_HOST || 'imap.zoho.com',
+    host: process.env.AR_DUNNING_IMAP_HOST || 'imap.zoho.com',
     port: 993,
     secure: true,
     auth: { user, pass },
@@ -58,10 +70,10 @@ export async function pollInboxReplies(): Promise<{ scanned: number; matched: nu
     const box = await client.mailboxOpen(MAILBOX, { readOnly: true });
     const uidNext = box.uidNext;
 
-    const [cursor] = await db.select().from(inboxPollState).where(eq(inboxPollState.mailbox, MAILBOX)).limit(1);
+    const [cursor] = await db.select().from(inboxPollState).where(eq(inboxPollState.mailbox, CURSOR_KEY)).limit(1);
 
     if (!cursor) {
-      await db.insert(inboxPollState).values({ mailbox: MAILBOX, lastUid: Math.max(0, uidNext - 1) });
+      await db.insert(inboxPollState).values({ mailbox: CURSOR_KEY, lastUid: Math.max(0, uidNext - 1) });
       return { scanned: 0, matched: 0, errors: 0 };
     }
 
@@ -105,7 +117,7 @@ export async function pollInboxReplies(): Promise<{ scanned: number; matched: nu
       }
     }
 
-    await db.update(inboxPollState).set({ lastUid: highestSeen, updatedAt: new Date() }).where(eq(inboxPollState.mailbox, MAILBOX));
+    await db.update(inboxPollState).set({ lastUid: highestSeen, updatedAt: new Date() }).where(eq(inboxPollState.mailbox, CURSOR_KEY));
   } finally {
     try {
       await client.logout();
