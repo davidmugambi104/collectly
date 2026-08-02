@@ -1,8 +1,8 @@
 import Stripe from 'stripe';
 import { getStripe } from '@/lib/infra';
 import { db } from '@/db';
-import { subscriptions, organizations, invoices, payments, events } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { subscriptions, organizations, invoices, payments, events, disputes, timelineEvents, users } from '@/db/schema';
+import { eq, and, desc } from 'drizzle-orm';
 import { nanoid, PLAN_PRICING } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
 import { applyPayment, applyRefund } from '@/lib/billing-math';
@@ -106,27 +106,17 @@ export async function handleStripeEvent(event: Stripe.Event) {
       break;
     }
     case 'charge.dispute.created': {
-      // A customer has disputed a charge. Log it and surface to the org owner.
       const dispute = event.data.object as Stripe.Dispute;
       const chargeId = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge?.id;
       console.warn(`[stripe-webhook] dispute opened: ${dispute.id} for charge ${chargeId} amount=${dispute.amount} reason=${dispute.reason}`);
-      // Best-effort: mark the related payment as disputed by external id lookup.
-      // (Full evidence-tracking is queued as Fix #5 in the events-table refactor.)
-      try {
-        const orgId = (dispute.metadata as any)?.orgId;
-        if (orgId) {
-          // Future: write a `disputes` row + email org owner. For now, structured log.
-          console.warn(`[stripe-webhook] dispute orgId=${orgId} amount_cents=${dispute.amount}`);
-        }
-      } catch (e: any) {
-        // Future: write a `disputes` row + email org owner. For now, structured log.
-        console.warn(`[stripe-webhook] dispute handler non-fatal error: ${e?.message ?? e}`);
-      }
+      await handleChargeDispute(dispute, chargeId, 'created');
       break;
     }
     case 'charge.dispute.closed': {
       const dispute = event.data.object as Stripe.Dispute;
+      const chargeId = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge?.id;
       console.warn(`[stripe-webhook] dispute closed: ${dispute.id} status=${dispute.status}`);
+      await handleChargeDispute(dispute, chargeId, 'closed');
       break;
     }
     case 'charge.refunded': {
@@ -158,6 +148,120 @@ export async function handleStripeEvent(event: Stripe.Event) {
       }
       break;
     }
+  }
+}
+
+/**
+ * Handle a Stripe chargeback on an AR invoice payment (paid through the
+ * hosted payment portal — see /api/payment/create-checkout, which stamps
+ * invoiceId/orgId/customerId onto payment_intent_data.metadata). Disputes
+ * don't carry that metadata themselves, so we retrieve the underlying
+ * charge, which Stripe copies the PaymentIntent's metadata onto.
+ *
+ * On open: writes a `disputes` row, flips the invoice to 'disputed', logs
+ * a timeline event, and emails the org owner.
+ * On close: resolves the dispute row, then either reverses the payment
+ * (chargeback lost — funds were clawed back) or restores the invoice's
+ * prior collection status (chargeback won).
+ */
+async function handleChargeDispute(dispute: Stripe.Dispute, chargeId: string | undefined, phase: 'created' | 'closed') {
+  if (!chargeId) return;
+  try {
+    const stripe = getStripe();
+    const charge = await stripe.charges.retrieve(chargeId);
+    const invoiceId = charge.metadata?.invoiceId;
+    const orgId = charge.metadata?.orgId;
+    const customerId = charge.metadata?.customerId;
+    if (!invoiceId || !orgId || !customerId) {
+      // Not an AR invoice payment (e.g. a SaaS subscription charge) — no
+      // customer-facing dispute record to create. Structured log only.
+      console.warn(`[stripe-webhook] dispute ${dispute.id} on charge ${chargeId} has no invoice metadata — skipping AR dispute record`);
+      return;
+    }
+    const amount = dispute.amount / 100;
+    const currency = (dispute.currency ?? 'usd').toUpperCase();
+
+    if (phase === 'created') {
+      await db.insert(disputes).values({
+        id: nanoid(),
+        orgId, invoiceId, customerId,
+        reason: 'other',
+        status: 'open',
+        internalNotes: `Stripe chargeback ${dispute.id} — card network reason: ${dispute.reason}, amount: ${amount} ${currency}`,
+      });
+      await db.update(invoices).set({ status: 'disputed', updatedAt: new Date() }).where(eq(invoices.id, invoiceId));
+      await db.insert(timelineEvents).values({
+        id: nanoid(), orgId, customerId, invoiceId,
+        eventType: 'dispute_opened',
+        title: `Chargeback opened — ${amount} ${currency}`,
+        description: `Card network reason: ${dispute.reason}`,
+      });
+      await notifyOwnerOfChargeback(orgId, { amount, currency, reason: dispute.reason, invoiceId, won: null });
+    } else {
+      const [openDispute] = await db
+        .select()
+        .from(disputes)
+        .where(and(eq(disputes.invoiceId, invoiceId), eq(disputes.status, 'open')))
+        .orderBy(desc(disputes.createdAt))
+        .limit(1);
+      if (openDispute) {
+        await db.update(disputes).set({
+          status: 'resolved',
+          resolvedAt: new Date(),
+          updatedAt: new Date(),
+          internalNotes: `${openDispute.internalNotes ?? ''}\nStripe outcome: ${dispute.status}`.trim(),
+        }).where(eq(disputes.id, openDispute.id));
+      }
+
+      const won = dispute.status === 'won';
+      if (!won) {
+        // Funds were clawed back — reverse the payment like a refund.
+        await reversePaymentForInvoice({ invoiceId, refundAmount: amount, reason: 'stripe-chargeback-lost' });
+      } else {
+        const [inv] = await db.select().from(invoices).where(eq(invoices.id, invoiceId)).limit(1);
+        if (inv && inv.status === 'disputed') {
+          const total = Number(inv.amount);
+          const paid = Number(inv.amountPaid ?? 0);
+          const nextStatus =
+            paid >= total ? 'paid' :
+            paid > 0 ? 'partial' :
+            new Date(inv.dueDate) < new Date() ? 'overdue' : 'sent';
+          await db.update(invoices).set({ status: nextStatus, updatedAt: new Date() }).where(eq(invoices.id, invoiceId));
+        }
+      }
+
+      await db.insert(timelineEvents).values({
+        id: nanoid(), orgId, customerId, invoiceId,
+        eventType: 'dispute_resolved',
+        title: `Chargeback ${dispute.status}`,
+      });
+      await notifyOwnerOfChargeback(orgId, { amount, currency, reason: dispute.reason, invoiceId, won });
+    }
+  } catch (e: any) {
+    console.error(`[stripe-webhook] dispute handler error (${phase}):`, e?.message ?? e);
+  }
+}
+
+async function notifyOwnerOfChargeback(orgId: string, info: { amount: number; currency: string; reason: string; invoiceId: string; won: boolean | null }) {
+  try {
+    const [org] = await db.select().from(organizations).where(eq(organizations.id, orgId)).limit(1);
+    if (!org) return;
+    const [owner] = await db.select({ email: users.email, name: users.name }).from(users).where(eq(users.id, org.ownerId)).limit(1);
+    if (!owner?.email) return;
+    const { sendEmail } = await import('@/lib/infra');
+    const subject = info.won === null
+      ? `Chargeback opened on an invoice payment — ${org.name}`
+      : `Chargeback ${info.won ? 'won' : 'lost'} — ${org.name}`;
+    const body = info.won === null
+      ? `<p>A customer disputed a card payment made through your Collectly payment portal.</p>
+         <ul><li>Amount: ${info.amount} ${info.currency}</li><li>Card network reason: ${info.reason}</li><li>Invoice: ${info.invoiceId}</li></ul>
+         <p>Stripe usually requires evidence within a few days — check your Stripe dashboard.</p>`
+      : info.won
+        ? `<p>Good news — you won the chargeback on invoice ${info.invoiceId} (${info.amount} ${info.currency}). The invoice is marked paid again.</p>`
+        : `<p>You lost the chargeback on invoice ${info.invoiceId} (${info.amount} ${info.currency}). The funds were clawed back and the invoice balance has been reopened.</p>`;
+    await sendEmail({ to: owner.email, subject, html: body });
+  } catch (e: any) {
+    console.error('[stripe-webhook] chargeback notify failed:', e?.message ?? e);
   }
 }
 
