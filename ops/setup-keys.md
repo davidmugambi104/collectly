@@ -190,29 +190,27 @@ POSTHOG_HOST: https://us.i.posthog.com
 
 ---
 
-## After you do the 4: do OpenAI + Twilio yourself (12 min)
+## After you do the 4: do Gemini + Twilio yourself (12 min)
 
 These two I want YOU to do because they involve payment / phone numbers / regulatory forms.
 
-### 5. OPENAI (5 min)
+### 5. GOOGLE GEMINI (5 min)
 
-**URL:** https://platform.openai.com
+**URL:** https://aistudio.google.com/apikey
 
-**You'll need:** An OpenAI account with a payment method on file. If you don't have one:
-- Sign up
-- Go to Settings → Billing → Add payment method
-- Add $5 credit minimum (you'll use ~$1-5/month for dunning AI)
+Note: the app runs on Google Gemini (`src/lib/ai/dunning.ts`, `src/lib/ai/inbox.ts`) for dunning message generation and inbox reply classification, not OpenAI — this section used to say OpenAI, that's now stale.
+
+**You'll need:** A Google account. Billing is optional to start (Gemini has a free tier); add a payment method later if you exceed it.
 
 **Get the key:**
-1. https://platform.openai.com/api-keys
-2. "Create new secret key"
-3. Name: `Collectly Production`
-4. Permissions: "All" (or "Read" if you want to be tight, but I need "Write" for dunning generation)
-5. Copy: `sk-proj-...`
+1. https://aistudio.google.com/apikey
+2. "Create API key"
+3. Select or create a Google Cloud project
+4. Copy the key
 
 **PASTE TO ME:**
 ```
-OPENAI_API_KEY: sk-proj-xxxxx
+GEMINI_API_KEY: xxxxx
 ```
 
 ### 6. TWILIO (7 min, plus ongoing A2P registration)
@@ -274,7 +272,7 @@ As you paste each one, I write it to `/home/davie/.openclaw/workspace/collectly/
 | Stripe setup | You | 15 min | Includes KYC, products, webhook |
 | Resend setup | You | 10 min | Includes DNS records we'll add together |
 | PostHog setup | You | 5 min | Easiest of the 4 |
-| OpenAI key | You | 5 min | Just paste the key |
+| Gemini key | You | 5 min | Just paste the key |
 | Twilio setup | You | 7 min + 1-7 day wait | Includes 10DLC brand |
 | DNS for domain | Together | 10 min | I'll tell you exactly which records to add |
 | Upload keys to Vercel | Me | 10 min | Deploy script does it |

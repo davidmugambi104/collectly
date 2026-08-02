@@ -132,7 +132,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
         <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt as any} />
         <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt as any} />
         <IntegrationCard logo="S" name="Stripe" description="Payments processor. Paused — we use bank transfer / Wise for billing. Code is kept in case we re-enable." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
-        <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" />
+        <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt as any} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
         <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref="mailto:hello@getcollectly.app?subject=Integration%20request" docsHref="#" ctaLabel="Request" />
       </div>
@@ -151,11 +151,11 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   );
 }
 
-function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt }: { logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero'; label?: string; lastSyncAt?: string | null }) {
+function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt }: { logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero' | 'square'; label?: string; lastSyncAt?: string | null }) {
   const connected = status === 'connected';
   const errored = status === 'error';
   const paused = status === 'paused';
-  const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero');
+  const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero' || provider === 'square');
   return (
     <div className={`card transition-colors ${connected ? 'border-emerald-200 bg-emerald-50/30' : errored ? 'border-red-200 bg-red-50/30' : paused ? 'border-ink-200 bg-ink-50/50 opacity-70' : ''}`}>
       <div className="flex items-start gap-3">

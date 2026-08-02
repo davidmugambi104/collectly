@@ -6,6 +6,7 @@ import { and, eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { syncQboForOrg, disconnectQbo } from '@/lib/integrations/quickbooks';
 import { syncXeroForOrg, disconnectXero } from '@/lib/integrations/xero';
+import { syncSquareForOrg, disconnectSquare } from '@/lib/integrations/square';
 
 export const dynamic = 'force-dynamic';
 // syncXeroForOrg/syncQboForOrg do sequential, unbatched per-row DB upserts on
@@ -15,7 +16,7 @@ export const dynamic = 'force-dynamic';
 // can log or respond). This is a real observed failure, not speculative.
 export const maxDuration = 60;
 
-async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xero') {
+async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xero' | 'square') {
   const [row] = await db
     .select()
     .from(integrations)
@@ -26,8 +27,8 @@ async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xer
 
 /**
  * POST /api/integrations/sync
- * Body: { provider: "quickbooks" | "xero" }
- * Pulls invoices + customers from the connected accounting system
+ * Body: { provider: "quickbooks" | "xero" | "square" }
+ * Pulls invoices + customers from the connected accounting/payments system
  * and upserts them into our DB. Returns counts and any per-row errors.
  */
 export async function POST(req: NextRequest) {
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const provider = body?.provider as string | undefined;
-  if (provider !== 'quickbooks' && provider !== 'xero') {
+  if (provider !== 'quickbooks' && provider !== 'xero' && provider !== 'square') {
     return NextResponse.json({ error: 'invalid provider' }, { status: 400 });
   }
 
@@ -49,7 +50,9 @@ export async function POST(req: NextRequest) {
   try {
     const result = provider === 'quickbooks'
       ? await syncQboForOrg(orgId)
-      : await syncXeroForOrg(orgId);
+      : provider === 'xero'
+        ? await syncXeroForOrg(orgId)
+        : await syncSquareForOrg(orgId);
     // If the provider itself threw (refresh failed, network error),
     // syncQboForOrg would have thrown too — we wouldn't be here.
     // But if ALL customers + invoices failed and there were per-row errors
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * DELETE /api/integrations/sync?provider=quickbooks|xero
+ * DELETE /api/integrations/sync?provider=quickbooks|xero|square
  * Disconnects the integration: revokes tokens and deletes the row.
  */
 export async function DELETE(req: NextRequest) {
@@ -79,13 +82,14 @@ export async function DELETE(req: NextRequest) {
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const provider = new URL(req.url).searchParams.get('provider');
-  if (provider !== 'quickbooks' && provider !== 'xero') {
+  if (provider !== 'quickbooks' && provider !== 'xero' && provider !== 'square') {
     return NextResponse.json({ error: 'invalid provider' }, { status: 400 });
   }
 
   try {
     if (provider === 'quickbooks') await disconnectQbo(orgId);
-    else await disconnectXero(orgId);
+    else if (provider === 'xero') await disconnectXero(orgId);
+    else await disconnectSquare(orgId);
     return NextResponse.json({ ok: true, provider });
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });

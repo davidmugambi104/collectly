@@ -10,7 +10,7 @@ import { RefreshCw, Unlink, Loader2 } from 'lucide-react';
  *  - "Sync now" — POST /api/integrations/sync, refreshes the page on success
  *  - "Disconnect" — DELETE /api/integrations/sync with confirmation
  */
-export function IntegrationControls({ provider, label, lastSyncAt }: { provider: 'quickbooks' | 'xero'; label: string; lastSyncAt?: string | null }) {
+export function IntegrationControls({ provider, label, lastSyncAt }: { provider: 'quickbooks' | 'xero' | 'square'; label: string; lastSyncAt?: string | null }) {
   const router = useRouter();
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);

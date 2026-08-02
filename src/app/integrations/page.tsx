@@ -109,15 +109,15 @@ const categories = [
   },
   {
     title: 'Banking',
-    description: 'Read-only bank feeds for cash-flow forecasting. We never move money.',
+    description: 'Read-only bank connection. We never move money.',
     items: [
       {
         name: 'Plaid',
         slug: 'plaid',
-        status: 'live',
+        status: 'beta',
         bullets: [
-          'Read-only access to balances and transactions',
-          'Powers the 4-week cash-flow forecast',
+          'Secure bank connection via Plaid Link',
+          'Balance and transaction sync in progress — not yet feeding the cash-flow forecast',
           'Sandbox support for testing',
         ],
       },

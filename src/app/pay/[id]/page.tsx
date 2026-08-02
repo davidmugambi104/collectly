@@ -62,7 +62,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                 <h1 className="h3">Payment cancelled</h1>
                 <p className="mt-2 text-sm text-ink-600">No charge was made. You can try again below or contact {org.name} with any questions.</p>
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} />
                 </div>
               </div>
             ) : (
@@ -76,7 +76,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                   </div>
                 )}
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} />
                 </div>
               </>
             )}

@@ -109,7 +109,7 @@ export function PlaidCard({ status }: { status: string }) {
               <span className="badge-neutral text-[10px]">Not connected</span>
             )}
           </div>
-          <p className="mt-1 text-sm text-ink-600">Read-only bank feeds for cash-flow forecasting.</p>
+          <p className="mt-1 text-sm text-ink-600">Read-only bank connection. Balance/transaction sync isn't wired into the forecast yet — connecting saves your bank link for when it is.</p>
           {error && (
             <p className="mt-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-md px-2 py-1">
               {error}
