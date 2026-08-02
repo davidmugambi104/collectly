@@ -37,6 +37,19 @@ export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getT
 export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as any)[p] });
 export const redis = new Proxy({} as Redis, { get: (_t, p) => { const r = getRedis(); return r ? (r as any)[p] : undefined; } });
 
+// Plus-addressed reply-to for dunning sends: reply+{invoiceId}@{domain}.
+// The inbound webhook (/api/webhooks/inbox) parses this back out of the
+// "to" address on the reply to resolve which invoice/customer/org it
+// belongs to, without needing a lookup table of tokens. Domain is derived
+// from RESEND_FROM_EMAIL so it stays correct if the sending domain changes.
+export function buildInboxReplyToAddress(invoiceId: string): string {
+  const raw = process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app';
+  const match = raw.match(/[^<\s]+@[^>\s]+/);
+  const address = match ? match[0] : 'hello@getcollectly.app';
+  const domain = address.split('@')[1] ?? 'getcollectly.app';
+  return `reply+${invoiceId}@${domain}`;
+}
+
 export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }) {
   if (!process.env.RESEND_API_KEY) {
     console.warn('[email] RESEND_API_KEY missing — skipping send');

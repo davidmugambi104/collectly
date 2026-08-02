@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { pool } from '@/db';
+import { parseInboxReplyToken, handleArCustomerReply } from '@/lib/inbox-inbound';
 
 /**
  * Resend inbound webhook handler for outreach replies.
@@ -138,11 +139,36 @@ export async function handleResendInboundWebhook(req: NextRequest): Promise<Next
   // Resend inbound wraps the actual fields under .data
   const data = event?.data ?? {};
   const fromAddress = String(data.from || '').toLowerCase().trim();
+  const fromName = data.from_name ? String(data.from_name) : null;
   const subject = String(data.subject || '');
   const text = String(data.text || data.html || '');
 
   if (!fromAddress) {
     return NextResponse.json({ error: 'Missing from address' }, { status: 400 });
+  }
+
+  // AR-customer replies (to a dunning email) land on the same inbound
+  // domain as outreach-prospect replies, distinguished by a
+  // reply+{invoiceId}@ recipient stamped by buildInboxReplyToAddress
+  // (src/lib/infra.ts). Route those to the AR inbox instead of treating
+  // them as a cold-outreach prospect reply.
+  const invoiceToken = parseInboxReplyToken(data.to);
+  if (invoiceToken) {
+    const result = await handleArCustomerReply({
+      invoiceId: invoiceToken,
+      fromAddress,
+      fromName,
+      subject,
+      body: text,
+      rawPayload: event,
+    });
+    if (result.handled) {
+      return NextResponse.json({ ok: true, inboxMessageId: result.inboxMessageId });
+    }
+    // Token didn't resolve to a real invoice (stale/forged address) — fall
+    // through to outreach handling rather than erroring, since a malformed
+    // reply+ address shouldn't 500 the webhook.
+    console.warn(`[inbound] reply+ token ${invoiceToken} did not resolve: ${result.reason}`);
   }
 
   const classification = classifyReply(text, subject);

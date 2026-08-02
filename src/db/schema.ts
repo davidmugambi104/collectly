@@ -364,10 +364,36 @@ export const disputes = pgTable('disputes', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Backs the "AI Collections Inbox" — every inbound reply from an AR
+// customer (not to be confused with outreach_contacts/outreach_replies,
+// which are cold-outreach prospect replies handled separately in
+// src/lib/outreach-inbound.ts). Populated by POST /api/webhooks/inbox.
 export const inboxMessages = pgTable('inbox_messages', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
-  customerId: text('customer_id').references(() => customers.id, { onDelete: 'cascade' }),
+  customerId: text('customer_id').references(() => customers.id, { onDelete: 'set null' }),
+  invoiceId: text('invoice_id').references(() => invoices.id, { onDelete: 'set null' }),
+  channel: varchar('channel', { length: 16 }).notNull().default('email'),
+  fromAddress: text('from_address'),
+  fromName: text('from_name'),
+  subject: text('subject'),
+  body: text('body').notNull(),
+  rawPayload: jsonb('raw_payload'),
+  // Live Postgres enum `reply_classification`; kept as text() here (same
+  // convention as disputes.reason / promisesToPay.status) so a mismatched
+  // literal fails loudly instead of drifting silently — see the values in
+  // REPLY_CLASSIFICATIONS in src/lib/ai/inbox.ts.
+  classification: text('classification').notNull().default('unclassified'),
+  classificationConfidence: decimal('classification_confidence', { precision: 4, scale: 3 }),
+  aiSummary: text('ai_summary'),
+  aiRecommendedAction: text('ai_recommended_action'),
+  aiSuggestedPromiseDate: timestamp('ai_suggested_promise_date', { withTimezone: true }),
+  status: text('status').notNull().default('new'),
+  actionTaken: text('action_taken'),
+  actionTakenAt: timestamp('action_taken_at', { withTimezone: true }),
+  actionTakenBy: text('action_taken_by').references(() => users.id),
+  receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const customerPreferences = pgTable('customer_preferences', {

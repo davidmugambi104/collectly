@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS waitlist (id text PRIMARY KEY, email text NOT NULL UN
 CREATE TABLE IF NOT EXISTS timeline_events (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, customer_id text REFERENCES customers(id) ON DELETE CASCADE, invoice_id text REFERENCES invoices(id) ON DELETE CASCADE, actor_id text, event_type text NOT NULL DEFAULT 'note', title text, description text, occurred_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS promises_to_pay (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, invoice_id text NOT NULL REFERENCES invoices(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, promised_date timestamptz, promised_amount decimal(14,2) NOT NULL DEFAULT 0, currency varchar(3) DEFAULT 'USD', status text NOT NULL DEFAULT 'active', source_text text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS disputes (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, invoice_id text NOT NULL REFERENCES invoices(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, reason text NOT NULL DEFAULT 'other', status text NOT NULL DEFAULT 'open', customer_message text, internal_notes text, resolved_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS inbox_messages (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, customer_id text REFERENCES customers(id) ON DELETE SET NULL, invoice_id text REFERENCES invoices(id) ON DELETE SET NULL, channel varchar(16) NOT NULL DEFAULT 'email', from_address text, from_name text, subject text, body text NOT NULL, raw_payload jsonb, classification text NOT NULL DEFAULT 'unclassified', classification_confidence decimal(4,3), ai_summary text, ai_recommended_action text, ai_suggested_promise_date timestamptz, status text NOT NULL DEFAULT 'new', action_taken text, action_taken_at timestamptz, action_taken_by text REFERENCES users(id), received_at timestamptz NOT NULL DEFAULT now(), created_at timestamptz NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS customers_org_idx ON customers(org_id);
 CREATE INDEX IF NOT EXISTS invoices_org_idx ON invoices(org_id);
 CREATE INDEX IF NOT EXISTS invoices_status_idx ON invoices(org_id, status);
@@ -34,6 +35,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS subs_org_idx ON subscriptions(org_id);
 CREATE INDEX IF NOT EXISTS timeline_cust_idx ON timeline_events(customer_id);
 CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);
 CREATE INDEX IF NOT EXISTS disputes_cust_idx ON disputes(customer_id);
+CREATE INDEX IF NOT EXISTS inbox_org_status_idx ON inbox_messages(org_id, status);
 `;
 
 let bootstrapped = false;

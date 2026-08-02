@@ -6,7 +6,7 @@ import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations, users } from '@/db/schema';
 import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, buildInboxReplyToAddress } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
 import { nanoid } from '@/lib/utils';
 
@@ -208,6 +208,7 @@ export async function processDunning() {
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
               html: withUnsubscribeFooter(renderEmailHtml({ body: result.body, invoice, businessName }), customer.email),
               headers: dunningListUnsubscribeHeaders(customer.email),
+              replyTo: buildInboxReplyToAddress(invoice.id),
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns
             // status='skipped' only when the API key is missing (a config bug).

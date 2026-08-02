@@ -3,7 +3,7 @@ import { getAuth } from '@/lib/auth-helper';
 import { db } from "@/db";
 import { dunningSequences, dunningRuns, invoices, customers } from '@/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, buildInboxReplyToAddress } from '@/lib/infra';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
         subject: data.subject ?? `Invoice ${inv.number}`,
         html: withUnsubscribeFooter(`<p style="white-space:pre-wrap;font-family:system-ui;">${data.body}</p>`, cust.email),
         headers: dunningListUnsubscribeHeaders(cust.email),
+        replyTo: buildInboxReplyToAddress(inv.id),
       });
     } else {
       if (!cust.phone) throw new Error('Customer has no phone');

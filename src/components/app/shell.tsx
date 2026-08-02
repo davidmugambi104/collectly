@@ -26,6 +26,7 @@ const NAV = [
   { href: '/dashboard', label: 'Overview' },
   { href: '/dashboard/invoices', label: 'Invoices' },
   { href: '/dashboard/customers', label: 'Customers' },
+  { href: '/dashboard/inbox', label: 'Inbox' },
   { href: '/dashboard/dunning', label: 'Dunning' },
   { href: '/dashboard/cash-flow', label: 'Cash flow' },
   { href: '/dashboard/events', label: 'Activity' },
