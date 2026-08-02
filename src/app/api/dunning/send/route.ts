@@ -82,11 +82,12 @@ export async function POST(req: NextRequest) {
       } catch (e) {
         console.error('[dunning] fetchResendMessageId failed:', e instanceof Error ? e.message : e);
       }
+      await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));
     } else {
       if (!cust.phone) throw new Error('Customer has no phone');
-      await sendSms({ to: cust.phone, body: data.body });
+      const sms = await sendSms({ to: cust.phone, body: data.body });
+      await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date(), externalMessageId: sms.sid }).where(eq(dunningRuns.id, run.id));
     }
-    await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));
     await db.update(invoices).set({ lastReminderAt: new Date() }).where(eq(invoices.id, data.invoiceId));
     return NextResponse.json({ ok: true, id: run.id });
   } catch (e: any) {

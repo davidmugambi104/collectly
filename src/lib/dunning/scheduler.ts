@@ -256,7 +256,7 @@ export async function processDunning() {
                 payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', error: 'twilio not configured' },
               });
             } else {
-              await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
+              await db.update(dunningRuns).set({ status: 'sent', sentAt: now, externalMessageId: (sms as any).sid }).where(eq(dunningRuns.id, run.id));
               sent += 1;
               await recordEvent({
                 orgId: seq.orgId,

@@ -120,7 +120,17 @@ export async function sendSms(opts: { to: string; body: string }) {
   const client = getTwilio()!;
   // Twilio client.messages.create throws on transport errors but returns
   // { sid, error_code, error_message } on API errors. Surface both.
-  const msg = await client.messages.create({ from: process.env.TWILIO_FROM_NUMBER, to: opts.to, body: opts.body });
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  const msg = await client.messages.create({
+    from: process.env.TWILIO_FROM_NUMBER,
+    to: opts.to,
+    body: opts.body,
+    // Delivery status (queued/sent/delivered/undelivered/failed) — see
+    // /api/webhooks/twilio-status, which matches back on msg.sid stored
+    // as dunningRuns.externalMessageId (same column email uses for its
+    // Resend Message-ID; a run is one channel or the other, no collision).
+    statusCallback: `${appUrl}/api/webhooks/twilio-status`,
+  });
   if ((msg as any).errorCode || (msg as any).errorMessage) {
     throw new Error(`twilio: ${(msg as any).errorCode ?? 'error'}: ${(msg as any).errorMessage}`);
   }
