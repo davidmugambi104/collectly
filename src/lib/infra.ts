@@ -38,11 +38,22 @@ export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as 
 export const redis = new Proxy({} as Redis, { get: (_t, p) => { const r = getRedis(); return r ? (r as any)[p] : undefined; } });
 
 // Plus-addressed reply-to for dunning sends: reply+{invoiceId}@{domain}.
-// The inbound webhook (/api/webhooks/inbox) parses this back out of the
-// "to" address on the reply to resolve which invoice/customer/org it
-// belongs to, without needing a lookup table of tokens. Domain is derived
-// from RESEND_FROM_EMAIL so it stays correct if the sending domain changes.
+// The inbound webhook (src/lib/inbox-inbound.ts) parses this back out of
+// the "to" address on the reply to resolve which invoice/customer/org it
+// belongs to, without needing a lookup table of tokens.
+//
+// Deliberately NOT the same domain as RESEND_FROM_EMAIL (getcollectly.app),
+// whose MX records point at Zoho for real business email — pointing that
+// domain's MX at Resend for inbound receiving would break it. Set
+// INBOUND_REPLY_DOMAIN to a dedicated receiving subdomain (e.g.
+// reply.getcollectly.app) once it's configured in Resend + DNS. Until then
+// this falls back to the sending domain, which is harmless (Resend
+// receiving is disabled there, so replies just won't be classified —
+// same as before this feature existed).
 export function buildInboxReplyToAddress(invoiceId: string): string {
+  if (process.env.INBOUND_REPLY_DOMAIN) {
+    return `reply+${invoiceId}@${process.env.INBOUND_REPLY_DOMAIN}`;
+  }
   const raw = process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app';
   const match = raw.match(/[^<\s]+@[^>\s]+/);
   const address = match ? match[0] : 'hello@getcollectly.app';
