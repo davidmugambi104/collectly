@@ -6,7 +6,23 @@ import { rateLimit, getIp } from '@/lib/rate-limit';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
+// Disabled platform-wide (2026-08-05): this route charges through
+// Collectly's own single PAYSTACK_SECRET_KEY with no per-agency subaccount
+// or split_code — money paid here settles into Collectly's account, not
+// the business being paid, and nothing anywhere transfers it onward. Same
+// class of bug as the one fixed in /api/payment/create-checkout, except
+// no per-org connect flow exists yet to fix it properly. Gated at the API
+// level (not just hidden in the UI) so a direct POST can't route around
+// the frontend gate in src/components/payment/payment-form.tsx.
+const PAYSTACK_ENABLED = false;
+
 export async function POST(req: NextRequest) {
+  if (!PAYSTACK_ENABLED) {
+    return NextResponse.json(
+      { error: 'Card/bank/mobile-money payment via Paystack is temporarily unavailable. Please use wire transfer, or contact the business directly.' },
+      { status: 503 },
+    );
+  }
   if (!PAYSTACK_SECRET) {
     return NextResponse.json({ error: 'PAYSTACK_SECRET_KEY not configured' }, { status: 500 });
   }

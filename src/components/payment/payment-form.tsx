@@ -7,13 +7,24 @@ import { CheckCircle2, Lock, ShieldCheck, Loader2, AlertTriangle } from 'lucide-
 // add Paystack for currencies Stripe checkout isn't set up to charge in.
 const PAYSTACK_CURRENCIES = ['NGN', 'GHS', 'ZAR', 'KES'];
 
+// Disabled platform-wide (2026-08-05): every Paystack transaction runs
+// through Collectly's own single PAYSTACK_SECRET_KEY, exactly like the
+// Stripe bug that was fixed — except Paystack has no per-agency
+// subaccount/split mechanism at all (not even a disabled one), and no
+// transfer-to-agency step anywhere in the code. Money paid via Paystack
+// settles into Collectly's own account with zero way to reconcile it to
+// the actual business. Do not re-enable until a real per-agency Paystack
+// subaccount + split_code flow exists (mirroring how Stripe Connect would
+// fix the same class of bug) — see [[stripe-connect-blocked-kenya]] for
+// the analogous Stripe situation.
+const PAYSTACK_ENABLED = false;
+
 export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug, customerEmail, cardAchAvailable }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string; customerEmail?: string | null; cardAchAvailable: boolean }) {
-  const paystackEligible = PAYSTACK_CURRENCIES.includes((currency ?? '').toUpperCase());
+  const paystackEligible = PAYSTACK_ENABLED && PAYSTACK_CURRENCIES.includes((currency ?? '').toUpperCase());
   const allMethods = paystackEligible ? (['card', 'ach', 'paystack', 'wire'] as const) : (['card', 'ach', 'wire'] as const);
   // Card/ACH charge through the business's own connected Stripe account —
   // if they haven't linked one yet, offering the buttons would just lead
-  // to a checkout-creation error. Paystack is unaffected (routes through
-  // Collectly's own Paystack keys, not a per-org connection).
+  // to a checkout-creation error.
   const methods = cardAchAvailable ? allMethods : allMethods.filter((m) => m !== 'card' && m !== 'ach');
   const [method, setMethod] = useState<'card' | 'ach' | 'wire' | 'paystack'>(cardAchAvailable ? 'card' : paystackEligible ? 'paystack' : 'wire');
   const [email, setEmail] = useState(customerEmail ?? '');
