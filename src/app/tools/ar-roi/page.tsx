@@ -3,16 +3,20 @@ import Link from 'next/link';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { RoiCalculator } from './client';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+// Was a hand-rolled Metadata object with no `alternates.canonical` — every
+// other marketing page in this codebase goes through pageMetadata() for
+// exactly that. /ar-roi (a legacy alias, see src/app/ar-roi/page.tsx) had
+// a real canonical pointing at this real page, but this page — the actual
+// crawlable destination, linked directly from the footer — had none at
+// all, and was also missing from sitemap.ts entirely.
+export const metadata: Metadata = pageMetadata({
   title: 'A/R ROI Calculator — How much is slow invoicing costing you?',
   description: 'Free calculator: see exactly how much cash faster invoicing would free up for your service business. Built for 5-30 person agencies and consultancies on net-30 / net-60 terms.',
+  path: '/tools/ar-roi',
   keywords: ['AR calculator', 'DSO calculator', 'days sales outstanding', 'cash flow calculator', 'small business AR'],
-  openGraph: {
-    title: 'A/R ROI Calculator — Collectly',
-    description: 'See how much faster collections could free up for your business. Free, no signup.',
-  },
-};
+});
 
 export default function ArRoiPage() {
   return (

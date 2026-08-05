@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { ArrowRight, Check, Loader2 } from 'lucide-react';
 
-export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
+export function WaitlistForm({ variant, source = 'homepage', compact }: { variant?: 'dark' | 'light'; source?: string; compact?: boolean }) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -15,7 +15,7 @@ export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email, source: 'homepage' }),
+        body: JSON.stringify({ email, source }),
       });
       if (!res.ok) throw new Error('Failed');
       setStatus('ok');
@@ -51,11 +51,11 @@ export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
           disabled={status === 'loading'}
           className="inline-flex items-center justify-center gap-1.5 rounded-md bg-ink-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-ink-800 disabled:opacity-50 transition-colors"
         >
-          {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Join waitlist <ArrowRight className="h-4 w-4" /></>}
+          {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : compact ? 'Subscribe' : <>Join waitlist <ArrowRight className="h-4 w-4" /></>}
         </button>
       </div>
       {status === 'error' && <div className="mt-2 text-xs text-red-600">{message}</div>}
-      {!message && (
+      {!compact && !message && (
         <p className={`mt-2 text-xs ${dark ? 'text-ink-400' : 'text-ink-500'}`}>
           Or <a href="/sign-up" className="link">create an account</a> to start now.
         </p>

@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/cron/dunning", "schedule": "0 14 * * *" },
-    { "path": "/api/cron/outreach-poll", "schedule": "0 12 * * *" }
+    { "path": "/api/cron/outreach-poll", "schedule": "0 12 * * *" },
+    { "path": "/api/cron/inbox-poll", "schedule": "0 13 * * *" }
   ]
 }

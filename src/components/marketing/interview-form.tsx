@@ -15,14 +15,29 @@ export function InterviewForm() {
   const [pain, setPain] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
-      await fetch('/api/interview', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, name, company, country, teamSize, industry, dso, outstanding, tool, pain }) });
+      // Was unconditional (no res.ok check, no catch) — a rate-limited
+      // (429, /api/interview allows 10/min) or failed submission still
+      // showed "Got it, we'll reach out" to someone filling this out for
+      // a $25 incentive, with nothing actually saved. Matches the pattern
+      // already fixed in AuditForm (src/components/marketing/audit-form.tsx).
+      const res = await fetch('/api/interview', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, name, company, country, teamSize, industry, dso, outstanding, tool, pain }) });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Request failed (${res.status})`);
+      }
       setDone(true);
-    } finally { setLoading(false); }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (done) {
@@ -45,7 +60,7 @@ export function InterviewForm() {
         <div><label className="label">Company</label><input value={company} onChange={(e) => setCompany(e.target.value)} required className="input" /></div>
         <div><label className="label">Country</label>
           <select value={country} onChange={(e) => setCountry(e.target.value)} className="input">
-            {['US','GB','UK','AU','CA','IE','NZ','KE','NG','ZA','IN','Other'].map((c) => <option key={c} value={c}>{c}</option>)}
+            {['US','GB','AU','CA','IE','NZ','KE','NG','ZA','IN','Other'].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         <div><label className="label">Team size</label>
@@ -72,6 +87,12 @@ export function InterviewForm() {
         <label className="label">What's the worst part of collecting unpaid invoices?</label>
         <textarea value={pain} onChange={(e) => setPain(e.target.value)} required rows={3} className="input" placeholder="e.g. Awkward phone calls, cash flow gaps, manual chasing..." />
       </div>
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          {error}
+        </div>
+      )}
+
       <button type="submit" disabled={loading} className="btn-primary w-full text-base h-12">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Submit & book a 15-min call <ArrowRight className="h-4 w-4" /></>}
       </button>

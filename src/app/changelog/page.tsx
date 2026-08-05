@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { pageMetadata } from '@/lib/seo';
+import { WaitlistForm } from '@/components/marketing/waitlist';
 
 export const metadata = pageMetadata({
   title: 'Changelog — what we shipped, and when',
@@ -51,11 +52,14 @@ export default function ChangelogPage() {
         <div className="mt-16 p-6 rounded-xl bg-white border border-ink-200 text-center">
           <h3 className="font-semibold text-ink-900">Get the changelog by email</h3>
           <p className="mt-1 text-sm text-ink-600">One short email every Friday. Product updates, customer wins, and what we learned.</p>
-          <form action="/api/waitlist" method="post" className="mt-4 flex max-w-md mx-auto gap-2">
-            <input name="email" type="email" required placeholder="you@company.com" className="input flex-1" />
-            <input type="hidden" name="source" value="changelog-signup" />
-            <button type="submit" className="btn-primary">Subscribe</button>
-          </form>
+          {/* Was a raw HTML form POSTing url-encoded data straight to
+              /api/waitlist, which only accepts JSON (req.json()) — every
+              real submission full-page-navigated to a bare JSON error
+              blob instead of saving anything. Every other page on the
+              site already goes through this shared client component. */}
+          <div className="mt-4 max-w-md mx-auto">
+            <WaitlistForm source="changelog-signup" compact />
+          </div>
         </div>
       </div>
     </div>

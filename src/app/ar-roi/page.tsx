@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { permanentRedirect } from 'next/navigation';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -13,5 +13,11 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function ArRoiRedirect() {
-  redirect('/tools/ar-roi');
+  // Was next/navigation's redirect() (temporary, 307) — this is a
+  // permanent URL alias, not a transient bounce, and sitemap.ts was
+  // telling Googlebot to prioritize-crawl this exact URL while it 307'd
+  // to a page with no canonical of its own. permanentRedirect (308)
+  // correctly signals "this moved for good" and passes link equity to
+  // the real destination.
+  permanentRedirect('/tools/ar-roi');
 }

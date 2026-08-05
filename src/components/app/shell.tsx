@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/brand/logo';
-import { ArrowUpRight, Bell, Search, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
 
 // Clerk components are imported dynamically below to avoid 'missing
 // ClerkProvider' errors when USE_DEV_AUTH=1 (dev shim has no Clerk
@@ -30,11 +30,39 @@ const NAV = [
   { href: '/dashboard/dunning', label: 'Dunning' },
   { href: '/dashboard/cash-flow', label: 'Cash flow' },
   { href: '/dashboard/events', label: 'Activity' },
-  { href: '/dashboard/admin/interviews', label: 'Interviews' },
   { href: '/dashboard/payments', label: 'Payments' },
   { href: '/dashboard/integrations', label: 'Integrations' },
   { href: '/dashboard/settings', label: 'Settings' },
 ];
+
+function TrialNudge() {
+  const [trial, setTrial] = useState<{ isTrialing: boolean; daysLeft: number } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/billing/trial-status')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (!cancelled && data) setTrial(data); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  // Nothing to say until we know, and nothing to say once they've already
+  // upgraded — showing "Trial" copy to a paying org is its own kind of lie.
+  if (!trial?.isTrialing) return null;
+
+  return (
+    <div className="m-3 rounded-xl border border-brand-200 bg-brand-50 p-4">
+      <div className="text-xs font-semibold text-brand-900">
+        {trial.daysLeft > 0 ? `Trial · ${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left` : 'Trial ended'}
+      </div>
+      <p className="mt-1 text-xs text-brand-800">Upgrade to keep unlimited invoices & SMS dunning.</p>
+      <Link href="/dashboard/billing" className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand-700 hover:text-brand-900">
+        Upgrade <ArrowUpRight className="h-3 w-3" />
+      </Link>
+    </div>
+  );
+}
 
 export function AppShell({ children, title, subtitle }: { children: React.ReactNode; title: string; subtitle?: string }) {
   const [open, setOpen] = useState(false);
@@ -81,13 +109,7 @@ export function AppShell({ children, title, subtitle }: { children: React.ReactN
             );
           })}
         </nav>
-        <div className="m-3 rounded-xl border border-brand-200 bg-brand-50 p-4">
-          <div className="text-xs font-semibold text-brand-900">Trial · 13 days left</div>
-          <p className="mt-1 text-xs text-brand-800">Upgrade to keep unlimited invoices & SMS dunning.</p>
-          <Link href="/dashboard/billing" className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand-700 hover:text-brand-900">
-            Upgrade <ArrowUpRight className="h-3 w-3" />
-          </Link>
-        </div>
+        <TrialNudge />
       </aside>
 
       {/* Main column */}
@@ -110,13 +132,6 @@ export function AppShell({ children, title, subtitle }: { children: React.ReactN
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <button className="h-9 w-9 grid place-items-center rounded-lg hover:bg-ink-100 text-ink-600 hidden sm:grid" aria-label="Search">
-              <Search className="h-4 w-4" />
-            </button>
-            <button className="h-9 w-9 grid place-items-center rounded-lg hover:bg-ink-100 text-ink-600 relative" aria-label="Notifications">
-              <Bell className="h-4 w-4" />
-              <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-red-500" />
-            </button>
             {hasClerk && (
               <>
                 <OrganizationSwitcher hidePersonal afterSelectOrganizationUrl="/dashboard" />
@@ -159,13 +174,7 @@ export function AppShell({ children, title, subtitle }: { children: React.ReactN
                 );
               })}
             </nav>
-            <div className="m-3 rounded-xl border border-brand-200 bg-brand-50 p-4">
-              <div className="text-xs font-semibold text-brand-900">Trial · 13 days left</div>
-              <p className="mt-1 text-xs text-brand-800">Upgrade to keep unlimited invoices & SMS dunning.</p>
-              <Link href="/dashboard/billing" className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand-700 hover:text-brand-900">
-                Upgrade <ArrowUpRight className="h-3 w-3" />
-              </Link>
-            </div>
+            <TrialNudge />
           </div>
         </>
       )}

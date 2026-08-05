@@ -21,6 +21,9 @@ export function ArCostCalculator() {
   const [currency, setCurrency] = useState('USD');
   const [email, setEmail] = useState('');
   const [showCapture, setShowCapture] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const sym = CURRENCIES.find((c) => c.code === currency)?.symbol ?? '$';
 
@@ -36,6 +39,32 @@ export function ArCostCalculator() {
       total: Math.round(total),
     };
   }, [avgInvoice, lateDays, lateClients, chaseHours, hourlyRate]);
+
+  async function sendReport() {
+    if (!email.trim() || !email.includes('@')) {
+      setSendError('Enter a valid email address.');
+      return;
+    }
+    setSending(true);
+    setSendError(null);
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          source: 'ar-cost-calculator',
+          painPoint: `[AR cost calculator] annual drag ${formatCurrency(result.total, currency)} — avg invoice ${formatCurrency(avgInvoice, currency)}, ${lateDays}d late, ${lateClients} late clients, ${chaseHours}h/wk chasing at ${formatCurrency(hourlyRate, currency)}/hr`,
+        }),
+      });
+      if (!res.ok) throw new Error('Something went wrong. Try again.');
+      setSent(true);
+    } catch (e: unknown) {
+      setSendError(e instanceof Error ? e.message : 'Something went wrong. Try again.');
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
     <div className="mt-12 grid lg:grid-cols-2 gap-6">
@@ -103,7 +132,12 @@ export function ArCostCalculator() {
         </div>
 
         <div className="card">
-          {showCapture ? (
+          {sent ? (
+            <>
+              <h3 className="font-semibold text-ink-900">Sent — check your inbox</h3>
+              <p className="mt-1 text-sm text-ink-600">The detailed breakdown and 5-step AR playbook are on their way to {email}.</p>
+            </>
+          ) : showCapture ? (
             <>
               <h3 className="font-semibold text-ink-900">Get the detailed breakdown + 5-step AR playbook</h3>
               <div className="mt-3 flex gap-2">
@@ -111,13 +145,15 @@ export function ArCostCalculator() {
                   type="email"
                   placeholder="you@agency.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); setSendError(null); }}
+                  onKeyDown={(e) => e.key === 'Enter' && sendReport()}
                   className="input flex-1"
                 />
-                <button className="btn-primary whitespace-nowrap" onClick={() => {}}>
-                  <Mail className="h-4 w-4" /> Send
+                <button className="btn-primary whitespace-nowrap" onClick={sendReport} disabled={sending}>
+                  <Mail className="h-4 w-4" /> {sending ? 'Sending…' : 'Send'}
                 </button>
               </div>
+              {sendError && <p className="mt-2 text-xs text-red-600">{sendError}</p>}
               <p className="mt-2 text-xs text-ink-500">No spam. Unsubscribe anytime.</p>
             </>
           ) : (

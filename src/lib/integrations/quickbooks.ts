@@ -278,6 +278,12 @@ interface QboSyncResult {
   invoicesMarkedPaid: number;
   durationMs: number;
   errors: string[];
+  /** True if a list query hit its MAXRESULTS cap — the sync completed
+   * without error but is known-incomplete. Real STARTPOSITION-based
+   * pagination is a larger follow-up (needs a QBO sandbox to verify the
+   * loop terminates and doesn't double-fetch); this at least stops the
+   * result from claiming a clean, complete sync when it wasn't one. */
+  truncated?: boolean;
 }
 
 /**
@@ -293,12 +299,15 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let truncated = false;
+  const QBO_PAGE_SIZE = 1000; // matches MAXRESULTS in qboListCustomers/qboListOpenInvoices
 
   // 1. Customers
   let qboCustomers: any[] = [];
   try {
     const res: any = await qboListCustomers(orgId);
     qboCustomers = res?.QueryResponse?.Customer ?? [];
+    if (qboCustomers.length >= QBO_PAGE_SIZE) truncated = true;
   } catch (e: any) {
     errors.push(`customers: ${e?.message ?? e}`);
   }
@@ -337,6 +346,7 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   try {
     const res: any = await qboListOpenInvoices(orgId);
     qboInvoices = res?.QueryResponse?.Invoice ?? [];
+    if (qboInvoices.length >= QBO_PAGE_SIZE) truncated = true;
   } catch (e: any) {
     errors.push(`invoices: ${e?.message ?? e}`);
   }
@@ -441,7 +451,8 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks')));
 
-  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors };
+  if (truncated) errors.push('sync hit the 1000-record page limit — some customers/invoices may not have been imported (pagination not yet implemented)');
+  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }
 
 /**

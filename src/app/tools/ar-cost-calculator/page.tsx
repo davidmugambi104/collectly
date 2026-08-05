@@ -3,16 +3,18 @@ import Link from 'next/link';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { ArCostCalculator } from './client';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+// Was a hand-rolled Metadata object with no `alternates.canonical` and no
+// sitemap.ts entry, despite being a real, working calculator linked
+// directly from the site footer. See the matching fix on
+// src/app/tools/ar-roi/page.tsx for the same gap.
+export const metadata: Metadata = pageMetadata({
   title: 'Late Payment Cost Calculator — How much is your agency losing?',
   description: 'Free 2-minute calculator: see how much late invoices and manual chasing are costing your agency every year. Built for 5-30 person agencies and consultancies.',
+  path: '/tools/ar-cost-calculator',
   keywords: ['late payment cost', 'agency cash flow', 'invoice chasing cost', 'AR calculator', 'accounts receivable calculator'],
-  openGraph: {
-    title: 'Late Payment Cost Calculator — Collectly',
-    description: 'See how much late invoices and manual chasing cost your agency every year. Free, no signup required.',
-  },
-};
+});
 
 export default function ArCostCalculatorPage() {
   return (
