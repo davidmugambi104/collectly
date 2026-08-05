@@ -3,7 +3,7 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay } from '@/db/schema';
 import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
@@ -97,6 +97,19 @@ export async function processDunning() {
         eq(invoices.orgId, seq.orgId),
         sql`${invoices.status} IN ('sent', 'viewed', 'overdue', 'partial')`,
         lte(invoices.dueDate, now),
+        // A customer who just promised to pay by a future date shouldn't
+        // keep getting dunned in the meantime — disputes exclude via
+        // invoices.status flipping to 'disputed', but creating a promise
+        // (POST /api/promises) never touched invoice.status, so this was
+        // the one pause condition dunning didn't actually respect. Once
+        // promisedDate passes with the invoice still unpaid, the promise
+        // stops excluding it and normal dunning resumes.
+        sql`NOT EXISTS (
+          SELECT 1 FROM ${promisesToPay}
+          WHERE ${promisesToPay.invoiceId} = ${invoices.id}
+            AND ${promisesToPay.status} = 'active'
+            AND ${promisesToPay.promisedDate} >= ${now}
+        )`,
       ));
 
     // Batch-fetch every dunning_runs row already recorded for this sequence
