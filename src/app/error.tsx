@@ -1,12 +1,12 @@
 'use client';
 import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { reportClientError } from '@/lib/report-client-error';
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      console.error('Page error:', error.message, error.digest);
-    }
+    console.error('Page error:', error.message, error.digest);
+    reportClientError(error, { boundary: 'error' });
   }, [error]);
 
   return (

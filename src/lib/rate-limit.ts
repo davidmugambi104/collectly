@@ -12,14 +12,20 @@ const DEFAULTS = {
 type Entry = { count: number; resetAt: number };
 const buckets = new Map<string, Entry>();
 
-function inProcessRateLimit(ip: string, opts: { windowMs?: number; max?: number } = {}): RateLimitResult {
+function inProcessRateLimit(key: string, opts: { windowMs?: number; max?: number } = {}): RateLimitResult {
   const windowMs = opts.windowMs ?? DEFAULTS.windowMs;
   const max = opts.max ?? DEFAULTS.max;
   const now = Date.now();
-  const key = `${ip}:${Math.floor(now / windowMs)}`;
-  const entry = buckets.get(key);
+  const bucketKey = `${key}:${Math.floor(now / windowMs)}`;
+  const entry = buckets.get(bucketKey);
   if (!entry) {
-    buckets.set(key, { count: 1, resetAt: now + windowMs });
+    buckets.set(bucketKey, { count: 1, resetAt: now + windowMs });
+    // Opportunistic cleanup: this map otherwise grows unboundedly for the
+    // lifetime of the process, one entry per distinct key:window forever.
+    // Cheap since it only runs on a cache miss, not every call.
+    if (buckets.size > 5000) {
+      for (const [k, v] of buckets) if (v.resetAt < now) buckets.delete(k);
+    }
     return { allowed: true, remaining: max - 1, resetAt: now + windowMs };
   }
   if (entry.count >= max) {
@@ -32,16 +38,28 @@ function inProcessRateLimit(ip: string, opts: { windowMs?: number; max?: number 
 /**
  * IP-based rate limiter backed by Upstash Redis in production.
  * Falls back to an in-process map when Redis is not configured.
+ *
+ * `opts.key` namespaces the bucket — without it, every call site shared
+ * one flat `ip`-only keyspace (both here and in the Redis path below,
+ * which used a single fixed `prefix` with no per-endpoint distinction
+ * either), so a user hitting one public endpoint a few times could get
+ * blocked from an unrelated one on the same IP because the shared
+ * counter was already past that second endpoint's own (lower) max.
+ * Defaults to 'default' for any caller that hasn't been updated to pass
+ * one, which preserves the old shared-keyspace behavior for those call
+ * sites rather than silently changing their limits.
  */
 export async function rateLimit(
   ip: string,
-  opts: { windowMs?: number; max?: number } = {},
+  opts: { windowMs?: number; max?: number; key?: string } = {},
 ): Promise<RateLimitResult> {
   const windowMs = opts.windowMs ?? DEFAULTS.windowMs;
   const max = opts.max ?? DEFAULTS.max;
+  const namespace = opts.key ?? 'default';
+  const identifier = `${namespace}:${ip || 'unknown'}`;
   const redis = getRedis();
   if (!redis) {
-    return inProcessRateLimit(ip, opts);
+    return inProcessRateLimit(identifier, opts);
   }
 
   // Upstash ratelimit windows are defined as seconds; convert from ms.
@@ -50,11 +68,10 @@ export async function rateLimit(
     redis,
     limiter: Ratelimit.slidingWindow(max, `${windowSeconds}s`),
     analytics: true,
-    prefix: 'collectly:ratelimit',
+    prefix: `collectly:ratelimit:${namespace}`,
   });
 
-  const identifier = ip || 'unknown';
-  const { success, limit, remaining, reset } = await limiter.limit(identifier);
+  const { success, remaining, reset } = await limiter.limit(identifier);
   return {
     allowed: success,
     remaining: Math.max(0, remaining),

@@ -5,6 +5,12 @@ const isPublicRoute = createRouteMatcher([
   // Marketing pages
   '/', '/pricing', '/features', '/blog', '/blog/(.*)', '/customers', '/about', '/contact', '/changelog', '/privacy', '/terms', '/security',
   '/dpa', '/integrations', '/tools/(.*)', '/compare', '/ar-roi', '/ar-audit', '/tour',
+  // These two pages' own submit endpoints (/api/interview,
+  // /api/playbook/download) were already public, but the pages
+  // themselves were never added here — an anonymous visitor hit Clerk's
+  // sign-in redirect before ever seeing the form. Two whole lead-capture
+  // landing pages were unreachable by the public they were built for.
+  '/interview', '/playbook',
   '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
   '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
   // Industry landing pages — keyword-targeted long-tail entry points.
@@ -30,11 +36,15 @@ const isPublicRoute = createRouteMatcher([
   '/api/square/callback', '/api/square/connect',
   '/api/plaid/connect', '/api/plaid/exchange',
   '/api/dunning/preview', '/api/dunning/public-demo',
-  '/api/exec-summary', '/api/forecast',
-  // Sample data + dev seed (dev shim returns synthetic session anyway)
+  // Sample data + dev seed (dev shim returns synthetic session anyway).
+  // /api/seed is additionally gated at the route level to refuse outside
+  // the dev auth shim regardless of this allowlist entry.
   '/api/seed', '/api/seed-sample',
-  '/api/reset-data',
-  '/api/support',
+  // '/api/reset-data' and '/api/support' were both listed here with no
+  // matching route file anywhere in the repo — dead entries that skip
+  // Clerk auth entirely for paths that 404 today, but would be reachable
+  // by a fully anonymous caller with zero auth check the moment either
+  // path was ever reintroduced without remembering this allowlist exists.
   // Lead capture + admin read-only
   '/api/admin/interviews/(.*)', '/api/playbook/download',
   // Unsubscribe (CAN-SPAM/PECR compliance) and one-shot migration endpoints
@@ -43,6 +53,10 @@ const isPublicRoute = createRouteMatcher([
   '/api/inbound',
   // Healthcheck must be public so external monitors can ping it.
   '/api/healthcheck',
+  // Crash reporter (src/lib/report-client-error.ts) — a crash can happen
+  // before auth resolves (root layout, marketing pages), so this can't
+  // require a session.
+  '/api/errors',
 ]);
 
 // In dev mode without Clerk keys, fall through (no-op).

@@ -34,8 +34,8 @@ const schema = z.object({ confirm: z.string().min(1) });
 export async function POST(req: NextRequest) {
   await ensureBootstrapped();
 
-  const { orgId } = await getAuth();
-  if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  const { userId, orgId } = await getAuth();
+  if (!orgId || !userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   let body: z.infer<typeof schema>;
   try {
@@ -46,6 +46,29 @@ export async function POST(req: NextRequest) {
 
   const [org] = await db.select().from(organizations).where(eq(organizations.id, orgId)).limit(1);
   if (!org) return NextResponse.json({ error: 'not found' }, { status: 404 });
+
+  // SECURITY: the only prior gate was "is a member of this org" — getAuth()
+  // proves that for *any* member, not specifically the owner. Clerk's
+  // <OrganizationSwitcher> (src/components/app/shell.tsx) already exposes
+  // real invite/member-management UI, so a multi-member org with a mix of
+  // admin/basic_member roles is a normal, reachable state even though
+  // nothing else in this app distinguishes them (grepped: no other route
+  // checks orgRole either). Without this, any invited teammate — a
+  // bookkeeper, a support rep, anyone with a Collectly login for this
+  // workspace — could type the org's own name (visible to them already)
+  // into the confirm field and irreversibly wipe the entire tenant's
+  // customers, invoices, payments, and dunning history. Checked against
+  // our own organizations.ownerId rather than Clerk's orgRole session
+  // claim: it's already the field the rest of the app treats as "the
+  // owner" (e.g. dunning's owner-notification emails), and unlike orgRole
+  // it doesn't depend on Clerk's "include role in session token" dashboard
+  // setting being turned on to actually be populated.
+  if (org.ownerId !== userId) {
+    return NextResponse.json(
+      { error: 'Only the organization owner can delete the account.' },
+      { status: 403 },
+    );
+  }
 
   // Typed confirmation: the user must retype the org name exactly. Prevents a
   // stray POST (or a CSRF-shaped request) from destroying a tenant.

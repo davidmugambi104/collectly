@@ -1,8 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { AppShell } from '@/components/app/shell';
-import { getAuth } from '@/lib/auth-helper';
-import { redirect } from 'next/navigation';
+import { requireAdminEmail } from '@/lib/auth-helper';
 import { db } from '@/db';
 import { waitlist } from '@/db/schema';
 import { eq, desc, sql, and, like, or } from 'drizzle-orm';
@@ -12,9 +11,22 @@ import { TaggingControls } from './tagging-controls';
 import { Sparkles, ArrowUpRight, Mail, Filter, Download, Users, Clock, MessageSquare } from 'lucide-react';
 
 export default async function InterviewsPage({ searchParams }: { searchParams: Promise<{ tag?: string; q?: string }> }) {
-  const { userId, orgId } = await getAuth();
-  if (!userId) redirect('/sign-in');
-  if (!orgId) redirect('/sign-in');
+  // SECURITY: this reads across every prospect in the platform (the
+  // `waitlist` table is global, not org-scoped) — a plain "is signed in"
+  // check let any paying customer who found/guessed this URL, or clicked it
+  // from their own nav, see every other prospect's raw lead data. Same
+  // allowlist gate as /admin/upgrade-requests and the interviews API routes.
+  const admin = await requireAdminEmail();
+  if (!admin.ok) {
+    return (
+      <AppShell title="Customer interviews">
+        <div className="card max-w-md mx-auto text-center py-12">
+          <h2 className="h3">Not authorized</h2>
+          <p className="mt-2 text-sm text-ink-600">This page is for the Collectly team only.</p>
+        </div>
+      </AppShell>
+    );
+  }
 
   const sp = await searchParams;
   const tag = sp.tag ?? 'all';
