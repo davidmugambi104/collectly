@@ -225,20 +225,28 @@ export async function saveXeroConnection(orgId: string, tokens: {
  * We fetch both AUTHORISED (open) and PAID (zero balance) so we can
  * detect payments the customer made outside Collectly.
  */
-export async function xeroListOpenInvoices(orgId: string) {
+const XERO_PAGE_SIZE = 100; // Xero's fixed page size for list endpoints
+
+export async function xeroListOpenInvoices(orgId: string): Promise<{ invoices: any[]; truncated: boolean }> {
   // Fetch in two passes — Xero's filter syntax for OR is awkward
   const auth: any = await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`);
   const paid: any = await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`);
-  return [
-    ...((auth?.Invoices ?? []) as any[]),
-    ...((paid?.Invoices ?? []) as any[]),
-  ];
+  const authInvoices = (auth?.Invoices ?? []) as any[];
+  const paidInvoices = (paid?.Invoices ?? []) as any[];
+  return {
+    invoices: [...authInvoices, ...paidInvoices],
+    // Checked per-call, not on the combined length -- 100 AUTHORISED + 40
+    // PAID is truncated (AUTHORISED hit its cap) even though the combined
+    // 140 isn't itself a round page-size multiple.
+    truncated: authInvoices.length >= XERO_PAGE_SIZE || paidInvoices.length >= XERO_PAGE_SIZE,
+  };
 }
 
 /** List all contacts (customers) from Xero. */
-export async function xeroListContacts(orgId: string) {
+export async function xeroListContacts(orgId: string): Promise<{ contacts: any[]; truncated: boolean }> {
   const res: any = await xeroFetch(orgId, `/Contacts?page=1`);
-  return (res?.Contacts ?? []) as any[];
+  const contacts = (res?.Contacts ?? []) as any[];
+  return { contacts, truncated: contacts.length >= XERO_PAGE_SIZE };
 }
 
 // -------------------------------------------------------------------
@@ -296,6 +304,12 @@ interface XeroSyncResult {
   invoicesMarkedPaid: number;
   durationMs: number;
   errors: string[];
+  /** True if a list call hit Xero's fixed 100-per-page size — xeroListOpenInvoices/
+   * xeroListContacts hardcode page=1, so anything past the first page is
+   * silently missing. Real multi-page fetching is a larger follow-up
+   * (needs a Xero sandbox to verify); this at least reports the sync as
+   * known-incomplete instead of claiming a clean, complete one. */
+  truncated?: boolean;
 }
 
 export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
@@ -304,11 +318,14 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let truncated = false;
 
   // 1. Contacts → customers
   let xeroContacts: any[] = [];
   try {
-    xeroContacts = await xeroListContacts(orgId);
+    const res = await xeroListContacts(orgId);
+    xeroContacts = res.contacts;
+    if (res.truncated) truncated = true;
   } catch (e: any) {
     errors.push(`contacts: ${e?.message ?? e}`);
   }
@@ -338,7 +355,9 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   // 2. Invoices
   let xeroInvoices: any[] = [];
   try {
-    xeroInvoices = await xeroListOpenInvoices(orgId);
+    const res = await xeroListOpenInvoices(orgId);
+    xeroInvoices = res.invoices;
+    if (res.truncated) truncated = true;
   } catch (e: any) {
     errors.push(`invoices: ${e?.message ?? e}`);
   }
@@ -436,5 +455,6 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'xero')));
 
-  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors };
+  if (truncated) errors.push('sync hit Xero’s 100-per-page limit — some contacts/invoices may not have been imported (pagination not yet implemented)');
+  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }

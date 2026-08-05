@@ -14,6 +14,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
   const router = useRouter();
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
+  const [syncHadErrors, setSyncHadErrors] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
 
   const onSync = async () => {
@@ -27,13 +28,22 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? 'sync failed');
+      // The API can return ok:true with a non-empty `errors` array — e.g.
+      // customers imported fine but the invoice fetch itself failed, or a
+      // handful of rows were individually malformed. That used to be
+      // silently dropped here: the message only ever showed the upsert
+      // counts, so a partially-failed sync looked identical to a clean one.
+      const errorCount = Array.isArray(data.errors) ? data.errors.length : 0;
+      setSyncHadErrors(errorCount > 0);
       setSyncResult(
         `Imported ${data.customersUpserted} customers, ${data.invoicesUpserted} invoices` +
           (data.invoicesMarkedPaid ? ` (${data.invoicesMarkedPaid} marked paid)` : '') +
-          ` in ${data.durationMs}ms`,
+          ` in ${data.durationMs}ms` +
+          (errorCount > 0 ? ` — ${errorCount} error${errorCount === 1 ? '' : 's'}: ${data.errors.slice(0, 3).join('; ')}${errorCount > 3 ? '…' : ''}` : ''),
       );
       router.refresh();
     } catch (e: any) {
+      setSyncHadErrors(true);
       setSyncResult(`Error: ${e?.message ?? e}`);
     } finally {
       setSyncing(false);
@@ -81,7 +91,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
           <span className="text-xs text-ink-500">Last sync {new Date(lastSyncAt).toLocaleString()}</span>
         )}
       </div>
-      {syncResult && <p className="text-xs text-ink-600">{syncResult}</p>}
+      {syncResult && <p className={`text-xs ${syncHadErrors ? 'text-red-600' : 'text-ink-600'}`}>{syncResult}</p>}
     </div>
   );
 }

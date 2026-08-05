@@ -36,6 +36,23 @@ export function PlaidCard({ status }: { status: string }) {
     document.head.appendChild(s);
   }, []);
 
+  async function disconnect() {
+    if (!confirm('Disconnect Plaid? This revokes access to the connected bank account. You can reconnect at any time.')) return;
+    setError(null);
+    setOpening(true);
+    try {
+      const res = await fetch('/api/plaid/disconnect', { method: 'POST' });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || `Disconnect failed (HTTP ${res.status})`);
+      }
+      window.location.reload();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
+      setOpening(false);
+    }
+  }
+
   async function openLink() {
     setError(null);
     setOpening(true);
@@ -118,11 +135,11 @@ export function PlaidCard({ status }: { status: string }) {
           <div className="mt-3 flex items-center gap-2">
             <button
               type="button"
-              onClick={openLink}
-              disabled={opening || connected}
-              className={connected ? 'btn-secondary text-sm' : 'btn-primary text-sm'}
+              onClick={connected ? disconnect : openLink}
+              disabled={opening}
+              className={connected ? 'btn-secondary text-sm text-red-600 hover:text-red-700' : 'btn-primary text-sm'}
             >
-              {opening ? 'Opening Plaid…' : connected ? 'Manage' : 'Connect'}
+              {opening ? (connected ? 'Disconnecting…' : 'Opening Plaid…') : connected ? 'Disconnect' : 'Connect'}
             </button>
             <a href="https://plaid.com/docs/link/" target="_blank" rel="noreferrer" className="btn-ghost text-sm">
               <BookOpen className="h-3.5 w-3.5" /> Docs

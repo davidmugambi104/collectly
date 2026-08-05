@@ -32,7 +32,7 @@ export async function GET(_req: NextRequest) {
 
   try {
     const state = await mintOAuthState(orgId, userId, 'square');
-    return NextResponse.redirect(squareAuthUrl(state));
+    return NextResponse.redirect(await squareAuthUrl(state));
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
   }

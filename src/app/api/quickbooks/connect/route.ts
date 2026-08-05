@@ -18,9 +18,16 @@ export async function GET(_req: NextRequest) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  if (!process.env.QUICKBOOKS_CLIENT_ID) {
+  // Was QUICKBOOKS_CLIENT_ID here — that var is never set anywhere in the
+  // app (qboAuthUrl() and every token exchange in
+  // src/lib/integrations/quickbooks.ts read QBO_CLIENT_ID, matching
+  // .env.example and the page's own "needs setup" check). With
+  // QBO_CLIENT_ID actually configured, the integrations page correctly
+  // showed QuickBooks as ready, but clicking Connect always 503'd here —
+  // the most-used provider's connect button was dead for everyone.
+  if (!process.env.QBO_CLIENT_ID) {
     return NextResponse.json(
-      { error: 'QuickBooks not configured', hint: 'Set QUICKBOOKS_CLIENT_ID and QUICKBOOKS_CLIENT_SECRET' },
+      { error: 'QuickBooks not configured', hint: 'Set QBO_CLIENT_ID and QBO_CLIENT_SECRET' },
       { status: 503 },
     );
   }

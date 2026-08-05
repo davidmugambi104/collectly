@@ -11,6 +11,7 @@ import { db } from '@/db';
 import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
+import { getRedis } from '@/lib/infra';
 
 const SQUARE_OAUTH = 'https://connect.squareup.com/oauth2/authorize';
 const SQUARE_TOKEN = 'https://connect.squareup.com/oauth2/token';
@@ -23,15 +24,27 @@ function base64url(buf: Buffer) {
   return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export function squareAuthUrl(state: string) {
+// Dev-only fallback when Redis isn't configured — mirrors the same
+// tradeoff src/lib/oauth-state.ts documents for its own Redis-vs-fallback
+// split. Never sufficient in production: Vercel serverless functions are
+// stateless between invocations, so the connect request and the callback
+// request (separated by however long the user takes on Square's consent
+// screen) can and routinely do land on different instances with an empty
+// Map. That was the actual bug here — this was the *only* storage this
+// verifier ever had.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const devPkceStore = (globalThis as any).__squarePkce ??= new Map<string, { verifier: string; expires: number }>();
+const PKCE_TTL_SECONDS = 10 * 60;
+
+export async function squareAuthUrl(state: string): Promise<string> {
   const verifier = base64url(crypto.randomBytes(32));
   const challenge = base64url(crypto.createHash('sha256').update(verifier).digest());
-  // Stash verifier in a short-lived global keyed by state (orgId).
-  // For prod: persist in DB with TTL. For dev: in-memory is fine.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const g = globalThis as any;
-  g.__squarePkce ??= new Map<string, { verifier: string; expires: number }>();
-  g.__squarePkce.set(state, { verifier, expires: Date.now() + 10 * 60_000 });
+  const redis = getRedis();
+  if (redis) {
+    await redis.set(`square:pkce:${state}`, verifier, { ex: PKCE_TTL_SECONDS });
+  } else {
+    devPkceStore.set(state, { verifier, expires: Date.now() + PKCE_TTL_SECONDS * 1000 });
+  }
   const params = new URLSearchParams({
     client_id: process.env.SQUARE_CLIENT_ID ?? '',
     scope: 'MERCHANT_PROFILE_READ ORDERS_READ ITEMS_READ PAYMENTS_READ',
@@ -44,16 +57,18 @@ export function squareAuthUrl(state: string) {
   return `${SANDBOX ? SQUARE_SANDBOX_OAUTH : SQUARE_OAUTH}?${params.toString()}`;
 }
 
-export function squareGetPkceVerifier(state: string): string | null {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const g = globalThis as any;
-  const entry = g.__squarePkce?.get(state);
-  if (!entry) return null;
-  if (entry.expires < Date.now()) {
-    g.__squarePkce.delete(state);
-    return null;
+export async function squareGetPkceVerifier(state: string): Promise<string | null> {
+  const redis = getRedis();
+  if (redis) {
+    const verifier = await redis.get<string>(`square:pkce:${state}`);
+    if (!verifier) return null;
+    await redis.del(`square:pkce:${state}`); // single-use, same as consumeOAuthState
+    return verifier;
   }
-  g.__squarePkce.delete(state);
+  const entry = devPkceStore.get(state);
+  if (!entry) return null;
+  devPkceStore.delete(state);
+  if (entry.expires < Date.now()) return null;
   return entry.verifier;
 }
 
@@ -194,20 +209,24 @@ export async function squareListLocations(orgId: string) {
 }
 
 /** List customers (first page — mirrors the single-page convention used for QBO/Xero). */
-export async function squareListCustomers(orgId: string) {
+export async function squareListCustomers(orgId: string): Promise<{ customers: any[]; truncated: boolean }> {
   const res: any = await squareFetch(orgId, '/customers');
-  return (res?.customers ?? []) as any[];
+  // Square returns a `cursor` string when more pages exist — the
+  // provider's own explicit "there's more" signal, rather than guessing
+  // its default page size (which isn't fixed the way QBO's MAXRESULTS or
+  // Xero's 100-per-page are).
+  return { customers: (res?.customers ?? []) as any[], truncated: !!res?.cursor };
 }
 
 /** Search invoices across all of this merchant's locations. */
-export async function squareSearchInvoices(orgId: string, locationIds: string[]) {
-  if (locationIds.length === 0) return [];
+export async function squareSearchInvoices(orgId: string, locationIds: string[]): Promise<{ invoices: any[]; truncated: boolean }> {
+  if (locationIds.length === 0) return { invoices: [], truncated: false };
   const res: any = await squareFetch(orgId, '/invoices/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: { filter: { location_ids: locationIds } } }),
   });
-  return (res?.invoices ?? []) as any[];
+  return { invoices: (res?.invoices ?? []) as any[], truncated: !!res?.cursor };
 }
 
 // Square amounts are integer minor units (cents); our schema stores decimal dollars.
@@ -267,6 +286,12 @@ interface SquareSyncResult {
   invoicesMarkedPaid: number;
   durationMs: number;
   errors: string[];
+  /** True if Square returned a pagination `cursor` on either list call —
+   * only the first page is ever fetched. Real cursor-following is a
+   * larger follow-up (needs a Square sandbox to verify); this at least
+   * reports the sync as known-incomplete instead of claiming a clean,
+   * complete one. */
+  truncated?: boolean;
 }
 
 export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult> {
@@ -275,11 +300,14 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let truncated = false;
 
   // 1. Customers
   let squareCustomers: any[] = [];
   try {
-    squareCustomers = await squareListCustomers(orgId);
+    const res = await squareListCustomers(orgId);
+    squareCustomers = res.customers;
+    if (res.truncated) truncated = true;
   } catch (e: any) {
     errors.push(`customers: ${e?.message ?? e}`);
   }
@@ -310,7 +338,9 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
   let squareInvoices: any[] = [];
   try {
     const locationIds = await squareListLocations(orgId);
-    squareInvoices = await squareSearchInvoices(orgId, locationIds);
+    const res = await squareSearchInvoices(orgId, locationIds);
+    squareInvoices = res.invoices;
+    if (res.truncated) truncated = true;
   } catch (e: any) {
     errors.push(`invoices: ${e?.message ?? e}`);
   }
@@ -412,5 +442,6 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'square')));
 
-  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors };
+  if (truncated) errors.push('sync hit Square’s page limit — some customers/invoices may not have been imported (cursor-following not yet implemented)');
+  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }

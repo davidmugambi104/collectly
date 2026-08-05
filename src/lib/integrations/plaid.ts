@@ -50,6 +50,29 @@ export async function plaidExchangePublicToken(publicToken: string): Promise<Pla
   return plaidPost<PlaidTokens>('/item/public_token/exchange', { public_token: publicToken });
 }
 
+/**
+ * Disconnect: revokes the item on Plaid's side (this is a real bank
+ * credential — best-effort revoke matters more here than for e.g. Square)
+ * then removes the local row. Mirrors disconnectSquare()/disconnectQbo()/
+ * disconnectXero() in the sibling files. Previously had no counterpart at
+ * all — once connected, Plaid could never be disconnected from the app;
+ * the "Manage" button was permanently disabled once `connected` was true.
+ */
+export async function disconnectPlaid(orgId: string) {
+  const [integ] = await db.select().from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'plaid'))).limit(1);
+  if (!integ) return { ok: true };
+  if (integ.accessToken) {
+    try {
+      await plaidPost('/item/remove', { access_token: integ.accessToken });
+    } catch {
+      // best-effort; we still want to delete the local row so the org can
+      // reconnect (a fresh Link flow creates a new item regardless).
+    }
+  }
+  await db.delete(integrations).where(eq(integrations.id, integ.id));
+  return { ok: true };
+}
+
 export async function savePlaidConnection(orgId: string, tokens: PlaidTokens) {
   const existing = await db
     .select()
