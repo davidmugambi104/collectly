@@ -43,7 +43,7 @@ const sections = [
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
           <li>Syncing invoices, customers, and payments from connected systems (QuickBooks, Xero, Stripe, Square, Plaid).</li>
-          <li>Generating dunning messages and cash-flow forecasts using Google Gemini under strict no-retention terms.</li>
+          <li>Generating dunning messages and cash-flow forecasts using a paid Google Gemini API. Google&apos;s terms for paid services state that submitted prompts and responses are not used to train its models; retention depends on the applicable service terms and account configuration.</li>
           <li>Sending emails and SMS on your behalf through Resend and Twilio.</li>
           <li>Storing Customer Data encrypted at rest for as long as your account is active.</li>
         </ul>
@@ -65,8 +65,8 @@ const sections = [
           <li><b>Clerk</b> — authentication and identity.</li>
           <li><b>Resend</b> — transactional email delivery.</li>
           <li><b>Twilio</b> — SMS delivery.</li>
-          <li><b>Google (Gemini)</b> — AI message generation under no-retention API terms.</li>
-          <li><b>PostHog</b> — product analytics (no customer data sent).</li>
+          <li><b>Google (Gemini)</b> — AI message generation. Paid-tier API; not used for model training. See processing instructions above for retention detail.</li>
+          <li><b>PostHog</b> — product analytics. Receives account identifiers (user ID, organization ID) and standard web-analytics data (pages viewed, device/browser info, approximate location from IP); never receives invoice, customer, or payment content.</li>
           <li><b>Upstash</b> — Redis-backed rate limiting and caching.</li>
         </ul>
       </>

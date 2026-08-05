@@ -98,10 +98,10 @@ const categories = [
       {
         name: 'Paystack',
         slug: 'paystack',
-        status: 'live',
+        status: 'disabled',
         bullets: [
-          'Live keys verified; ready to process payments',
-          'Best for Nigeria, Ghana, Kenya, and South Africa',
+          'Temporarily disabled while we build per-business payout routing',
+          'Best for Nigeria, Ghana, Kenya, and South Africa once live',
           'Card, bank transfer, and mobile money where supported',
         ],
       },
@@ -144,7 +144,7 @@ const categories = [
         bullets: [
           'SMS dunning route is built and ready',
           'Add a verified from-number and complete A2P registration for US sends',
-          'Compliance with TCPA, GDPR, and AU spam laws',
+          'You\'re responsible for having lawful authority to text each recipient in their jurisdiction — Collectly doesn\'t verify consent on your behalf',
         ],
       },
     ],
@@ -194,6 +194,7 @@ const statusBadge: Record<string, string> = {
   'needs-credentials': 'badge-warn',
   'test-mode': 'badge-warn',
   sandbox: 'badge-warn',
+  disabled: 'badge-danger',
 };
 
 const statusLabel: Record<string, string> = {
@@ -203,6 +204,7 @@ const statusLabel: Record<string, string> = {
   'needs-credentials': 'Needs credentials',
   'test-mode': 'Test mode',
   sandbox: 'Sandbox',
+  disabled: 'Temporarily disabled',
 };
 
 export default function IntegrationsPage() {

@@ -46,7 +46,7 @@ const controls = [
   { label: 'Org-scoped queries (no cross-tenant reads)', status: 'enforced' },
   { label: 'SSO via Clerk (Google, Microsoft, GitHub)', status: 'available' },
   { label: 'SOC 2 Type II', status: 'in progress' },
-  { label: 'GDPR + UK GDPR + CCPA compliant', status: 'enforced' },
+  { label: 'GDPR + UK GDPR + CCPA-aligned DPA', status: 'available' },
   { label: 'DPA on request', status: 'available' },
 ];
 
@@ -148,8 +148,8 @@ export default function SecurityPage() {
         <p className="eyebrow">Incident response</p>
         <h2 className="mt-3 h2">If something goes wrong.</h2>
         <p className="mt-4 text-ink-600 leading-relaxed">
-          We commit to notifying affected customers within 72 hours of confirming a security incident that
-          materially impacts their data. You can reach the security team directly at{' '}
+          We commit to notifying affected customers within 72 hours of becoming aware of a security incident that
+          materially impacts their data, consistent with our DPA. You can reach the security team directly at{' '}
           <a href="mailto:security@getcollectly.app" className="link">security@getcollectly.app</a> for disclosure,
           responsible-vulnerability reports, or to request our latest penetration-test summary.
         </p>
@@ -176,7 +176,7 @@ export default function SecurityPage() {
           <div className="card text-center">
             <Globe2 className="mx-auto h-6 w-6 text-brand-600" />
             <div className="mt-2 text-sm font-semibold text-ink-900">GDPR & UK GDPR</div>
-            <div className="text-xs text-ink-500">Full DPA + SCCs</div>
+            <div className="text-xs text-ink-500">DPA + SCCs available on request</div>
           </div>
           <div className="card text-center">
             <FileCheck2 className="mx-auto h-6 w-6 text-brand-600" />

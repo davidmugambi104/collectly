@@ -49,7 +49,7 @@ const pricingJsonLd = JSON.stringify([
     },
     {
       q: 'Can I cancel anytime?',
-      a: 'Yes. Monthly billing, cancel from the dashboard. No annual contract required.',
+      a: 'Yes, no annual contract. During the private beta, billing is manual (founder-invoiced) rather than self-serve — email david@getcollectly.app to cancel or downgrade and it\'s handled within 12 hours.',
     },
   ]),
 ]);
@@ -127,11 +127,11 @@ export default function PricingPage() {
         <div className="mt-10 max-w-2xl mx-auto space-y-4">
           {[
             { q: 'Do you support multi-entity or multiple companies?', a: 'Growth supports multiple entities under one account with consolidated reporting. Scale adds per-entity workflows and role isolation.' },
-            { q: 'What payment methods does the portal accept?', a: "It depends on the payment provider you connect. Paystack is live today for NG/GH/KE/ZA (card, bank transfer, mobile money). Stripe and Square are wired but still in test/sandbox for US/UK/AU/CA until production credentials are swapped. We never mark up processor fees." },
+            { q: 'What payment methods does the portal accept?', a: 'Wire transfer today, for every customer. Card, ACH, and mobile-money rails are built but temporarily disabled while we finish routing payments to your own account instead of ours — no timeline promises until that\'s done.' },
             { q: 'Is there really a free trial?', a: 'Yes. 14 days, full access to Growth-tier features, no credit card required.' },
-            { q: 'How does billing work?', a: 'Founding customers get a manual Stripe invoice for $49/mo after the 14-day trial. Automated checkout will replace this once US/UK payment credentials are live. Annual plans save 20%.' },
-            { q: 'Do you take a cut of payments?', a: 'No. We pass through processor fees at cost. We make money on the subscription, not your transaction volume.' },
-            { q: 'What if I outgrow my plan?', a: 'Upgrade in one click. We prorate the difference automatically.' },
+            { q: 'How does billing work?', a: 'Founding customers get a manual invoice for $49/mo after the 14-day trial (bank transfer, Wise, or PayPal). Self-serve card checkout isn\'t live yet — no committed date.' },
+            { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
+            { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing — David reviews and sends an invoice within 12 hours. Not yet automatic or self-serve.' },
             { q: 'Do you support multi-currency?', a: 'Yes. USD, GBP, AUD, CAD, EUR in Growth. KES, NGN, ZAR in Scale or custom.' },
             { q: 'Can I switch from another tool?', a: 'Yes. Free migration from QuickBooks, Xero, FreshBooks, Wave, and most others.' },
           ].map((f) => (
