@@ -7,10 +7,15 @@ import { CheckCircle2, Lock, ShieldCheck, Loader2, AlertTriangle } from 'lucide-
 // add Paystack for currencies Stripe checkout isn't set up to charge in.
 const PAYSTACK_CURRENCIES = ['NGN', 'GHS', 'ZAR', 'KES'];
 
-export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug, customerEmail }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string; customerEmail?: string | null }) {
+export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug, customerEmail, cardAchAvailable }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string; customerEmail?: string | null; cardAchAvailable: boolean }) {
   const paystackEligible = PAYSTACK_CURRENCIES.includes((currency ?? '').toUpperCase());
-  const methods = paystackEligible ? (['card', 'ach', 'paystack', 'wire'] as const) : (['card', 'ach', 'wire'] as const);
-  const [method, setMethod] = useState<'card' | 'ach' | 'wire' | 'paystack'>('card');
+  const allMethods = paystackEligible ? (['card', 'ach', 'paystack', 'wire'] as const) : (['card', 'ach', 'wire'] as const);
+  // Card/ACH charge through the business's own connected Stripe account —
+  // if they haven't linked one yet, offering the buttons would just lead
+  // to a checkout-creation error. Paystack is unaffected (routes through
+  // Collectly's own Paystack keys, not a per-org connection).
+  const methods = cardAchAvailable ? allMethods : allMethods.filter((m) => m !== 'card' && m !== 'ach');
+  const [method, setMethod] = useState<'card' | 'ach' | 'wire' | 'paystack'>(cardAchAvailable ? 'card' : paystackEligible ? 'paystack' : 'wire');
   const [email, setEmail] = useState(customerEmail ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -103,7 +108,12 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
 
   return (
     <form onSubmit={pay} className="space-y-4">
-      <div className={`grid gap-2 ${paystackEligible ? 'grid-cols-4' : 'grid-cols-3'}`}>
+      {!cardAchAvailable && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+          {orgSlug} hasn&apos;t finished setting up online card/ACH payments yet — {paystackEligible ? 'use Paystack or wire transfer below.' : 'use wire transfer below.'}
+        </div>
+      )}
+      <div className={`grid gap-2 ${methods.length === 4 ? 'grid-cols-4' : methods.length === 3 ? 'grid-cols-3' : methods.length === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
         {methods.map((m) => (
           <button
             type="button"

@@ -322,7 +322,7 @@ async function markInvoicePaidFromSession(session: Stripe.Checkout.Session, invo
   }
   if (inv.status === 'paid') return; // idempotent
   const amount = (session.amount_total ?? Math.round(Number(inv.amount) * 100)) / 100;
-  await markInvoicePaidInDb({ invoiceId, customerId: inv.customerId, orgId: inv.orgId, amount, currency: inv.currency, method: 'stripe-checkout' });
+  await markInvoicePaidInDb({ invoiceId, customerId: inv.customerId, orgId: inv.orgId, amount, currency: inv.currency, method: 'stripe-checkout', externalId: `stripe-cs-${session.id}` });
 }
 
 async function markInvoicePaidFromPaymentIntent(pi: Stripe.PaymentIntent, invoiceId: string) {
@@ -333,14 +333,25 @@ async function markInvoicePaidFromPaymentIntent(pi: Stripe.PaymentIntent, invoic
   }
   if (inv.status === 'paid') return;
   const amount = (pi.amount_received ?? pi.amount ?? 0) / 100;
-  await markInvoicePaidInDb({ invoiceId, customerId: inv.customerId, orgId: inv.orgId, amount, currency: inv.currency, method: 'stripe-payment-intent' });
+  await markInvoicePaidInDb({ invoiceId, customerId: inv.customerId, orgId: inv.orgId, amount, currency: inv.currency, method: 'stripe-payment-intent', externalId: `stripe-pi-${pi.id}` });
 }
 
-async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string; orgId: string; amount: number; currency: string; method: string }) {
+async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string; orgId: string; amount: number; currency: string; method: string; externalId: string }) {
   const now = new Date();
-  // Idempotency guard: don't double-insert a payment row if the same PI is replayed
-  const existingPayment = await db.select().from(payments).where(eq(payments.invoiceId, args.invoiceId)).limit(1);
-  if (existingPayment[0] && existingPayment[0].externalId === `stripe-${args.invoiceId}-${args.amount}`) return;
+  // Idempotency guard: don't double-insert a payment row if the same
+  // Stripe event is replayed. Was checking an arbitrary payment row for
+  // this invoice (`.limit(1)`, no filter on externalId) against a key
+  // synthesized from invoiceId+amount — two genuinely separate payments
+  // of the same dollar amount (e.g. two equal installments) produced the
+  // *same* synthesized key, so the second payment's real check could
+  // match the first payment's row and silently return without ever
+  // crediting it. Now keyed on the real Stripe session/payment-intent id
+  // (see callers), which is unique per actual event — also enforced at
+  // the DB layer by the unique partial index on payments.external_id
+  // (drizzle/0003_add_missing_fk_indexes.sql), so even a race between
+  // concurrent webhook deliveries can't double-insert.
+  const [existingPayment] = await db.select().from(payments).where(and(eq(payments.invoiceId, args.invoiceId), eq(payments.externalId, args.externalId))).limit(1);
+  if (existingPayment) return;
 
   // Load the invoice to compute the running balance (supports partial payments)
   const [inv] = await db
@@ -368,7 +379,7 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
       currency: args.currency,
       method: args.method,
       paidAt: now,
-      externalId: `stripe-${args.invoiceId}-${args.amount}`,
+      externalId: args.externalId,
     });
 
     await tx.update(invoices).set({

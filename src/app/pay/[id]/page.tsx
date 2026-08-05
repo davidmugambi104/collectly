@@ -6,6 +6,7 @@ import { PaymentForm } from '@/components/payment/payment-form';
 import { Logo } from '@/components/brand/logo';
 import { ShieldCheck, Clock, Mail, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { getConnectedStripeAccountId } from '@/lib/integrations/stripe-connect';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,9 +25,27 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
   if (!row) notFound();
 
   const { invoice, customer, org } = row;
+  // Card/ACH only get offered once this business has connected their own
+  // Stripe account — /api/payment/create-checkout charges the connected
+  // account directly, deliberately with no fallback to Collectly's own
+  // platform account, so the option shouldn't be shown as if it works
+  // when it can't yet.
+  const cardAchAvailable = !!(await getConnectedStripeAccountId(org.id));
   const balance = Number(invoice.amount) - Number(invoice.amountPaid);
   const days = daysOverdue(invoice.dueDate);
   const isOverdue = days > 0;
+  // `paid=1` only means "the payment provider redirected back here" — it
+  // does NOT mean the webhook that actually updates the invoice has run
+  // yet (real race: the browser redirect can and does arrive before an
+  // async webhook), and for Paystack specifically a charge could
+  // legitimately be for less than the full balance. Was shown
+  // unconditionally on `paid` alone, so a customer could see a full
+  // "Payment received" confirmation while the invoice — and the balance
+  // sidebar right next to it, which reads the same real DB row — still
+  // showed money owed, or while the payment never actually got recorded
+  // at all if the webhook failed.
+  const genuinelyPaid = paid === '1' && invoice.status === 'paid';
+  const paidButUnconfirmed = paid === '1' && invoice.status !== 'paid';
 
   return (
     <div className="min-h-screen bg-ink-50">
@@ -46,7 +65,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
       <div className="container-tight py-10 grid md:grid-cols-5 gap-6">
         <div className="md:col-span-3">
           <div className="card-lg">
-            {paid ? (
+            {genuinelyPaid ? (
               <div className="text-center py-6">
                 <div className="h-14 w-14 mx-auto rounded-full bg-emerald-50 grid place-items-center">
                   <CheckCircle2 className="h-7 w-7 text-emerald-600" />
@@ -57,12 +76,25 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                 {session_id && <p className="mt-1 text-xs text-ink-500 font-mono">Stripe session: {session_id.substring(0, 18)}…</p>}
                 <p className="mt-4 text-xs text-ink-500">If you have any questions, reply to the receipt email or contact <a className="link" href={`mailto:${org.slug}@getcollectly.app`}>{org.slug}@getcollectly.app</a>.</p>
               </div>
+            ) : paidButUnconfirmed ? (
+              <div className="text-center py-6">
+                <div className="h-14 w-14 mx-auto rounded-full bg-amber-50 grid place-items-center">
+                  <Clock className="h-7 w-7 text-amber-600" />
+                </div>
+                <h1 className="mt-4 h3">Confirming your payment…</h1>
+                <p className="mt-2 text-sm text-ink-600">
+                  We got the redirect back from checkout, but it hasn&apos;t finished processing yet — this is usually a
+                  few seconds. {balance > 0 ? `Remaining balance shown is $${balance.toFixed(2)} until it clears.` : ''}
+                </p>
+                <p className="mt-1 text-sm text-ink-600">Refresh this page in a moment, or check back — a receipt will be emailed once it&apos;s confirmed.</p>
+                <p className="mt-4 text-xs text-ink-500">If this doesn&apos;t update within a few minutes, contact <a className="link" href={`mailto:${org.slug}@getcollectly.app`}>{org.slug}@getcollectly.app</a> and we&apos;ll sort it out.</p>
+              </div>
             ) : cancelled ? (
               <div>
                 <h1 className="h3">Payment cancelled</h1>
                 <p className="mt-2 text-sm text-ink-600">No charge was made. You can try again below or contact {org.name} with any questions.</p>
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
                 </div>
               </div>
             ) : (
@@ -76,7 +108,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                   </div>
                 )}
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
                 </div>
               </>
             )}

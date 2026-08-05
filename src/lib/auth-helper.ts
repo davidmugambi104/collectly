@@ -12,7 +12,8 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { clerkClient } from '@clerk/nextjs/server';
 import { getDevAuth } from '@/db/dev-auth';
 import { db } from '@/db';
-import { users } from '@/db/schema';
+import { users, organizations, deletedOrgsLog, subscriptions } from '@/db/schema';
+import { nanoid } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
 
 // Admin emails allowed to hit internal/admin-only routes (lead exports,
@@ -37,6 +38,101 @@ function devShimEnabled(): boolean {
   return true;
 }
 
+// Bug that caused this: getAuthWithOrg() below can create a brand-new
+// Clerk organization, and users can also create one directly through
+// Clerk's own <OrganizationSwitcher> UI (see src/components/app/shell.tsx)
+// — neither path ever inserted a matching row into our own `organizations`
+// table. Nothing in the app did; the only production webhook handler
+// (/api/webhooks/clerk) only reacts to `organization.deleted`, not
+// `.created`. A session would come back with a perfectly valid Clerk
+// orgId that had no corresponding DB row at all, and the first org-scoped
+// INSERT for that org (e.g. the dunning page auto-creating its default
+// sequence) would fail with a foreign-key violation and crash the page
+// for every new user — not a rare race, a guaranteed miss.
+//
+// Fixed at the root: both getAuth() and getAuthWithOrg() call this before
+// returning. It's a no-op after the first successful run for a given org
+// (cheap indexed SELECT), and self-heals any org missing its row instead
+// of depending on webhook delivery. Same fix covers the matching gap for
+// `users` rows, since organizations.owner_id is itself a NOT NULL FK to
+// users.id — nothing in production ever inserted those either.
+export async function ensureOrgProvisioned(userId: string, orgId: string): Promise<void> {
+  const [existingOrg] = await db.select({ id: organizations.id }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
+  if (existingOrg) return;
+
+  // A deleted org's Clerk-side record can outlive its DB row: DELETE
+  // /api/account/delete removes the DB data first, then deletes the Clerk
+  // organization as a best-effort second step — if that second step fails
+  // (transient Clerk API issue), the Clerk org still exists, and the very
+  // next authenticated request from anyone still holding a session for it
+  // would otherwise land right here and silently re-provision a brand-new
+  // row under the same orgId (placeholder name, fresh 14-day trial) with
+  // zero user action. That's a data-deletion promise (this app's own
+  // /privacy page cites it) quietly undoing itself. deleted_orgs_log is
+  // the durable marker cascadeDeleteOrgData() writes specifically to make
+  // this distinguishable from a genuinely new org.
+  try {
+    const [wasDeleted] = await db.select({ id: deletedOrgsLog.id }).from(deletedOrgsLog).where(eq(deletedOrgsLog.orgId, orgId)).limit(1);
+    if (wasDeleted) {
+      throw new Error(`Organization ${orgId} was deleted and cannot be re-provisioned automatically. Contact support if this is unexpected.`);
+    }
+  } catch (e: unknown) {
+    // Table not created yet (no deletion has ever happened in this
+    // environment) is not itself a reason to block provisioning.
+    const code = (e as { code?: string })?.code;
+    if (code !== '42P01') throw e; // 42P01 = undefined_table
+  }
+
+  const [existingUser] = await db.select({ id: users.id }).from(users).where(eq(users.id, userId)).limit(1);
+  if (!existingUser) {
+    const cu = await currentUser();
+    const email = cu?.emailAddresses?.[0]?.emailAddress ?? `${userId}@unknown.clerk.local`;
+    const name = cu ? [cu.firstName, cu.lastName].filter(Boolean).join(' ') || cu.username || null : null;
+    await db.insert(users).values({ id: userId, clerkId: userId, email, name }).onConflictDoNothing();
+  }
+
+  let orgName = 'Your workspace';
+  let orgSlug = orgId;
+  try {
+    const client = await clerkClient();
+    const org = await client.organizations.getOrganization({ organizationId: orgId });
+    orgName = org.name || orgName;
+    orgSlug = org.slug || orgId;
+  } catch (e: unknown) {
+    // Clerk lookup failing is rare and shouldn't block provisioning — a
+    // row with a placeholder name (fixable later) beats every write for
+    // this org crashing forever, which is the status quo without it.
+    console.error('[auth] Clerk org lookup failed during provisioning, using placeholder name:', e instanceof Error ? e.message : e);
+  }
+  const now = new Date();
+  const trialEndsAt = new Date(now.getTime() + 14 * 86400000);
+  await db.insert(organizations).values({
+    id: orgId,
+    name: orgName,
+    slug: orgSlug,
+    ownerId: userId,
+    plan: 'starter',
+    trialEndsAt,
+  }).onConflictDoNothing();
+
+  // Without this, the trial nudge in the dashboard sidebar
+  // (src/components/app/shell.tsx, via /api/billing/trial-status) and the
+  // trial countdown on the billing page both read from `subscriptions`,
+  // not `organizations.trialEndsAt` — and nothing else ever inserted a
+  // subscriptions row for a real signup (only the sample-data seeder did,
+  // in bootstrap-db.ts). So `organizations.trialEndsAt` was set correctly
+  // on every org but never actually surfaced or enforced anywhere: the
+  // trial silently never appeared and never "ended" for any real user.
+  await db.insert(subscriptions).values({
+    id: nanoid(),
+    orgId,
+    plan: 'starter',
+    status: 'trialing',
+    currentPeriodStart: now,
+    currentPeriodEnd: trialEndsAt,
+  }).onConflictDoNothing();
+}
+
 export async function getAuth() {
   if (!devShimEnabled()) {
     throw new Error('Dev auth shim is disabled in production');
@@ -48,7 +144,11 @@ export async function getAuth() {
     // rather than falling through to Clerk (which requires middleware)
     return { userId: 'user_dev_davie', orgId: 'org_dev_collectly' };
   }
-  return await auth();
+  const session = await auth();
+  if (session.userId && session.orgId) {
+    await ensureOrgProvisioned(session.userId, session.orgId);
+  }
+  return session;
 }
 
 /**
@@ -69,6 +169,7 @@ export async function getAuthWithOrg() {
   if (!session.userId) return null;
 
   if (session.orgId) {
+    await ensureOrgProvisioned(session.userId, session.orgId);
     return { userId: session.userId, orgId: session.orgId, user: null };
   }
 
@@ -95,6 +196,7 @@ export async function getAuthWithOrg() {
       slug,
       createdBy: user.id,
     });
+    await ensureOrgProvisioned(session.userId, org.id);
     return { userId: session.userId, orgId: org.id, user: null };
   } catch (err) {
     // If the slug collides (extremely rare with user-id suffix), try once
@@ -105,6 +207,7 @@ export async function getAuthWithOrg() {
       slug: fallbackSlug,
       createdBy: user.id,
     });
+    await ensureOrgProvisioned(session.userId, org.id);
     return { userId: session.userId, orgId: org.id, user: null };
   }
 }

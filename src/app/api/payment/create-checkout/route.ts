@@ -5,6 +5,7 @@ import { rateLimit, getIp } from '@/lib/rate-limit';
 import { db } from '@/db';
 import { invoices, customers, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { getConnectedStripeAccountId } from '@/lib/integrations/stripe-connect';
 
 const body = z.object({
   invoiceId: z.string(),
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
   // Rate-limit checkout creation: each call creates a real Stripe Session,
   // so cap at 5/min per IP. Returning 429 cheaply stops the spam vector
   // where an attacker burns our Stripe quota.
-  const rl = await rateLimit(getIp(req), { max: 5 });
+  const rl = await rateLimit(getIp(req), { max: 5, key: 'payment-checkout' });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: 'Too many checkout attempts. Please wait a minute and try again.' },
@@ -50,6 +51,23 @@ export async function POST(req: NextRequest) {
   const balance = Number(row.invoice.amount) - Number(row.invoice.amountPaid);
   if (balance <= 0) return NextResponse.json({ error: 'no balance due' }, { status: 400 });
 
+  // SECURITY / CORRECTNESS: every card/ACH payment used to be charged to
+  // Collectly's own platform Stripe account (getStripe() reads only
+  // STRIPE_SECRET_KEY, the platform's key) with nothing that ever
+  // forwarded the money to the actual business. This is now a DIRECT
+  // charge on the org's own connected Stripe account (see
+  // getConnectedStripeAccountId / stripe-connect.ts) so the money settles
+  // into their bank, not Collectly's. Deliberately no fallback to the old
+  // platform-account behavior if the org hasn't connected Stripe — that
+  // would silently reintroduce the exact bug this fixes.
+  const connectedAccountId = await getConnectedStripeAccountId(row.org.id);
+  if (!connectedAccountId) {
+    return NextResponse.json(
+      { error: `${row.org.name} hasn't finished setting up online payments yet. Try Wire transfer, or contact them directly.` },
+      { status: 400 },
+    );
+  }
+
   // Resolve the public origin so the success/cancel URLs work both locally and in prod
   const origin =
     req.headers.get('origin') ??
@@ -59,38 +77,46 @@ export async function POST(req: NextRequest) {
 
   try {
     const stripe = getStripe();
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: data.method === 'ach' ? (['us_bank_transfer'] as any) : ['card'],
-      customer_email: row.customer.email ?? undefined,
-      line_items: [
-        {
-          price_data: {
-            currency: (row.invoice.currency ?? 'usd').toLowerCase(),
-            product_data: {
-              name: `Invoice ${row.invoice.number} — ${row.org.name}`,
+    const session = await stripe.checkout.sessions.create(
+      {
+        mode: 'payment',
+        payment_method_types: data.method === 'ach' ? (['us_bank_transfer'] as any) : ['card'],
+        customer_email: row.customer.email ?? undefined,
+        line_items: [
+          {
+            price_data: {
+              currency: (row.invoice.currency ?? 'usd').toLowerCase(),
+              product_data: {
+                name: `Invoice ${row.invoice.number} — ${row.org.name}`,
+              },
+              unit_amount: Math.round(balance * 100),
             },
-            unit_amount: Math.round(balance * 100),
+            quantity: 1,
           },
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        invoiceId: row.invoice.id,
-        orgId: row.org.id,
-        customerId: row.customer.id,
-        source: 'collectly-payment-portal',
-      },
-      payment_intent_data: {
+        ],
         metadata: {
           invoiceId: row.invoice.id,
           orgId: row.org.id,
           customerId: row.customer.id,
+          source: 'collectly-payment-portal',
         },
+        payment_intent_data: {
+          metadata: {
+            invoiceId: row.invoice.id,
+            orgId: row.org.id,
+            customerId: row.customer.id,
+          },
+          // No application_fee_amount set — Collectly takes no cut of
+          // this charge today. Add one here (in cents) once a platform
+          // fee rate is actually decided; Standard connected accounts
+          // require the fee to be set on the charge itself, it can't be
+          // bolted on after the fact.
+        },
+        success_url: `${origin}/pay/${row.invoice.id}?paid=1&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/pay/${row.invoice.id}?cancelled=1`,
       },
-      success_url: `${origin}/pay/${row.invoice.id}?paid=1&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/pay/${row.invoice.id}?cancelled=1`,
-    });
+      { stripeAccount: connectedAccountId },
+    );
 
     return NextResponse.json({ url: session.url, sessionId: session.id });
   } catch (e: any) {

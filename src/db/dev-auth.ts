@@ -60,6 +60,16 @@ export async function getDevAuth() {
         orgId: DEV_ORG_ID,
         role: 'owner',
       });
+      // Mirror the real signup path (ensureOrgProvisioned in auth-helper.ts)
+      // so the dev shim's trial banner behaves the same as production.
+      await db.insert(schema.subscriptions).values({
+        id: nanoid(),
+        orgId: DEV_ORG_ID,
+        plan: 'starter',
+        status: 'trialing',
+        currentPeriodStart: now,
+        currentPeriodEnd: new Date(now.getTime() + 14 * 86400000),
+      }).onConflictDoNothing();
     } catch {
       // Race: another request already created it
       [org] = await db.select().from(schema.organizations).where(eq(schema.organizations.slug, 'collectly-dev')).limit(1);

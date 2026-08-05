@@ -61,6 +61,14 @@ export async function POST(req: NextRequest) {
         console.log('[paystack] charge.success missing data.id; skipping DB write.');
         return NextResponse.json({ received: true, action: 'logged' });
       }
+      if (amountMajor <= 0) {
+        // Was falling back to `row.invoice.amount` below when this was 0
+        // (amountKobo missing/zero) — i.e. a charge event with no real
+        // amount on it got treated as "the full invoice, paid." Refuse
+        // instead of guessing.
+        console.error('[paystack] charge.success with amount <= 0; refusing to apply. ref=', data?.reference);
+        return NextResponse.json({ received: true, action: 'logged' });
+      }
 
       // Look up invoice + customer in one go
       const [row] = await db
@@ -83,7 +91,7 @@ export async function POST(req: NextRequest) {
           orgId: row.invoice.orgId,
           invoiceId: row.invoice.id,
           customerId: row.customer.id,
-          amount: String(amountMajor || row.invoice.amount),
+          amount: String(amountMajor),
           currency,
           method: data?.channel ?? 'card',
           reference: data?.reference ? String(data.reference) : null,
@@ -98,19 +106,35 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Mark invoice paid (idempotent: only flips non-paid invoices)
-      const updated = await db
-        .update(invoices)
-        .set({
-          status: 'paid',
-          amountPaid: String(row.invoice.amount),
-          paidAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(and(eq(invoices.id, row.invoice.id), sql`${invoices.status} <> 'paid'`))
-        .returning({ id: invoices.id });
+      // Credit the invoice by what was actually charged, not the full
+      // invoice amount — the previous version force-set amountPaid to
+      // the full invoice total and status to 'paid' for ANY successful
+      // charge, regardless of amount. Combined with the old
+      // /api/paystack/initialize accepting a client-supplied amount, that
+      // meant a $1 charge against a $500 invoice fully discharged it.
+      // Only applied when paymentInserted is true — a redelivered webhook
+      // for a charge already recorded here must not credit the amount a
+      // second time (the DB unique-index dedup above only stops the
+      // duplicate `payments` row, not a naive re-add to amountPaid).
+      let flippedInvoice = false;
+      if (paymentInserted) {
+        const totalDue = Number(row.invoice.amount);
+        const newAmountPaid = Math.min(totalDue, Number(row.invoice.amountPaid) + amountMajor);
+        const paidInFull = newAmountPaid >= totalDue;
+        const updated = await db
+          .update(invoices)
+          .set({
+            status: paidInFull ? 'paid' : 'partial',
+            amountPaid: String(newAmountPaid),
+            paidAt: paidInFull ? new Date() : row.invoice.paidAt,
+            updatedAt: new Date(),
+          })
+          .where(and(eq(invoices.id, row.invoice.id), sql`${invoices.status} <> 'paid'`))
+          .returning({ id: invoices.id });
+        flippedInvoice = updated.length > 0;
+      }
 
-      console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', updated.length > 0, 'email=', email);
+      console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', flippedInvoice, 'email=', email);
       return NextResponse.json({ received: true, action: 'applied' });
     } catch (e: any) {
       console.error('[paystack] charge.success failed:', e?.message);

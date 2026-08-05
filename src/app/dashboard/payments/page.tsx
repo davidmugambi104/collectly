@@ -3,7 +3,7 @@ import { getAuth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db, schema } from '@/db';
 import { payments, customers, invoices } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sql, gte } from 'drizzle-orm';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
@@ -24,20 +24,34 @@ export default async function PaymentsPage() {
     .orderBy(desc(payments.paidAt))
     .limit(100);
 
-  const total = rows.reduce((s: number, r: typeof rows[number]) => s + Number(r.payment.amount), 0);
+  // "Lifetime collected" was summed over the same 100-row page used for
+  // the table below — for any org with more than 100 payments the stat
+  // tile silently understated the real total, with nothing indicating it
+  // was capped. Real totals now come from their own unbounded aggregate
+  // queries; `rows` stays limit(100) purely for the table listing.
   const now = new Date();
-  const monthTotal = rows.reduce((s: number, r: typeof rows[number]) => {
-    const d = new Date(r.payment.paidAt);
-    if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) return s + Number(r.payment.amount);
-    return s;
-  }, 0);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const [{ total: totalRaw, count: totalCount }] = await db
+    .select({ total: sql<string>`coalesce(sum(${payments.amount}), 0)`, count: sql<string>`count(*)` })
+    .from(payments)
+    .where(eq(payments.orgId, orgId));
+  const [{ total: monthTotalRaw }] = await db
+    .select({ total: sql<string>`coalesce(sum(${payments.amount}), 0)` })
+    .from(payments)
+    .where(sql`${payments.orgId} = ${orgId} AND ${gte(payments.paidAt, startOfMonth)}`);
+  const total = parseFloat(totalRaw);
+  const monthTotal = parseFloat(monthTotalRaw);
+  const totalPaymentCount = parseInt(totalCount, 10);
 
   return (
-    <AppShell title="Payments" subtitle={`${rows.length} payment${rows.length === 1 ? '' : 's'} · ${formatCurrency(total)} lifetime`}>
+    <AppShell title="Payments" subtitle={`${totalPaymentCount} payment${totalPaymentCount === 1 ? '' : 's'} · ${formatCurrency(total)} lifetime`}>
       <div className="grid sm:grid-cols-2 gap-4 mb-5">
         <div className="card"><div className="text-xs text-ink-500 uppercase tracking-wider font-medium">Lifetime collected</div><div className="mt-2 text-2xl font-display font-bold text-ink-950">{formatCurrency(total)}</div></div>
         <div className="card"><div className="text-xs text-ink-500 uppercase tracking-wider font-medium">Collected this month</div><div className="mt-2 text-2xl font-display font-bold text-emerald-600">{formatCurrency(monthTotal)}</div></div>
       </div>
+      {totalPaymentCount > rows.length && (
+        <p className="text-xs text-ink-500 -mt-3 mb-5">Showing the latest {rows.length} of {totalPaymentCount} payments below — the totals above cover all of them.</p>
+      )}
 
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">

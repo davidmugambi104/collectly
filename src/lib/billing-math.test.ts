@@ -38,6 +38,18 @@ describe('applyPayment', () => {
     assert.equal(r.newAmountPaid, 150);
     assert.equal(r.status, 'paid');
   });
+
+  test('a zero-amount payment (100%-off Stripe checkout, uncaptured PaymentIntent) does not flip an unpaid invoice to partial', () => {
+    const r = applyPayment(0, 0, 100);
+    assert.equal(r.newAmountPaid, 0);
+    assert.equal(r.status, 'sent');
+  });
+
+  test('a zero-amount payment on an already-partial invoice leaves it partial, not paid or reset', () => {
+    const r = applyPayment(40, 0, 100);
+    assert.equal(r.newAmountPaid, 40);
+    assert.equal(r.status, 'partial');
+  });
 });
 
 describe('applyRefund', () => {

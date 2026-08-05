@@ -1,18 +1,28 @@
 export const dynamic = 'force-dynamic';
 
-import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { upgradeRequests } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { CheckCircle2, X, Mail, Building2, Globe, Calendar, MessageSquare } from 'lucide-react';
 import { formatDate, PLAN_PRICING } from '@/lib/utils';
+import { requireAdminEmail } from '@/lib/auth-helper';
 
-// Admin emails allowed to view this page.
-// Add your own email here.
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? 'davie@getcollectly.app').split(',').map(e => e.trim().toLowerCase());
-
+// SECURITY: markStatus is a Next.js Server Action — its own POST endpoint,
+// callable independent of whether this page's body ever rendered for the
+// caller. It previously had NO auth check of its own at all (only
+// validated that `id` was non-empty and `status` was one of four literal
+// strings), relying entirely on the page component's render-time gate
+// below — which does not protect a server action. Any authenticated
+// non-admin user who could reach this action reference could flip any
+// upgrade request to paid/cancelled/invoiced for any org. requireAdminEmail()
+// is now the single shared admin check (previously this page also kept
+// its own separate, slightly-different copy of the ADMIN_EMAILS parsing
+// logic — the exact kind of drift that caused the interviews-page
+// cross-tenant leak fixed earlier this session).
 async function markStatus(formData: FormData) {
   'use server';
+  const admin = await requireAdminEmail();
+  if (!admin.ok) return;
   const id = String(formData.get('id') ?? '');
   const status = String(formData.get('status') ?? '');
   if (!id || !['pending', 'invoiced', 'paid', 'cancelled'].includes(status)) return;
@@ -20,21 +30,13 @@ async function markStatus(formData: FormData) {
 }
 
 export default async function AdminUpgradeRequestsPage() {
-  // Auth check — must be a logged-in admin
-  const { getAuth } = await import('@/lib/auth-helper');
-  const { db: dbClient } = await import('@/db');
-  const { users } = await import('@/db/schema');
-  const { eq } = await import('drizzle-orm');
-  const { userId } = await getAuth();
-  if (!userId) redirect('/sign-in');
-  const [u] = await dbClient.select({ email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
-  const userEmail = u?.email?.toLowerCase();
-  if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
+  const admin = await requireAdminEmail();
+  if (!admin.ok) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
         <div className="max-w-md text-center">
           <h1 className="h2">Not authorized</h1>
-          <p className="mt-3 text-ink-600">This page is for the Collectly team only. If you should have access, ask Davie to add <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">{userEmail ?? 'your email'}</code> to <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">ADMIN_EMAILS</code>.</p>
+          <p className="mt-3 text-ink-600">This page is for the Collectly team only. If you should have access, ask Davie to add your email to <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">ADMIN_EMAILS</code>.</p>
         </div>
       </div>
     );
