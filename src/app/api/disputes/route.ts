@@ -24,40 +24,48 @@ export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const data = body.parse(await req.json());
 
-  const [invoice] = await db
-    .select()
-    .from(invoices)
-    .where(and(eq(invoices.id, data.invoiceId), eq(invoices.orgId, orgId), eq(invoices.customerId, data.customerId)))
-    .limit(1);
-  if (!invoice) return NextResponse.json({ error: 'invoice not found' }, { status: 404 });
+  try {
+    const data = body.parse(await req.json());
 
-  const [dispute] = await db.insert(disputes).values({
-    id: nanoid(),
-    orgId,
-    invoiceId: data.invoiceId,
-    customerId: data.customerId,
-    reason: data.reason,
-    status: 'open',
-    customerMessage: data.customerMessage || null,
-  }).returning();
+    const [invoice] = await db
+      .select()
+      .from(invoices)
+      .where(and(eq(invoices.id, data.invoiceId), eq(invoices.orgId, orgId), eq(invoices.customerId, data.customerId)))
+      .limit(1);
+    if (!invoice) return NextResponse.json({ error: 'invoice not found' }, { status: 404 });
 
-  // Disputing a paid/written-off invoice doesn't change its status —
-  // otherwise mark it disputed so dunning + the invoice list reflect it.
-  if (invoice.status !== 'paid' && invoice.status !== 'written_off') {
-    await db.update(invoices).set({ status: 'disputed', updatedAt: new Date() }).where(eq(invoices.id, data.invoiceId));
+    const [dispute] = await db.insert(disputes).values({
+      id: nanoid(),
+      orgId,
+      invoiceId: data.invoiceId,
+      customerId: data.customerId,
+      reason: data.reason,
+      status: 'open',
+      customerMessage: data.customerMessage || null,
+    }).returning();
+
+    // Disputing a paid/written-off invoice doesn't change its status —
+    // otherwise mark it disputed so dunning + the invoice list reflect it.
+    if (invoice.status !== 'paid' && invoice.status !== 'written_off') {
+      await db.update(invoices).set({ status: 'disputed', updatedAt: new Date() }).where(eq(invoices.id, data.invoiceId));
+    }
+
+    await db.insert(timelineEvents).values({
+      id: nanoid(),
+      orgId,
+      customerId: data.customerId,
+      invoiceId: data.invoiceId,
+      eventType: 'dispute_opened',
+      title: `Dispute opened — ${data.reason.replace(/_/g, ' ')}`,
+      description: data.customerMessage || null,
+    });
+
+    return NextResponse.json({ ok: true, id: dispute.id });
+  } catch (e: unknown) {
+    // Was unwrapped — a validation failure (body.parse) threw an
+    // unhandled ZodError into a bare 500. Same class of bug already
+    // fixed on /api/sequences/[id] and /api/interview.
+    return NextResponse.json({ error: e instanceof Error ? e.message : 'Bad request' }, { status: 400 });
   }
-
-  await db.insert(timelineEvents).values({
-    id: nanoid(),
-    orgId,
-    customerId: data.customerId,
-    invoiceId: data.invoiceId,
-    eventType: 'dispute_opened',
-    title: `Dispute opened — ${data.reason.replace(/_/g, ' ')}`,
-    description: data.customerMessage || null,
-  });
-
-  return NextResponse.json({ ok: true, id: dispute.id });
 }

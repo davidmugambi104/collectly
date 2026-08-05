@@ -185,6 +185,41 @@ export async function classifyAndPersistOutreachReply(opts: {
   }
 }
 
+/**
+ * Idempotency guard keyed on Svix's own delivery id. Found via a burst of
+ * ~150+ POSTs to this webhook within an 8-second window in production —
+ * every one independently re-ran classifyAndPersistOutreachReply() (a new
+ * outreach_replies row, a new attempted founder-notify email each time)
+ * with no dedup, so a single event Svix decided to retry (or redeliver)
+ * fanned out into repeated processing instead of one. Self-creates its
+ * table on first use rather than depending on a separate migration step
+ * (see ensureOrgProvisioned in src/lib/auth-helper.ts for the same
+ * pattern and why: this codebase has no reliable path to run
+ * drizzle-kit push against production).
+ */
+async function wasEventAlreadyProcessed(svixId: string): Promise<boolean> {
+  if (!svixId) return false; // never block processing on a missing id
+  const client = await pool().connect();
+  try {
+    const insert = () => client.query(
+      `INSERT INTO webhook_events_seen (svix_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING svix_id`,
+      [svixId],
+    );
+    let result;
+    try {
+      result = await insert();
+    } catch (e: unknown) {
+      const code = (e as { code?: string })?.code;
+      if (code !== '42P01') throw e; // 42P01 = undefined_table
+      await client.query(`CREATE TABLE IF NOT EXISTS webhook_events_seen (svix_id TEXT PRIMARY KEY, received_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+      result = await insert();
+    }
+    return result.rows.length === 0; // no row returned => ON CONFLICT fired => already seen
+  } finally {
+    client.release();
+  }
+}
+
 export async function handleResendInboundWebhook(req: NextRequest): Promise<NextResponse> {
   // Verify Svix signature on Resend inbound events. Refuse unsigned requests
   // so external callers cannot create outreach_contacts rows or trigger
@@ -195,15 +230,20 @@ export async function handleResendInboundWebhook(req: NextRequest): Promise<Next
   }
   const rawBody = await req.text();
   const wh = new Webhook(secret);
+  const svixId = req.headers.get('svix-id') || '';
   let event: any;
   try {
     event = wh.verify(rawBody, {
-      'svix-id': req.headers.get('svix-id') || '',
+      'svix-id': svixId,
       'svix-timestamp': req.headers.get('svix-timestamp') || '',
       'svix-signature': req.headers.get('svix-signature') || '',
     }) as any;
   } catch (e: any) {
     return NextResponse.json({ error: `signature verification failed: ${e?.message ?? e}` }, { status: 400 });
+  }
+
+  if (await wasEventAlreadyProcessed(svixId)) {
+    return NextResponse.json({ ok: true, deduped: true });
   }
 
   // Resend inbound wraps the actual fields under .data

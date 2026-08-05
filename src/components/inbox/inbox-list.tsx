@@ -34,7 +34,7 @@ const CLASSIFICATION_STYLE: Record<string, { label: string; className: string }>
   unclassified: { label: 'Unclassified', className: 'bg-ink-100 text-ink-500 border-ink-200' },
 };
 
-export function InboxList({ items }: { items: InboxItem[] }) {
+export function InboxList({ items, configured = true }: { items: InboxItem[]; configured?: boolean }) {
   const router = useRouter();
   const [filter, setFilter] = useState<'new' | 'handled' | 'dismissed' | 'all'>('new');
   const [actingId, setActingId] = useState<string | null>(null);
@@ -69,6 +69,17 @@ export function InboxList({ items }: { items: InboxItem[] }) {
 
   return (
     <div>
+      {!configured && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-900 mb-5">
+          <div className="font-medium">Reply capture isn't set up yet</div>
+          <p className="mt-1 text-amber-800">
+            This page is built and ready, but nothing will ever land here until a dedicated mailbox is connected for
+            AR reply capture. Customers who reply to a dunning email still reach you — the reply just goes to your
+            normal inbox instead of showing up here, classified, with a suggested next step.
+          </p>
+        </div>
+      )}
+
       <div className="flex gap-2 mb-5">
         {(['new', 'handled', 'dismissed', 'all'] as const).map((f) => (
           <button
@@ -89,7 +100,11 @@ export function InboxList({ items }: { items: InboxItem[] }) {
         <div className="card text-center py-12">
           <Mail className="h-8 w-8 mx-auto text-ink-300" />
           <h3 className="mt-3 font-semibold text-ink-900">No {filter === 'all' ? '' : filter} messages</h3>
-          <p className="mt-1 text-sm text-ink-600">Replies to dunning emails will show up here automatically.</p>
+          <p className="mt-1 text-sm text-ink-600">
+            {configured
+              ? 'Replies to dunning emails will show up here automatically.'
+              : 'Nothing to show until reply capture is set up (see above).'}
+          </p>
         </div>
       ) : (
         <div className="space-y-3">

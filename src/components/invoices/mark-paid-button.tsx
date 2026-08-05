@@ -12,10 +12,20 @@ export function MarkAsPaidButton({ invoiceId }: { invoiceId: string }) {
     if (!confirm('Mark this invoice as paid? This records a manual payment.')) return;
     setLoading(true);
     try {
-      await fetch('/api/invoices/mark-paid', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ invoiceId }) });
+      // Was unconditional — a 401 (lapsed session), 404 (invoice already
+      // deleted/written off elsewhere), or 500 still flipped this to
+      // "Marked paid" with a checkmark. On a page whose entire job is
+      // financial record-keeping, that's a false confirmation on top of
+      // an untouched balance.
+      const res = await fetch('/api/invoices/mark-paid', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ invoiceId }) });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? `Failed (${res.status})`);
       setDone(true);
       router.refresh();
-    } finally { setLoading(false); }
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Failed to mark as paid');
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (done) {

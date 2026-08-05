@@ -43,6 +43,13 @@ export default async function InboxPage() {
   }));
 
   const newCount = items.filter((i: typeof items[number]) => i.status === 'new').length;
+  // Reply capture is a real, built feature (src/lib/inbox-imap-poll.ts) that's
+  // deliberately dormant until a dedicated mailbox exists — see the comment
+  // on getDunningReplyToAddress() in src/lib/infra.ts for why it can't share
+  // the cold-outreach mailbox. Surfaced honestly here instead of leaving the
+  // page's normal empty state ("will show up here automatically") implying
+  // a working feature that structurally cannot receive anything yet.
+  const configured = !!process.env.AR_DUNNING_IMAP_USER;
 
   return (
     <AppShell
@@ -50,7 +57,7 @@ export default async function InboxPage() {
       subtitle={`${items.length} customer repl${items.length === 1 ? 'y' : 'ies'}${newCount > 0 ? ` · ${newCount} new` : ''}`}
     >
       <p className="text-sm text-ink-600 mb-5">Every reply to a dunning email lands here, classified by AI with a recommended next step.</p>
-      <InboxList items={items} />
+      <InboxList items={items} configured={configured} />
     </AppShell>
   );
 }

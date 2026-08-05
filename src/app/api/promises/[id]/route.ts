@@ -16,27 +16,32 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const { id } = await params;
-  const data = body.parse(await req.json());
 
-  const [promise] = await db
-    .select()
-    .from(promisesToPay)
-    .where(and(eq(promisesToPay.id, id), eq(promisesToPay.orgId, orgId)))
-    .limit(1);
-  if (!promise) return NextResponse.json({ error: 'not found' }, { status: 404 });
+  try {
+    const data = body.parse(await req.json());
 
-  await db.update(promisesToPay).set({ status: data.status, updatedAt: new Date() }).where(eq(promisesToPay.id, id));
+    const [promise] = await db
+      .select()
+      .from(promisesToPay)
+      .where(and(eq(promisesToPay.id, id), eq(promisesToPay.orgId, orgId)))
+      .limit(1);
+    if (!promise) return NextResponse.json({ error: 'not found' }, { status: 404 });
 
-  await db.insert(timelineEvents).values({
-    id: nanoid(),
-    orgId,
-    customerId: promise.customerId,
-    invoiceId: promise.invoiceId,
-    eventType: data.status === 'fulfilled' ? 'promise_fulfilled' : 'promise_broken',
-    title: data.status === 'fulfilled'
-      ? `Promise fulfilled — ${formatCurrency(promise.promisedAmount, promise.currency ?? 'USD')}`
-      : `Promise broken — ${formatCurrency(promise.promisedAmount, promise.currency ?? 'USD')} was due ${formatDate(promise.promisedDate)}`,
-  });
+    await db.update(promisesToPay).set({ status: data.status, updatedAt: new Date() }).where(eq(promisesToPay.id, id));
 
-  return NextResponse.json({ ok: true });
+    await db.insert(timelineEvents).values({
+      id: nanoid(),
+      orgId,
+      customerId: promise.customerId,
+      invoiceId: promise.invoiceId,
+      eventType: data.status === 'fulfilled' ? 'promise_fulfilled' : 'promise_broken',
+      title: data.status === 'fulfilled'
+        ? `Promise fulfilled — ${formatCurrency(promise.promisedAmount, promise.currency ?? 'USD')}`
+        : `Promise broken — ${formatCurrency(promise.promisedAmount, promise.currency ?? 'USD')} was due ${formatDate(promise.promisedDate)}`,
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : 'Bad request' }, { status: 400 });
+  }
 }

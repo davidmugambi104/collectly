@@ -9,6 +9,7 @@ import { getCustomerInsights } from '@/lib/analytics';
 import { PromisePanel } from '@/components/customers/promise-panel';
 import { DisputePanel } from '@/components/customers/dispute-panel';
 import { AddNoteForm } from '@/components/customers/add-note-form';
+import { dunningComposeHref, canDunningCompose } from '@/lib/dunning/compose-link';
 import {
   Mail, MessageSquare, AlertCircle, CheckCircle2, Clock,
   FileText, DollarSign, Pause, Play, X, Bell, Phone, Sparkles, TrendingUp,
@@ -368,9 +369,9 @@ function FollowUpPanel({ insight }: { insight: import('@/lib/analytics').Custome
       </div>
 
       <div className="flex flex-wrap gap-2 mt-4">
-        {insight.email && (
+        {canDunningCompose(insight) && (
           <a
-            href={`/dashboard/dunning?customerId=${insight.customerId}&tone=${insight.riskLevel === 'critical' ? 'final' : insight.riskLevel === 'high' ? 'firm' : 'friendly'}&channel=${insight.recommendedChannel === 'phone' ? 'email' : insight.recommendedChannel}`}
+            href={dunningComposeHref(insight)}
             className="btn-primary text-sm"
           >
             <Sparkles className="h-3.5 w-3.5" />

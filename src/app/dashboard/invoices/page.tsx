@@ -22,7 +22,11 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   // Build the base WHERE clause for the active filter
   const filterCond =
     filter === 'overdue'
-      ? and(eq(invoices.orgId, orgId), sql`${invoices.dueDate} < NOW()`)
+      // Missing a status exclusion here let fully-paid invoices show up
+      // under "Overdue" (with a "Paid" badge) — the 'paid' branch right
+      // below already excludes correctly, so this was an omission, not by
+      // design.
+      ? and(eq(invoices.orgId, orgId), sql`${invoices.status} NOT IN ('paid', 'written_off')`, sql`${invoices.dueDate} < NOW()`)
       : filter === 'paid'
       ? and(eq(invoices.orgId, orgId), eq(invoices.status, 'paid'))
       : eq(invoices.orgId, orgId);
