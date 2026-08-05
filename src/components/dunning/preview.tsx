@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw, AlertCircle } from 'lucide-react';
 import { RecipientCard } from './recipient-card';
 
 interface PreviewProps {
@@ -18,13 +19,16 @@ interface PreviewProps {
 }
 
 export function DunningPreview(props: PreviewProps) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [content, setContent] = useState<{ subject?: string; body: string } | null>(null);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function generate() {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/dunning/preview', {
         method: 'POST', headers: { 'content-type': 'application/json' },
@@ -38,7 +42,14 @@ export function DunningPreview(props: PreviewProps) {
         }),
       });
       const data = await res.json();
+      // Was setting content from the response unconditionally — a 401/404
+      // still had `content` set (to { subject: undefined, body: undefined
+      // }), rendering an empty editable message as if the AI had really
+      // generated one, with Send still clickable against nothing.
+      if (!res.ok) throw new Error(data?.error ?? `Could not generate a preview (${res.status})`);
       setContent({ subject: data.subject, body: data.body });
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Could not generate a preview');
     } finally {
       setLoading(false);
     }
@@ -47,13 +58,30 @@ export function DunningPreview(props: PreviewProps) {
   async function send() {
     if (!content) return;
     setSending(true);
+    setError(null);
     try {
-      await fetch('/api/dunning/send', {
+      // Was unconditional — /api/dunning/send legitimately returns 403 when
+      // the customer has opted out (DND), 400/404 on a bad invoice/missing
+      // contact, or 500 on a real Resend/Twilio failure, and none of that
+      // was checked. The UI showed "Reminder sent" and auto-closed the
+      // panel regardless, including for a customer who explicitly
+      // unsubscribed — the one case a human most needs to know did NOT go
+      // out.
+      const res = await fetch('/api/dunning/send', {
         method: 'POST', headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ invoiceId: props.invoiceId, channel: props.channel, tone: props.tone, subject: content.subject, body: content.body }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error ?? `Send failed (${res.status})`);
       setSent(true);
+      // The invoice detail page (server component) renders lastReminderAt
+      // and the communication-history list from data fetched at page
+      // load — without this, both stayed stale after a real, successful
+      // send until the user manually reloaded.
+      router.refresh();
       props.onSent?.();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Send failed');
     } finally {
       setSending(false);
     }
@@ -96,6 +124,13 @@ export function DunningPreview(props: PreviewProps) {
         </span>
         <span className={`badge text-[10px] capitalize ${props.tone === 'final' ? 'badge-danger' : props.tone === 'firm' ? 'badge-warn' : 'badge-success'}`}>{props.tone}</span>
       </div>
+
+      {error && (
+        <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-700">
+          <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
 
       {!content ? (
         <button onClick={generate} disabled={loading} className="btn-brand w-full">

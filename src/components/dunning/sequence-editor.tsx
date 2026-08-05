@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw, ChevronRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { MessageBubble } from './message-bubble';
 import { RecipientCard } from './recipient-card';
+import { DUNNING_UNSAVED_EVENT, DUNNING_ERROR_EVENT } from '@/lib/dunning/events';
 
 type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
 type Recipient = { name: string; email: string | null; phone: string | null; invoiceNumber: string; amount?: string; currency?: string; daysOverdue?: number };
@@ -42,12 +43,18 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
   const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const active = activeIdx !== null ? steps[activeIdx] : null;
 
+  function markUnsaved() {
+    setSaved(false);
+    try { window.dispatchEvent(new CustomEvent(DUNNING_UNSAVED_EVENT, { detail: true })); } catch {}
+  }
+
   function updateStep(idx: number, patch: Partial<Step>) {
     setSteps(steps.map((s, i) => i === idx ? { ...s, ...patch } : s));
-    setSaved(false);
+    markUnsaved();
     setPreview(null);
   }
 
@@ -56,7 +63,7 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
     const newStep: Step = { id: `s${Date.now()}`, daysFromDue: last ? last.daysFromDue + 7 : 7, channel: 'email', tone: 'firm', template: '' };
     setSteps([...steps, newStep]);
     setActiveIdx(steps.length);
-    setSaved(false);
+    markUnsaved();
     setPreview(null);
   }
 
@@ -64,17 +71,32 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
     const next = steps.filter((_, i) => i !== idx);
     setSteps(next);
     setActiveIdx(next.length === 0 ? null : Math.min(idx, next.length - 1));
-    setSaved(false);
+    markUnsaved();
     setPreview(null);
   }
 
   async function save() {
     setSaving(true);
+    setSaveError(null);
     try {
-      await fetch('/api/sequences/' + sequenceId, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ steps }) });
+      const res = await fetch('/api/sequences/' + sequenceId, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ steps }) });
+      // A failed save must never be reported as a success — this was
+      // previously unconditional, so a 500 (or any non-2xx) still showed
+      // "All changes saved" and silently discarded the edit.
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error ?? `Save failed (${res.status})`);
+      }
       setSaved(true);
+      try { window.dispatchEvent(new CustomEvent(DUNNING_UNSAVED_EVENT, { detail: false })); } catch {}
       router.refresh();
-    } finally { setSaving(false); }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Save failed';
+      setSaveError(message);
+      try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: message })); } catch {}
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function generatePreview() {
@@ -90,8 +112,11 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? 'preview failed');
       setPreview({ subject: data.subject, body: data.body, sample: !!data.sample, recipient: data.recipient ?? null });
+      try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: null })); } catch {}
     } catch (e: any) {
-      setPreviewError(e?.message ?? 'Preview failed');
+      const message = e?.message ?? 'Preview failed';
+      setPreviewError(message);
+      try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: message })); } catch {}
     } finally {
       setPreviewing(false);
     }
@@ -203,7 +228,7 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
             <div className="pt-2 border-t border-ink-100">
               <div className="flex items-center justify-between mb-2">
                 <div className="text-xs font-semibold text-ink-700 uppercase tracking-wide">Live preview</div>
-                <button data-tour="generate-preview" onClick={generatePreview} disabled={previewing} className="btn-secondary text-xs">
+                <button data-tour="generate-preview" data-stuck-id="generate-preview" onClick={generatePreview} disabled={previewing} className="btn-secondary text-xs">
                   {previewing ? <Loader2 className="h-3 w-3 animate-spin" /> : preview ? <RefreshCw className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
                   {preview ? 'Regenerate' : 'Generate preview'}
                 </button>
@@ -246,19 +271,24 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
       <AnimatePresence>
         {!saved && (
           <motion.div
+            data-stuck-id="unsaved-bar"
             initial={{ y: 72, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 72, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-            className="fixed inset-x-0 bottom-0 z-30 border-t border-amber-200 bg-amber-50/95 backdrop-blur px-4 sm:px-8 py-3"
+            className={`fixed inset-x-0 bottom-0 z-30 border-t backdrop-blur px-4 sm:px-8 py-3 ${saveError ? 'border-red-200 bg-red-50/95' : 'border-amber-200 bg-amber-50/95'}`}
           >
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm text-amber-900">
-                <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse-soft" />
-                <span className="font-medium">Unsaved changes to this sequence</span>
+              <div className={`flex items-center gap-2 text-sm ${saveError ? 'text-red-900' : 'text-amber-900'}`}>
+                <span className={`h-2 w-2 rounded-full ${saveError ? 'bg-red-500' : 'bg-amber-500 animate-pulse-soft'}`} />
+                <span className="font-medium">
+                  {saveError
+                    ? `Save failed — your changes are NOT stored: ${saveError}`
+                    : 'Unsaved changes — nothing sends until this is saved, and saving still does not send anything'}
+                </span>
               </div>
-              <button onClick={save} disabled={saving} className="btn-primary text-sm">
-                {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Save sequence
+              <button data-stuck-id="save-sequence" onClick={save} disabled={saving} className="btn-primary text-sm">
+                {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}{saveError ? 'Retry save' : 'Save sequence'}
               </button>
             </div>
           </motion.div>

@@ -219,17 +219,29 @@ export function fallbackDunningMessage(ctx: DunningContext): { subject?: string;
   const link = buildPaymentLink(ctx.invoiceId);
   const num = resolveInvoiceLabel(ctx);
   const linkFragment = ctx.channel === 'email' ? `\n\nPay here: ${link}` : ` ${link}`;
+  // Was raw `${ctx.currency} ${ctx.amount}` in every branch below — no
+  // thousands separator, inconsistent decimal places, and visibly
+  // different formatting from the AI path (which pre-formats via this
+  // same function) every time this fallback fires, i.e. every time
+  // Gemini is down or unconfigured.
+  const amount = formatAmount(ctx.amount, ctx.currency);
+  // Threatening a fixed "after 60 days" threshold regardless of how
+  // overdue the invoice actually is reads as self-contradictory once
+  // daysOverdue has already passed 60.
+  const collectionsThreshold = ctx.daysOverdue >= 60
+    ? 'This is now significantly overdue and will be referred to collections.'
+    : 'After 60 days unpaid, we will need to refer this to collections.';
   let body: string;
   if (ctx.tone === 'friendly') {
-    body = `Hi ${ctx.contactName ?? 'there'},\n\nJust a quick nudge — invoice ${num} for ${ctx.currency} ${ctx.amount} was due on ${ctx.dueDate}. No rush, but if you can settle it today, that'd help us out.${linkFragment}\n\nThanks for being a great customer.\n\n${ctx.businessName}`;
+    body = `Hi ${ctx.contactName ?? 'there'},\n\nJust a quick nudge — invoice ${num} for ${amount} was due on ${ctx.dueDate}. No rush, but if you can settle it today, that'd help us out.${linkFragment}\n\nThanks for being a great customer.\n\n${ctx.businessName}`;
   } else if (ctx.tone === 'firm') {
-    body = `Hi ${ctx.contactName ?? 'there'},\n\nInvoice ${num} for ${ctx.currency} ${ctx.amount} is now ${ctx.daysOverdue} day${ctx.daysOverdue === 1 ? '' : 's'} past due (originally due ${ctx.dueDate}).\n\nPlease review and settle at your earliest convenience. If there's an issue with the work, just reply and we'll sort it out.${linkFragment}\n\n${ctx.businessName}`;
+    body = `Hi ${ctx.contactName ?? 'there'},\n\nInvoice ${num} for ${amount} is now ${ctx.daysOverdue} day${ctx.daysOverdue === 1 ? '' : 's'} past due (originally due ${ctx.dueDate}).\n\nPlease review and settle at your earliest convenience. If there's an issue with the work, just reply and we'll sort it out.${linkFragment}\n\n${ctx.businessName}`;
   } else {
-    body = `Final notice: invoice ${num} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue} days overdue. After 60 days unpaid, we will need to refer this to collections.${linkFragment}\n\nIf you'd like to discuss payment arrangements, please reply today.\n\n${ctx.businessName}`;
+    body = `Final notice: invoice ${num} for ${amount} is ${ctx.daysOverdue} days overdue. ${collectionsThreshold}${linkFragment}\n\nIf you'd like to discuss payment arrangements, please reply today.\n\n${ctx.businessName}`;
   }
   if (ctx.channel === 'sms') {
     // SMS: shorter, no newlines
-    const short = `${ctx.contactName ?? 'Hi'} — invoice ${num} for ${ctx.currency} ${ctx.amount} is ${ctx.daysOverdue}d overdue.${linkFragment} — ${ctx.businessName}`;
+    const short = `${ctx.contactName ?? 'Hi'} — invoice ${num} for ${amount} is ${ctx.daysOverdue}d overdue.${linkFragment} — ${ctx.businessName}`;
     return { body: short.slice(0, 320) };
   }
   const subject = ctx.tone === 'friendly'

@@ -79,9 +79,17 @@ describe('fallbackDunningMessage — channel-specific formatting', () => {
     assert.ok(body.length <= 320, `sms body was ${body.length} chars`);
   });
 
-  test('email body respects the invoice amount and currency', () => {
+  test('email body respects the invoice amount and currency, formatted consistently with the AI path', () => {
+    // Was asserting the raw, unformatted 'EUR 4321.55' — that was the bug
+    // (no thousands separator, inconsistent with formatAmount() used on
+    // the Gemini path) encoded as if it were the expected output. The
+    // fallback now goes through the same formatAmount() the AI prompt
+    // does, so this should look identical either way. Regex (not a plain
+    // .includes) because Intl.NumberFormat with currencyDisplay:'code'
+    // separates the code from the number with a non-breaking space
+    // (U+00A0), not a regular one.
     const { body } = fallbackDunningMessage(ctx({ amount: '4321.55', currency: 'EUR' }));
-    assert.ok(body.includes('EUR 4321.55'));
+    assert.match(body, /EUR\s4,321\.55/, `expected consistently-formatted amount in body, got: ${body}`);
   });
 });
 

@@ -13,6 +13,7 @@ import { Sparkles, Mail, MessageSquare, Pause, Play, BarChart3, AlertCircle, Arr
 import { DunningPreview } from '@/components/dunning/preview';
 import { SequenceEditor } from '@/components/dunning/sequence-editor';
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
+import { DunningStuckHelper } from '@/components/dunning/stuck-helper';
 
 const DEFAULT_STEPS = [
   { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
@@ -168,6 +169,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   return (
     <AppShell title="AI Dunning" subtitle="Automated, tone-aware reminders — written by Gemini, sent on your schedule.">
       <DunningTour />
+      <DunningStuckHelper />
       {/* Composer: when the page is opened from a per-customer follow-up
           recommendation (?customerId=...&tone=...&channel=...) we pre-fill
           the Gemini-backed preview for the customer's oldest unpaid invoice
@@ -322,7 +324,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           </div>
         </div>
 
-        <div className="card">
+        <div data-tour="activity" className="card">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="h3">Recent activity</h2>

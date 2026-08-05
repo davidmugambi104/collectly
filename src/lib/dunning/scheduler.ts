@@ -107,17 +107,37 @@ export async function processDunning() {
     // unique index + onConflictDoNothing on the insert further down — this
     // is purely to avoid a wasted AI-generation call for steps that are
     // already scheduled/sent.
+    //
+    // 'failed' rows are deliberately excluded from the skip set (and kept
+    // in retriableRunIds instead): the dedup key is (invoiceId, sequenceId,
+    // stepId), and since it's enforced by a DB-unique index a step could
+    // only ever be inserted once, ever, no matter how its send actually
+    // went. A transient failure (Resend 429, a Twilio error) permanently
+    // pinned that step as "already handled" — the scheduler moved on to
+    // whatever later step's threshold came due next and the failed one was
+    // never retried or backfilled, with no other retry path anywhere in
+    // the app. Retrying is intentionally scoped to 'failed' only, not
+    // 'cancelled' (no contact info on file) — retrying that would just
+    // waste an AI-generation call for the same, still-true reason.
     const invoiceIds = overdueInvoices.map(({ invoice }: typeof overdueInvoices[number]) => invoice.id);
     const existingRunKeys = new Set<string>();
+    const retriableRunIds = new Map<string, string>();
     if (invoiceIds.length > 0) {
       const existingRuns = await db
-        .select({ invoiceId: dunningRuns.invoiceId, stepId: dunningRuns.stepId })
+        .select({ invoiceId: dunningRuns.invoiceId, stepId: dunningRuns.stepId, id: dunningRuns.id, status: dunningRuns.status })
         .from(dunningRuns)
         .where(and(
           eq(dunningRuns.sequenceId, seq.id),
           inArray(dunningRuns.invoiceId, invoiceIds),
         ));
-      for (const r of existingRuns) existingRunKeys.add(`${r.invoiceId}:${r.stepId}`);
+      for (const r of existingRuns) {
+        const key = `${r.invoiceId}:${r.stepId}`;
+        if (r.status === 'failed') {
+          retriableRunIds.set(key, r.id);
+        } else {
+          existingRunKeys.add(key);
+        }
+      }
     }
 
     for (const { invoice, customer } of overdueInvoices) {
@@ -167,28 +187,43 @@ export async function processDunning() {
       // concurrent cron invocation cannot double-schedule the same
       // (invoiceId, sequenceId, stepId). We rely on the unique index on
       // (invoice_id, sequence_id, step_id) (added in 0003 if not present;
-      // dedup is the existing convention) and ON CONFLICT DO NOTHING so
-      // the second writer sees zero returning rows and skips cleanly.
+      // dedup is the existing convention).
       // P1.4 audit fix 2026-07-31.
+      //
+      // A retry (retriableRunIds has this key -- see the batched fetch
+      // above) uses ON CONFLICT DO UPDATE instead of DO NOTHING, so a
+      // previously-failed row gets a fresh scheduledFor/subject/body and
+      // its status reset to 'scheduled' rather than being silently
+      // skipped by the same unique index that's supposed to prevent
+      // double-sends, not prevent ever retrying a real failure.
+      const retryKey = `${invoice.id}:${lastStep.id}`;
+      const isRetry = retriableRunIds.has(retryKey);
+      const insertValues = {
+        id: nanoid(),
+        orgId: seq.orgId,
+        invoiceId: invoice.id,
+        sequenceId: seq.id,
+        stepId: lastStep.id,
+        channel: lastStep.channel,
+        status: 'scheduled' as const,
+        scheduledFor: now,
+        subject: result.subject,
+        body: result.body,
+      };
       let insertedRunId: string | null = null;
       try {
         insertedRunId = await db.transaction(async (tx: any) => {
-          const [run] = await tx
-            .insert(dunningRuns)
-            .values({
-              id: nanoid(),
-              orgId: seq.orgId,
-              invoiceId: invoice.id,
-              sequenceId: seq.id,
-              stepId: lastStep.id,
-              channel: lastStep.channel,
-              status: 'scheduled',
-              scheduledFor: now,
-              subject: result.subject,
-              body: result.body,
-            })
-            .onConflictDoNothing({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId] })
-            .returning();
+          const query = tx.insert(dunningRuns).values(insertValues);
+          const [run] = isRetry
+            ? await query
+                .onConflictDoUpdate({
+                  target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId],
+                  set: { status: 'scheduled', scheduledFor: now, subject: result.subject, body: result.body, error: null, sentAt: null, externalMessageId: null },
+                })
+                .returning()
+            : await query
+                .onConflictDoNothing({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId] })
+                .returning();
           return run?.id ?? null;
         });
       } catch (e: any) {
@@ -268,12 +303,23 @@ export async function processDunning() {
               orgDigest.set(seq.orgId, digest);
             }
           } else {
-            // No channel available for this customer — cancel, don't mark 'sent'
-            await db.update(dunningRuns).set({ status: 'cancelled', error: 'no email/phone on file' }).where(eq(dunningRuns.id, run.id));
+            // This step's configured channel has no matching contact info.
+            // The customer may still have the OTHER channel on file — there
+            // is no cross-channel fallback (a step configured for SMS never
+            // falls back to email even if only email is on file, or vice
+            // versa) — but the error previously said "no email/phone on
+            // file" unconditionally, which is simply false whenever the
+            // other channel *is* on file, and misleads anyone triaging
+            // cancelled runs in the dashboard into thinking the customer
+            // has no contact info at all.
+            const reason = lastStep.channel === 'email'
+              ? (customer.phone ? 'step is set to email, but only a phone number is on file' : 'no email on file')
+              : (customer.email ? 'step is set to SMS, but only an email address is on file' : 'no phone number on file');
+            await db.update(dunningRuns).set({ status: 'cancelled', error: reason }).where(eq(dunningRuns.id, run.id));
             await recordEvent({
               orgId: seq.orgId,
               type: 'dunning.run.cancelled',
-              payload: { runId: run.id, invoiceId: invoice.id, reason: 'no email/phone on file' },
+              payload: { runId: run.id, invoiceId: invoice.id, reason },
             });
           }
         } catch (e: any) {
