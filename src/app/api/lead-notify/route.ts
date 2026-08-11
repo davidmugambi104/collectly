@@ -5,7 +5,7 @@ import { sendEmail } from '@/lib/infra';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
 const schema = z.object({
-  type: z.enum(['waitlist', 'interview', 'dunning_test']),
+  type: z.enum(['waitlist', 'interview', 'dunning_test', 'async_qualify']),
   email: z.string().email(),
   name: z.string().optional(),
   company: z.string().optional(),
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
   const subject =
     data.type === 'waitlist' ? `🌱 New waitlist signup — ${data.email}` :
     data.type === 'interview' ? `🎯 New interview — ${data.email} (${data.company ?? 'n/a'})` :
+    data.type === 'async_qualify' ? `📋 Async qualify reply — ${data.email} (${data.company ?? 'n/a'})` :
     `🧪 Dunning test from ${data.email}`;
 
   const metaRows = data.meta
