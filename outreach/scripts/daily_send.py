@@ -25,19 +25,23 @@ import os
 import sys
 import time
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 from clients import request, load_secret
+from outreach_state import can_send as state_can_send, record_send as state_record_send
 
-PROSPECTS_CSV = "/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv"
-LOG_CSV = "/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv"
-MESSAGES_DIR = "/home/davie/.openclaw/workspace/collectly/outreach/messages"
-ENV_PATH = "/home/davie/.openclaw/workspace/collectly/.env.local"
-LOG_DIR = "/home/davie/.openclaw/workspace/collectly/outreach/logs"
+PROSPECTS_CSV = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/prospects.csv"
+LOG_CSV = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv"
+MESSAGES_DIR = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/messages"
+ENV_PATH = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/.env.local"
+LOG_DIR = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/logs"
 
-LOG_FIELDS = ["id", "email", "touch", "sent_at", "replied_at", "status", "next_step", "message_id", "detail", "segment"]
+# Keep in sync with reconcile_live.py:LIVE_CANON (10 columns).
+# Field renames vs prior schema: sent_at→timestamp, replied_at→replied,
+# status→signal, detail→signal_details. next_step and segment retained.
+LOG_FIELDS = ["id", "email", "touch", "timestamp", "replied", "signal", "next_step", "message_id", "signal_details", "segment"]
 
 
 def load_env() -> Dict[str, str]:
@@ -64,7 +68,7 @@ def load_log() -> List[Dict[str, str]]:
 def already_sent_today(log: List[Dict[str, str]], prospect_id: str) -> bool:
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     for r in log:
-        if r.get("id") == prospect_id and (r.get("sent_at") or "").startswith(today):
+        if r.get("id") == prospect_id and (r.get("timestamp") or "").startswith(today):
             return True
     return False
 
@@ -83,9 +87,9 @@ def pick_prospects(tier: int, limit: int, log: List[Dict[str, str]]) -> List[Dic
     last_sent: Dict[str, str] = {}
     for r in log:
         rid = r.get("id")
-        if rid and r.get("sent_at"):
-            if rid not in last_sent or r["sent_at"] > last_sent[rid]:
-                last_sent[rid] = r["sent_at"]
+        if rid and r.get("timestamp"):
+            if rid not in last_sent or r["timestamp"] > last_sent[rid]:
+                last_sent[rid] = r["timestamp"]
 
     cutoff = "2026-07-09T00:00:00Z"  # 14 days ago
     eligible = []
@@ -97,6 +101,12 @@ def pick_prospects(tier: int, limit: int, log: List[Dict[str, str]]) -> List[Dic
         rid = r.get("id")
         # Cooldown: don't re-t1 within 14 days
         if rid in last_sent and last_sent[rid] > cutoff:
+            continue
+        # Cross-channel dedup: outreach_state.py is shared with send_with_guard.py
+        # (bookkeeper channel). A prospect present in both prospects.csv and
+        # bookkeeper-channel-prospects.csv must not get touched by both.
+        ok, _reason = state_can_send(r["email"], "t1")
+        if not ok:
             continue
         eligible.append(r)
 
@@ -246,10 +256,76 @@ def send_one(env: Dict[str, str], to: str, subject: str, body: str) -> Dict[str,
     return request("POST", "https://api.resend.com/emails", headers=headers, json_body=payload, timeout=30)
 
 
+GATE_MAX_AGE_HOURS = 6  # gate-status.json older than this is untrustworthy: block rather than act on stale data.
+
+
+def _check_gate(gate_path: str = None) -> int:
+    """Read gate-status.json. If gate != 'allow'/'pullback' (with cap > 0), refuse to send.
+
+    Returns exit code: 0 = ok to send, 2 = blocked.
+
+    Fails CLOSED on every non-happy-path: missing file, unreadable file,
+    malformed JSON, stale checked_at, or an explicit block/unknown state
+    all return 2. A missing or stale gate file is not "no opinion" — it
+    means deliverability_gate.py hasn't confirmed anything recently, which
+    is exactly when sending is riskiest. (Previously this returned None on
+    a missing file and the caller treated that as "proceed" — see the
+    2026-08-09 02:21 UTC incident where that let 17 emails out despite the
+    gate being unresolved. Never make this function return anything but
+    0 or 2.)
+
+    gate_path is injectable for testing (see test_gate_check.py) so tests
+    never need to touch the real gate-status.json.
+    """
+    if gate_path is None:
+        gate_path = os.path.join(os.path.dirname(LOG_CSV), "gate-status.json")
+    if not os.path.exists(gate_path):
+        print("BLOCKED: gate-status.json missing — deliverability_gate.py hasn't run (or hasn't finished) yet. Failing closed.", file=sys.stderr)
+        return 2
+    try:
+        with open(gate_path) as f:
+            gate = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"BLOCKED: gate-status.json unreadable/malformed ({e}); failing closed.", file=sys.stderr)
+        return 2
+
+    checked_at_raw = gate.get("checked_at")
+    if not checked_at_raw:
+        print("BLOCKED: gate-status.json missing checked_at field; failing closed.", file=sys.stderr)
+        return 2
+    try:
+        checked_at = datetime.fromisoformat(str(checked_at_raw).replace("Z", "+00:00"))
+        if checked_at.tzinfo is None:
+            checked_at = checked_at.replace(tzinfo=timezone.utc)
+    except ValueError:
+        print(f"BLOCKED: gate-status.json has unparseable checked_at={checked_at_raw!r}; failing closed.", file=sys.stderr)
+        return 2
+    age_hours = (datetime.now(timezone.utc) - checked_at).total_seconds() / 3600
+    if age_hours > GATE_MAX_AGE_HOURS:
+        print(f"BLOCKED: gate-status.json is {age_hours:.1f}h old (max {GATE_MAX_AGE_HOURS}h) — failing closed on stale data.", file=sys.stderr)
+        return 2
+
+    state = (gate.get("gate") or "").lower()
+    cap = int(gate.get("resend_daily_cap") or 0)
+    reason = gate.get("reason") or "(no reason)"
+    if state in ("allow", "pullback") and cap > 0:
+        print(f"gate: {state}, cap: {cap}/day")
+        return 0
+    print(f"BLOCKED by deliverability gate: state={state!r}, cap={cap}, reason={reason}", file=sys.stderr)
+    return 2
+
+
 def cmd_send(args):
     env = load_env()
     log = load_log()
     template = load_template(args.template)
+
+    # Enforce gate before doing any work. Idempotent: gate script already ran
+    # in the cron pipeline; this is a defense-in-depth check at the producer.
+    # _check_gate() always returns 0 or 2 — never a third "unknown" state.
+    gate_exit = _check_gate()
+    if gate_exit != 0:
+        return gate_exit
 
     prospects = pick_prospects(args.tier, args.limit, log)
     if not prospects:
@@ -276,17 +352,25 @@ def cmd_send(args):
             "id": p["id"],
             "email": p["email"],
             "touch": "t1",
-            "sent_at": sent_at,
-            "replied_at": "",
-            "status": "sent" if result.get("ok") else "send_failed",
-            "next_step": "",
+            "timestamp": sent_at,
+            "replied": "",
+            "signal": "sent" if result.get("ok") else "send_failed",
             "message_id": (result.get("data") or {}).get("id", "") if result.get("ok") else "",
-            "detail": f"{args.template}; tier{args.tier}",
+            "signal_details": f"{args.template}; tier{args.tier}",
+            "next_step": "",
             "segment": p.get("industry", "unknown"),
         }
         with open(LOG_CSV, "a", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=LOG_FIELDS)
             writer.writerow(row)
+
+        if result.get("ok"):
+            state_record_send(
+                p["email"], "t1",
+                message_id=row["message_id"],
+                campaign=f"tier{args.tier}",
+                prospect_id=p["id"],
+            )
 
         status = "✓" if result.get("ok") else "✗"
         print(f"  {status} {p['id']} → {p['email']}: {result.get('error') or (result.get('data') or {}).get('id', '')}")

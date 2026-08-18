@@ -5,23 +5,43 @@ from email.message import EmailMessage
 from pathlib import Path
 from datetime import datetime, timezone
 
+import os
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_PORT = 465  # SSL
 
-SECRETS = Path('/home/davie/.openclaw/secrets/collectly')
-USER_FILE = SECRETS / 'GMAIL_USER'
-PASS_FILE = SECRETS / 'GMAIL_APP_PASSWORD'
+# GMAIL_USER / GMAIL_APP_PASSWORD live in .env.local (not a dedicated secrets
+# file -- ~/.openclaw/secrets/collectly/GMAIL_USER never actually existed,
+# which made non-dry-run sends crash with FileNotFoundError). Read the same
+# way daily_send.py reads RESEND_API_KEY, so there's one source of truth.
+ENV_PATH = Path(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/.env.local')
 
-LOG_FILE = Path('/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv')
-
-
-def load_secret(path: Path) -> str:
-    if not path.exists():
-        raise FileNotFoundError(f'{path} not found')
-    return path.read_text().strip()
+LOG_FILE = Path(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv')
 
 
-CANONICAL_FIELDS = ['id','email','touch','sent_at','replied_at','status','next_step','message_id','detail','segment']
+def load_env() -> dict:
+    env = {}
+    if not ENV_PATH.exists():
+        return env
+    for line in ENV_PATH.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        k, v = line.split('=', 1)
+        env[k.strip()] = v.strip().strip('"').strip("'")
+    return env
+
+
+def load_secret(env: dict, key: str) -> str:
+    val = env.get(key, '')
+    if not val:
+        raise FileNotFoundError(f'{key} not set in {ENV_PATH}')
+    return val
+
+
+# Must match reconcile_live.py:LIVE_CANON / daily_send.py:LOG_FIELDS — this
+# script appends to the same outreach-log.csv, so column order and names have
+# to agree exactly or rows silently misalign under the wrong header labels.
+CANONICAL_FIELDS = ['id', 'email', 'touch', 'timestamp', 'replied', 'signal', 'next_step', 'message_id', 'signal_details', 'segment']
 
 def log_rows(rows):
     file_exists = LOG_FILE.exists()
@@ -37,8 +57,9 @@ def send_batch(draft_csv: Path, dry_run: bool = False, delay: float = 1.5):
         user = 'dry-run@example.com'
         password = ''
     else:
-        user = load_secret(USER_FILE)
-        password = load_secret(PASS_FILE)
+        env = load_env()
+        user = load_secret(env, 'GMAIL_USER')
+        password = load_secret(env, 'GMAIL_APP_PASSWORD')
     from_email = f'Davie Mugambi <{user}>'
     reply_to = 'davidmugambi104@gmail.com'
 
@@ -90,12 +111,12 @@ def send_batch(draft_csv: Path, dry_run: bool = False, delay: float = 1.5):
                 'id': row['id'],
                 'email': row['to'],
                 'touch': touch,
-                'sent_at': datetime.now(timezone.utc).isoformat(),
-                'replied_at': '',
-                'status': status,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'replied': '',
+                'signal': status,
                 'next_step': '',
                 'message_id': message_id,
-                'detail': 'gmail_fallback',
+                'signal_details': 'gmail_fallback',
                 'segment': ''
             })
         except Exception as e:
@@ -105,12 +126,12 @@ def send_batch(draft_csv: Path, dry_run: bool = False, delay: float = 1.5):
                 'id': row['id'],
                 'email': row['to'],
                 'touch': touch,
-                'sent_at': datetime.now(timezone.utc).isoformat(),
-                'replied_at': '',
-                'status': 'failed',
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'replied': '',
+                'signal': 'failed',
                 'next_step': '',
                 'message_id': '',
-                'detail': f'error: {e}',
+                'signal_details': f'error: {e}',
                 'segment': ''
             })
         time.sleep(delay)
