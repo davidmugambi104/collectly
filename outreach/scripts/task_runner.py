@@ -369,6 +369,18 @@ def process_task(task: Dict[str, Any], env: Dict[str, str], template_cache: Dict
 # Cycle
 # --------------------------------------------------------------------------
 
+def gate_cap() -> int:
+    """Read the deliverability gate's own cap (drops to 30 on a bounce/spam
+    pullback, 0 on block). _check_gate() only returns pass/fail, not the
+    number, so read gate-status.json directly -- the same file it writes."""
+    gate_path = os.path.join(os.path.dirname(daily_send.LOG_CSV), "gate-status.json")
+    try:
+        with open(gate_path) as f:
+            return int(json.load(f).get("resend_daily_cap") or 0)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return 0
+
+
 def cmd_cycle(args: argparse.Namespace) -> int:
     cfg = load_config()
 
@@ -380,7 +392,9 @@ def cmd_cycle(args: argparse.Namespace) -> int:
     tasks = refresh_queue(cfg)
     env = daily_send.load_env()
     usage = load_rate_usage()
-    effective_cap = cfg["daily_send_cap"]
+    # The gate's cap can be lower than the founder's configured cap (e.g. a
+    # bounce/spam pullback to 30/day) -- always honor whichever is stricter.
+    effective_cap = min(cfg["daily_send_cap"], gate_cap())
 
     prospects_by_id = {}
     if os.path.exists(daily_send.PROSPECTS_CSV):
