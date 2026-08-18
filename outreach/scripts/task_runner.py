@@ -15,7 +15,8 @@ detection. Does not reimplement any of them.
 
 Approval levels (exactly three, per policy -- not per-task owner/agent):
     auto            routine sends within existing dedup/pause rules.
-    flag_for_review new domain or segment never contacted before, or a
+    flag_for_review a new segment/industry never contacted before (not a
+                    new domain -- see classify_task docstring), or a
                     reply that looks like it needs a human response.
     requires_yes    changing send volume/rate, billing, or a new OAuth/API
                     credential. The runner cannot self-approve these -- it
@@ -129,44 +130,40 @@ def save_queue(tasks: List[Dict[str, Any]]) -> None:
 
 
 # --------------------------------------------------------------------------
-# History (for "new domain/segment" classification)
+# History (for "new segment" classification)
 # --------------------------------------------------------------------------
 
-def _domain(email: str) -> str:
-    return (email or "").rsplit("@", 1)[-1].strip().lower()
-
-
-def known_domains_and_segments(log: List[Dict[str, str]]) -> tuple[set, set]:
-    """Domains/segments already contacted, from the live log AND the
-    cross-channel dedup state -- a prospect the bookkeeper channel already
-    reached counts as a known domain too."""
-    domains, segments = set(), set()
+def known_segments_seen(log: List[Dict[str, str]]) -> set:
+    """Segments/industries already contacted, from the live log."""
+    segments = set()
     for r in log:
-        if (r.get("signal") or "") == "sent":
-            if r.get("email"):
-                domains.add(_domain(r["email"]))
-            if r.get("segment"):
-                segments.add(r["segment"].strip().lower())
-    state = outreach_state.load_state()
-    for email, rec in state.get("contacts", {}).items():
-        if rec.get("sent_history"):
-            domains.add(_domain(email))
-    return domains, segments
+        if (r.get("signal") or "") == "sent" and r.get("segment"):
+            segments.add(r["segment"].strip().lower())
+    return segments
 
 
 # --------------------------------------------------------------------------
 # Approval classification
 # --------------------------------------------------------------------------
 
-def classify_task(prospect: Dict[str, str], known_domains: set, known_segments: set) -> tuple[str, str]:
+def classify_task(prospect: Dict[str, str], known_segments: set) -> tuple[str, str]:
     """Return (approval_level, reason). Only ever returns 'auto' or
     'flag_for_review' -- 'requires_yes' actions (volume/rate, billing, new
     credentials) are never per-prospect decisions, so they're never
-    produced here; see module docstring."""
-    domain = _domain(prospect.get("email", ""))
+    produced here; see module docstring.
+
+    Per-prospect new-domain is deliberately NOT a review trigger for this
+    (cold-outreach, tier 1-3) channel -- every first-touch cold prospect is
+    a new domain by definition, so that rule flagged ~everything (19/20 on
+    2026-08-19) and added review load without adding signal. Confirmed with
+    Davie 2026-08-19: approve-all for this channel. New *segment* stays a
+    review trigger -- entering a whole new industry vertical is a real
+    strategic signal, unlike one more company in an already-worked segment.
+    If task_runner ever builds tasks for the bookkeeper-referral channel
+    (repeat/known-partner relationships, where a new domain IS unusual),
+    that channel should get its own classify function, not this one.
+    """
     segment = (prospect.get("industry") or "").strip().lower()
-    if domain and domain not in known_domains:
-        return "flag_for_review", f"new domain never contacted before: {domain}"
     if segment and segment not in known_segments:
         return "flag_for_review", f"new segment never contacted before: {segment}"
     return "auto", "routine send within existing dedup/pause rules"
@@ -208,7 +205,7 @@ def refresh_queue(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
     # DONE tasks stay in the queue as history but don't block re-creation
     # of a *new* touch for the same prospect (touch is part of the id).
     log = daily_send.load_log()
-    known_domains, known_segments = known_domains_and_segments(log)
+    known_segments = known_segments_seen(log)
 
     for tier in cfg["tiers"]:
         prospects = daily_send.pick_prospects(tier, cfg["limit_per_tier"], log)
@@ -218,7 +215,7 @@ def refresh_queue(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
                 continue
             if any(t["id"] == task_id and t["state"] == "DONE" for t in tasks):
                 continue
-            level, reason = classify_task(p, known_domains, known_segments)
+            level, reason = classify_task(p, known_segments)
             tasks.append({
                 "id": task_id,
                 "prospect_id": p["id"],
