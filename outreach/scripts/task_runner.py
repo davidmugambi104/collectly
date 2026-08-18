@@ -176,8 +176,34 @@ def classify_task(prospect: Dict[str, str], known_domains: set, known_segments: 
 # Task construction: "check for new prospects"
 # --------------------------------------------------------------------------
 
+def reconcile_stale_tasks(tasks: List[Dict[str, Any]]) -> int:
+    """A prospect can get sent through a path other than this queue (e.g.
+    the raw hourly sequencer cron calling daily_send.py directly, or a
+    manual run) -- refresh_queue only ever adds tasks, so without this,
+    a PENDING/NEEDS_APPROVAL entry for an already-sent prospect goes
+    stale forever and misreports as still needing action. Reconcile
+    against outreach_state.py (the shared cross-channel dedup record)
+    every refresh. Returns how many were reconciled."""
+    reconciled = 0
+    for t in tasks:
+        if t["state"] not in ("PENDING", "NEEDS_APPROVAL"):
+            continue
+        ok, reason = outreach_state.can_send(t["email"], t["touch"])
+        if not ok:
+            t["state"] = "DONE"
+            t["result"] = t.get("result") or {}
+            t["error"] = None
+            t["approval_reason"] += f" (reconciled: {reason} -- sent via another path)"
+            t["updated_at"] = _iso()
+            reconciled += 1
+    return reconciled
+
+
 def refresh_queue(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
     tasks = load_queue()
+    reconciled = reconcile_stale_tasks(tasks)
+    if reconciled:
+        print(f"  reconciled {reconciled} stale task(s): already sent via another path since last refresh")
     existing_ids = {t["id"] for t in tasks if t["state"] != "DONE"}
     # DONE tasks stay in the queue as history but don't block re-creation
     # of a *new* touch for the same prospect (touch is part of the id).
