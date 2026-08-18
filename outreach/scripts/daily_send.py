@@ -144,6 +144,9 @@ def _select_variant_block(template: str, industry: str) -> str:
         "motion": "Design",
         "ecommerce_agency": "Ecommerce agency",
         "beauty_marketing": "Ecommerce agency",
+        "bookkeeping": "Bookkeeping",
+        "outsourced-accounting": "Outsourced accounting",
+        "fractional-cfo": "Fractional CFO",
     }
     target = mapping.get((industry or "").lower(), "Branding")
 

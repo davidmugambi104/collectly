@@ -112,6 +112,45 @@ Worth 10 minutes this week? I can send a few open times.
 David
 ```
 
+### Bookkeeping (added 2026-08-19 -- was silently falling back to Branding copy, "brand project"/"studios and agencies" language sent to bookkeeping firms)
+```
+Hi {{first_name}},
+
+Between your own invoices and the AR work you already do for clients, follow-up on anything past 14 days overdue is probably one of the most repetitive parts of running {{company}}.
+
+I'm building Collectly: it connects to QuickBooks, sends tone-aware payment reminders on a schedule, and tracks who's actually paid vs. still owing. Early, live, starting with a small batch before broad launch.
+
+Worth 10 minutes this week? I can send a few open times.
+
+David
+```
+
+### Outsourced accounting (added 2026-08-19)
+```
+Hi {{first_name}},
+
+Running AR follow-up across a full client roster at {{company}} is probably one of the most repetitive, easiest-to-automate parts of the work.
+
+I'm building Collectly: it connects to QuickBooks, sends tone-aware payment reminders on a schedule, and flags which clients are chronically slow to pay. Early, live, starting with a small batch before broad launch.
+
+Worth 10 minutes this week? I can send a few open times.
+
+David
+```
+
+### Fractional CFO (added 2026-08-19)
+```
+Hi {{first_name}},
+
+Cash flow is the thing you're managing for clients at {{company}}, and AR follow-up is usually the leakiest, least-automated part of that picture.
+
+I'm building Collectly: it connects to QuickBooks, automates the reminder sequence for overdue invoices, and gives a clearer read on who's actually going to pay on time. Early, live, starting with a small batch before broad launch.
+
+Worth 10 minutes this week? I can send a few open times.
+
+David
+```
+
 ## How to use this
 
 1. Look up the prospect's `industry` in `outreach/data/prospects.csv`
@@ -133,3 +172,6 @@ David
 | motion | Design (closest fit) |
 | ecommerce_agency | Ecommerce agency / beauty marketing |
 | beauty_marketing | Ecommerce agency / beauty marketing |
+| bookkeeping | Bookkeeping |
+| outsourced-accounting | Outsourced accounting |
+| fractional-cfo | Fractional CFO |
