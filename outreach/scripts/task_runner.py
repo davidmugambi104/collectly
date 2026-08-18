@@ -259,6 +259,37 @@ def save_rate_usage(usage: Dict[str, Any]) -> None:
 # Verification: Resend status check + CSV read-back
 # --------------------------------------------------------------------------
 
+def reverify_failed_tasks(tasks: List[Dict[str, Any]], env: Dict[str, str]) -> int:
+    """Self-repair for the one FAILED case that's safe to retry: a send
+    that Resend accepted but our post-send verification couldn't confirm
+    (e.g. Resend's API hadn't propagated last_event yet). This is a
+    read-only re-check (GET + CSV read), never a resend -- a task that
+    genuinely never sent (exhausted retries, no message_id) is never
+    touched here, since retrying *that* risks a duplicate send. Runs
+    every cycle regardless of gate state; it isn't sending anything.
+    Returns how many were resolved."""
+    resolved = 0
+    for t in tasks:
+        if t["state"] != "FAILED":
+            continue
+        message_id = (t.get("result") or {}).get("message_id")
+        if not message_id:
+            continue  # never actually sent -- nothing to re-verify
+        csv_ok, csv_reason = verify_csv_row({
+            "id": t["prospect_id"], "email": t["email"], "touch": t["touch"], "message_id": message_id,
+        })
+        resend_ok, resend_reason = verify_resend_accepted(message_id, env)
+        if csv_ok and resend_ok:
+            t["state"] = "DONE"
+            t["error"] = None
+            t["result"] = {"message_id": message_id, "csv_verified": True, "resend_verified": resend_reason}
+            t["approval_reason"] += " (resolved on re-verification)"
+            t["updated_at"] = _iso()
+            resolved += 1
+            print(f"  re-verified and resolved: {t['id']} -> {resend_reason}")
+    return resolved
+
+
 def verify_resend_accepted(message_id: str, env: Dict[str, str]) -> tuple[bool, str]:
     """Confirm Resend actually accepted the send, not just that the POST
     didn't error. GET /emails/{id} and check it isn't already bounced/
@@ -406,6 +437,17 @@ def gate_cap() -> int:
 
 def cmd_cycle(args: argparse.Namespace) -> int:
     cfg = load_config()
+    env = daily_send.load_env()
+
+    # Self-repair first, regardless of gate state or --dry-run: re-checking
+    # an already-sent message's status is read-only (GET, never a resend)
+    # and only ever corrects our own records, so it isn't gated by whether
+    # new sends are currently allowed or requested.
+    pending_tasks = load_queue()
+    resolved = reverify_failed_tasks(pending_tasks, env)
+    if resolved:
+        save_queue(pending_tasks)
+        print(f"  self-repaired {resolved} previously-FAILED task(s) via re-verification")
 
     gate_exit = daily_send._check_gate()
     if gate_exit != 0:
@@ -413,7 +455,6 @@ def cmd_cycle(args: argparse.Namespace) -> int:
         return gate_exit
 
     tasks = refresh_queue(cfg)
-    env = daily_send.load_env()
     usage = load_rate_usage()
     # The gate's cap can be lower than the founder's configured cap (e.g. a
     # bounce/spam pullback to 30/day) -- always honor whichever is stricter.
@@ -472,6 +513,12 @@ def print_status(tasks: List[Dict[str, Any]], usage: Dict[str, Any], cfg: Dict[s
         print(f"\n{len(needs_approval)} task(s) need approval:")
         for t in needs_approval[:10]:
             print(f"  {t['id']:12s} {t['email']:35s} [{t['approval_level']}] {t['approval_reason']}")
+    failed = [t for t in tasks if t["state"] == "FAILED"]
+    if failed:
+        print(f"\n{len(failed)} task(s) genuinely FAILED (retries exhausted or verification still "
+              f"unresolved after re-check -- these need a human look, not another retry):")
+        for t in failed[:10]:
+            print(f"  {t['id']:12s} {t['email']:35s} {t['error']}")
 
 
 def cmd_status(args: argparse.Namespace) -> int:
