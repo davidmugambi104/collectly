@@ -46,6 +46,7 @@ sys.path.insert(0, str(HERE.parent.parent))  # matches daily_send.py's clients-p
 
 import daily_send  # noqa: E402  (reused: gate check, prospect selection, send, CSV log)
 import outreach_state  # noqa: E402  (reused: cross-channel dedup + reply state)
+import experiment  # noqa: E402  (reused: subject-line rotation + kill/scale rules)
 from clients import request as http_request  # noqa: E402
 
 DATA = HERE.parent / "data"
@@ -335,7 +336,7 @@ def verify_csv_row(expected: Dict[str, str]) -> tuple[bool, str]:
 
 def process_task(task: Dict[str, Any], env: Dict[str, str], template_cache: Dict[str, str],
                   usage: Dict[str, Any], prospects_by_id: Dict[str, Dict[str, str]],
-                  cfg: Dict[str, Any], dry_run: bool) -> None:
+                  cfg: Dict[str, Any], exp_state: Dict[str, Any], dry_run: bool) -> None:
     task["state"] = "RUNNING"
     task["updated_at"] = _iso()
 
@@ -350,9 +351,12 @@ def process_task(task: Dict[str, Any], env: Dict[str, str], template_cache: Dict
     if template_name not in template_cache:
         template_cache[template_name] = daily_send.load_template(template_name)
     rendered = daily_send.render_template(template_cache[template_name], prospect)
+    variant_id = experiment.pick_variant(exp_state["index"], exp_state["weights"])
+    exp_state["index"] += 1
+    rendered["subject"] = experiment.subject_text(variant_id, prospect)
 
     if dry_run:
-        print(f"  [DRY RUN] would send {task['id']} -> {task['email']} ({task['approval_level']})")
+        print(f"  [DRY RUN] would send {task['id']} -> {task['email']} ({task['approval_level']}) [subj:{variant_id}]")
         task["state"] = "PENDING"
         task["updated_at"] = _iso()
         return
@@ -388,7 +392,7 @@ def process_task(task: Dict[str, Any], env: Dict[str, str], template_cache: Dict
         "signal": "sent",
         "next_step": "",
         "message_id": message_id,
-        "signal_details": f"{template_name}; tier{task['tier']}; task_runner",
+        "signal_details": f"{template_name}; tier{task['tier']}; task_runner; subj:{variant_id}",
         "segment": task["segment"],
     }
     import csv
@@ -470,6 +474,8 @@ def cmd_cycle(args: argparse.Namespace) -> int:
     template_cache: Dict[str, str] = {}
     processed = 0
     limit = args.limit_per_tier or cfg["limit_per_tier"] * len(cfg["tiers"])
+    exp_weights, exp_index = experiment.load_weights_and_start_index()
+    exp_state = {"weights": exp_weights, "index": exp_index}
 
     for task in tasks:
         if usage["sends_today"] >= effective_cap:
@@ -481,7 +487,7 @@ def cmd_cycle(args: argparse.Namespace) -> int:
             continue
         if task["next_attempt_at"] and task["next_attempt_at"] > _iso():
             continue  # still in backoff window
-        process_task(task, env, template_cache, usage, prospects_by_id, cfg, dry_run=args.dry_run)
+        process_task(task, env, template_cache, usage, prospects_by_id, cfg, exp_state, dry_run=args.dry_run)
         processed += 1
 
     save_queue(tasks)

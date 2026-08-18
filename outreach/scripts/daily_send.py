@@ -31,6 +31,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 from clients import request, load_secret
 from outreach_state import can_send as state_can_send, record_send as state_record_send
+import experiment
 
 PROSPECTS_CSV = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/prospects.csv"
 LOG_CSV = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv"
@@ -337,16 +338,27 @@ def cmd_send(args):
 
     if args.dry_run:
         print(f"DRY RUN — would send {len(prospects)} emails using {args.template}:")
+        exp_weights, exp_index = experiment.load_weights_and_start_index()
         for p in prospects:
-            print(f"  {p['id']:6s} {p['email']:35s} {p['first_name']:15s} ({p['company']})")
+            variant_id = experiment.pick_variant(exp_index, exp_weights)
+            exp_index += 1
+            print(f"  {p['id']:6s} {p['email']:35s} {p['first_name']:15s} ({p['company']}) [subj:{variant_id}]")
         return 0
 
     sent_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     os.makedirs(LOG_DIR, exist_ok=True)
     results = []
 
+    # Compute subject-line experiment weights once per batch (not per send --
+    # each send just advances the running index) per experiment.py's kill/
+    # scale rules.
+    exp_weights, exp_index = experiment.load_weights_and_start_index()
+
     for p in prospects:
         rendered = render_template(template, p)
+        variant_id = experiment.pick_variant(exp_index, exp_weights)
+        exp_index += 1
+        rendered["subject"] = experiment.subject_text(variant_id, p)
         result = send_one(env, p["email"], rendered["subject"], rendered["body"])
         results.append({"id": p["id"], "email": p["email"], "ok": result.get("ok"), "result": result})
 
@@ -359,7 +371,7 @@ def cmd_send(args):
             "replied": "",
             "signal": "sent" if result.get("ok") else "send_failed",
             "message_id": (result.get("data") or {}).get("id", "") if result.get("ok") else "",
-            "signal_details": f"{args.template}; tier{args.tier}",
+            "signal_details": f"{args.template}; tier{args.tier}; subj:{variant_id}",
             "next_step": "",
             "segment": p.get("industry", "unknown"),
         }
