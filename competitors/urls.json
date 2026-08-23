@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "updated": "2026-08-07",
+  "competitors": {
+    "Chaser": {
+      "homepage": "https://www.chaserhq.com/",
+      "pricing": "https://www.chaserhq.com/pricing"
+    },
+    "Upflow": {
+      "homepage": "https://upflow.io/",
+      "pricing": "https://upflow.io/pricing"
+    },
+    "HighRadius": {
+      "homepage": "https://www.highradius.com/",
+      "pricing": "https://www.highradius.com/products/order-to-cash/"
+    },
+    "Gaviti": {
+      "homepage": "https://gaviti.com/",
+      "pricing": "https://gaviti.com/pricing/"
+    },
+    "Growfin": {
+      "homepage": "https://growfin.ai/",
+      "pricing": "https://growfin.ai/pricing/"
+    },
+    "BILL": {
+      "homepage": "https://www.bill.com/",
+      "pricing": "https://www.bill.com/pricing"
+    },
+    "Melio": {
+      "homepage": "https://www.melio.com/",
+      "pricing": "https://www.melio.com/pricing"
+    },
+    "Versapay": {
+      "homepage": "https://www.versapay.com/",
+      "pricing": "https://www.versapay.com/pricing"
+    },
+    "QBO_AR": {
+      "homepage": "https://quickbooks.intuit.com/",
+      "ar": "https://quickbooks.intuit.com/learn-support/en-us/help-article/invoicing/send-invoice-reminders-automatically-manually/L84cQjpxo_US_en_US"
+    },
+    "Xero_AR": {
+      "homepage": "https://www.xero.com/",
+      "ar": "https://www.xero.com/us/accounting-software/accounts-receivable/"
+    }
+  }
+}

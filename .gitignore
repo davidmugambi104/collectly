@@ -98,3 +98,6 @@ __pycache__/
 /outreach/data/rate-usage.json
 /outreach/data/deliverability-status*.json
 /.bin/
+/memory/
+/outreach/deliverability-report-*.md
+*.snapshot

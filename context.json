@@ -1,0 +1,48 @@
+{
+  "company": {
+    "name": "Collectly",
+    "founder": "Faith",
+    "timezone": "Africa/Nairobi",
+    "market": "accounts receivable / dunning automation",
+    "stage": "pre-launch",
+    "primary_integrations": ["QBO", "Xero", "Paystack"]
+  },
+  "icp": {
+    "industries": ["local service agencies", "bookkeeping firms", "small consultancies"],
+    "signals": ["uses QBO or Xero", "recurring invoices", "manual payment chasing"],
+    "pain_points": ["late payments", "manual follow-up awkward"],
+    "decision_maker": "founder, finance lead, or bookkeeper"
+  },
+  "product": {
+    "core_loop": "pull invoices → send reminders → track replies/payments → reconcile",
+    "known_risks": [
+      "leaked QBO client secret must be rotated",
+      "dev/prod environments lack proper isolation"
+    ]
+  },
+  "brand_voice": {
+    "tone": "clear, practical, human",
+    "avoid": ["revolutionary", "AI-powered", "synergy"]
+  },
+  "escalation": {
+    "requires_faith_approval": [
+      "OAuth logins",
+      "API key acquisition or rotation",
+      "legal sign-off",
+      "financial decisions",
+      "product-vision judgment",
+      "physical presence",
+      "public messages",
+      "production deployments"
+    ]
+  },
+  "tooling": {
+    "resend": "active",
+    "imap_webhook": "active",
+    "qbo_oauth": "pending_secret_rotation",
+    "xero_oauth": "not_acquired",
+    "paystack": "active",
+    "github": "active"
+  },
+  "updated_at": "2026-08-04"
+}
