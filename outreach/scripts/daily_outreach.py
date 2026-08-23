@@ -11,6 +11,7 @@ sane and avoid spam-flagging).
 import csv, os, subprocess, time, random
 from datetime import datetime
 
+import os
 YOUR_NAME = 'David Mugambi'
 MAX_PER_RUN = 5  # keep daily volume conservative
 
@@ -80,7 +81,7 @@ def send_via_gog(to, subject, body):
 
 def get_contacted_ids():
     """Get IDs of prospects that have received any touch."""
-    log_path = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
+    log_path = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
     contacted = set()
     if os.path.exists(log_path):
         with open(log_path, newline='') as f:
@@ -93,7 +94,7 @@ def get_contacted_ids():
     return contacted
 
 def log_outreach(pid, email, touch, status, detail=''):
-    log_path = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
+    log_path = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
     ts = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     file_exists = os.path.exists(log_path)
     with open(log_path, 'a', newline='') as f:
@@ -103,7 +104,7 @@ def log_outreach(pid, email, touch, status, detail=''):
         w.writerow([pid, email, touch, ts, '', status, '', '', detail])
 
 # Read prospects
-with open('/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv', newline='') as f:
+with open(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects.csv', newline='') as f:
     prospects = list(csv.DictReader(f))
 
 # Find uncontacted, emailable prospects
@@ -117,7 +118,7 @@ print(f"daily outreach run: {len(candidates)} candidates, sending {len(batch)}")
 if not batch:
     print("no uncontacted emailable prospects left")
 else:
-    template = load_template('/home/davie/.openclaw/workspace/collectly/outreach/messages/t1-cold.md')
+    template = load_template(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/messages/t1-cold.md')
     sent = 0
     for p in batch:
         body = render(template, p)

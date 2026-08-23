@@ -553,6 +553,55 @@ def cmd_approve(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_drop(args: argparse.Namespace) -> int:
+    """Retire a task from active reporting without trying again. Used for
+    the persistent FAILED cases where Resend verification 404's but the
+    send record on our side is intact -- retrying risks a duplicate
+    touch, but leaving the row means the cron re-announces the same
+    failure every cycle. Default mode retires a FAILED task to DONE
+    with an audit trail; --remove hard-removes the row (also for other
+    states) when you want the queue cleaner."""
+
+    import json as _json
+    tasks = load_queue()
+    target = next((t for t in tasks if t["id"] == args.task_id), None)
+    if target is None:
+        print(f"Task {args.task_id} not found in queue.", file=sys.stderr)
+        return 1
+
+    if args.remove:
+        # Audit the drop in the rate log so it's not silent.
+        print(f"DROP (remove): {args.task_id} was {target['state']} for {target['email']} "
+              f"(reason={args.reason or 'no reason given'})")
+        tasks = [t for t in tasks if t["id"] != args.task_id]
+        save_queue(tasks)
+        return 0
+
+    # Retire path: FAILED -> DONE. Only FAILED is a sensible target -- any other
+    # state (PENDING/RUNNING/DONE) is being managed by other code paths and a
+    # drop there would mask real issues.
+    if target["state"] != "FAILED":
+        print(f"Task {args.task_id} is in state {target['state']}, not FAILED. "
+              "Pass --remove if you want to hard-delete it anyway.", file=sys.stderr)
+        return 1
+
+    prev_error = target.get("error")
+    target["state"] = "DONE"
+    target["error"] = None
+    target["result"] = {
+        **(target.get("result") or {}),
+        "dropped": True,
+        "drop_reason": args.reason or "verification_failed_unrecoverable",
+        "previous_error": prev_error,
+    }
+    target["approval_reason"] = (target.get("approval_reason") or "") + \
+        f" (retired via drop: {args.reason or 'verification_failed_unrecoverable'})"
+    target["updated_at"] = _iso()
+    save_queue(tasks)
+    print(f"Dropped {args.task_id}: FAILED -> DONE (suppressed, audit trail kept)")
+    return 0
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description="Collectly outreach task runner")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -566,6 +615,11 @@ def main() -> int:
     p_approve = sub.add_parser("approve", help="approve a NEEDS_APPROVAL task -> PENDING")
     p_approve.add_argument("task_id")
 
+    p_drop = sub.add_parser("drop", help="retire a FAILED task -> DONE without retrying (avoids duplicates); --remove hard-deletes")
+    p_drop.add_argument("task_id")
+    p_drop.add_argument("--reason", default="", help="optional audit reason recorded in the task record")
+    p_drop.add_argument("--remove", action="store_true", help="hard-delete the row instead of retiring it")
+
     p_cap = sub.add_parser("set-cap", help="change daily_send_cap (requires --yes: volume/rate change)")
     p_cap.add_argument("n", type=int)
     p_cap.add_argument("--yes", action="store_true")
@@ -575,6 +629,7 @@ def main() -> int:
         "status": cmd_status,
         "cycle": cmd_cycle,
         "approve": cmd_approve,
+        "drop": cmd_drop,
         "set-cap": cmd_set_cap,
     }[args.cmd](args)
 

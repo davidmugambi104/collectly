@@ -1,5 +1,5 @@
 {
-  "daily_send_cap": 20,
+  "daily_send_cap": 100,
   "max_retries": 3,
   "backoff_base_seconds": 30,
   "tiers": [

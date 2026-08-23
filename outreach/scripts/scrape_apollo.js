@@ -12,10 +12,11 @@
 
 const { chromium } = require("patchright");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
-const SECRET_LOGIN = "/home/davie/.openclaw/secrets/collectly/APOLLO_LOGIN";
-const SECRET_KEY = "/home/davie/.openclaw/secrets/collectly/APOLLO_API_KEY";
+const SECRET_LOGIN = path.join(os.homedir(), ".openclaw/secrets/collectly/APOLLO_LOGIN");
+const SECRET_KEY = path.join(os.homedir(), ".openclaw/secrets/collectly/APOLLO_API_KEY");
 const SESSION_PATH = path.join(__dirname, "apollo-session.json");
 const APOLLO_BASE = "https://app.apollo.io";
 

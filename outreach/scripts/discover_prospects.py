@@ -17,11 +17,12 @@ import csv, os, re, json, time, urllib.parse, urllib.request
 from urllib.parse import urlparse
 
 # Paths
-CSV_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv'
-LOG_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
+import os
+CSV_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects.csv'
+LOG_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
 
 # Hunter
-HUNTER_KEY_PATH = '/home/davie/.openclaw/secrets/collectly/HUNTER_API_KEY'
+HUNTER_KEY_PATH = f'{os.path.expanduser("~")}/.openclaw/secrets/collectly/HUNTER_API_KEY'
 
 # Segments to scrape
 SEGMENTS = [

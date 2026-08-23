@@ -8,8 +8,9 @@ Methods:
 """
 import csv, re, json, urllib.request, urllib.parse, time, sys, os
 
-PROSPECTS_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv'
-NEXT_BATCH_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/prospects-next-batch.csv'
+import os
+PROSPECTS_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects.csv'
+NEXT_BATCH_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects-next-batch.csv'
 
 def normalize(name):
     return re.sub(r"[^a-z0-9]", "", name.lower())

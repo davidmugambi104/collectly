@@ -11,12 +11,29 @@ import smtplib
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+def _load_env_local():
+    env_path = Path(__file__).resolve().parent.parent.parent / '.env.local'
+    if not env_path.exists():
+        return
+    with open(env_path, encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+            k, v = line.split('=', 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+_load_env_local()
 
 IMAP_HOST = 'imap.gmail.com'
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_PORT = 587
-USER = 'davidmugambi104@gmail.com'
-APP_PASSWORD = 'ieir izkv hwyn glvr'
+USER = os.environ.get('GMAIL_USER', 'davidmugambi104@gmail.com')
+if not os.environ.get('GMAIL_APP_PASSWORD'):
+    sys.exit('Missing GMAIL_APP_PASSWORD in .env.local — see .env.example')
+APP_PASSWORD = os.environ['GMAIL_APP_PASSWORD']
 SENDERS = [
     'jon.burdon@bertagency.co.uk',
     'jason@madebyshape.co.uk',
@@ -48,10 +65,17 @@ SENDERS = [
     'mellor@duo.at',
     'eleanor@oslo.agency',
 ]
-PROSPECTS_CSV = '/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv'
-LOG_CSV = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
-TRIAGE_SCRIPT = '/home/davie/.openclaw/workspace/collectly/outreach/scripts/triage_reply.py'
-MEMORY_FILE = '/home/davie/.openclaw/workspace/memory/2026-07-20-collectly-launch.md'
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_OUTREACH = os.path.dirname(_SCRIPT_DIR)
+_COLLECTLY = os.path.dirname(_OUTREACH)
+_WORKSPACE = os.path.dirname(_COLLECTLY)
+_DATA = os.path.join(_OUTREACH, 'data')
+_SCRIPTS = _SCRIPT_DIR
+PROSPECTS_CSV = os.path.join(_DATA, 'prospects.csv')
+LOG_CSV = os.path.join(_DATA, 'outreach-log.csv')
+TRIAGE_SCRIPT = os.path.join(_SCRIPTS, 'triage_reply.py')
+_MEMORY_DIR = os.path.join(_WORKSPACE, 'memory')
+MEMORY_FILE = os.path.join(_MEMORY_DIR, '2026-07-20-collectly-launch.md')
 SINCE_HOURS = 6
 SUBJECT_FILTER = re.compile(r'Re:\s*Who chases invoices\?', re.I)
 

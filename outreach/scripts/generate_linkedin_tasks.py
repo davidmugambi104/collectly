@@ -10,9 +10,10 @@ import csv, os
 from collections import defaultdict
 from datetime import datetime
 
-CSV_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv'
-LOG_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
-OUTPUT_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/queue/linkedin-tasks.md'
+import os
+CSV_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects.csv'
+LOG_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
+OUTPUT_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/queue/linkedin-tasks.md'
 
 os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
 

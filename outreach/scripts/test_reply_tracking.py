@@ -10,7 +10,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-LOG = Path("/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv")
+import os
+LOG = Path(f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv")
 TEST_LOG = LOG.with_suffix(".test.csv")
 
 

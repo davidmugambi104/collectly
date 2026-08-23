@@ -68,3 +68,33 @@ __pycache__/
 .vercel
 .cron_secret.txt
 .env*
+
+# Operational reports/data that embed real prospect contact info (names,
+# emails) inline in prose or JSON -- same reasoning as
+# outreach/data/outreach-log.csv (see outreach/data/.gitignore): these are
+# working files with PII, not source of truth for the product, and don't
+# belong in permanent git history. Added 2026-08-24 when a git-tracking
+# audit found decades of untracked files -- most were fine to add (source
+# code, policy docs with 0-1 incidental email mentions), these were not
+# (14-31 unique prospect emails each).
+/briefings/
+/kpi/
+/launch-checklist.md
+/outreach/policy/decision-log-*.md
+/outreach/drafts/
+/outreach/ready/
+/outreach/data/crm-reconciliation-*.json
+/outreach/data/deliverability-snapshots/
+/outreach/data/gate-status*.json
+/outreach/data/experiment-status*.json
+/outreach/data/task-queue*.json
+/outreach/data/followup-pause-*.json
+/outreach/data/new-batches/
+/outreach/data/apify-runs/
+/outreach/data/run-history/
+/outreach/data/outbound-send-log-*.csv
+/outreach/prospect-states*.json
+/outreach/data/prospect-states-corrected-*.json
+/outreach/data/rate-usage.json
+/outreach/data/deliverability-status*.json
+/.bin/

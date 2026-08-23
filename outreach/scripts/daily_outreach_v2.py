@@ -13,6 +13,7 @@ from datetime import datetime, date
 
 # Allow imports from same dir
 import sys
+import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from state import (
     load_prospects, load_log, append_log,
@@ -46,7 +47,7 @@ TARGET_SEGMENTS = {
 
 def render_template(row):
     """Render the v2 t1-cold template with prospect fields."""
-    with open('/home/davie/.openclaw/workspace/collectly/outreach/messages/t1-cold.md') as f:
+    with open(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/messages/t1-cold.md') as f:
         template = f.read()
     industry = row.get('industry', '')
     segment_label = SEGMENT_LABEL.get(industry, 'agency')

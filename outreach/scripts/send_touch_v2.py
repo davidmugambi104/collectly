@@ -12,6 +12,7 @@ Skips anyone whose status is in SKIP_STATUSES (replied/positive/booked/bounced/e
 import csv, os, subprocess, time, sys
 from datetime import datetime, timedelta
 
+import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from state import load_prospects, load_log, append_log, SKIP_STATUSES
 
@@ -132,7 +133,7 @@ def main():
     print(f"=== {touch} run ===")
     print(f"targets: {len(targets)}")
 
-    template_path = f'/home/davie/.openclaw/workspace/collectly/outreach/messages/{touch}-{"followup" if touch == "t2" else "final" if touch == "t3" else "close"}.md'
+    template_path = '{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/messages/{touch}-{"followup" if touch == "t2" else "final" if touch == "t3" else "close"}.md'
     default_subject = f'Re: Who chases invoices?'
 
     sent = 0

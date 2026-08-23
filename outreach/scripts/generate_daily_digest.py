@@ -10,8 +10,9 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-LOG = Path("/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv")
-LOG_DIR = Path("/home/davie/.openclaw/workspace/collectly/outreach/policy")
+import os
+LOG = Path(f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv")
+LOG_DIR = Path(f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/policy")
 
 
 def main():

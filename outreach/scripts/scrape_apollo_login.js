@@ -21,7 +21,7 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
-const SECRET_PATH = "/home/davie/.openclaw/secrets/collectly/APOLLO_LOGIN";
+const SECRET_PATH = path.join(os.homedir(), ".openclaw/secrets/collectly/APOLLO_LOGIN");
 const SESSION_PATH = path.join(__dirname, "apollo-session.json");
 
 function loadCredentials() {

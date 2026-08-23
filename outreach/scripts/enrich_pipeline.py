@@ -38,8 +38,8 @@ sys.path.insert(0, os.path.dirname(HERE))  # so we can import scripts.clients
 from clients import status as secret_status, request
 from clients import apollo, hunter, skrapp
 
-CSV_PATH = "/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv"
-LOG_PATH = "/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv"
+CSV_PATH = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/prospects.csv"
+LOG_PATH = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv"
 
 CSV_FIELDS = [
     "id", "first_name", "last_name", "company", "role", "country", "team_size",

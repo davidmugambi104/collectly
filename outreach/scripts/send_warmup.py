@@ -22,7 +22,7 @@ CONTACTS = WORKSPACE / "data" / "warmup-contacts.csv"
 TEMPLATES = WORKSPACE / "outputs" / "warmup-templates-v2.md"
 LOG = WORKSPACE / "data" / "outreach-log.csv"
 LOG_DIR = WORKSPACE / "logs"
-ENV_PATH = Path("/home/davie/.openclaw/workspace/collectly/.env.local")
+ENV_PATH = Path(f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/.env.local")
 
 LOG_FIELDS = ["id", "email", "touch", "sent_at", "replied_at", "status", "next_step", "message_id", "detail", "segment"]
 

@@ -11,8 +11,8 @@ import csv
 import os
 from datetime import datetime
 
-CSV_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv'
-LOG_PATH = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
+CSV_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects.csv'
+LOG_PATH = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
 
 # Statuses that mean "do not contact again"
 SKIP_STATUSES = {

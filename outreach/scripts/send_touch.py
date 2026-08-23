@@ -7,6 +7,7 @@ Reads the t1 log to know who was sent t1, reads outreach-log.csv for replies.
 import csv, subprocess, time, os
 from datetime import datetime, timedelta
 
+import os
 YOUR_NAME = 'David Mugendi'
 
 # Industry formatting
@@ -70,7 +71,7 @@ def send(row, body_file, subject):
     return subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 
 def log_outreach(pid, touch, status, detail=''):
-    log_path = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
+    log_path = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
     ts = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     with open(log_path, 'a', newline='') as f:
         w = csv.writer(f)
@@ -78,7 +79,7 @@ def log_outreach(pid, touch, status, detail=''):
 
 # Get replied prospects
 replied = set()
-log_path = '/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
+log_path = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv'
 if os.path.exists(log_path):
     with open(log_path, newline='') as f:
         for row in csv.DictReader(f):
@@ -86,12 +87,12 @@ if os.path.exists(log_path):
                 replied.add(row.get('id', '').strip())
 
 # Read prospects
-with open('/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv', newline='') as f:
+with open(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects.csv', newline='') as f:
     prospects = list(csv.DictReader(f))
 
 # Find who was sent t1 (from log)
 t1_sent = set()
-t1_log = '/home/davie/.openclaw/workspace/collectly/outreach/queue/t1-sent-2026-07-20-gog.csv'
+t1_log = f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/queue/t1-sent-2026-07-20-gog.csv'
 if os.path.exists(t1_log):
     with open(t1_log, newline='') as f:
         for row in csv.DictReader(f):
@@ -100,7 +101,7 @@ if os.path.exists(t1_log):
 
 # Send t2 to those not replied
 TOUCH = os.environ.get('OUTREACH_TOUCH', 't2')
-TEMPLATE_PATH = f'/home/davie/.openclaw/workspace/collectly/outreach/messages/{TOUCH}-{"followup" if TOUCH == "t2" else "final"}.md'
+TEMPLATE_PATH = '{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/messages/{TOUCH}-{"followup" if TOUCH == "t2" else "final"}.md'
 DEFAULT_SUBJ = {
     't2': 'Re: Quick question about your collections process',
     't3': 'closing the loop',

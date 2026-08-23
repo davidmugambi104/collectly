@@ -20,11 +20,11 @@ import smtplib
 SMTP_HOST = 'smtp.gmail.com'
 SMTP_PORT = 465  # SSL
 
-SECRETS = Path('/home/davie/.openclaw/secrets/collectly')
+SECRETS = Path(f'{os.path.expanduser("~")}/.openclaw/secrets/collectly')
 USER_FILE = SECRETS / 'GMAIL_USER'
 PASS_FILE = SECRETS / 'GMAIL_APP_PASSWORD'
 
-LOG_FILE = Path('/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv')
+LOG_FILE = Path(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv')
 
 
 def load_secret(path: Path) -> str:

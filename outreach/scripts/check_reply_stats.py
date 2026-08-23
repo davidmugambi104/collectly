@@ -7,7 +7,8 @@ import csv
 from collections import Counter
 from pathlib import Path
 
-LOG = Path("/home/davie/.openclaw/workspace/collectly/outreach/data/outreach-log.csv")
+import os
+LOG = Path(f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/outreach-log.csv")
 
 
 def main():

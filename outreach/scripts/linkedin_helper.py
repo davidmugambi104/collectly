@@ -10,7 +10,8 @@ import csv, json
 from pathlib import Path
 
 # Read prospects
-CSV_PATH = Path('/home/davie/.openclaw/workspace/collectly/outreach/data/prospects.csv')
+import os
+CSV_PATH = Path(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/data/prospects.csv')
 with CSV_PATH.open(newline='') as f:
     prospects = list(csv.DictReader(f))
 
@@ -18,7 +19,7 @@ with CSV_PATH.open(newline='') as f:
 tbd = [p for p in prospects if p['id'] in [f"P00{i}" for i in range(1, 9)]]
 
 # For each, generate a one-click helper
-output_path = Path('/home/davie/.openclaw/workspace/collectly/outreach/queue/linkedin-helper.md')
+output_path = Path(f'{os.path.expanduser("~")}/.openclaw/workspace/collectly/outreach/queue/linkedin-helper.md')
 output_path.parent.mkdir(parents=True, exist_ok=True)
 
 with output_path.open('w') as f:

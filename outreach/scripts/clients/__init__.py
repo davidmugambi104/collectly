@@ -17,7 +17,7 @@ import urllib.error
 import urllib.request
 from typing import Any, Dict, Optional, Tuple
 
-SECRETS_DIR = "/home/davie/.openclaw/secrets/collectly"
+SECRETS_DIR = f"{os.path.expanduser('~')}/.openclaw/secrets/collectly"
 USER_AGENT = "collectly-outreach/1.0 (+getcollectly.app)"
 
 # Per-host rate limits (requests per second). Conservative defaults.
