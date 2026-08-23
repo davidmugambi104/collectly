@@ -1,0 +1,122 @@
+[
+  {
+    "companyName": "2BScene Design",
+    "domain": "2bs.net.au",
+    "website": "https://2bs.net.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Errol Street, 40, 3051",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@2bs.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61393290282"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/wix-com",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/2bscene_design",
+      "facebook": "https://www.facebook.com/wix",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:21:07.248Z"
+  },
+  {
+    "companyName": "Ooga Booga Designs",
+    "domain": "oogabooga.com.au",
+    "website": "https://oogabooga.com.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Gilbert Road, 9a, 3072",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@oogabooga.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "94804377"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:21:07.258Z"
+  },
+  {
+    "companyName": "Supple",
+    "domain": "supple.com.au",
+    "website": "https://supple.com.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Church Street, 83, 3121",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@supple.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "1300787753"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/suppledigital/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/SuppleDigital/",
+      "facebook": "https://www.facebook.com/Suppledigital/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:21:07.266Z"
+  },
+  {
+    "companyName": "Xponential",
+    "domain": "xponential.com.au",
+    "website": "https://xponential.com.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Chetwynd Street, 79, 3051",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "success@xponential.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "0417703218"
+    ],
+    "socials": {
+      "linkedin": "https://au.linkedin.com/company/xponential-big-gift-specialists",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-08-23T22:21:07.290Z"
+  }
+]

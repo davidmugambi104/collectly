@@ -1,0 +1,123 @@
+[
+  {
+    "companyName": "ScottMadden, Inc",
+    "domain": "scottmadden.com",
+    "website": "https://scottmadden.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "Piedmont Road Northeast, 3565, Atlanta, 30305",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@scottmadden.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14048140020"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/scottmadden-inc./",
+      "twitter": "https://twitter.com/ScottMadden",
+      "instagram": null,
+      "facebook": null,
+      "youtube": "https://www.youtube.com/channel/UChcoO-1KTFq3z9gHLm4vbLA"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:22:51.605Z"
+  },
+  {
+    "companyName": "InForm Advisory",
+    "domain": "informadvisory.com",
+    "website": "https://informadvisory.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "Sidco Drive, 2934, Nashville, 37204",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@informadvisory.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+16152028427"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/inform-advisory-llc?trk=ppro_cprof",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:22:51.636Z"
+  },
+  {
+    "companyName": "On-Demand Group",
+    "domain": "ondemandgroup.com",
+    "website": "https://ondemandgroup.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "Lyndale Avenue South, 2604, Minneapolis, 55405",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@ondemandgroup.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+16123678101",
+      "6123678101"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/on-demand-group",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:22:51.645Z"
+  },
+  {
+    "companyName": "Clientek",
+    "domain": "clientek.com",
+    "website": "https://clientek.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "2nd Avenue North, 417, Minneapolis, 55401",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@clientek.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+16122541475"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/clientek/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": "https://www.facebook.com/ClientekInc/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:22:51.663Z"
+  }
+]

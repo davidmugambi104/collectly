@@ -1,0 +1,127 @@
+[
+  {
+    "companyName": "Tax Minimizers",
+    "domain": "taxminimizers.com",
+    "website": "https://taxminimizers.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "Northeast Hancock Street, 3835, Portland, 97212",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@taxminimizers.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+15032810919",
+      "+15036651040"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": "https://www.instagram.com/taxminimizersoforegon/?hl=en",
+      "facebook": "https://www.facebook.com/tmmgresham",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:18:02.368Z"
+  },
+  {
+    "companyName": "Dougall Conradie",
+    "domain": "cpanw.com",
+    "website": "https://cpanw.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "Southeast Washington Street, 9955, Portland, 97216",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "admin@cpanw.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "9712499920"
+    ],
+    "socials": {
+      "linkedin": "  https://www.linkedin.com/company/52713790/admin/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:18:02.379Z"
+  },
+  {
+    "companyName": "David Downs",
+    "domain": "downscpas.com",
+    "website": "https://downscpas.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "South Macadam Avenue, 5200, Portland, 97239",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "dave@downscpas.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+15032215117",
+      "5032215117"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:18:02.453Z"
+  },
+  {
+    "companyName": "Kim Albert",
+    "domain": "kimalbertcpa.com",
+    "website": "https://kimalbertcpa.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "South Macadam Avenue, 5200, Portland, 97239",
+    "searchQuery": "osm",
+    "emailPattern": "first",
+    "companyEmails": [],
+    "persons": [
+      {
+        "name": "Kim Albert",
+        "title": "attorney",
+        "email": "kim@kimalbertcpa.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [
+      "+15033436123",
+      "5033436123"
+    ],
+    "socials": {
+      "linkedin": "http://linkedin.com/in/kim-albert-8797322",
+      "twitter": "https://twitter.com/kimalbertcpa",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/Kim-Albert-CPA-PC-416907341727446/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-23T22:18:02.483Z"
+  }
+]
