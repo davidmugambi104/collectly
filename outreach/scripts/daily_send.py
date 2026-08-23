@@ -169,7 +169,7 @@ def _select_variant_block(template: str, industry: str) -> str:
     return ""
 
 
-def render_template(template: str, prospect: Dict[str, str]) -> Dict[str, str]:
+def render_template(template: str, prospect: Dict[str, str], hook_override: str = None) -> Dict[str, str]:
     """Render subject + body from a t1 template.
 
     For v3 industry-variants: subject from "## Subject" header, body from
@@ -182,7 +182,10 @@ def render_template(template: str, prospect: Dict[str, str]) -> Dict[str, str]:
     last = prospect.get("last_name", "")
     company = prospect.get("company", "")
     industry = prospect.get("industry", "")
-    hook = prospect.get("hook", "")
+    # hook_override wins when the caller passed one (the H1/H2 rotation from
+    # experiment.py) -- falls back to the prospect's own CSV hook field for
+    # any template/call site that doesn't opt into rotation.
+    hook = hook_override if hook_override is not None else prospect.get("hook", "")
 
     text = template
     for k, v in {
@@ -339,25 +342,31 @@ def cmd_send(args):
     if args.dry_run:
         print(f"DRY RUN — would send {len(prospects)} emails using {args.template}:")
         exp_weights, exp_index = experiment.load_weights_and_start_index()
+        hook_weights, hook_index = experiment.load_hook_weights_and_start_index()
         for p in prospects:
             variant_id = experiment.pick_variant(exp_index, exp_weights)
             exp_index += 1
-            print(f"  {p['id']:6s} {p['email']:35s} {p['first_name']:15s} ({p['company']}) [subj:{variant_id}]")
+            hook_id = experiment.pick_hook(hook_index, hook_weights)
+            hook_index += 1
+            print(f"  {p['id']:6s} {p['email']:35s} {p['first_name']:15s} ({p['company']}) [subj:{variant_id}] [hook:{hook_id}]")
         return 0
 
     sent_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     os.makedirs(LOG_DIR, exist_ok=True)
     results = []
 
-    # Compute subject-line experiment weights once per batch (not per send --
-    # each send just advances the running index) per experiment.py's kill/
-    # scale rules.
+    # Compute subject-line and hook experiment weights once per batch (not
+    # per send -- each send just advances its running index) per
+    # experiment.py's kill/scale rules.
     exp_weights, exp_index = experiment.load_weights_and_start_index()
+    hook_weights, hook_index = experiment.load_hook_weights_and_start_index()
 
     for p in prospects:
-        rendered = render_template(template, p)
         variant_id = experiment.pick_variant(exp_index, exp_weights)
         exp_index += 1
+        hook_id = experiment.pick_hook(hook_index, hook_weights)
+        hook_index += 1
+        rendered = render_template(template, p, hook_override=experiment.hook_text(hook_id, p))
         rendered["subject"] = experiment.subject_text(variant_id, p)
         result = send_one(env, p["email"], rendered["subject"], rendered["body"])
         results.append({"id": p["id"], "email": p["email"], "ok": result.get("ok"), "result": result})
@@ -371,7 +380,7 @@ def cmd_send(args):
             "replied": "",
             "signal": "sent" if result.get("ok") else "send_failed",
             "message_id": (result.get("data") or {}).get("id", "") if result.get("ok") else "",
-            "signal_details": f"{args.template}; tier{args.tier}; subj:{variant_id}",
+            "signal_details": f"{args.template}; tier{args.tier}; subj:{variant_id}; hook:{hook_id}",
             "next_step": "",
             "segment": p.get("industry", "unknown"),
         }

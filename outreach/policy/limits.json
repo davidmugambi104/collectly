@@ -1,0 +1,27 @@
+{
+  "_comment": "Machine-readable thresholds mirroring outreach/policy/collectly_bot_policy.md Sections 0, 3, and 4. Referenced by cron job descriptions and deliverability_gate.py since at least 2026-08-11 but never created until now -- see decision-log-2026-08-11.md / 2026-08-18.md / 2026-08-23.md section 5.4. Keep this file and the policy doc in sync; if they ever disagree, the policy doc is the source of truth.",
+  "min_sends_for_kill": 50,
+  "min_sends_for_scale": 30,
+  "min_sends_for_niche_lead": 100,
+  "reply_rate_pct_kill_below": 2.0,
+  "reply_rate_pct_scale_above": 8.0,
+  "niche_lead_multiplier": 2.0,
+  "niche_lead_volume_shift_winner_pct": 70,
+  "niche_lead_volume_shift_loser_pct": 30,
+  "bounce_pct_pullback": 5.0,
+  "spam_pct_pullback": 5.0,
+  "resend_daily_cap_default": 100,
+  "pullback_cap": 30,
+  "gmail_daily_cap_default": 0,
+  "linkedin_daily_cap_default": 10,
+  "review_cadence_days": 7,
+  "primary_folder_required_for_pass": 4,
+  "primary_folder_required_for_conditional_pass": 3,
+  "spam_promotions_max_for_pass": 0,
+  "spam_junk_promotions_min_for_fail": 2,
+  "follow_up_cadence_days": {
+    "touch_2": 4,
+    "touch_3": 9
+  },
+  "cold_recontact_days": 90
+}
