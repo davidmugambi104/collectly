@@ -50,6 +50,8 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
 SEED_LOG = DATA / "seed-inbox-test-log.csv"
 DELIV_STATUS = DATA / "deliverability-status.json"
 GATE_STATUS = DATA / "gate-status.json"
+SNAPSHOTS = DATA / "deliverability-snapshots"
+SNAPSHOT_MAX_AGE_HOURS = 24
 
 # Pass criteria from collectly_bot_policy.md Section 0.
 PRIMARY_REQUIRED = 4   # 4/4 in Primary/Inbox = pass
@@ -153,6 +155,47 @@ def _read_send_logs(window_days: int = 7) -> dict:
     }
 
 
+def _read_live_snapshot() -> dict | None:
+    """Return rolling-window bounce/spam data from the latest live Resend
+    snapshot (written by run_daily_deliverability_monitor.py), if one
+    exists and is fresh enough to trust.
+
+    The local-CSV rollup in _read_send_logs() is blind to bounces once
+    Resend's actual send activity outruns the per-day
+    outbound-send-log-*.csv files (which this repo hasn't kept current) --
+    it silently reports 0 total / 0% bounce and the gate defaults to
+    allow/100 even when the live bounce rate is well over the pull-back
+    threshold. Preferring the live snapshot here, when present and recent,
+    keeps every caller of this script (including the 5-minute reply/gate
+    cron) from clobbering the correct pullback state that the daily
+    deliverability monitor already computed from the real Resend API.
+    """
+    candidates = sorted(glob.glob(str(SNAPSHOTS / "resend-7d-summary-*.json")))
+    if not candidates:
+        return None
+    latest = Path(candidates[-1])
+    try:
+        payload = json.loads(latest.read_text(encoding="utf-8"))
+        rollup = payload["rollup"]
+        fetched_at = datetime.fromisoformat(payload["fetched_at"].replace("Z", "+00:00"))
+    except (OSError, KeyError, ValueError):
+        return None
+    age_hours = (_now() - fetched_at).total_seconds() / 3600.0
+    if age_hours > SNAPSHOT_MAX_AGE_HOURS:
+        return None
+    return {
+        "window_days": rollup.get("window_days", 7),
+        "total": rollup["total"],
+        "bounced": rollup["bounced"],
+        "spam": rollup.get("complained", 0),
+        "bounce_rate": rollup["bounce_rate"],
+        "spam_rate": rollup.get("complaint_rate", rollup.get("spam_rate", 0.0)),
+        "source": str(latest.relative_to(HERE.parent.parent)),
+        "fetched_at": payload["fetched_at"],
+        "age_hours": round(age_hours, 2),
+    }
+
+
 def _classify(seed: dict) -> tuple[str, str]:
     """Return (status, reason) per policy Section 0."""
     if seed["total"] == 0:
@@ -189,7 +232,8 @@ def _decide_gate(deliv_status: str, send_metrics: dict) -> tuple[str, str, int]:
 def main() -> int:
     now = _now()
     seed = _read_seed_log()
-    send = _read_send_logs(window_days=7)
+    live_snapshot = _read_live_snapshot()
+    send = live_snapshot if live_snapshot is not None else _read_send_logs(window_days=7)
     deliv_status, deliv_reason = _classify(seed)
     gate, gate_reason, cap = _decide_gate(deliv_status, send)
 
