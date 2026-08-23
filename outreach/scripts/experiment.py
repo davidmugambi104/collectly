@@ -15,13 +15,23 @@ copy, not changing volume/rate/billing/credentials).
 
 Covers two dimensions of the matrix in collectly_bot_policy.md section 2
 (subject x hook), not niche. Hook tracking was added 2026-08-23 per ICP
-review decision-log-2026-08-23.md section 5.2. Deliberately still NOT
-tracking niche as a third dimension here -- at this channel's actual
-volume, splitting across every dimension before any one of them has
-enough sends to read the signal would just add noise. Adding hooks
-roughly doubles the sends needed per cell to reach the kill/scale
-floors in section 3; if that turns out to dilute signal too much at
-current volume, drop back to subject-only rather than adding niche too.
+review decision-log-2026-08-23.md section 5.2.
+
+Subject and hook are tracked as two INDEPENDENT (marginal) experiments,
+not a joint subject x hook grid -- every send advances both dimensions'
+running indices in parallel, and each dimension hits its own 50-send
+kill floor / 30-send scale floor on its own. This is NOT the same cost
+as a full 4x2 factorial design, which would need 50+ sends per cell
+(400+ total) before any single cell could be evaluated. Marginal
+tracking needs roughly 50 sends per subject (already close, given
+existing volume) and separately ~50 per hook (~100 total across H1+H2,
+since they split roughly evenly) -- additive, not multiplicative, and
+the two dimensions never block each other.
+
+Deliberately still NOT tracking niche as a third dimension here --
+adding a third independent axis would mean three floors to clear
+instead of two, and at this channel's current daily-send cap that's
+still a meaningful added wait even without going full-factorial.
 
 Never pauses every variant: if the rules would kill all of them
 simultaneously, falls back to even weights rather than going dark --
