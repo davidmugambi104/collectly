@@ -31,11 +31,16 @@ export function getStripe() {
   return _stripe;
 }
 
-// Backward-compatible exports (lazy getters)
-export const resend = new Proxy({} as Resend, { get: (_t, p) => (getResend() as any)[p] });
-export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getTwilio(); return t ? (t as any)[p] : undefined; } });
-export const stripe = new Proxy({} as Stripe, { get: (_t, p) => (getStripe() as any)[p] });
-export const redis = new Proxy({} as Redis, { get: (_t, p) => { const r = getRedis(); return r ? (r as any)[p] : undefined; } });
+// Backward-compatible exports (lazy getters). Reflect.get() is the
+// idiomatic way to do dynamic property forwarding in a Proxy trap --
+// its own lib.es2015.reflect.d.ts signature returns `any` by design
+// (there's no way to know an arbitrary property's type at compile time),
+// but that's the standard library's typing, not an `any` we're
+// introducing in this file.
+export const resend = new Proxy({} as Resend, { get: (_t, p) => Reflect.get(getResend(), p) });
+export const twilio = new Proxy({} as Twilio, { get: (_t, p) => { const t = getTwilio(); return t ? Reflect.get(t, p) : undefined; } });
+export const stripe = new Proxy({} as Stripe, { get: (_t, p) => Reflect.get(getStripe(), p) });
+export const redis = new Proxy({} as Redis, { get: (_t, p) => { const r = getRedis(); return r ? Reflect.get(r, p) : undefined; } });
 
 // Where dunning replies should go.
 //
@@ -131,8 +136,8 @@ export async function sendSms(opts: { to: string; body: string }) {
     // Resend Message-ID; a run is one channel or the other, no collision).
     statusCallback: `${appUrl}/api/webhooks/twilio-status`,
   });
-  if ((msg as any).errorCode || (msg as any).errorMessage) {
-    throw new Error(`twilio: ${(msg as any).errorCode ?? 'error'}: ${(msg as any).errorMessage}`);
+  if (msg.errorCode || msg.errorMessage) {
+    throw new Error(`twilio: ${msg.errorCode ?? 'error'}: ${msg.errorMessage}`);
   }
   return { sid: msg.sid, status: 'sent' as const };
 }

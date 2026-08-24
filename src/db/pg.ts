@@ -31,7 +31,7 @@ function getDb(): NodePgDatabase<typeof schema> {
 }
 
 export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
-  get(_t, prop) { return (getDb() as any)[prop]; },
+  get(_t, prop) { return Reflect.get(getDb(), prop); },
 });
 
 export { schema };

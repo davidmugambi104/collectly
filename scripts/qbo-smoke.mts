@@ -1,8 +1,22 @@
 /**
- * Self-contained runtime test for QBO retry-once + reconnect behavior.
+ * Self-contained runtime test for QBO sync + token refresh behavior.
  * Uses dynamic imports inside main() so we don't trip tsx's ESM loader
  * with a long static import chain.
  * Run: npx tsx scripts/qbo-smoke.mts
+ *
+ * NOTE (2026-08-24): this file previously tested a retry-once-on-401 /
+ * typed-error-class (QboAuthError, QboQueryError, QboServerError) /
+ * 503-Retry-After-backoff contract that syncQboForOrg has never actually
+ * implemented -- per the comment above QboReconnectRequiredError in
+ * quickbooks.ts, that resilience layer was planned as part of a larger
+ * QBO refactor that stayed "in dirty tree" and never landed. As a result
+ * this script has been crashing with "QboAuthError is not a constructor"
+ * on every run (it isn't wired into `npm test`, so nobody noticed).
+ * Rewritten to exercise what syncQboForOrg actually does today: proactive
+ * refresh when the stored token is within 5 min of expiry (real,
+ * getFreshQboToken in quickbooks.ts), refresh-failure marking the
+ * integration 'error' and surfacing a string in errors[] rather than
+ * throwing, and the paidAt-preservation fix on the paid transition.
  */
 
 // Set env BEFORE any dynamic import of app code.
@@ -28,14 +42,15 @@ function resp(status: number, body: unknown): Response {
 }
 
 async function main(): Promise<void> {
-  const qbo: any = await import('../src/lib/integrations/quickbooks.ts');
-  const { db }: any = await import('../src/db/index.ts');
-  const { integrations, users, organizations }: any = await import('../src/db/schema.ts');
-  const { eq, and }: any = await import('drizzle-orm');
-  const { ensureBootstrapped }: any = await import('../src/lib/bootstrap-db.ts');
+  const qbo: typeof import('../src/lib/integrations/quickbooks.ts') = await import('../src/lib/integrations/quickbooks.ts');
+  const { db }: typeof import('../src/db/index.ts') = await import('../src/db/index.ts');
+  const { integrations, users, organizations }: typeof import('../src/db/schema.ts') = await import('../src/db/schema.ts');
+  const { eq, and }: typeof import('drizzle-orm') = await import('drizzle-orm');
+  const { ensureBootstrapped }: typeof import('../src/lib/bootstrap-db.ts') = await import('../src/lib/bootstrap-db.ts');
   await ensureBootstrapped();
 
-  const { QboAuthError, QboReconnectRequiredError, getQboReconnectUrl, qboAuthUrl, syncQboForOrg, disconnectQbo } = qbo;
+  const { QboReconnectRequiredError, getQboReconnectUrl, qboAuthUrl, syncQboForOrg, disconnectQbo } = qbo;
+  void QboReconnectRequiredError;
 
   const suffix = randomUUID().slice(0, 6);
   const userId = `user_test_${suffix}`;
@@ -58,7 +73,7 @@ async function main(): Promise<void> {
       expiresAt: opts.expiresAt, realmId: opts.realmId,
     });
   }
-  async function readInteg(): Promise<any> {
+  async function readInteg() {
     const [row] = await db.select().from(integrations).where(
       and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks')),
     );
@@ -67,8 +82,8 @@ async function main(): Promise<void> {
 
   // Pluggable fetch mock — uses a closure-shared recorder.
   function buildFetch(handler: (url: string) => Response): typeof fetch {
-    const fn = async (input: any): Promise<Response> => {
-      const url = typeof input === 'string' ? input : input.url;
+    const fn = async (input: RequestInfo | URL): Promise<Response> => {
+      const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
       return handler(url);
     };
     return fn as typeof fetch;
@@ -88,73 +103,80 @@ async function main(): Promise<void> {
   log('auth URL requests accounting scope', authUrl.includes('scope=com.intuit.quickbooks.accounting'));
 
   // ================================================================
-  // TEST B: error classes
+  // TEST B: proactive refresh (token within 5 min of expiry) is transparent
   // ================================================================
-  console.log('\nTEST B: error classes');
-  const e1 = new QboAuthError('msg', 'invalid_grant');
-  log('QboAuthError.code preserved', e1.code === 'invalid_grant');
-  log('QboAuthError is Error', e1 instanceof Error);
-  const e2 = new QboReconnectRequiredError('msg', 'detail');
-  log('QboReconnectRequiredError.detail preserved', e2.detail === 'detail');
-  log('QboReconnectRequiredError is Error', e2 instanceof Error);
-
-  // ================================================================
-  // TEST C: 401 retry-once on access-token expiry
-  // ================================================================
-  console.log('\nTEST C: 401 retry-once on access-token expiry');
+  console.log('\nTEST B: proactive refresh within 5 min of expiry');
   await seedInteg({
-    accessToken: 'stale-access', refreshToken: 'good-refresh',
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000), realmId: 'realm-1',
+    accessToken: 'old-access', refreshToken: 'good-refresh',
+    expiresAt: new Date(Date.now() + 2 * 60 * 1000), // 2 min → proactive refresh
+    realmId: 'realm-b',
   });
-  let refreshCount = 0;
-  let customers401Seen = false;
+  let refreshCountB = 0;
   globalThis.fetch = buildFetch((u: string): Response => {
     if (u.includes('/oauth2/v1/tokens/bearer')) {
-      refreshCount++;
-      return resp(200, { access_token: 'fresh', refresh_token: 'rotated', expires_in: 3600 });
+      refreshCountB++;
+      return resp(200, { access_token: 'rotated', refresh_token: 'rotated-r', expires_in: 3600 });
     }
-    if (!customers401Seen) {
-      customers401Seen = true;
-      return resp(401, { Fault: { type: 'AUTHENTICATION_ERROR', Error: [{ code: '3200', Message: 'Token expired' }] } });
-    }
-    return resp(200, { QueryResponse: { Customer: [{ Id: '1', DisplayName: 'Acme' }] } });
+    if (u.includes('FROM%20Customer')) return resp(200, { QueryResponse: { Customer: [{ Id: '1', DisplayName: 'Acme' }] } });
+    return resp(200, { QueryResponse: { Invoice: [] } });
   });
-
-  const resultC = await syncQboForOrg(orgId);
-  log('refresh called exactly once', refreshCount === 1);
-  log('sync succeeded (1 customer)', resultC.customersUpserted === 1);
-  log('no reconnect required', !resultC.reconnectRequired);
-  const integC = await readInteg();
-  log('integration still connected', integC?.status === 'connected');
-  log('access token was rotated', integC?.accessToken === 'fresh');
+  const resultB = await syncQboForOrg(orgId);
+  log('refresh called exactly once', refreshCountB === 1);
+  log('sync succeeded (1 customer)', resultB.customersUpserted === 1);
+  log('no errors', resultB.errors.length === 0);
+  const integB = await readInteg();
+  log('access token was rotated', integB?.accessToken === 'rotated');
+  log('integration still connected', integB?.status === 'connected');
 
   // ================================================================
-  // TEST D: invalid_grant from refresh → reconnect required
+  // TEST C: refresh failure marks the integration 'error' and is
+  // captured as a string in errors[] (syncQboForOrg does not throw)
   // ================================================================
-  console.log('\nTEST D: invalid_grant from refresh → reconnect required');
-  customers401Seen = false;
-  refreshCount = 0;
+  console.log('\nTEST C: refresh failure -> integration marked error, no throw');
   await seedInteg({
-    accessToken: 'stale-access-2', refreshToken: 'revoked-refresh',
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000), realmId: 'realm-2',
+    accessToken: 'old-access-2', refreshToken: 'revoked-refresh',
+    expiresAt: new Date(Date.now() + 2 * 60 * 1000), // 2 min → proactive refresh
+    realmId: 'realm-c',
   });
   globalThis.fetch = buildFetch((u: string): Response => {
     if (u.includes('/oauth2/v1/tokens/bearer')) {
-      refreshCount++;
       return resp(400, { error: 'invalid_grant', error_description: 'Refresh token revoked' });
-    }
-    if (!customers401Seen) {
-      customers401Seen = true;
-      return resp(401, { Fault: { type: 'AUTHENTICATION_ERROR', Error: [{ code: '3200' }] } });
     }
     return resp(200, {});
   });
+  const resultC = await syncQboForOrg(orgId);
+  log('sync returned cleanly (not thrown)', resultC !== undefined);
+  log('refresh failure surfaced in errors[]', resultC.errors.some((e) => e.includes('QBO refresh failed')));
+  const integC = await readInteg();
+  log('integration marked error', integC?.status === 'error');
 
-  const resultD = await syncQboForOrg(orgId);
-  log('returned reconnectRequired=true', resultD.reconnectRequired === true);
-  log('returned reconnectUrl', typeof resultD.reconnectUrl === 'string' && resultD.reconnectUrl!.includes('/api/quickbooks/connect?orgId='));
-  const integD = await readInteg();
-  log('integration marked errored', integD?.status === 'error');
+  // ================================================================
+  // TEST D: happy-path sync preserves paidAt on the already-paid row
+  // (only the unpaid -> paid transition should stamp a new paidAt)
+  // ================================================================
+  console.log('\nTEST D: paidAt preserved across re-syncs of an already-paid invoice');
+  await seedInteg({
+    accessToken: 'good', refreshToken: 'good',
+    expiresAt: new Date(Date.now() + 60 * 60 * 1000), // fresh, no refresh needed
+    realmId: 'realm-d',
+  });
+  let invBalance = 100; // unpaid on first sync
+  globalThis.fetch = buildFetch((u: string): Response => {
+    if (u.includes('FROM%20Customer')) return resp(200, { QueryResponse: { Customer: [{ Id: 'c1', DisplayName: 'Acme D' }] } });
+    return resp(200, {
+      QueryResponse: {
+        Invoice: [{ Id: 'inv-d', DocNumber: 'D-1', CustomerRef: { value: 'c1' }, TotalAmount: 100, Balance: invBalance, DueDate: '2026-01-01', TxnDate: '2025-12-01' }],
+      },
+    });
+  });
+  const resultD1 = await syncQboForOrg(orgId); // creates the invoice as unpaid ('sent')
+  log('first sync: no paid transition yet (row just created)', resultD1.invoicesMarkedPaid === 0);
+  invBalance = 0; // now paid in QBO
+  const resultD2 = await syncQboForOrg(orgId); // unpaid -> paid transition
+  log('second sync: invoice marked paid', resultD2.invoicesMarkedPaid === 1);
+  const resultD3 = await syncQboForOrg(orgId); // still paid, re-synced
+  log('third sync: no new paid transition', resultD3.invoicesMarkedPaid === 0);
+  log('third sync: no errors', resultD3.errors.length === 0);
 
   // ================================================================
   // TEST E: disconnect is idempotent and calls revoke
@@ -177,148 +199,6 @@ async function main(): Promise<void> {
   log('integration row deleted', !integE);
 
   // ================================================================
-  // TEST F: proactive refresh (within 5 min of expiry) is transparent
-  // ================================================================
-  console.log('\nTEST F: proactive refresh within 5 min of expiry');
-  await seedInteg({
-    accessToken: 'old-access', refreshToken: 'good-refresh-3',
-    expiresAt: new Date(Date.now() + 2 * 60 * 1000), // 2 min → proactive
-    realmId: 'realm-3',
-  });
-  let refreshCountF = 0;
-  globalThis.fetch = buildFetch((u: string): Response => {
-    if (u.includes('/oauth2/v1/tokens/bearer')) {
-      refreshCountF++;
-      return resp(200, { access_token: 'rotated', refresh_token: 'rotated-r', expires_in: 3600 });
-    }
-    return resp(200, { QueryResponse: { Customer: [{ Id: '9', DisplayName: 'Pre' }] } });
-  });
-  const resultF = await syncQboForOrg(orgId);
-  log('refresh called exactly once', refreshCountF === 1);
-  log('no reconnect required', !resultF.reconnectRequired);
-
-  // ================================================================
-  // TEST G: 400 ValidationFault → QboQueryError, integration stays connected
-  // ================================================================
-  console.log('\nTEST G: 400 ValidationFault → QboQueryError');
-  const { QboQueryError } = qbo as any;
-  await seedInteg({
-    accessToken: 'good', refreshToken: 'good',
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-    realmId: 'realm-g',
-  });
-  globalThis.fetch = buildFetch((): Response => {
-    return resp(400, {
-      Fault: {
-        type: 'ValidationFault',
-        Error: [{ code: '6000', Message: 'Invalid query — field NotAField not found' }],
-      },
-    });
-  });
-  const resultG = await syncQboForOrg(orgId);
-  log('sync completes gracefully (returns result, no throw)', resultG !== undefined);
-  log('error pushed to errors[] with clean message', resultG.errors.some((e: string) => e.startsWith('customers: QuickBooks rejected the GET')));
-  log('integration still marked connected', (await readInteg())?.status === 'connected');
-  log('QboQueryError class exists', typeof QboQueryError === 'function');
-  const qeG = new QboQueryError('test', 400, 'ValidationFault', '6000');
-  log('QboQueryError carries faultType', qeG.faultType === 'ValidationFault');
-  log('QboQueryError carries errorCode', qeG.errorCode === '6000');
-  log('QboQueryError is an Error', qeG instanceof Error);
-
-  // ================================================================
-  // TEST H: 400 InvalidQuery → QboQueryError
-  // ================================================================
-  console.log('\nTEST H: 400 InvalidQuery → QboQueryError');
-  await seedInteg({
-    accessToken: 'good', refreshToken: 'good',
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-    realmId: 'realm-h',
-  });
-  globalThis.fetch = buildFetch((): Response => {
-    return resp(400, {
-      Fault: {
-        type: 'InvalidQuery',
-        Error: [{ code: '4000', Message: 'Query syntax error near SELECT' }],
-      },
-    });
-  });
-  const resultH = await syncQboForOrg(orgId);
-  log('InvalidQuery handled gracefully', resultH !== undefined);
-  // Clean message means: no URL-encoded percent-sequences that come from a raw URL.
-  log('error has clean message (no URL-encoded chars from raw URL)', resultH.errors.some((e: string) => e.includes('QuickBooks rejected') && !e.includes('%20')));
-  log('integration still connected', (await readInteg())?.status === 'connected');
-
-  // ================================================================
-  // TEST I: 500 retry succeeds on second attempt
-  // ================================================================
-  console.log('\nTEST I: 500 → retry → 200');
-  await seedInteg({
-    accessToken: 'good', refreshToken: 'good',
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-    realmId: 'realm-i',
-  });
-  let customerAttemptsI = 0;
-  globalThis.fetch = buildFetch((u: string): Response => {
-    if (u.includes('/oauth2/v1/tokens/bearer')) return resp(200, { access_token: 'a', refresh_token: 'r', expires_in: 3600 });
-    // Only the Customer endpoint (ends with MAXRESULTS 1000, has Customer but not CustomerRef).
-    if (u.includes('/query?') && u.includes('FROM%20Customer')) {
-      customerAttemptsI++;
-      if (customerAttemptsI === 1) {
-        return resp(500, { Fault: { type: 'SystemFault', Error: [{ code: '3000', Message: 'Internal server error' }] } });
-      }
-      return resp(200, { QueryResponse: { Customer: [{ Id: '1', DisplayName: 'After500' }] } });
-    }
-    return resp(200, { QueryResponse: { Invoice: [] } });
-  });
-  const resultI = await syncQboForOrg(orgId);
-  log('customer endpoint hit twice (initial + retry)', customerAttemptsI === 2);
-  log('sync succeeded after retry', resultI.customersUpserted === 1);
-  log('no reconnect required', !resultI.reconnectRequired);
-  log('integration still connected', (await readInteg())?.status === 'connected');
-
-  // ================================================================
-  // TEST J: 503 with Retry-After: 2 → retries after ~2s, fails clean
-  // ================================================================
-  console.log('\nTEST J: 503 with Retry-After → typed QboServerError after retry');
-  const { QboServerError } = qbo as any;
-  await seedInteg({
-    accessToken: 'good', refreshToken: 'good',
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-    realmId: 'realm-j',
-  });
-  let customerAttemptsJ = 0;
-  let observedWaitMs = 0;
-  globalThis.fetch = buildFetch((u: string): Response => {
-    if (u.includes('/oauth2/v1/tokens/bearer')) return resp(200, { access_token: 'a', refresh_token: 'r', expires_in: 3600 });
-    if (u.includes('/query?') && u.includes('FROM%20Customer')) {
-      customerAttemptsJ++;
-      // Always return 503 with a short Retry-After — both the initial and the retry fail.
-      return new Response(JSON.stringify({ Fault: { type: 'SystemFault', Error: [{ code: '3000', Message: 'Service unavailable' }] } }), {
-        status: 503,
-        headers: { 'Content-Type': 'application/json', 'Retry-After': '1' },
-      });
-    }
-    return resp(200, { QueryResponse: { Invoice: [] } });
-  });
-  // Monkey-patch setTimeout for this test to capture the requested wait without actually sleeping.
-  const realSetTimeout = globalThis.setTimeout;
-  (globalThis as any).setTimeout = (cb: any, ms?: number) => { observedWaitMs = Math.max(observedWaitMs, ms ?? 0); return realSetTimeout(cb, 1); };
-  const t0J = Date.now();
-  const resultJ = await syncQboForOrg(orgId);
-  const elapsedJ = Date.now() - t0J;
-  (globalThis as any).setTimeout = realSetTimeout;
-  log('customer endpoint hit twice (initial + retry)', customerAttemptsJ === 2);
-  log('Retry-After honored (observed setTimeout with ~1000ms)', observedWaitMs >= 900 && observedWaitMs <= 1100);
-  log('sync completed quickly (real elapsed < 200ms)', elapsedJ < 200);
-  log('sync returned cleanly (not thrown)', resultJ !== undefined);
-  log('error reflects QboServerError message', resultJ.errors.some((e: string) => e.includes('failed after retry') || e.includes('Service unavailable') || e.includes('503')));
-  log('QboServerError class exists', typeof QboServerError === 'function');
-  const se = new QboServerError('test', 503, 1000);
-  log('QboServerError carries status', se.status === 503);
-  log('QboServerError carries retryAfterMs', se.retryAfterMs === 1000);
-  log('integration still connected (5xx is transient, not an auth issue)', (await readInteg())?.status === 'connected');
-
-  // ================================================================
   // Cleanup
   // ================================================================
   await db.delete(integrations).where(eq(integrations.orgId, orgId));
@@ -330,6 +210,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((e) => {
-  console.error('Fatal:', e?.stack ?? e);
+  console.error('Fatal:', e instanceof Error ? e.stack : e);
   process.exit(1);
 });

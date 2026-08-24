@@ -8,23 +8,13 @@ config({ path: '.env' });
 
 import { db, schema } from '../src/db';
 import { nanoid } from '../src/lib/utils';
+import { ensureBootstrapped } from '../src/lib/bootstrap-db';
 
 async function main() {
   console.log('Seeding database...');
 
   // 1. Push schema (CREATE TABLE IF NOT EXISTS)
-  const tables = [
-    schema.users, schema.organizations, schema.memberships,
-    schema.customers, schema.invoices, schema.payments, schema.integrations,
-    schema.dunningSequences, schema.dunningRuns, schema.subscriptions, schema.events,
-    schema.waitlist,
-  ];
-  for (const table of tables) {
-    try {
-      void (table as any)[Symbol.for('drizzle:Name')];
-      // Use drizzle-kit-style introspection instead
-    } catch {}
-  }
+  await ensureBootstrapped();
 
   // 2. Wipe + insert
   await db.delete(schema.dunningRuns);
@@ -64,11 +54,11 @@ async function main() {
     { name: 'Riverstone Co.', email: 'hello@riverstone.co', phone: '+447700900123', company: 'Riverstone Co', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 21, paidRate: 0.92, lastPaidAt: new Date(Date.now() - 18 * 86400000).toISOString(), riskScore: 22 } },
   ];
 
-  const customerRows: any[] = [];
+  const customerRows: schema.Customer[] = [];
   for (const c of customers) {
     const [row] = await db.insert(schema.customers).values({
       id: nanoid(), orgId, name: c.name, email: c.email, phone: c.phone, company: c.company,
-      preferredChannel: c.preferredChannel, paymentBehavior: c.behavior as any,
+      preferredChannel: c.preferredChannel, paymentBehavior: c.behavior,
     }).returning();
     customerRows.push(row);
   }
@@ -118,8 +108,8 @@ async function main() {
       { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
       { id: 's2', daysFromDue: 7, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is now 7 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 7 days past due. Please review and settle at your earliest convenience: {{payment_link}}' },
       { id: 's3', daysFromDue: 14, channel: 'email', tone: 'firm', subject: 'Action required: Invoice {{number}}', template: 'Hi {{contact_name}}, our records show Invoice {{number}} for {{amount}} is 14 days overdue. Please confirm payment status or settle the balance: {{payment_link}}' },
-      { id: 's4', daysFromDue: 30, channel: 'sms', tone: 'final', subject: undefined as any, template: 'Final notice: Invoice {{number}} for {{amount}} is 30+ days overdue. Please reply or settle: {{payment_link}}' },
-    ] as any, pauseOnReply: true, pauseOnPayment: true,
+      { id: 's4', daysFromDue: 30, channel: 'sms', tone: 'final', template: 'Final notice: Invoice {{number}} for {{amount}} is 30+ days overdue. Please reply or settle: {{payment_link}}' },
+    ], pauseOnReply: true, pauseOnPayment: true,
   });
 
   // Active subscription
