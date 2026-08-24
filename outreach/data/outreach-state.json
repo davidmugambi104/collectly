@@ -1186,6 +1186,134 @@
       "replies": [],
       "created_at": "2026-08-24T05:20:06.888895+00:00",
       "last_contact": "2026-08-24T05:20:06.888895+00:00"
+    },
+    "info@oogabooga.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T17:25:05.458247+00:00",
+          "message_id": "3e5240a8-f025-4d8d-adb9-522162aba645",
+          "campaign": "tier1",
+          "prospect_id": "PX-56fea893aa",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T17:25:05.458247+00:00",
+      "last_contact": "2026-08-24T17:25:05.458247+00:00"
+    },
+    "info@digitalpresence.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T17:56:14.264719+00:00",
+          "message_id": "c8396bbb-0d86-4e27-a882-b600ee56741b",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787514353-06",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T17:56:14.264719+00:00",
+      "last_contact": "2026-08-24T17:56:14.264719+00:00"
+    },
+    "studio@junocreative.net.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T17:56:17.763188+00:00",
+          "message_id": "543ada2e-6ac8-4229-8e4a-dc439c4f032f",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787514353-08",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T17:56:17.763188+00:00",
+      "last_contact": "2026-08-24T17:56:17.763188+00:00"
+    },
+    "info@pixite.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T17:56:19.826534+00:00",
+          "message_id": "c996b446-e238-4feb-8a00-7f81a4662c5d",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787514353-09",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T17:56:19.826534+00:00",
+      "last_contact": "2026-08-24T17:56:19.826534+00:00"
+    },
+    "info@supple.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T17:56:37.993397+00:00",
+          "message_id": "fa11d316-d8ce-4e84-ab96-9c4736225ade",
+          "campaign": "tier1",
+          "prospect_id": "93",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T17:56:37.993397+00:00",
+      "last_contact": "2026-08-24T17:56:37.993397+00:00"
+    },
+    "info@ondemandgroup.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T17:56:40.236860+00:00",
+          "message_id": "d4a63c78-0cf9-4779-b5e6-95aad503fb5a",
+          "campaign": "tier1",
+          "prospect_id": "94",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T17:56:40.236860+00:00",
+      "last_contact": "2026-08-24T17:56:40.236860+00:00"
+    },
+    "contact@clientek.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T17:56:41.811949+00:00",
+          "message_id": "3c833012-eab4-4725-9afd-ccfd6ee9459f",
+          "campaign": "tier1",
+          "prospect_id": "95",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T17:56:41.811949+00:00",
+      "last_contact": "2026-08-24T17:56:41.811949+00:00"
+    },
+    "info@thomsoncooper.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T19:30:07.666676+00:00",
+          "message_id": "ec854f4b-6714-4a2c-81af-6726ce6b422a",
+          "campaign": "tier1",
+          "prospect_id": "PX-00e9a4272c43",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T19:30:07.666676+00:00",
+      "last_contact": "2026-08-24T19:30:07.666676+00:00"
     }
   },
   "emails": {
@@ -1255,7 +1383,15 @@
     "info@2bs.net.au:t1": "2026-08-23T22:40:51.449562+00:00",
     "info@taxminimizers.com:t1": "2026-08-24T05:17:47.831054+00:00",
     "info@ashishaccounting.com:t1": "2026-08-24T05:17:48.930375+00:00",
-    "contact@ncllcpa.com:t1": "2026-08-24T05:20:06.888895+00:00"
+    "contact@ncllcpa.com:t1": "2026-08-24T05:20:06.888895+00:00",
+    "info@oogabooga.com.au:t1": "2026-08-24T17:25:05.458247+00:00",
+    "info@digitalpresence.com.au:t1": "2026-08-24T17:56:14.264719+00:00",
+    "studio@junocreative.net.au:t1": "2026-08-24T17:56:17.763188+00:00",
+    "info@pixite.com.au:t1": "2026-08-24T17:56:19.826534+00:00",
+    "info@supple.com.au:t1": "2026-08-24T17:56:37.993397+00:00",
+    "info@ondemandgroup.com:t1": "2026-08-24T17:56:40.236860+00:00",
+    "contact@clientek.com:t1": "2026-08-24T17:56:41.811949+00:00",
+    "info@thomsoncooper.com:t1": "2026-08-24T19:30:07.666676+00:00"
   },
   "notes": []
 }
