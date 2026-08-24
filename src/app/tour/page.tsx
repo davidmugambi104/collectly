@@ -61,8 +61,8 @@ export default function TourPage() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="h2 mb-4">Want a walkthrough now, not later?</h2>
           <p className="text-ink-600 mb-8">
-            Product videos are being recorded. For now, email the founder directly and we'll find a time —
-            we'll show you exactly how Collectly works for your business and answer your questions.
+            Product videos are being recorded. For now, email the founder directly and we&apos;ll find a time —
+            we&apos;ll show you exactly how Collectly works for your business and answer your questions.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a
@@ -84,7 +84,7 @@ export default function TourPage() {
       {/* Quick feature strip — an inline list, not a fifth icon-card grid on the site */}
       <section className="border-y border-ink-200 bg-ink-50">
         <div className="container-page py-10 max-w-4xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-ink-500 text-center mb-5">What you'll see in the videos</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-ink-500 text-center mb-5">What you&apos;ll see in the videos</p>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm">
             {[
               { icon: Mail, label: 'Tone-aware dunning — friendly → firm → final, automatically' },

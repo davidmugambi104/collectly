@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { processDunning } from '@/lib/dunning/scheduler';
-import { db } from '@/db';
-import { events } from '@/db/schema';
-import { nanoid } from '@/lib/utils';
 
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET;

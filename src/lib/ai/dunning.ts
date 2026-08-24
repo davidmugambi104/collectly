@@ -58,17 +58,6 @@ const TONE_GUIDANCE: Record<DunningTone, string> = {
   final: 'Last notice before escalation. Clear, professional, and matter-of-fact. State the specific action (collections, legal, service suspension) without being abusive. Include the contact information for resolution. Leave the door open for immediate resolution.',
 };
 
-const MAX_BODY = { email: 600, sms: 320 };
-
-async function callGeminiJSON<T>(systemPrompt: string, userPrompt: string): Promise<T> {
-  const result = await getModel().generateContent({
-    contents: [
-      { role: 'user', parts: [{ text: systemPrompt + '\n\n' + userPrompt }] },
-    ],
-  });
-  const text = result.response.text();
-  return JSON.parse(text) as T;
-}
 
 // Same portal link builder used everywhere else in the codebase (see
 // infra.ts, quickbooks.ts) -- keeps NEXT_PUBLIC_APP_URL as the single
@@ -155,7 +144,7 @@ async function callGeminiValidated<T>(systemPrompt: string, userPrompt: string, 
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
-  } catch (e) {
+  } catch  {
     throw new Error(`LLM returned non-JSON: ${text.slice(0, 200)}`);
   }
   return schema.parse(parsed);
@@ -164,7 +153,6 @@ async function callGeminiValidated<T>(systemPrompt: string, userPrompt: string, 
 export async function generateDunningMessage(ctx: DunningContext): Promise<{ subject?: string; body: string }> {
   validateToneSequence(ctx.tone, ctx.priorMessages);
   const toneGuide = TONE_GUIDANCE[ctx.tone];
-  const maxBody = MAX_BODY[ctx.channel];
   const formattedAmount = formatAmount(ctx.amount, ctx.currency);
   const paymentLink = buildPaymentLink(ctx.invoiceId);
   const invoiceLabel = resolveInvoiceLabel(ctx);

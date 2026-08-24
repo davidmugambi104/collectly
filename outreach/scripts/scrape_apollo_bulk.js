@@ -267,7 +267,6 @@ async function scrape() {
         seen.add(row);
         // Try to extract: name, title, company, email
         const cells = row.querySelectorAll("td");
-        const text = (el) => (el ? el.innerText.trim() : "");
         // First cell often has the name + title + company
         const main = row.querySelector("td:first-child") || row;
         const allText = main.innerText || "";

@@ -64,10 +64,6 @@ function newNonce(): string {
   return randomBytes(32).toString('base64url');
 }
 
-function sign(payload: string): string {
-  return createHmac('sha256', COOKIE_SECRET).update(payload).digest('base64url');
-}
-
 function encryptCookie(json: string): string {
   // Derive a 32-byte key from COOKIE_SECRET.
   const key = createHmac('sha256', COOKIE_SECRET).update('qbo-cookie-key').digest();

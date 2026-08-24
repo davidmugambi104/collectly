@@ -10,7 +10,7 @@ async function main(): Promise<void> {
 
   let pass = 0, fail = 0;
   function log(msg: string, ok: boolean): void {
-    ok ? (pass++, console.log(`  ✓ ${msg}`)) : (fail++, console.log(`  ✗ ${msg}`));
+    if (ok) { pass++; console.log(`  ✓ ${msg}`); } else { fail++; console.log(`  ✗ ${msg}`); }
   }
 
   console.log('\nTEST 1: factorVerificationAge absent → false');

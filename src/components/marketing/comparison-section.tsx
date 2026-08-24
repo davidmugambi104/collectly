@@ -11,7 +11,6 @@ export type PickReason = { label: string };
 export function ComparisonHero({
   title,
   subtitle,
-  competitorName,
   ctaHref = '/sign-up',
 }: {
   title: string;

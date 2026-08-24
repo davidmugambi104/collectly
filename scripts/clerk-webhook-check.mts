@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let pass = 0, fail = 0;
 function log(msg: string, ok: boolean): void {
-  ok ? (pass++, console.log(`  ✓ ${msg}`)) : (fail++, console.log(`  ✗ ${msg}`));
+  if (ok) { pass++; console.log(`  ✓ ${msg}`); } else { fail++; console.log(`  ✗ ${msg}`); }
 }
 
 const routePath = resolve(__dirname, '../src/app/api/webhooks/clerk/route.ts');

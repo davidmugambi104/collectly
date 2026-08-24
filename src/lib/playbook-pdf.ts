@@ -58,7 +58,6 @@ A 5-person services business can typically take DSO from 45 to 18 days in 90 day
   ];
 
   // Build PDF page 1 (cover) and pages 2-6 (sections)
-  const yPos = 760; // y position for next text element
   let pageNum = 1;
 
   // ---- Page 1: cover ----
@@ -71,7 +70,7 @@ A 5-person services business can typically take DSO from 45 to 18 days in 90 day
   }
 
   // ---- Page 7: about / CTA ----
-  pages.push(makeCtaPage(pageNum));
+  pages.push(makeCtaPage());
 
   // ---- Assemble PDF ----
   const objects: string[] = [];
@@ -182,7 +181,7 @@ ET`;
 >>`;
 }
 
-function makeCtaPage(pageNum: number): string {
+function makeCtaPage(): string {
   const content = `BT
 /F1 24 Tf
 72 700 Td

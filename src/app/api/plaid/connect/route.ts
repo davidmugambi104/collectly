@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
 import { plaidCreateLinkToken } from '@/lib/integrations/plaid';
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!process.env.PLAID_CLIENT_ID || !process.env.PLAID_SECRET) {

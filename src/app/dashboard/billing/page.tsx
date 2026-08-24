@@ -6,9 +6,9 @@ import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { organizations, subscriptions, customers, invoices, payments } from '@/db/schema';
 import { eq, and, gte, sql, desc } from 'drizzle-orm';
-import { CheckCircle2, Sparkles, ArrowUpRight, CreditCard, Calendar, AlertCircle, Download, ExternalLink, FileText, X } from 'lucide-react';
+import { CheckCircle2, Sparkles, ArrowUpRight, CreditCard, Calendar, AlertCircle, ExternalLink, FileText, X } from 'lucide-react';
 import { PLAN_PRICING, formatCurrency, formatDate } from '@/lib/utils';
-import { createCustomerPortal, recordUpgradeRequest } from '@/lib/billing';
+import { createCustomerPortal } from '@/lib/billing';
 import Link from 'next/link';
 
 // Per-plan limits. Parsed from PLAN_PRICING.features for display.
@@ -108,11 +108,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                 {PLAN_PRICING[sp.plan as keyof typeof PLAN_PRICING]?.name ?? sp.plan} upgrade request received
               </div>
               <p className="mt-1 text-emerald-900/80">
-                Here's what happens next:
+                Here&apos;s what happens next:
               </p>
               <ol className="mt-2 space-y-1 text-emerald-900/80 list-decimal list-inside">
                 <li>David emails your invoice <b>within 12 hours</b> (bank transfer, Wise, or PayPal — your choice).</li>
-                <li>Once paid, your account is upgraded manually and you'll get a confirmation email.</li>
+                <li>Once paid, your account is upgraded manually and you&apos;ll get a confirmation email.</li>
                 <li>You can keep using Collectly during this window — no interruption.</li>
               </ol>
               <p className="mt-2 text-xs text-emerald-900/70">
@@ -140,7 +140,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         <div className="flex items-start gap-3">
           <Sparkles className="h-4 w-4 text-brand-600 mt-0.5 shrink-0" />
           <div>
-            <div className="font-semibold text-brand-950">You're in the private beta</div>
+            <div className="font-semibold text-brand-950">You&apos;re in the private beta</div>
             <p className="mt-1 text-brand-900/80">
               Card checkout opens with the public beta in a few weeks. During the
               private beta, plan upgrades are handled by manual invoice (bank
@@ -266,7 +266,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="h3">Receipts & payments</h2>
-            <p className="text-xs text-ink-500 mt-0.5">Customer payments you've collected. Use these as proof of receipt for accounting.</p>
+            <p className="text-xs text-ink-500 mt-0.5">Customer payments you&apos;ve collected. Use these as proof of receipt for accounting.</p>
           </div>
           <Link href="/dashboard/payments" className="text-sm text-brand-600 hover:text-brand-700">All payments →</Link>
         </div>

@@ -87,7 +87,7 @@ export default function VsMelioPage() {
           <div className="mt-8 grid sm:grid-cols-2 gap-4 text-sm text-ink-700">
             <div className="card">
               <div className="font-semibold text-ink-900">Free-forever entry plan</div>
-              <p className="mt-1">A $0/mo "Go" plan with free ACH transfers removes all signup friction and gets SMBs in the door fast.</p>
+              <p className="mt-1">A $0/mo &quot;Go&quot; plan with free ACH transfers removes all signup friction and gets SMBs in the door fast.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">AP-first viral loop</div>
@@ -136,7 +136,7 @@ export default function VsMelioPage() {
 
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
-          <h2 className="h2">Don't let free invoicing become slow collections</h2>
+          <h2 className="h2">Don&apos;t let free invoicing become slow collections</h2>
           <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Collectly would send your customers in 10 minutes.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />

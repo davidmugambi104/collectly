@@ -16,7 +16,7 @@ import { parse } from 'csv-parse/sync';
 import { fileURLToPath } from 'node:url';
 import { readSheet, appendRows, ensureSheet } from './sheets.mjs';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+path.dirname(fileURLToPath(import.meta.url));
 
 const SHEET_NAME = 'Prospects';
 const HEADERS = [
@@ -151,7 +151,7 @@ async function main() {
   const data = existing.slice(1);
   const domainCol = headers.indexOf('domain');
   const emailCol = headers.indexOf('email_guess');
-  const idCol = headers.indexOf('id');
+  headers.indexOf('id');
 
   // Index existing rows by domain (and by domain+email if email exists)
   const existingByDomain = new Map();
@@ -195,7 +195,7 @@ async function main() {
   console.log(`After dedupe: ${toAppend.length} new rows, ${toUpdate.length} rows to merge`);
 
   if (dryRun) {
-    for (const { row, sourceRow } of toUpdate.slice(0, 5)) {
+    for (const { sourceRow } of toUpdate.slice(0, 5)) {
       console.log('  Would update row', sourceRow.company, sourceRow.domain, sourceRow.email_guess);
     }
     for (const r of toAppend.slice(0, 5)) {

@@ -96,7 +96,7 @@ export async function getAuthWithOrg() {
       createdBy: user.id,
     });
     return { userId: session.userId, orgId: org.id, user: null };
-  } catch (err) {
+  } catch  {
     // If the slug collides (extremely rare with user-id suffix), try once
     // more with a random suffix before giving up.
     const fallbackSlug = `${slugBase}-${Math.random().toString(36).slice(2, 8)}`;

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
@@ -39,7 +40,7 @@ export function NewCustomerForm() {
       </div>
       {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
       <div className="flex justify-end gap-2">
-        <a href="/dashboard/customers" className="btn-secondary text-sm">Cancel</a>
+        <Link href="/dashboard/customers" className="btn-secondary text-sm">Cancel</Link>
         <button disabled={loading} className="btn-primary text-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Add customer</button>
       </div>
     </form>

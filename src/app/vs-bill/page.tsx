@@ -4,7 +4,7 @@ import { WaitlistForm } from '@/components/marketing/waitlist';
 import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
-import { Check, X, ArrowRight, DollarSign, Layers, Target, Receipt } from 'lucide-react';
+import { Check, ArrowRight, DollarSign, Layers, Target, Receipt } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
@@ -88,11 +88,11 @@ export default function VsBillPage() {
           <div className="mt-8 grid sm:grid-cols-2 gap-4 text-sm text-ink-700">
             <div className="card">
               <div className="font-semibold text-ink-900">Accountant/bookkeeper channel</div>
-              <p className="mt-1">BILL's biggest growth engine is the accounting firm: one bookkeeper can roll it out to dozens of clients.</p>
+              <p className="mt-1">BILL&apos;s biggest growth engine is the accounting firm: one bookkeeper can roll it out to dozens of clients.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">M&A expansion</div>
-              <p className="mt-1">Acquired Divvy (spend cards), Invoice2go, and others to become an "all-in-one" financial operations platform.</p>
+              <p className="mt-1">Acquired Divvy (spend cards), Invoice2go, and others to become an &quot;all-in-one&quot; financial operations platform.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Credit lines as hook</div>
@@ -104,7 +104,7 @@ export default function VsBillPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>For Collectly:</strong> BILL wins by bundling everything. Collectly wins by staying narrow: easier setup, no per-user fees, and AR messaging that doesn't feel like a bank portal.
+            <strong>For Collectly:</strong> BILL wins by bundling everything. Collectly wins by staying narrow: easier setup, no per-user fees, and AR messaging that doesn&apos;t feel like a bank portal.
           </div>
         </div>
       </section>

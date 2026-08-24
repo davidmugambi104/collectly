@@ -1,7 +1,7 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Database, Banknote, ReceiptText, MessageSquare, BarChart3, Lock, Server } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Database, MessageSquare, BarChart3, Lock, Server } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
 
 export const metadata = pageMetadata({
@@ -289,7 +289,7 @@ export default function IntegrationsPage() {
             { icon: Lock, title: 'Authorize the scopes', body: 'You see exactly what we\'re asking for. Most providers let you scope to a single company or org.' },
             { icon: BarChart3, title: 'We pull a snapshot', body: 'Initial sync takes 10-30 seconds for typical A/R volumes. Older data is paginated in the background.' },
             { icon: MessageSquare, title: 'Dunning kicks in', body: 'New overdue invoices automatically enter your dunning sequence. You can pause, edit, or override anytime.' },
-          ].map(({ icon: Icon, title, body }, i) => (
+          ].map(({ title, body }, i) => (
             <li key={title} className="flex items-start gap-4">
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink-900 text-sm font-semibold text-white">{i + 1}</span>
               <div>
@@ -304,10 +304,10 @@ export default function IntegrationsPage() {
       {/* Request */}
       <section className="container-page pb-24 max-w-3xl">
         <div className="rounded-2xl border border-ink-200 bg-ink-50 p-8">
-          <h2 className="h3">Don't see what you need?</h2>
+          <h2 className="h3">Don&apos;t see what you need?</h2>
           <p className="mt-2 text-sm text-ink-600 leading-relaxed">
             We ship integrations based on user votes. The top three most-requested right now are Sage, NetSuite, and MYOB.
-            Tell us what's blocking you and we'll add it to the public roadmap.
+            Tell us what&apos;s blocking you and we&apos;ll add it to the public roadmap.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <a href="mailto:hello@getcollectly.app?subject=Integration%20request" className="btn-primary">

@@ -4,7 +4,7 @@
  */
 import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations, users } from '@/db/schema';
-import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
+import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
@@ -292,7 +292,7 @@ export async function processDunning() {
           type: 'dunning.run.scheduled',
           payload: { runId: run.id, invoiceId: invoice.id, stepId: lastStep.id, days },
         });
-      } catch (e) {
+      } catch  {
         errors += 1;
       }
     }

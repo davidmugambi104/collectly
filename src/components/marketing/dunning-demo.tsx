@@ -23,7 +23,7 @@ export function DunningDemo() {
       });
       const data = await res.json();
       setOutput({ subject: data.subject, body: data.body });
-    } catch (e) {
+    } catch  {
       setOutput({ body: 'Error generating message.' });
     } finally {
       setLoading(false);
@@ -89,7 +89,7 @@ export function DunningDemo() {
         {!output ? (
           <div className="mt-8 text-center text-ink-500 text-sm">
             <Sparkles className="h-8 w-8 mx-auto text-ink-300 mb-3" />
-            <p>Click "Generate message" to see what Collectly sends.</p>
+            <p>Click &quot;Generate message&quot; to see what Collectly sends.</p>
             <p className="mt-1 text-xs text-ink-400">No data is stored. No signup required.</p>
           </div>
         ) : (

@@ -65,7 +65,7 @@ export default async function AdminUpgradeRequestsPage() {
 
         {pending.length === 0 && others.length === 0 && (
           <div className="card text-center py-12">
-            <p className="text-ink-500">No upgrade requests yet. When someone clicks a "Request {PLAN_PRICING.growth.name}" button on /dashboard/billing, it'll show up here.</p>
+            <p className="text-ink-500">No upgrade requests yet. When someone clicks a &quot;Request {PLAN_PRICING.growth.name}&quot; button on /dashboard/billing, it&apos;ll show up here.</p>
           </div>
         )}
 

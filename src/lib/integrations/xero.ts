@@ -12,7 +12,7 @@
  *    the first one (most Xero apps are single-tenant per connection).
  */
 import { db } from '@/db';
-import { integrations, customers as customersTbl, invoices as invoicesTbl, payments as paymentsTbl } from '@/db/schema';
+import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 

@@ -93,11 +93,11 @@ export default function VsQuickbooksPage() {
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Accountant + ProAdvisor network</div>
-              <p className="mt-1">Intuit's ProAdvisor program turns bookkeepers and accountants into a massive unpaid salesforce for QuickBooks products.</p>
+              <p className="mt-1">Intuit&apos;s ProAdvisor program turns bookkeepers and accountants into a massive unpaid salesforce for QuickBooks products.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Brand trust and ubiquity</div>
-              <p className="mt-1">"It's QuickBooks" is enough for many SMBs. Decades of market presence make it the safe default.</p>
+              <p className="mt-1">&quot;It&apos;s QuickBooks&quot; is enough for many SMBs. Decades of market presence make it the safe default.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Transaction-fee model</div>
@@ -105,7 +105,7 @@ export default function VsQuickbooksPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>For Collectly:</strong> Don't fight QuickBooks on invoicing — augment it. Position as the "collections layer" that syncs with QBO and turns reminders into real dunning.
+            <strong>For Collectly:</strong> Don&apos;t fight QuickBooks on invoicing — augment it. Position as the &quot;collections layer&quot; that syncs with QBO and turns reminders into real dunning.
           </div>
         </div>
       </section>
@@ -128,7 +128,7 @@ export default function VsQuickbooksPage() {
               <ul className="space-y-2 text-sm text-ink-700">
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />Your collections needs are simple and occasional</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You only want one tool and one login</li>
-                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You already use QuickBooks Payments and don't want to switch</li>
+                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You already use QuickBooks Payments and don&apos;t want to switch</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You want payment acceptance tightly embedded in QBO</li>
               </ul>
             </div>

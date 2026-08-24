@@ -40,7 +40,7 @@ export default function ArCostCalculatorPage() {
             </Link>
             <Link href="/ar-audit" className="card hover:border-brand-300 transition-colors text-center">
               <div className="text-sm font-semibold text-ink-900">Get a free audit →</div>
-              <p className="mt-1 text-xs text-ink-600">We'll reply with 3 specific cash-flow fixes.</p>
+              <p className="mt-1 text-xs text-ink-600">We&apos;ll reply with 3 specific cash-flow fixes.</p>
             </Link>
           </div>
         </section>

@@ -194,8 +194,8 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
                 placeholder="e.g. mention we value the relationship, keep it short, sign off as 'the team' not a person"
               />
               <div className="mt-1 text-xs text-ink-500">
-                Guides the AI's tone and content for this step. It does not get sent as-is — every message is
-                still written fresh by Gemini using this hint, the actual invoice, and the customer's real payment
+                Guides the AI&apos;s tone and content for this step. It does not get sent as-is — every message is
+                still written fresh by Gemini using this hint, the actual invoice, and the customer&apos;s real payment
                 history. Leave blank to let the AI write with no extra guidance.
               </div>
             </div>

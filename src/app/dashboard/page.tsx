@@ -8,7 +8,7 @@ import { eq, and, sql, lte, desc } from 'drizzle-orm';
 import { getAgingReport, getCashFlowSnapshot, getAIInsights, getCustomerInsights } from '@/lib/analytics';
 import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
-import { DollarSign, Clock, TrendingUp, AlertCircle, CheckCircle2, Sparkles, ArrowRight, Activity, Users, Wallet, Lightbulb } from 'lucide-react';
+import { DollarSign, TrendingUp, AlertCircle, CheckCircle2, Sparkles, ArrowRight, Activity, Wallet, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency, daysOverdue } from '@/lib/utils';
 import { AIInsightsPanel } from '@/components/dashboard/ai-insights-panel';
@@ -208,7 +208,7 @@ function QuickActions({ hasData, hasIntegrations, overdueCount, totalOverdue, ai
   );
 }
 
-function ActionRow({ href, icon, title, subtitle, danger, priority }: { href: string; icon: React.ReactNode; title: string; subtitle: string; danger?: boolean; priority?: 'high' }) {
+function ActionRow({ href, icon, title, subtitle, danger }: { href: string; icon: React.ReactNode; title: string; subtitle: string; danger?: boolean; priority?: 'high' }) {
   return (
     <Link href={href} className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2.5 transition-colors group ${danger ? 'border-red-200 bg-red-50/30 hover:bg-red-50' : 'border-ink-200 hover:border-ink-300 hover:bg-ink-50'}`}>
       <div className="flex items-center gap-3 min-w-0">
@@ -269,7 +269,7 @@ function OverdueCard({ rows, totalCount }: { rows: Array<{ invoice: typeof invoi
         <div className="rounded-xl border border-dashed border-ink-200 p-8 text-center">
           <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto" />
           <h3 className="mt-2 font-semibold text-ink-900">All clear!</h3>
-          <p className="mt-1 text-sm text-ink-600">No overdue invoices. You're all caught up.</p>
+          <p className="mt-1 text-sm text-ink-600">No overdue invoices. You&apos;re all caught up.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -325,7 +325,7 @@ function RecentPaymentsCard({ payments }: { payments: Array<{ payment: typeof sc
         <div className="rounded-xl border border-dashed border-ink-200 p-8 text-center">
           <Wallet className="h-8 w-8 text-ink-300 mx-auto" />
           <h3 className="mt-2 font-semibold text-ink-900 text-sm">No payments yet</h3>
-          <p className="mt-1 text-xs text-ink-600">When customers pay, you'll see them here.</p>
+          <p className="mt-1 text-xs text-ink-600">When customers pay, you&apos;ll see them here.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -366,7 +366,7 @@ function FirstRunChecklist() {
           </ol>
           <p className="mt-5 text-xs text-ink-500">
             <Lightbulb className="inline h-3 w-3 mr-1" />
-            Don't have a QuickBooks account handy? <Link href="/dashboard/integrations" className="font-semibold text-brand-700 hover:text-brand-800">Load sample data</Link> to explore the product with realistic A/R.
+            Don&apos;t have a QuickBooks account handy? <Link href="/dashboard/integrations" className="font-semibold text-brand-700 hover:text-brand-800">Load sample data</Link> to explore the product with realistic A/R.
           </p>
         </div>
       </div>

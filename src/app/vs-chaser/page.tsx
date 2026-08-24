@@ -4,7 +4,7 @@ import { WaitlistForm } from '@/components/marketing/waitlist';
 import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
-import { Check, X, ArrowRight, DollarSign, Clock, Zap, Users } from 'lucide-react';
+import { Check, ArrowRight, DollarSign, Clock, Zap, Users } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
@@ -43,7 +43,7 @@ export default function VsChaserPage() {
         <p className="eyebrow">Comparison</p>
         <h1 className="mt-3 h1">Collectly vs Chaser</h1>
         <p className="mt-5 lead">
-          Chaser is a solid receivables tool — but it's priced for bigger businesses and starts at ~$259/mo.
+          Chaser is a solid receivables tool — but it&apos;s priced for bigger businesses and starts at ~$259/mo.
           Collectly gives small B2B service businesses the same AR automation at a flat $49/mo, with no per-invoice fees
           and a 10-minute setup.
         </p>
@@ -88,14 +88,14 @@ export default function VsChaserPage() {
           <div className="mt-8 grid sm:grid-cols-2 gap-4 text-sm text-ink-700">
             <div className="card">
               <div className="font-semibold text-ink-900">Content + education</div>
-              <p className="mt-1">Heavy blog and "accounts receivable insights" hub drives organic traffic from finance teams searching AR best practices.</p>
+              <p className="mt-1">Heavy blog and &quot;accounts receivable insights&quot; hub drives organic traffic from finance teams searching AR best practices.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Revenue-tiered pricing</div>
               <p className="mt-1">Plans priced by annual revenue band made it easy for growing SMBs to self-select and upgrade naturally.</p>
             </div>
             <div className="card">
-              <div className="font-semibold text-ink-900">"Chaser Pay" wedge</div>
+              <div className="font-semibold text-ink-900">&quot;Chaser Pay&quot; wedge</div>
               <p className="mt-1">Embedded payment acceptance gives customers a reason to bring invoices into Chaser even before full automation.</p>
             </div>
             <div className="card">
@@ -116,7 +116,7 @@ export default function VsChaserPage() {
             <div className="card">
               <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Collectly if...</div>
               <ul className="space-y-2 text-sm text-ink-700">
-                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You're a 5-30 person agency or consultancy</li>
+                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You&apos;re a 5-30 person agency or consultancy</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want transparent, flat pricing</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You use Xero (QuickBooks in beta)</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want empathetic, tone-aware follow-up</li>
@@ -125,7 +125,7 @@ export default function VsChaserPage() {
             <div className="card">
               <div className="text-sm font-semibold text-ink-700 mb-2">Choose Chaser if...</div>
               <ul className="space-y-2 text-sm text-ink-700">
-                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You're mid-market ($5M+ revenue)</li>
+                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You&apos;re mid-market ($5M+ revenue)</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You need multi-entity or complex forecasting</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You want outsourced AR services (Care add-on)</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You need phone/letter dunning channels</li>

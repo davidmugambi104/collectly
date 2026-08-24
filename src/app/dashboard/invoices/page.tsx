@@ -8,7 +8,7 @@ import { db } from '@/db';
 import { invoices, customers } from '@/db/schema';
 import { eq, sql, and, or, ilike } from 'drizzle-orm';
 import Link from 'next/link';
-import { Search, Filter, Download, Plus } from 'lucide-react';
+import { Search, Plus } from 'lucide-react';
 
 export default async function InvoicesPage({ searchParams }: { searchParams: Promise<{ filter?: string; q?: string }> }) {
   const { userId, orgId } = await auth();
@@ -71,14 +71,14 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
           <Link href={`/dashboard/invoices?filter=overdue${q ? `&q=${encodeURIComponent(q)}` : ''}`} className={`btn text-sm ${filter === 'overdue' ? 'btn-primary' : 'btn-secondary'}`}>Overdue</Link>
           <Link href={`/dashboard/invoices?filter=paid${q ? `&q=${encodeURIComponent(q)}` : ''}`} className={`btn text-sm ${filter === 'paid' ? 'btn-primary' : 'btn-secondary'}`}>Paid</Link>
           <button type="submit" className="btn-secondary text-sm">Search</button>
-          <a href="/dashboard/invoices/new" className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />New invoice</a>
+          <Link href="/dashboard/invoices/new" className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />New invoice</Link>
         </div>
       </form>
 
       {filtered.length === 0 ? (
         <div className="card text-center py-12 text-ink-500">
           {q ? (
-            <>No invoices matching <b>"{q}"</b>. <Link href="/dashboard/invoices" className="link">Clear search</Link></>
+            <>No invoices matching <b>&quot;{q}&quot;</b>. <Link href="/dashboard/invoices" className="link">Clear search</Link></>
           ) : (
             <>No invoices yet. <Link href="/dashboard/integrations" className="link">Connect QuickBooks or Xero</Link> to import.</>
           )}

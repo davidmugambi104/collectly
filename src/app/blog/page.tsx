@@ -2,7 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { POSTS } from '@/lib/posts';
-import { pageMetadata, breadcrumbJsonLd, SITE } from '@/lib/seo';
+import { pageMetadata, breadcrumbJsonLd } from '@/lib/seo';
 import Link from 'next/link';
 import { Clock, Tag, Rss } from 'lucide-react';
 
@@ -37,7 +37,7 @@ export default function BlogPage() {
       <section className="container-page pt-16 pb-12">
         <p className="eyebrow">Blog</p>
         <h1 className="mt-3 h1">Notes on A/R, cash flow,<br/>and small-business finance.</h1>
-        <p className="mt-5 lead max-w-2xl">Real essays, not marketing content. Based on the data we've collected building Collectly and the conversations we've had with hundreds of small business owners.</p>
+        <p className="mt-5 lead max-w-2xl">Real essays, not marketing content. Based on the data we&apos;ve collected building Collectly and the conversations we&apos;ve had with hundreds of small business owners.</p>
         <a
           href="/rss.xml"
           className="mt-4 inline-flex items-center gap-1.5 text-sm text-ink-600 hover:text-ink-900"

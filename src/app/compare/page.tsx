@@ -67,9 +67,9 @@ export default function ComparePage() {
           <div className="flex items-start gap-3">
             <Search className="h-5 w-5 text-brand-600 mt-0.5" />
             <div>
-              <div className="font-semibold text-ink-900">Looking for a competitor we haven't covered?</div>
+              <div className="font-semibold text-ink-900">Looking for a competitor we haven&apos;t covered?</div>
               <p className="mt-1 text-sm text-ink-700">
-                Tell us who you're evaluating and we'll add a comparison.{' '}
+                Tell us who you&apos;re evaluating and we&apos;ll add a comparison.{' '}
                 <Link href="/contact" className="link">Contact us</Link> or{' '}
                 <Link href="/ar-audit" className="link">get a free A/R audit</Link>.
               </p>

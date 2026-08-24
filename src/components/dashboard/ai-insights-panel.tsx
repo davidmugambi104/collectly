@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ArrowRight, Sparkles, AlertTriangle, TrendingUp, Zap, Target, Lightbulb } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
 import type { AIInsight } from '@/lib/analytics';
 
 const CATEGORY_META: Record<AIInsight['category'], { icon: React.ReactNode; accent: string; bg: string; ring: string }> = {

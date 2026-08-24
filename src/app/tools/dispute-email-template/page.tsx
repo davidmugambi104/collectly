@@ -2,7 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
-import { CheckCircle2, ArrowRight, FileText } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { DisputeTemplateList } from '@/components/tools/dispute-template-list';
 
 // Free tool page — keyword target: "dispute email template", "invoice
@@ -178,7 +178,7 @@ export default function DisputeTemplatePage() {
       </section>
       <section className="bg-brand-600 text-white">
         <div className="container-page py-12 max-w-3xl">
-          <h2 className="h2">Don't keep writing these by hand.</h2>
+          <h2 className="h2">Don&apos;t keep writing these by hand.</h2>
           <p className="mt-4 lead text-brand-100">
             Collectly classifies incoming replies automatically and pauses the
             reminder sequence on every disputed invoice. No more chasing the

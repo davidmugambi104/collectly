@@ -13,7 +13,6 @@ process.env.QBO_CLIENT_SECRET = 'test_client_secret';
 process.env.QBO_REDIRECT_URI = 'https://test.local/api/quickbooks/callback';
 process.env.NEXT_PUBLIC_APP_URL = 'https://test.local';
 
-import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
 
 let pass = 0, fail = 0;
@@ -68,7 +67,7 @@ async function main(): Promise<void> {
 
   // Pluggable fetch mock — uses a closure-shared recorder.
   function buildFetch(handler: (url: string) => Response): typeof fetch {
-    const fn = async (input: any, _init?: any): Promise<Response> => {
+    const fn = async (input: any): Promise<Response> => {
       const url = typeof input === 'string' ? input : input.url;
       return handler(url);
     };
@@ -208,7 +207,7 @@ async function main(): Promise<void> {
     expiresAt: new Date(Date.now() + 60 * 60 * 1000),
     realmId: 'realm-g',
   });
-  globalThis.fetch = buildFetch((_u: string): Response => {
+  globalThis.fetch = buildFetch((): Response => {
     return resp(400, {
       Fault: {
         type: 'ValidationFault',
@@ -235,7 +234,7 @@ async function main(): Promise<void> {
     expiresAt: new Date(Date.now() + 60 * 60 * 1000),
     realmId: 'realm-h',
   });
-  globalThis.fetch = buildFetch((_u: string): Response => {
+  globalThis.fetch = buildFetch((): Response => {
     return resp(400, {
       Fault: {
         type: 'InvalidQuery',

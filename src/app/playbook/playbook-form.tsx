@@ -49,7 +49,7 @@ export function PlaybookForm() {
         <p className="mt-1 text-sm text-ink-600">
           The PDF should be on your machine. Read it today — Step 1 alone typically recovers $4,200 in the first week.
         </p>
-        <p className="mt-3 text-xs text-ink-500">Want us to email you the playbook too? <a href="/ar-audit" className="link">Book a free 15-min A/R review</a> and we'll send it.</p>
+        <p className="mt-3 text-xs text-ink-500">Want us to email you the playbook too? <a href="/ar-audit" className="link">Book a free 15-min A/R review</a> and we&apos;ll send it.</p>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export function PlaybookForm() {
         </button>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <p className="text-xs text-ink-500 text-center">
-          We'll email you the playbook link and one follow-up after 7 days. No other marketing.
+          We&apos;ll email you the playbook link and one follow-up after 7 days. No other marketing.
         </p>
       </div>
     </form>

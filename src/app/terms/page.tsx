@@ -22,7 +22,7 @@ export default function TermsPage() {
         <h2 className="font-display font-semibold text-xl mt-8">Billing</h2>
         <p>Subscriptions are billed monthly via Stripe, with no annual contract. Cancel anytime from your billing settings.</p>
         <h2 className="font-display font-semibold text-xl mt-8">Liability</h2>
-        <p>The service is provided "as is." We do our best to keep it running and your data safe, but we cannot guarantee uninterrupted service.</p>
+        <p>The service is provided &quot;as is.&quot; We do our best to keep it running and your data safe, but we cannot guarantee uninterrupted service.</p>
       </div>
     </div>
   );

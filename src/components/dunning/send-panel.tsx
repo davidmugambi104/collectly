@@ -1,11 +1,11 @@
 'use client';
 import { useState } from 'react';
 import { DunningPreview } from './preview';
-import { Mail, MessageSquare, Sparkles, Target, Phone } from 'lucide-react';
+import { Sparkles, Phone } from 'lucide-react';
 
 export function DunningSendPanel({
-  invoiceId, customerName, amount, currency, daysOverdue, email, phone, preferredChannel,
-  riskLevel, riskScore, recommendedAction, recommendedChannel, predictedPayment7d,
+  invoiceId, customerName, amount, currency, daysOverdue, email, phone,
+  riskLevel, recommendedAction, recommendedChannel, predictedPayment7d,
 }: {
   invoiceId: string;
   customerName: string;
@@ -22,8 +22,8 @@ export function DunningSendPanel({
   predictedPayment7d?: number;
 }) {
   const [open, setOpen] = useState(false);
-  const [channel, setChannel] = useState<'email' | 'sms'>(recommendedChannel === 'phone' ? (email ? 'email' : 'sms') : (recommendedChannel === 'sms' ? 'sms' : 'email'));
-  const [tone, setTone] = useState<'friendly' | 'firm' | 'final'>(
+  const [channel] = useState<'email' | 'sms'>(recommendedChannel === 'phone' ? (email ? 'email' : 'sms') : (recommendedChannel === 'sms' ? 'sms' : 'email'));
+  const [tone] = useState<'friendly' | 'firm' | 'final'>(
     riskLevel === 'critical' || daysOverdue > 30 ? 'final' :
     riskLevel === 'high' || daysOverdue > 7 ? 'firm' :
     'friendly'

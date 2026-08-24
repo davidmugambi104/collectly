@@ -64,7 +64,7 @@ export function DunningPreview(props: PreviewProps) {
       <div className="text-center py-4">
         <CheckCircle2 className="h-8 w-8 mx-auto text-emerald-600" />
         <h3 className="mt-2 font-semibold text-ink-900">Reminder sent</h3>
-        <p className="mt-1 text-sm text-ink-600">We'll pause any further reminders if they pay.</p>
+        <p className="mt-1 text-sm text-ink-600">We&apos;ll pause any further reminders if they pay.</p>
         <button onClick={props.onCancel} className="mt-3 btn-secondary text-sm">Close</button>
       </div>
     );

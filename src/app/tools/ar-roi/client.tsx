@@ -134,7 +134,7 @@ export function RoiCalculator() {
         </div>
 
         <div className="card">
-          <h3 className="font-semibold text-ink-900">What you'd do with the extra cash</h3>
+          <h3 className="font-semibold text-ink-900">What you&apos;d do with the extra cash</h3>
           <ul className="mt-3 space-y-2 text-sm text-ink-700">
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 mt-0.5">→</span>
@@ -142,7 +142,7 @@ export function RoiCalculator() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 mt-0.5">→</span>
-              Take 2-3 larger clients you've been turning down for cash-flow reasons
+              Take 2-3 larger clients you&apos;ve been turning down for cash-flow reasons
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 mt-0.5">→</span>

@@ -11,8 +11,8 @@
  *    of expiry, so callers can treat tokens as always-valid.
  */
 import { db } from '@/db';
-import { integrations, customers as customersTbl, invoices as invoicesTbl, payments as paymentsTbl } from '@/db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 
 const QBO_BASE = process.env.QBO_ENVIRONMENT === 'production'

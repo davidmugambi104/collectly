@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { eq } from 'drizzle-orm';
@@ -9,7 +9,7 @@ import { db, schema } from '@/db';
  * has no customers yet. Designed for the "Try the demo" flow on the
  * integrations page and the empty-state first-run checklist.
  */
-export async function POST(_req: NextRequest) {
+export async function POST() {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -32,7 +32,7 @@ export async function POST(_req: NextRequest) {
     { name: 'Pinecone Bakery', email: 'bills@pinecone.co', phone: '+12065552222', company: 'Pinecone Bakery', channel: 'email', behavior: { avgDaysToPay: 7, paidRate: 1.0, lastPaidAt: new Date(now.getTime() - 2 * 86400000).toISOString(), riskScore: 5 } },
   ];
   const custIds: Record<string, string> = {};
-  const nowIso = now.toISOString();
+  now.toISOString();
   for (const c of custList) {
     const id = nanoid();
     custIds[c.name] = id;

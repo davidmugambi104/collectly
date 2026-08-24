@@ -4,7 +4,7 @@ import { AppShell } from '@/components/app/shell';
 import { getAuth as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
-import { dunningRuns, dunningSequences, invoices, customers } from '@/db/schema';
+import { dunningRuns, invoices, customers } from '@/db/schema';
 import { eq, and, desc, gte, type SQL } from 'drizzle-orm';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { paramEnum } from '@/lib/query-params';
@@ -78,9 +78,6 @@ export default async function DunningPerformancePage({ searchParams }: { searchP
     .sort((a, b) => b.totalPaid - a.totalPaid)
     .slice(0, 10);
 
-  // Top 3 sequence by activation (most-used)
-  const [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), eq(dunningSequences.isActive, true))).limit(1);
-
   return (
     <AppShell title="Dunning performance" subtitle="Open rates, response rates, and time-to-pay by step and customer.">
       <FilterBar channel={channel} days={days} />
@@ -95,7 +92,7 @@ export default async function DunningPerformancePage({ searchParams }: { searchP
         <div className="card text-center py-12">
           <Sparkles className="h-8 w-8 mx-auto text-ink-300" />
           <h3 className="mt-3 font-semibold text-ink-900">No dunning activity yet</h3>
-          <p className="mt-1 text-sm text-ink-600">Once invoices go overdue and the cron fires, you'll see reminder stats here.</p>
+          <p className="mt-1 text-sm text-ink-600">Once invoices go overdue and the cron fires, you&apos;ll see reminder stats here.</p>
           <Link href="/dashboard/dunning" className="mt-4 btn-primary text-sm inline-flex">Go to dunning →</Link>
         </div>
       ) : (

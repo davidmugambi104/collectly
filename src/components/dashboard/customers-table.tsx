@@ -18,7 +18,7 @@ type Row = {
   openBalance: number;
 };
 
-function RiskBar({ score, level }: { score: number; level: string }) {
+function RiskBar({ score }: { score: number; level: string }) {
   const color = score > 60 ? 'bg-red-500' : score > 30 ? 'bg-amber-500' : 'bg-emerald-500';
   return (
     <div className="flex items-center gap-2">

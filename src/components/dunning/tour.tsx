@@ -85,7 +85,7 @@ export function DunningTour() {
     // Stop the per-frame tracking once things settle — no need to burn
     // cycles on a static tooltip after the scroll animation finishes.
     const stop = setTimeout(() => { if (rafRef.current) cancelAnimationFrame(rafRef.current); }, 900);
-    return () => { stop && clearTimeout(stop); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+    return () => { if (stop) clearTimeout(stop); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [stepIndex]);
 
   // If the user clicks a real control the tour is pointing at — on their

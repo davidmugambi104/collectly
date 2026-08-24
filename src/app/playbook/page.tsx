@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { PlaybookForm } from './playbook-form';
-import { Sparkles, CheckCircle2, Clock, Mail, TrendingDown } from 'lucide-react';
+import { Sparkles, CheckCircle2, Mail, TrendingDown } from 'lucide-react';
 import { pageMetadata, faqJsonLd, howToJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -102,7 +102,7 @@ export default function PlaybookPage() {
                 Cut your DSO from <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">45 days to 18</span> in 90 days.
               </h1>
               <p className="mt-5 text-lg text-ink-600 max-w-xl">
-                A 5-step method to help 5–30 person agencies and consultancies stop chasing invoices and start collecting them. No fluff, no upsell, no "book a call."
+                A 5-step method to help 5–30 person agencies and consultancies stop chasing invoices and start collecting them. No fluff, no upsell, no &quot;book a call.&quot;
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-700">
                 <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" />7-page PDF</span>
@@ -119,10 +119,10 @@ export default function PlaybookPage() {
         {/* What's inside */}
         <section className="container-page py-14 sm:py-20">
           <div className="max-w-2xl mx-auto text-center">
-            <p className="eyebrow">What's inside</p>
+            <p className="eyebrow">What&apos;s inside</p>
             <h2 className="mt-2 h2">5 steps, each with the exact action to take.</h2>
-            <p className="mt-4 lead">No theory, no "consider doing X" — each step ends with a concrete ritual you can start this week.</p>
-            <p className="mt-3 text-xs text-ink-500">Figures below are typical benchmarks from common A/R patterns, not Collectly's own customer data — we're pre-launch and don't have that yet.</p>
+            <p className="mt-4 lead">No theory, no &quot;consider doing X&quot; — each step ends with a concrete ritual you can start this week.</p>
+            <p className="mt-3 text-xs text-ink-500">Figures below are typical benchmarks from common A/R patterns, not Collectly&apos;s own customer data — we&apos;re pre-launch and don&apos;t have that yet.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {STEPS.map((s) => (
@@ -146,7 +146,7 @@ export default function PlaybookPage() {
                 nothing. Replaced with a factual statement of where the
                 product is today. */}
             <blockquote className="mt-4 text-2xl sm:text-3xl font-display leading-snug">
-              "We're early. Founding-customer program is open for the first 20 agencies and bookkeepers, with lifetime $49/mo pricing and direct founder onboarding."
+              &quot;We&apos;re early. Founding-customer program is open for the first 20 agencies and bookkeepers, with lifetime $49/mo pricing and direct founder onboarding.&quot;
             </blockquote>
             <div className="mt-6 flex items-center justify-center gap-3">
               <div className="h-10 w-10 rounded-full bg-white/20" />

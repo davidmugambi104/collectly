@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
   try {
     const result = await generateDunningMessage(fullCtx);
     return NextResponse.json({ ...result, sample: !row, recipient });
-  } catch (e: any) {
+  } catch  {
     // generateDunningMessage() already falls back internally on Gemini
     // failure -- this catch is defense-in-depth for anything else (e.g.
     // a malformed context) so the preview never hard-errors in the UI.

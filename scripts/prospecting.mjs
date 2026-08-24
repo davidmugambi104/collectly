@@ -5,11 +5,10 @@
  *   node scripts/prospecting.mjs lgxbranding.com
  *   node scripts/prospecting.mjs dsquaredmedia.net --source=audit
  */
-import { google } from 'googleapis';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { appendRows, readSheet, ensureSheet } from './sheets.mjs';
+import { appendRows, ensureSheet } from './sheets.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const envPath = path.resolve(__dirname, '../.env.local');
@@ -34,8 +33,6 @@ const HEADERS = [
   'signal', 'signal_source', 'icp_fit', 'status', 'last_touch', 'next_touch',
   'notes', 'created_at',
 ];
-
-const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function today() {
   return `'${new Date().toISOString().split('T')[0]}`;

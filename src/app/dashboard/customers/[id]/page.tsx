@@ -11,7 +11,7 @@ import { DisputePanel } from '@/components/customers/dispute-panel';
 import { AddNoteForm } from '@/components/customers/add-note-form';
 import {
   Mail, MessageSquare, AlertCircle, CheckCircle2, Clock,
-  FileText, DollarSign, Pause, Play, X, Bell, Phone, Sparkles, TrendingUp,
+  FileText, DollarSign, Pause, Play, Bell, Phone, Sparkles, TrendingUp,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -38,7 +38,7 @@ export default async function CustomerStatementPage({
   const cust = customer[0];
 
   // Fetch all related data
-  const [customerInvoices, customerPayments, customerTimeline, customerPromises, customerDisputes] = await Promise.all([
+  const [customerInvoices, , customerTimeline, customerPromises, customerDisputes] = await Promise.all([
     db.select().from(invoices).where(eq(invoices.customerId, cust.id)).orderBy(desc(invoices.dueDate)),
     db.select().from(payments).where(eq(payments.customerId, cust.id)).orderBy(desc(payments.paidAt)).limit(20),
     db.select().from(timelineEvents).where(eq(timelineEvents.customerId, cust.id)).orderBy(desc(timelineEvents.occurredAt)).limit(100),

@@ -1,7 +1,7 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { WaitlistForm } from '@/components/marketing/waitlist';
-import { Bot, FileText, BarChart3, Clock, ShieldCheck, Globe2, Bell, TrendingUp, Users, Sparkles, Mail, MessageSquare, Wallet, Zap } from 'lucide-react';
+import { Bot, FileText, BarChart3, Clock, ShieldCheck, Globe2 } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
 
 export const metadata = pageMetadata({
@@ -92,7 +92,7 @@ export default function FeaturesPage() {
       <section className="container-page pt-16 pb-12 text-center max-w-3xl mx-auto">
         <p className="eyebrow">Features</p>
         <h1 className="mt-3 h1">Six things. Each one aimed at getting you paid faster.</h1>
-        <p className="mt-5 lead">No 200-feature enterprise bloat. No "AI inside" stickers on things that don't need AI. Here's exactly what each one does, below — no marketing fog.</p>
+        <p className="mt-5 lead">No 200-feature enterprise bloat. No &quot;AI inside&quot; stickers on things that don&apos;t need AI. Here&apos;s exactly what each one does, below — no marketing fog.</p>
       </section>
 
       <section className="container-page pb-20">

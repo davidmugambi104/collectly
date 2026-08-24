@@ -1,6 +1,6 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
-import { CheckCircle2, Download, Mail, Globe2, Server, Users } from 'lucide-react';
+import { Mail, Globe2, Server, Users } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
@@ -20,8 +20,8 @@ const sections = [
     body: (
       <>
         <p>
-          This Data Processing Agreement ("DPA") forms part of the Collectly Terms of Service between you
-          ("Controller") and Collectly, Inc. ("Processor"). It applies to the extent that Collectly
+          This Data Processing Agreement (&quot;DPA&quot;) forms part of the Collectly Terms of Service between you
+          (&quot;Controller&quot;) and Collectly, Inc. (&quot;Processor&quot;). It applies to the extent that Collectly
           processes Personal Data on your behalf when you use the A/R automation service.
         </p>
         <p>
@@ -80,7 +80,7 @@ const sections = [
         <p>
           Self-serve accounts are currently processed in a single region (US). EU-only data residency is
           available for enterprise agreements on request. For transfers from the EEA, UK, or Switzerland to a
-          third country, Collectly relies on the European Commission's 2021 Standard Contractual Clauses
+          third country, Collectly relies on the European Commission&apos;s 2021 Standard Contractual Clauses
           (Module 2: Controller-to-Processor) and the UK International Data Transfer Addendum. A copy of the
           executed SCCs is available on request.
         </p>
@@ -201,7 +201,7 @@ export default function DPAPage() {
           <h3 className="h3">Need this countersigned?</h3>
           <p className="mt-2 text-sm text-ink-600 leading-relaxed">
             We accept email-based DPA execution. Send a countersigned PDF to{' '}
-            <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a> and we'll return a fully
+            <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a> and we&apos;ll return a fully
             executed copy within one business day. No DocuSign loop required.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">

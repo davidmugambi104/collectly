@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { xeroAuthUrl } from '@/lib/integrations/xero';
 import { getAuth } from '@/lib/auth-helper';
 import { mintOAuthState } from '@/lib/oauth-state';
 
 /** SECURITY (audit C-1): see quickbooks/connect — org comes from the session,
  * state is server-bound and expiring. */
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const session = await getAuth();
   const orgId = session?.orgId;
   const userId = session?.userId;

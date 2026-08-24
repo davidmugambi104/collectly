@@ -1,14 +1,14 @@
 import { AppShell } from '@/components/app/shell';
 import { getAuth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
-import { db, schema } from '@/db';
+import { db } from '@/db';
 import { invoices, customers, payments, dunningRuns, organizations } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
 import { DunningSendPanel } from '@/components/dunning/send-panel';
 import { MarkAsPaidButton } from '@/components/invoices/mark-paid-button';
 import { WriteOffButton } from '@/components/invoices/write-off-button';
-import { ArrowLeft, MessageSquare, Mail, ExternalLink, Clock, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Mail, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { CopyButton } from '@/components/ui/copy-button';
 import Link from 'next/link';
 import { getCustomerInsights } from '@/lib/analytics';
@@ -31,7 +31,7 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
 
   if (!row || row.invoice.orgId !== orgId) notFound();
 
-  const { invoice, customer, org } = row;
+  const { invoice, customer } = row;
   const balance = Number(invoice.amount) - Number(invoice.amountPaid);
   const days = daysOverdue(invoice.dueDate);
   const isOverdue = days > 0 && invoice.status !== 'paid';

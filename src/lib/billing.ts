@@ -425,7 +425,7 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
         html: `${body}<p>If you have any questions, reply to this email.</p><p>— ${row.org.name}</p>`,
       });
     }
-  } catch (e) {
+  } catch  {
     // Don't fail the webhook on receipt-email failure
     console.warn('[stripe-webhook] payment receipt email failed (non-fatal)');
   }

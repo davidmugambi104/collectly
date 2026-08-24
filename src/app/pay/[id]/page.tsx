@@ -1,10 +1,10 @@
-import { db, schema } from '@/db';
+import { db } from '@/db';
 import { invoices, customers, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
 import { PaymentForm } from '@/components/payment/payment-form';
 import { Logo } from '@/components/brand/logo';
-import { ShieldCheck, Clock, Mail, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Clock, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';

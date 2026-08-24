@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { invoices, customers, payments } from '@/db/schema';
-import { eq, and, sum, count, gte, lte, sql, ne, isNotNull, desc } from 'drizzle-orm';
+import { eq, and, sum, count, gte, lte, sql, desc } from 'drizzle-orm';
 import { bucketFor, daysOverdue } from '@/lib/utils';
 
 export interface AgingReport {
@@ -82,7 +82,7 @@ export async function getCashFlowSnapshot(orgId: string): Promise<CashFlowSnapsh
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const start30Ago = new Date(now.getTime() - 30 * 86400000);
-  const start60Ago = new Date(now.getTime() - 60 * 86400000);
+  new Date(now.getTime() - 60 * 86400000);
   const start90Ago = new Date(now.getTime() - 90 * 86400000);
 
   const [{ outstanding }] = await db

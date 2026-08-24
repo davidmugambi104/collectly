@@ -27,13 +27,6 @@ function loadEnv() {
 loadEnv();
 
 const SHEET_NAME = 'Prospects';
-const HEADERS = [
-  'id', 'source', 'company', 'domain', 'website', 'city', 'state', 'country',
-  'service', 'employees', 'employees_source', 'decision_maker', 'role',
-  'linkedin_url', 'email_guess', 'email_verified', 'email_status', 'confidence',
-  'signal', 'signal_source', 'icp_fit', 'status', 'last_touch', 'next_touch',
-  'notes', 'created_at',
-];
 
 function parseArgs() {
   const limitArg = process.argv.find(a => a.startsWith('--limit='));
@@ -54,7 +47,7 @@ async function verifyEmail(email) {
   return res.json();
 }
 
-function safeSendDecision(status, subStatus, catchAll) {
+function safeSendDecision(status) {
   // Statuses: valid, invalid, catch-all, unknown, spamtrap, abuse, do_not_mail, disposable
   if (status === 'valid') return 'send';
   if (status === 'catch-all') return 'review';

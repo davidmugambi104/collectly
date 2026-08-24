@@ -30,7 +30,7 @@ export function InterviewForm() {
       <div className="text-center py-6">
         <div className="h-12 w-12 mx-auto rounded-full bg-emerald-50 grid place-items-center"><CheckCircle2 className="h-6 w-6 text-emerald-600" /></div>
         <h2 className="mt-3 font-display font-semibold text-xl text-ink-950">Got it. Thank you!</h2>
-        <p className="mt-2 text-sm text-ink-600">We'll reach out within 48 hours to schedule your call. The $25 gift card will be sent after the interview.</p>
+        <p className="mt-2 text-sm text-ink-600">We&apos;ll reach out within 48 hours to schedule your call. The $25 gift card will be sent after the interview.</p>
       </div>
     );
   }
@@ -69,7 +69,7 @@ export function InterviewForm() {
       <div><label className="label">Roughly how much is in outstanding A/R right now? (USD)</label><input value={outstanding} onChange={(e) => setOutstanding(e.target.value)} placeholder="e.g. $50,000" className="input" /></div>
       <div><label className="label">What tools do you use today for invoicing + AR?</label><input value={tool} onChange={(e) => setTool(e.target.value)} placeholder="e.g. QuickBooks, Xero, Wave, spreadsheets" className="input" /></div>
       <div>
-        <label className="label">What's the worst part of collecting unpaid invoices?</label>
+        <label className="label">What&apos;s the worst part of collecting unpaid invoices?</label>
         <textarea value={pain} onChange={(e) => setPain(e.target.value)} required rows={3} className="input" placeholder="e.g. Awkward phone calls, cash flow gaps, manual chasing..." />
       </div>
       <button type="submit" disabled={loading} className="btn-primary w-full text-base h-12">

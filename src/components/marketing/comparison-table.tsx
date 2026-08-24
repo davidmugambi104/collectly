@@ -9,7 +9,6 @@ import { Check, X } from 'lucide-react';
 // per-page comparisons under /compare.
 
 type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
-type Row = [string, string, string, string, string, string, string];
 
 const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
@@ -38,7 +37,6 @@ const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolea
   { key: 'freshbooks', label: 'FreshBooks' },
 ];
 
-const COMPETITOR_INDEX: Record<CompetitorKey, number> = { us: 1, chaser: 2, bill: 3, melio: 4, qb: 5, freshbooks: 6 };
 
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   const isYes = value === '✓';

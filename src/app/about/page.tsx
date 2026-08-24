@@ -1,6 +1,5 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
-import { Logo } from '@/components/brand/logo';
 import { pageMetadata, personJsonLd, webPageJsonLd } from '@/lib/seo';
 
 export const metadata = pageMetadata({
@@ -36,22 +35,22 @@ export default function AboutPage() {
       <MarketingHeader />
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">About</p>
-        <h1 className="mt-3 h1">We're building the A/R tool we wish we had.</h1>
+        <h1 className="mt-3 h1">We&apos;re building the A/R tool we wish we had.</h1>
       </section>
       <section className="container-page pb-20 max-w-3xl prose prose-ink">
         <p className="lead">Collectly is being built for 5–30 person agencies and consultancies using Xero, where a founder or operations lead still manages overdue invoices manually.</p>
         <h2 className="h3 mt-10">Why we exist</h2>
-        <p>The A/R automation market is $4-6B and growing. It's also dominated by tools priced for 500-person companies. QuickBooks and Xero now cover the invoicing and reminders basics — what's missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
+        <p>The A/R automation market is $4-6B and growing. It&apos;s also dominated by tools priced for 500-person companies. QuickBooks and Xero now cover the invoicing and reminders basics — what&apos;s missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
         <h2 className="h3 mt-10">What we believe</h2>
         <ul>
-          <li><b>Small business owners are not stupid.</b> They're under-resourced, under-tooled, and overwhelmed. The right tool respects their time.</li>
-          <li><b>AI is leverage, not magic.</b> The right AI removes the boring 80% of A/R work — the 6th reminder, the cash-flow projection, the cash application. It doesn't replace the owner.</li>
-          <li><b>Honest pricing wins.</b> No per-invoice fees. No setup costs. No annual contracts. No "premium" support tiers.</li>
+          <li><b>Small business owners are not stupid.</b> They&apos;re under-resourced, under-tooled, and overwhelmed. The right tool respects their time.</li>
+          <li><b>AI is leverage, not magic.</b> The right AI removes the boring 80% of A/R work — the 6th reminder, the cash-flow projection, the cash application. It doesn&apos;t replace the owner.</li>
+          <li><b>Honest pricing wins.</b> No per-invoice fees. No setup costs. No annual contracts. No &quot;premium&quot; support tiers.</li>
         </ul>
         <h2 className="h3 mt-10">Where we are</h2>
-        <p>Collectly is built in Nairobi. The team is small and shipping fast. We're pre-launch, recruiting our first founding cohort from agencies and consultancies in the US, UK, AU, and CA.</p>
+        <p>Collectly is built in Nairobi. The team is small and shipping fast. We&apos;re pre-launch, recruiting our first founding cohort from agencies and consultancies in the US, UK, AU, and CA.</p>
         <h2 className="h3 mt-10">Who we serve</h2>
-        <p>5-30 person agencies and consultancies on Xero with 5+ open invoices at any time and no full-time credit controller. We're starting narrow on purpose — accountants and bookkeepers are a future distribution channel, not today's primary customer.</p>
+        <p>5-30 person agencies and consultancies on Xero with 5+ open invoices at any time and no full-time credit controller. We&apos;re starting narrow on purpose — accountants and bookkeepers are a future distribution channel, not today&apos;s primary customer.</p>
       </section>
       <MarketingFooter />
     </div>

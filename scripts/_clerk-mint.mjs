@@ -74,7 +74,7 @@ console.log(`Final title: ${await page.title()}`);
 try {
   const body = await page.evaluate(() => document.body?.innerText?.slice(0, 1500));
   if (body) console.log(`\nVisible body (first 1500 chars):\n${body}`);
-} catch (e) {
+} catch  {
   // Ignore — some redirects can't be introspected
 }
 

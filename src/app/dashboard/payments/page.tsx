@@ -1,11 +1,10 @@
 import { AppShell } from '@/components/app/shell';
 import { getAuth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
-import { db, schema } from '@/db';
+import { db } from '@/db';
 import { payments, customers, invoices } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';

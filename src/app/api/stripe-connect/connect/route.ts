@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { stripeConnectAuthUrl } from '@/lib/integrations/stripe-connect';
 import { getAuth } from '@/lib/auth-helper';
 import { mintOAuthState } from '@/lib/oauth-state';
@@ -15,7 +15,7 @@ import { mintOAuthState } from '@/lib/oauth-state';
  * the org from the caller's own session and mint a server-side binding for
  * the state, so the state can never be forged.
  */
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const session = await getAuth();
   const orgId = session?.orgId;
   const userId = session?.userId;

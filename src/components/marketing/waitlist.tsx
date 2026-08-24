@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import { ArrowRight, Check, Loader2 } from 'lucide-react';
 
 export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
@@ -20,7 +21,7 @@ export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
       if (!res.ok) throw new Error('Failed');
       setStatus('ok');
       setMessage("You're on the list. We'll be in touch.");
-    } catch (e) {
+    } catch  {
       setStatus('error');
       setMessage('Something went wrong. Try again.');
     }
@@ -57,7 +58,7 @@ export function WaitlistForm({ variant }: { variant?: 'dark' | 'light' }) {
       {status === 'error' && <div className="mt-2 text-xs text-red-600">{message}</div>}
       {!message && (
         <p className={`mt-2 text-xs ${dark ? 'text-ink-400' : 'text-ink-500'}`}>
-          Or <a href="/sign-up" className="link">create an account</a> to start now.
+          Or <Link href="/sign-up" className="link">create an account</Link> to start now.
         </p>
       )}
     </form>

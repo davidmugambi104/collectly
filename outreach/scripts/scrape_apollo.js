@@ -16,7 +16,6 @@ const os = require("os");
 const path = require("path");
 
 const SECRET_LOGIN = path.join(os.homedir(), ".openclaw/secrets/collectly/APOLLO_LOGIN");
-const SECRET_KEY = path.join(os.homedir(), ".openclaw/secrets/collectly/APOLLO_API_KEY");
 const SESSION_PATH = path.join(__dirname, "apollo-session.json");
 const APOLLO_BASE = "https://app.apollo.io";
 
@@ -30,13 +29,6 @@ function loadCredentials() {
     if (parts.length >= 2) {
       return { email: parts[0], password: parts.slice(1).join(" ") };
     }
-  }
-  return null;
-}
-
-function loadApiKey() {
-  if (fs.existsSync(SECRET_KEY)) {
-    return fs.readFileSync(SECRET_KEY, "utf-8").trim();
   }
   return null;
 }

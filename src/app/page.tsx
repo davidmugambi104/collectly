@@ -145,7 +145,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Live product status</div>
-              <h3 className="mt-1 text-xl font-display font-bold">What's live today — and what's next.</h3>
+              <h3 className="mt-1 text-xl font-display font-bold">What&apos;s live today — and what&apos;s next.</h3>
               <p className="mt-1 text-sm text-brand-100 max-w-xl">
                 Live: AI dunning, AR aging dashboard, Plaid bank feeds, Paystack payments, Resend email, 4-week cash forecast.
                 QuickBooks, Xero, Stripe, Square, and Twilio are wired and tested; we swap in your production credentials on the first setup call.
@@ -164,7 +164,7 @@ export default function HomePage() {
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-ink-500">Honest about what ships when</p>
             <p className="mt-3 text-sm text-ink-700">
-              No invented case studies. No fake metrics. Just a founder building the A/R tool he wished he'd had, pre-launch and recruiting the first founding cohort.
+              No invented case studies. No fake metrics. Just a founder building the A/R tool he wished he&apos;d had, pre-launch and recruiting the first founding cohort.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-600">
               <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2 Type II preparation in progress</span>
@@ -228,10 +228,10 @@ export default function HomePage() {
       <section className="container-page py-20 sm:py-28">
         <div className="max-w-2xl mx-auto text-center">
           <p className="eyebrow">Try it now</p>
-          <h2 className="mt-2 h2">See exactly what we'd send your customer.</h2>
+          <h2 className="mt-2 h2">See exactly what we&apos;d send your customer.</h2>
           <p className="mt-4 lead">
             No signup. No data stored. Pick a tone, pick a channel, click generate.
-            You'll see a sample message in our three voices. The production composer
+            You&apos;ll see a sample message in our three voices. The production composer
             (in the dashboard) generates real, customer-specific copy with Gemini,
             then lets you edit before sending — this demo shows the structure and
             tone only, with placeholder names.
@@ -326,7 +326,7 @@ export default function HomePage() {
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-emerald-400">Pricing</p>
             <h2 className="mt-2 text-3xl sm:text-4xl font-display font-bold tracking-tight">Honest pricing. No per-invoice fees. No setup costs.</h2>
-            <p className="mt-4 text-lg text-ink-300">14-day trial, founder-assisted setup. Upgrade when you're hooked. Cancel anytime.</p>
+            <p className="mt-4 text-lg text-ink-300">14-day trial, founder-assisted setup. Upgrade when you&apos;re hooked. Cancel anytime.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-3 gap-5">
             <PricingCard name="Founding Customer" price="$49" period="/mo" popular audience="First 20 customers · lifetime price lock" features={['All features unlocked', 'Founder onboarding call', 'Email + SMS dunning', 'Payment portal', 'Cash-flow forecast', 'Unlimited invoices', 'Priority support']} cta="Start founding trial" />
@@ -382,18 +382,18 @@ export default function HomePage() {
       {/* FOUNDER NOTE — a letter, not another eyebrow/h2/grid section */}
       <section className="container-page py-20 sm:py-28">
         <div className="max-w-2xl mx-auto">
-          <span className="font-display text-6xl text-brand-200 leading-none select-none">"</span>
+          <span className="font-display text-6xl text-brand-200 leading-none select-none">&quot;</span>
           <p className="-mt-6 text-xl sm:text-2xl font-display text-ink-900 leading-snug">
             I built this because I was tired of being the one who had to ask.
           </p>
           <p className="mt-5 text-ink-600 leading-relaxed">
-            I'm Davie, the founder of Collectly. I spent years building software and watching small teams
-            lose hours every week to awkward invoice follow-ups, spreadsheets, and "just checking in" emails.
-            Collectly is the tool I wish I'd had: honest pricing, fast setup, and follow-ups that don't make
+            I&apos;m Davie, the founder of Collectly. I spent years building software and watching small teams
+            lose hours every week to awkward invoice follow-ups, spreadsheets, and &quot;just checking in&quot; emails.
+            Collectly is the tool I wish I&apos;d had: honest pricing, fast setup, and follow-ups that don&apos;t make
             your customers hate you.
           </p>
           <p className="mt-4 text-sm text-ink-500">
-            We don't have polished case studies yet — we're building this with our first 20 customers, and
+            We don&apos;t have polished case studies yet — we&apos;re building this with our first 20 customers, and
             real results with real company names are coming once beta partners have a full quarter of data.
             Want to be one of them? Your feedback shapes what ships next.
           </p>
@@ -412,7 +412,7 @@ export default function HomePage() {
             <h2 className="h2">See your own invoices in it before you decide.</h2>
             <p className="mt-4 lead max-w-xl mx-auto">
               Connect Xero or QuickBooks, watch it draft reminders for your actual overdue invoices, and decide
-              from there. If it's not clearly saving you time by day 14, cancel — no retention call.
+              from there. If it&apos;s not clearly saving you time by day 14, cancel — no retention call.
             </p>
             <div className="mt-6 max-w-md mx-auto">
               <Link href="/sign-up" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">

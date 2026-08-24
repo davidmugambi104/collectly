@@ -5,11 +5,11 @@ import { getAuth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { waitlist } from '@/db/schema';
-import { eq, desc, sql, and, like, or } from 'drizzle-orm';
+import { desc, sql, like } from 'drizzle-orm';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { TaggingControls } from './tagging-controls';
-import { Sparkles, ArrowUpRight, Mail, Filter, Download, Users, Clock, MessageSquare } from 'lucide-react';
+import { Sparkles, ArrowUpRight, Mail, Download, Users, Clock, MessageSquare } from 'lucide-react';
 
 export default async function InterviewsPage({ searchParams }: { searchParams: Promise<{ tag?: string; q?: string }> }) {
   const { userId, orgId } = await getAuth();
@@ -108,7 +108,7 @@ export default async function InterviewsPage({ searchParams }: { searchParams: P
           <Sparkles className="h-8 w-8 mx-auto text-ink-300" />
           <h3 className="mt-3 font-semibold text-ink-900">No interviews to review</h3>
           <p className="mt-1 text-sm text-ink-600 max-w-md mx-auto">
-            {q ? <>No interviews match <b>"{q}"</b>. <Link href="/dashboard/admin/interviews" className="link">Clear filter</Link></> : <>Share your <Link href="/interview" className="link">/interview form</Link> link and submissions will land here.</>}
+            {q ? <>No interviews match <b>&quot;{q}&quot;</b>. <Link href="/dashboard/admin/interviews" className="link">Clear filter</Link></> : <>Share your <Link href="/interview" className="link">/interview form</Link> link and submissions will land here.</>}
           </p>
         </div>
       ) : (

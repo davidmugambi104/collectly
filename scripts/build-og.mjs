@@ -11,7 +11,7 @@
 // `image` in pageMetadata() to '/og-<slug>.png'.
 
 import { chromium } from 'patchright';
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 

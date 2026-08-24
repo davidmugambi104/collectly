@@ -86,7 +86,7 @@ export default hasClerk
         // upgrades to Pro and Clerk Multi-factor is flipped on.
       }
     })
-  : (req: any) => {
+  : () => {
       // No-op middleware in dev without Clerk
       return undefined;
     };

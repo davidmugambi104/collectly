@@ -31,7 +31,7 @@ export default function CustomersPage() {
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">Customers</p>
         <h1 className="mt-3 h1">What Collectly is<br/>built to do.</h1>
-        <p className="mt-5 lead">We're pre-launch with no customers yet, so we have no verified results to publish. Below are the outcomes we're building toward — not testimonials. Real, named case studies with permission are coming once our first founding customers have a full quarter of data.</p>
+        <p className="mt-5 lead">We&apos;re pre-launch with no customers yet, so we have no verified results to publish. Below are the outcomes we&apos;re building toward — not testimonials. Real, named case studies with permission are coming once our first founding customers have a full quarter of data.</p>
       </section>
       <section className="container-page pb-20">
         <div className="grid md:grid-cols-3 gap-5">

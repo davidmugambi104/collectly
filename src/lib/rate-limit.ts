@@ -54,7 +54,7 @@ export async function rateLimit(
   });
 
   const identifier = ip || 'unknown';
-  const { success, limit, remaining, reset } = await limiter.limit(identifier);
+  const { success, remaining, reset } = await limiter.limit(identifier);
   return {
     allowed: success,
     remaining: Math.max(0, remaining),

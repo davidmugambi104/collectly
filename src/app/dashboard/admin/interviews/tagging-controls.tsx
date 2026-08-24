@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Tag, Loader2, Check } from 'lucide-react';
+import { Tag, Loader2 } from 'lucide-react';
 
 type Tag = 'icp' | 'maybe' | 'no';
 

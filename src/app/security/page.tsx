@@ -1,6 +1,5 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
-import { Logo } from '@/components/brand/logo';
 import { ShieldCheck, Lock, Server, KeyRound, Eye, FileCheck2, AlertTriangle, Globe2, CheckCircle2 } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 
@@ -67,7 +66,7 @@ export default function SecurityPage() {
         <h1 className="mt-3 h1">Your invoices are sensitive. We treat them that way.</h1>
         <p className="mt-6 lead">
           Collectly sits between your books and your customers. That means we see customer names, balances,
-          payment behavior, and the dunning messages you send. Here's exactly what we do — and don't do — with that access.
+          payment behavior, and the dunning messages you send. Here&apos;s exactly what we do — and don&apos;t do — with that access.
         </p>
       </section>
 
@@ -92,8 +91,8 @@ export default function SecurityPage() {
 
       {/* What we don't do */}
       <section className="container-page pb-20 max-w-3xl">
-        <p className="eyebrow">What we don't do</p>
-        <h2 className="mt-3 h2">Hard lines we don't cross.</h2>
+        <p className="eyebrow">What we don&apos;t do</p>
+        <h2 className="mt-3 h2">Hard lines we don&apos;t cross.</h2>
         <ul className="mt-8 space-y-4 text-ink-700">
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
@@ -105,11 +104,11 @@ export default function SecurityPage() {
           </li>
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-            <span><b>We never share your data with third-party marketers.</b> PostHog is product analytics only. We don't run ad pixels in the app.</span>
+            <span><b>We never share your data with third-party marketers.</b> PostHog is product analytics only. We don&apos;t run ad pixels in the app.</span>
           </li>
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-            <span><b>We never auto-charge customers.</b> Every payment goes through your customer's explicit action on the branded portal or your payment processor's hosted checkout.</span>
+            <span><b>We never auto-charge customers.</b> Every payment goes through your customer&apos;s explicit action on the branded portal or your payment processor&apos;s hosted checkout.</span>
           </li>
         </ul>
       </section>
@@ -119,7 +118,7 @@ export default function SecurityPage() {
         <p className="eyebrow">Controls</p>
         <h2 className="mt-3 h2">Current security posture.</h2>
         <p className="mt-3 text-ink-600">
-          Honest status as of today. "In progress" means we have a target date within the next two quarters.
+          Honest status as of today. &quot;In progress&quot; means we have a target date within the next two quarters.
         </p>
         <div className="mt-8 card overflow-hidden p-0">
           <table className="w-full text-sm">
@@ -156,7 +155,7 @@ export default function SecurityPage() {
         <div className="mt-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
           <p>
-            <b>Bug bounty:</b> we don't have a paid program yet, but we acknowledge every responsible report within
+            <b>Bug bounty:</b> we don&apos;t have a paid program yet, but we acknowledge every responsible report within
             one business day and ship a fix on a negotiated timeline.
           </p>
         </div>

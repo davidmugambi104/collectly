@@ -12,7 +12,7 @@
  * Failures to write to events are swallowed (logged) — never break the
  * caller over an audit-log failure.
  */
-import { db, schema } from '@/db';
+import { db } from '@/db';
 import { events } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { and, eq, desc, gte } from 'drizzle-orm';

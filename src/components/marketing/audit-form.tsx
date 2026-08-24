@@ -47,8 +47,8 @@ export function AuditForm() {
         </div>
         <h2 className="mt-3 font-display font-semibold text-xl text-ink-950">Audit request received</h2>
         <p className="mt-2 text-sm text-ink-600">
-          We'll review your A/R snapshot and reply within 24 hours with 3 specific fixes.
-          If you don't hear back, check your spam folder or email hello@getcollectly.app.
+          We&apos;ll review your A/R snapshot and reply within 24 hours with 3 specific fixes.
+          If you don&apos;t hear back, check your spam folder or email hello@getcollectly.app.
         </p>
       </div>
     );
@@ -109,7 +109,7 @@ export function AuditForm() {
       </div>
 
       <div>
-        <label className="label">What's the biggest pain in your collections process? *</label>
+        <label className="label">What&apos;s the biggest pain in your collections process? *</label>
         <textarea
           value={topPain}
           onChange={(e) => setTopPain(e.target.value)}

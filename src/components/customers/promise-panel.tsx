@@ -120,7 +120,7 @@ export function PromisePanel({
                   {formatCurrency(parseFloat(p.promisedAmount), p.currency ?? 'USD')} by {formatDate(p.promisedDate)}
                 </div>
                 {p.sourceText && (
-                  <div className="text-xs text-ink-600 mt-1 italic">"{p.sourceText}"</div>
+                  <div className="text-xs text-ink-600 mt-1 italic">&quot;{p.sourceText}&quot;</div>
                 )}
               </div>
               <div className="flex items-center gap-2">

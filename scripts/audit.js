@@ -31,7 +31,6 @@ async function db() {
   console.log('Signed in\n');
 
   const c = await db();
-  const out = { sections: [] };
 
   // ===== 1. DUNNING PREVIEW (AI tone fallback) =====
   console.log('1. Dunning preview (no OpenAI key — uses fallback)');

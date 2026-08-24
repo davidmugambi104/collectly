@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { integrations, customers } from '@/db/schema';
 import { eq, count } from 'drizzle-orm';
-import { CheckCircle2, AlertCircle, ExternalLink, BookOpen, RefreshCw, Sparkles, Database, ArrowRight } from 'lucide-react';
+import { CheckCircle2, AlertCircle, BookOpen, Database, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { SampleDataButton } from './sample-data-button';
 import { PlaidCard } from './plaid-card';
@@ -116,13 +116,13 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="font-display font-semibold text-ink-950 text-lg">{needsSetup} integration{needsSetup > 1 ? 's' : ''} need production setup</h2>
-              <p className="mt-1 text-sm text-ink-700">These providers are wired in the code but their developer-app credentials aren't configured in this environment. OAuth won't complete until they're set.</p>
+              <p className="mt-1 text-sm text-ink-700">These providers are wired in the code but their developer-app credentials aren&apos;t configured in this environment. OAuth won&apos;t complete until they&apos;re set.</p>
               <ul className="mt-3 space-y-1 text-xs text-ink-700">
-                {Object.entries(providerStatus).filter(([_, s]) => !s.ready).map(([k, s]) => (
+                {Object.entries(providerStatus).filter(([, s]) => !s.ready).map(([k, s]) => (
                   <li key={k}><b className="capitalize">{k}:</b> {s.reason}</li>
                 ))}
               </ul>
-              <p className="mt-3 text-xs text-ink-600">For the production app, each provider needs: (1) a developer app on the platform's site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@getcollectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
+              <p className="mt-3 text-xs text-ink-600">For the production app, each provider needs: (1) a developer app on the platform&apos;s site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@getcollectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
         <h2 className="h3">How integrations work</h2>
         <ol className="mt-3 space-y-2 text-sm text-ink-600 list-decimal pl-5">
           <li>Click <b>Connect</b> on the provider you use.</li>
-          <li>Authorize Collectly in the provider's OAuth flow.</li>
+          <li>Authorize Collectly in the provider&apos;s OAuth flow.</li>
           <li>We pull your customer, invoice, and payment history (read-only, scoped to A/R).</li>
           <li>You can disconnect any time — we delete the tokens.</li>
         </ol>

@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       <div className="container-tight py-16 prose prose-ink max-w-none">
         <h1 className="text-4xl font-display font-bold">Privacy Policy</h1>
         <p className="text-ink-500 text-sm">Last updated: July 13, 2026</p>
-        <p className="lead">Collectly is a business-to-business accounts-receivable tool. This policy describes the data we collect, how we use it, and the choices you have. It's written in plain English, not legalese — but it's a real policy, not a draft. If you have questions, email privacy@getcollectly.app.</p>
+        <p className="lead">Collectly is a business-to-business accounts-receivable tool. This policy describes the data we collect, how we use it, and the choices you have. It&apos;s written in plain English, not legalese — but it&apos;s a real policy, not a draft. If you have questions, email privacy@getcollectly.app.</p>
         <h2 className="font-display font-semibold text-xl mt-8">What we collect</h2>
         <p>Email, name, billing info, and the data you put in our platform (customers, invoices, payment records).</p>
         <h2 className="font-display font-semibold text-xl mt-8">How we use it</h2>

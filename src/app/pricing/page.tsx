@@ -1,6 +1,5 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
-import { WaitlistForm } from '@/components/marketing/waitlist';
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, Sparkles, X } from 'lucide-react';
 import { PLAN_PRICING } from '@/lib/utils';

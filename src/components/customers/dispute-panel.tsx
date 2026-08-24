@@ -105,7 +105,7 @@ export function DisputePanel({
               </select>
             </div>
             <div className="col-span-2">
-              <label className="label">Customer's message (optional)</label>
+              <label className="label">Customer&apos;s message (optional)</label>
               <textarea name="customerMessage" className="input" rows={2} placeholder="What the customer said" />
             </div>
           </div>
@@ -128,7 +128,7 @@ export function DisputePanel({
                     {d.reason.replace(/_/g, ' ')}
                   </div>
                   {d.customerMessage && (
-                    <div className="text-sm text-ink-700 mt-1 italic">"{d.customerMessage}"</div>
+                    <div className="text-sm text-ink-700 mt-1 italic">&quot;{d.customerMessage}&quot;</div>
                   )}
                 </div>
                 <span className="badge bg-red-100 text-red-700 border-red-200 whitespace-nowrap">

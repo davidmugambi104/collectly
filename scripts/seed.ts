@@ -7,7 +7,6 @@ config({ path: '.env.local' });
 config({ path: '.env' });
 
 import { db, schema } from '../src/db';
-import { sql } from 'drizzle-orm';
 import { nanoid } from '../src/lib/utils';
 
 async function main() {
@@ -22,7 +21,7 @@ async function main() {
   ];
   for (const table of tables) {
     try {
-      const ddl = (table as any)[Symbol.for('drizzle:Name')];
+      void (table as any)[Symbol.for('drizzle:Name')];
       // Use drizzle-kit-style introspection instead
     } catch {}
   }

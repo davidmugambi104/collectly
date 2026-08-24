@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { CheckCircle2, Lock, ShieldCheck, Loader2, AlertTriangle } from 'lucide-react';
+import { Lock, ShieldCheck, Loader2, AlertTriangle } from 'lucide-react';
 
 // Currencies Collectly routes to Paystack instead of Stripe. Paystack also
 // supports USD, but we keep USD on Stripe (already live there) and only
@@ -119,7 +119,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
           <div className="flex items-start gap-2">
             <Lock className="h-4 w-4 mt-0.5 flex-shrink-0 text-ink-500" />
             <div>
-              You'll be redirected to a secure Stripe page to enter your card details. We never see or store your card number.
+              You&apos;ll be redirected to a secure Stripe page to enter your card details. We never see or store your card number.
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
           <div className="flex items-start gap-2">
             <Lock className="h-4 w-4 mt-0.5 flex-shrink-0 text-ink-500" />
             <div>
-              ACH transfers are processed by Stripe. You'll enter your bank routing and account number on their secure page. ACH typically settles in 3-5 business days.
+              ACH transfers are processed by Stripe. You&apos;ll enter your bank routing and account number on their secure page. ACH typically settles in 3-5 business days.
             </div>
           </div>
         </div>
@@ -149,7 +149,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
             <div className="flex items-start gap-2">
               <Lock className="h-4 w-4 mt-0.5 flex-shrink-0 text-ink-500" />
               <div>
-                You'll be redirected to Paystack's secure page to pay by card, bank transfer, or mobile money.
+                You&apos;ll be redirected to Paystack&apos;s secure page to pay by card, bank transfer, or mobile money.
               </div>
             </div>
           </div>

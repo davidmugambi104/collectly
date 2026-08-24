@@ -73,7 +73,7 @@ function inferCompanyName(domain) {
 async function builtwithCheck(domain) {
   const key = process.env.BUILTWITH_API_KEY;
   if (!key) return null;
-  const url = `https://api.builtwith.com/v18/api.json?KEY=***})}`;
+  const url = `https://api.builtwith.com/v18/api.json?KEY=${key}&LOOKUP=${domain}`;
   try {
     const res = await fetch(url);
     if (!res.ok) return null;

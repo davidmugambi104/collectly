@@ -1,7 +1,7 @@
 import { AppShell } from '@/components/app/shell';
 import { getAuth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
-import { db, schema } from '@/db';
+import { db } from '@/db';
 import { customers } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NewInvoiceForm } from '@/components/invoices/new-form';

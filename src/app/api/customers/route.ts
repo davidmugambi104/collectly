@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
-import { db, schema as dbSchema } from '@/db';
+import { db } from '@/db';
 import { customers } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';

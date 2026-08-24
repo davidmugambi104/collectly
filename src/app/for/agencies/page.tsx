@@ -2,7 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
-import { CheckCircle2, Sparkles, ArrowRight, FileText, Clock, ShieldCheck, MessageSquare } from 'lucide-react';
+import { CheckCircle2, Sparkles, ArrowRight, ShieldCheck, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata = pageMetadata({
@@ -146,7 +146,7 @@ export default function ForAgenciesPage() {
           <p className="mt-4 lead">
             Chaser is templated reminders starting around $259/mo. BILL bundles
             AP, AR, and spend at $49 per user/month plus transaction fees. Neither
-            is wrong — they're just priced and positioned for different teams.
+            is wrong — they&apos;re just priced and positioned for different teams.
             Collectly is the AR-native flat-rate option for 5-30 person agencies
             that want to stop writing those emails themselves.
           </p>
