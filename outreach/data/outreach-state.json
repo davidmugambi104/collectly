@@ -1090,6 +1090,102 @@
       "replies": [],
       "created_at": "2026-08-23T22:30:12.432748+00:00",
       "last_contact": "2026-08-23T22:30:12.432748+00:00"
+    },
+    "admin@cpanw.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-23T22:35:08.509030+00:00",
+          "message_id": "29c804a2-3ff8-4509-aa9d-9ab73c9f9068",
+          "campaign": "tier1",
+          "prospect_id": "91",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-23T22:35:08.509030+00:00",
+      "last_contact": "2026-08-23T22:35:08.509030+00:00"
+    },
+    "studio@hellomellow.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-23T22:35:23.537094+00:00",
+          "message_id": "27fab0c7-5ce6-4c8d-aaf7-0b2808aecacc",
+          "campaign": "tier1",
+          "prospect_id": "PX-a60de28449",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-23T22:35:23.537094+00:00",
+      "last_contact": "2026-08-23T22:35:23.537094+00:00"
+    },
+    "info@2bs.net.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-23T22:40:51.449562+00:00",
+          "message_id": "b3dc3a5d-ae99-44c7-92cf-c8e441f368c9",
+          "campaign": "tier1",
+          "prospect_id": "PX-b5b5b0f869",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-23T22:40:51.449562+00:00",
+      "last_contact": "2026-08-23T22:40:51.449562+00:00"
+    },
+    "info@taxminimizers.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T05:17:47.831054+00:00",
+          "message_id": "45da705c-a842-4404-860d-c7bb35e692f3",
+          "campaign": "tier1",
+          "prospect_id": "90",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T05:17:47.831054+00:00",
+      "last_contact": "2026-08-24T05:17:47.831054+00:00"
+    },
+    "info@ashishaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T05:17:48.930375+00:00",
+          "message_id": "7d2b89da-ac70-4842-9472-63dbe9283a05",
+          "campaign": "tier1",
+          "prospect_id": "P060",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T05:17:48.930375+00:00",
+      "last_contact": "2026-08-24T05:17:48.930375+00:00"
+    },
+    "contact@ncllcpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-24T05:20:06.888895+00:00",
+          "message_id": "9ad15f23-34a8-4e5c-8147-1562ec06f9ee",
+          "campaign": "tier1",
+          "prospect_id": "P061",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-24T05:20:06.888895+00:00",
+      "last_contact": "2026-08-24T05:20:06.888895+00:00"
     }
   },
   "emails": {
@@ -1153,7 +1249,13 @@
     "info@advertera.co:t1": "2026-08-23T22:25:06.061190+00:00",
     "info@finneyneill.com:t1": "2026-08-23T22:25:10.393771+00:00",
     "info@hugemedia.co.uk:t1": "2026-08-23T22:30:11.551063+00:00",
-    "info@jayfinncpa.com:t1": "2026-08-23T22:30:12.432748+00:00"
+    "info@jayfinncpa.com:t1": "2026-08-23T22:30:12.432748+00:00",
+    "admin@cpanw.com:t1": "2026-08-23T22:35:08.509030+00:00",
+    "studio@hellomellow.com.au:t1": "2026-08-23T22:35:23.537094+00:00",
+    "info@2bs.net.au:t1": "2026-08-23T22:40:51.449562+00:00",
+    "info@taxminimizers.com:t1": "2026-08-24T05:17:47.831054+00:00",
+    "info@ashishaccounting.com:t1": "2026-08-24T05:17:48.930375+00:00",
+    "contact@ncllcpa.com:t1": "2026-08-24T05:20:06.888895+00:00"
   },
   "notes": []
 }
