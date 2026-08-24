@@ -88,14 +88,24 @@ export async function logQboError(input: QboErrorInput): Promise<void> {
  *
  * Returns the most useful fields for the log row.
  */
+// Intuit's error body shape -- documented assertion at the trust boundary
+// (JSON.parse of an arbitrary QBO HTTP response body), same convention as
+// ResendInboundEvent in outreach-inbound.ts.
+interface QboErrorBody {
+  Fault?: { type?: string; Error?: Array<{ code?: string; Message?: string }> };
+  code?: string | number;
+  message?: string;
+  type?: string;
+}
+
 export function parseQboErrorBody(bodyText: string): {
   errorCode: string | null;
   errorMessage: string | null;
   faultType: string | null;
 } {
-  let parsed: any = null;
+  let parsed: QboErrorBody | null = null;
   try {
-    parsed = JSON.parse(bodyText);
+    parsed = JSON.parse(bodyText) as QboErrorBody;
   } catch {
     // Non-JSON body — keep the raw text as message.
     return {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
+import type { WebhookEvent } from '@clerk/nextjs/server';
 import { cascadeDeleteOrgData } from '@/lib/account-deletion';
 
 export const dynamic = 'force-dynamic';
@@ -39,16 +40,16 @@ export async function POST(req: NextRequest) {
   const payload = await req.text();
   const wh = new Webhook(secret);
 
-  let event: any;
+  let event: WebhookEvent;
   try {
     const headers = {
       'svix-id': req.headers.get('svix-id') || '',
       'svix-timestamp': req.headers.get('svix-timestamp') || '',
       'svix-signature': req.headers.get('svix-signature') || '',
     };
-    event = wh.verify(payload, headers) as any;
-  } catch (e: any) {
-    return NextResponse.json({ error: `signature verification failed: ${e.message}` }, { status: 400 });
+    event = wh.verify(payload, headers) as WebhookEvent;
+  } catch (e: unknown) {
+    return NextResponse.json({ error: `signature verification failed: ${e instanceof Error ? e.message : e}` }, { status: 400 });
   }
 
   if (event?.type !== 'organization.deleted') {
@@ -69,8 +70,8 @@ export async function POST(req: NextRequest) {
     const result = await cascadeDeleteOrgData(orgId, { reason: 'clerk.organization.deleted' });
     console.warn('[webhooks/clerk] organization.deleted handled', result);
     return NextResponse.json({ received: true, ...result });
-  } catch (e: any) {
-    console.error('[webhooks/clerk] cascade delete failed:', e?.message ?? e);
+  } catch (e: unknown) {
+    console.error('[webhooks/clerk] cascade delete failed:', e instanceof Error ? e.message : e);
     return NextResponse.json({ error: 'cascade delete failed' }, { status: 500 });
   }
 }

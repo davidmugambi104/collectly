@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(data.data);
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }

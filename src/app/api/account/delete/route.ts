@@ -62,8 +62,8 @@ export async function POST(req: NextRequest) {
   // dashboard) behave identically.
   try {
     await cascadeDeleteOrgData(orgId, { reason: 'user_requested' });
-  } catch (e: any) {
-    console.error('[account.delete] failed:', e?.message ?? e);
+  } catch (e: unknown) {
+    console.error('[account.delete] failed:', e instanceof Error ? e.message : e);
     return NextResponse.json({ error: 'deletion failed' }, { status: 500 });
   }
 
@@ -74,10 +74,14 @@ export async function POST(req: NextRequest) {
   try {
     const client = await clerkClient();
     await client.organizations.deleteOrganization(orgId);
-  } catch (e: any) {
+  } catch (e: unknown) {
+    // Clerk's backend SDK throws an object with an `errors` array (each
+    // with a `message`) on API errors, not a plain Error -- distinct from
+    // the transport-level throw that instanceof Error would catch.
+    const clerkMessage = (e as { errors?: Array<{ message?: string }> })?.errors?.[0]?.message;
     console.error(
       '[account.delete] Clerk org delete failed (app data already removed):',
-      e?.errors?.[0]?.message ?? e?.message ?? e,
+      clerkMessage ?? (e instanceof Error ? e.message : e),
     );
   }
 

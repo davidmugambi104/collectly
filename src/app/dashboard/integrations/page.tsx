@@ -129,10 +129,10 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       )}
 
       <div id="providers" className="grid md:grid-cols-2 gap-4">
-        <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt as any} />
-        <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt as any} />
+        <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt?.toISOString() ?? null} />
+        <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt?.toISOString() ?? null} />
         <IntegrationCard logo="S" name="Stripe" description="Payments processor. Paused — we use bank transfer / Wise for billing. Code is kept in case we re-enable." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
-        <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt as any} />
+        <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt?.toISOString() ?? null} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
         <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref="mailto:hello@getcollectly.app?subject=Integration%20request" docsHref="#" ctaLabel="Request" />
       </div>

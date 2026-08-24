@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
       tenant_id: tokens.xero_tenant_id ?? tokens.tenant_id,
     });
     return NextResponse.redirect(new URL(`/dashboard/integrations?ok=xero`, req.url));
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }

@@ -26,9 +26,9 @@ export function SampleDataButton() {
         setStatus('err');
         setMessage(data.error ?? 'Failed.');
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       setStatus('err');
-      setMessage(String(e?.message));
+      setMessage(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }

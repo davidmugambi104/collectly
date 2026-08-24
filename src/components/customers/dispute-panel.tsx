@@ -60,7 +60,7 @@ export function DisputePanel({
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
       setShowForm(false);
       router.refresh();
-    } catch (e: any) { setError(e.message); } finally { setLoading(false); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : String(e)); } finally { setLoading(false); }
   }
 
   async function resolve(id: string) {
@@ -73,7 +73,7 @@ export function DisputePanel({
       });
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
       router.refresh();
-    } catch (e: any) { setError(e.message); } finally { setResolvingId(null); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : String(e)); } finally { setResolvingId(null); }
   }
 
   return (

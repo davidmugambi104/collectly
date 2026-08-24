@@ -19,7 +19,7 @@ const body = z.object({
   pain: z.string().min(1),
 });
 
-function notify(type: 'waitlist' | 'interview', data: Record<string, any>) {
+function notify(type: 'waitlist' | 'interview', data: Record<string, unknown>) {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3030}`;
   fetch(`${base}/api/lead-notify`, {
     method: 'POST',

@@ -19,7 +19,7 @@ export default async function SettingsPage() {
     'use server';
     await db.update(organizations).set({
       name: String(form.get('name') ?? ''),
-      country: String(form.get('country') ?? 'US') as any,
+      country: String(form.get('country') ?? 'US'),
       baseCurrency: String(form.get('currency') ?? 'USD'),
       timezone: String(form.get('timezone') ?? 'UTC'),
       businessType: String(form.get('businessType') ?? ''),

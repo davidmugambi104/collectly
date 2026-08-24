@@ -24,7 +24,7 @@ export function AddNoteForm({ customerId }: { customerId: string }) {
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
       setShowForm(false);
       router.refresh();
-    } catch (e: any) { setError(e.message); } finally { setLoading(false); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : String(e)); } finally { setLoading(false); }
   }
 
   return (

@@ -50,7 +50,7 @@ export async function handleArCustomerReply(opts: {
     fromName: opts.fromName,
     subject: opts.subject || null,
     body: opts.body,
-    rawPayload: opts.rawPayload as any,
+    rawPayload: opts.rawPayload,
     classification: classification.classification,
     classificationConfidence: classification.confidence.toFixed(3),
     aiSummary: classification.summary,

@@ -21,7 +21,17 @@ interface PlaidTokens {
   request_id: string;
 }
 
-async function plaidPost<T = any>(path: string, body: Record<string, any>): Promise<T> {
+// Plaid has no official TypeScript types package installed here (this file
+// is a lightweight REST wrapper, not the `plaid` SDK client) -- minimal
+// interface for the one endpoint shape this file's callers actually read,
+// same convention as the hand-written Xero/Square/QBO interfaces.
+interface PlaidLinkTokenResponse {
+  link_token: string;
+  expiration: string;
+  request_id: string;
+}
+
+async function plaidPost<T>(path: string, body: Record<string, unknown>): Promise<T> {
   const res = await fetch(`${PLAID_BASE}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -36,7 +46,7 @@ async function plaidPost<T = any>(path: string, body: Record<string, any>): Prom
 }
 
 export async function plaidCreateLinkToken(orgId: string) {
-  return plaidPost('/link/token/create', {
+  return plaidPost<PlaidLinkTokenResponse>('/link/token/create', {
     user: { client_user_id: orgId },
     client_name: 'Collectly',
     products: ['auth', 'transactions'],

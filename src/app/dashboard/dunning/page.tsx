@@ -11,14 +11,14 @@ import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 import { Sparkles, Mail, MessageSquare, Pause, Play, BarChart3, AlertCircle, ArrowLeft, ShieldAlert, TrendingUp, Send, Target, ChevronRight } from 'lucide-react';
 import { DunningPreview } from '@/components/dunning/preview';
-import { SequenceEditor } from '@/components/dunning/sequence-editor';
+import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor';
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
 
-const DEFAULT_STEPS = [
+const DEFAULT_STEPS: Step[] = [
   { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
   { id: 's2', daysFromDue: 7, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is now 7 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 7 days past due. Please review and settle at your earliest convenience: {{payment_link}}' },
   { id: 's3', daysFromDue: 14, channel: 'email', tone: 'firm', subject: 'Action required: Invoice {{number}}', template: 'Hi {{contact_name}}, our records show Invoice {{number}} for {{amount}} is 14 days overdue. Please confirm payment status or settle the balance: {{payment_link}}' },
-  { id: 's4', daysFromDue: 30, channel: 'sms', tone: 'final', subject: undefined as any, template: 'Final notice: Invoice {{number}} for {{amount}} is 30+ days overdue. Please reply or settle: {{payment_link}}' },
+  { id: 's4', daysFromDue: 30, channel: 'sms', tone: 'final', template: 'Final notice: Invoice {{number}} for {{amount}} is 30+ days overdue. Please reply or settle: {{payment_link}}' },
 ];
 
 type Tone = 'friendly' | 'firm' | 'final';
@@ -96,7 +96,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     // seq?.steps for a static display, but SequenceEditor needs a real
     // sequenceId to save against on the very first render, not next time.
     [seq] = await db.insert(dunningSequences).values({
-      id: nanoid(), orgId, name: 'Default', isActive: true, steps: DEFAULT_STEPS as any, pauseOnReply: true, pauseOnPayment: true,
+      id: nanoid(), orgId, name: 'Default', isActive: true, steps: DEFAULT_STEPS, pauseOnReply: true, pauseOnPayment: true,
     }).returning();
   }
 
@@ -318,7 +318,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           </div>
 
           <div className="mt-5">
-            <SequenceEditor initialSteps={(seq?.steps ?? DEFAULT_STEPS) as any} sequenceId={seq!.id} />
+            <SequenceEditor initialSteps={seq?.steps ?? DEFAULT_STEPS} sequenceId={seq!.id} />
           </div>
         </div>
 

@@ -50,10 +50,11 @@ export async function POST(req: NextRequest) {
     const to = process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app';
     const result = await sendEmail({ to, subject, html });
     return NextResponse.json({ ok: true, sent: result });
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Don't fail the user's submission just because notification failed
-    console.error('Lead notify failed:', e?.message);
-    return NextResponse.json({ ok: true, notified: false, error: String(e?.message) });
+    const message = e instanceof Error ? e.message : String(e);
+    console.error('Lead notify failed:', message);
+    return NextResponse.json({ ok: true, notified: false, error: message });
   }
 }
 

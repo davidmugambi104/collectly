@@ -11,13 +11,13 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
   try {
     event = getStripe().webhooks.constructEvent(body, sig, secret);
-  } catch (e: any) {
-    return NextResponse.json({ error: `webhook signature failed: ${e.message}` }, { status: 400 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: `webhook signature failed: ${e instanceof Error ? e.message : e}` }, { status: 400 });
   }
   try {
     await handleStripeEvent(event);
     return NextResponse.json({ received: true });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? e }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }

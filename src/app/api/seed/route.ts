@@ -5,6 +5,26 @@ import { customers, invoices, payments, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 
+// Arbitrary caller-supplied JSON body (dev/onboarding seed endpoint, no
+// zod schema) -- minimal shape for the fields actually read below.
+interface SeedInvoiceInput {
+  number?: string;
+  amount?: number | string;
+  currency?: string;
+  issueDate?: string;
+  dueDate?: string;
+  description?: string;
+  paid?: boolean;
+}
+interface SeedCustomerInput {
+  name?: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  preferredChannel?: 'email' | 'sms';
+  invoices?: SeedInvoiceInput[];
+}
+
 export async function POST(req: NextRequest) {
   const { userId, orgId } = await auth();
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -15,15 +35,15 @@ export async function POST(req: NextRequest) {
     await db.insert(organizations).values({ id: orgId, name: 'My business', slug: `org-${nanoid().slice(0, 6)}`, ownerId: userId });
   }
 
-  const body = await req.json();
-  const customersIn = Array.isArray(body) ? body : [body];
+  const body = await req.json() as SeedCustomerInput | SeedCustomerInput[];
+  const customersIn: SeedCustomerInput[] = Array.isArray(body) ? body : [body];
   const created = [];
   for (const c of customersIn) {
     if (!c.name) continue;
     const [customer] = await db.insert(customers).values({
       id: nanoid(), orgId, name: c.name, email: c.email, phone: c.phone, company: c.company, preferredChannel: c.preferredChannel ?? 'email',
     }).returning();
-    const inv = (c.invoices ?? []) as Array<any>;
+    const inv = c.invoices ?? [];
     for (const i of inv) {
       const [invRow] = await db.insert(invoices).values({
         id: nanoid(), orgId, customerId: customer.id, number: i.number ?? `INV-${Date.now()}`,

@@ -48,9 +48,9 @@ export async function recordEvent(opts: {
       payload: opts.payload ?? null,
       actorId: opts.actorId ?? null,
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Audit log failure is non-fatal — log and move on.
-    console.warn(`[events] recordEvent failed: type=${opts.type} org=${opts.orgId} err=${e?.message}`);
+    console.warn(`[events] recordEvent failed: type=${opts.type} org=${opts.orgId} err=${e instanceof Error ? e.message : String(e)}`);
   }
 }
 

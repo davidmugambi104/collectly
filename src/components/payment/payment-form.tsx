@@ -50,8 +50,8 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
           return;
         }
         setError('Paystack session missing redirect URL');
-      } catch (e: any) {
-        setError(e?.message ?? 'Network error');
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'Network error');
       } finally {
         setLoading(false);
       }
@@ -77,8 +77,8 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
         return;
       }
       setError('Checkout session missing redirect URL');
-    } catch (e: any) {
-      setError(e?.message ?? 'Network error');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Network error');
     } finally {
       setLoading(false);
     }

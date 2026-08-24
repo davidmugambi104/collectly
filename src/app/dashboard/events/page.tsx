@@ -5,11 +5,11 @@ import { db } from '@/db';
 import { events } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { formatDate } from '@/lib/utils';
-import { Mail, MessageSquare, User, CreditCard, Sparkles, Send } from 'lucide-react';
+import { Mail, MessageSquare, User, CreditCard, Sparkles, Send, type LucideIcon } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-const ICON: Record<string, any> = {
+const ICON: Record<string, LucideIcon> = {
   'invoice.created': CreditCard,
   'invoice.paid': CreditCard,
   'dunning.sent': Send,

@@ -3,6 +3,7 @@
  * Only runs in PGlite mode (dev).
  */
 import { client } from '@/db/pglite';
+import type { PGlite } from '@electric-sql/pglite';
 import { nanoid } from '@/lib/utils';
 
 const DDL = `
@@ -54,7 +55,7 @@ export async function ensureBootstrapped() {
   bootstrapped = true;
 }
 
-async function seedIfEmpty(client: any) {
+async function seedIfEmpty(client: PGlite) {
   // Skip auto-seed if SKIP_BOOTSTRAP_SEED=1 (for testing the empty state)
   if (process.env.SKIP_BOOTSTRAP_SEED === '1') return;
   const r: { rows: { count: string }[] } = await client.query('SELECT count(*) as count FROM organizations');

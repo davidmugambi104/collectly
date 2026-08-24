@@ -21,13 +21,13 @@ export async function GET() {
       took_ms: Date.now() - startedAt,
       ts: new Date().toISOString(),
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return NextResponse.json(
       {
         ok: false,
         service: 'collectly',
         db: 'unreachable',
-        error: String(e?.message ?? e),
+        error: e instanceof Error ? e.message : String(e),
         took_ms: Date.now() - startedAt,
         ts: new Date().toISOString(),
       },

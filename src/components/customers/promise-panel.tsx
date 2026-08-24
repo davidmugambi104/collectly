@@ -51,7 +51,7 @@ export function PromisePanel({
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
       setShowForm(false);
       router.refresh();
-    } catch (e: any) { setError(e.message); } finally { setLoading(false); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : String(e)); } finally { setLoading(false); }
   }
 
   async function setStatus(id: string, status: 'fulfilled' | 'broken') {
@@ -64,7 +64,7 @@ export function PromisePanel({
       });
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
       router.refresh();
-    } catch (e: any) { setError(e.message); } finally { setActingId(null); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : String(e)); } finally { setActingId(null); }
   }
 
   return (

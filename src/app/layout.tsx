@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     other: process.env.NEXT_PUBLIC_BING_TOKEN
       ? { 'msvalidate.01': process.env.NEXT_PUBLIC_BING_TOKEN }
       : undefined,
-  } as any,
+  },
 };
 
 export const viewport: Viewport = {

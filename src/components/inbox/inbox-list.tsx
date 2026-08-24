@@ -53,8 +53,8 @@ export function InboxList({ items }: { items: InboxItem[] }) {
       });
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
       router.refresh();
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setActingId(null);
     }

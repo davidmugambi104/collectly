@@ -5,6 +5,21 @@
  */
 
 async function main(): Promise<void> {
+  // FLAG (2026-08-24): `../src/lib/mfa.ts` does not exist and has no git
+  // history in this repo at all (`git log --all -- src/lib/mfa.ts` is
+  // empty) -- this smoke test was written for an MFA-enforcement module
+  // (hasVerifiedSecondFactorSync / MfaRequiredError, gating on Clerk's
+  // sessionClaims.factorVerificationAge) that was never actually built.
+  // grep confirms no `factorVerificationAge`/`MfaRequired`/`SecondFactor`
+  // anywhere in src/ and getAuth() in auth-helper.ts never checks a
+  // second factor. This script currently crashes with
+  // ERR_MODULE_NOT_FOUND on every run and isn't wired into `npm test`,
+  // so nobody would notice. Implementing the MFA module itself is a real
+  // security feature needing its own design/review, not something to
+  // build as a side effect of a lint cleanup -- left as `any` here
+  // (there is no real module to type this import against) and flagged
+  // for the user rather than fixed inline.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mfa: any = await import('../src/lib/mfa.ts');
   const { hasVerifiedSecondFactorSync, MfaRequiredError } = mfa;
 

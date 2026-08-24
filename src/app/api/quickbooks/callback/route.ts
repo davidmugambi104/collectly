@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     const tokens = await qboExchangeCode(code, realmId);
     await saveQboConnection(consumed.orgId, { ...tokens, realmId });
     return NextResponse.redirect(new URL(`/dashboard/integrations?ok=quickbooks`, req.url));
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }

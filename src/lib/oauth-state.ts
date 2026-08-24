@@ -26,14 +26,17 @@
  */
 import { randomBytes, createHmac, createCipheriv, createDecipheriv } from 'node:crypto';
 import { getRedis } from '@/lib/infra';
+import type { cookies as nextCookies } from 'next/headers';
 
-// Lazy require so the module can be imported outside a Next request
-// context (e.g. from smoke tests).
-type CookieJar = { get(name: string): { value: string } | undefined; set(name: string, value: string, opts: any): void; delete(name: string): void };
+// The actual `next/headers` module is loaded lazily below (dynamic
+// import) so this file can be imported outside a Next request context
+// (e.g. from smoke tests); `import type` here only pulls in the type,
+// not the runtime module, so it's safe to keep at module scope.
+type CookieJar = Awaited<ReturnType<typeof nextCookies>>;
 async function readCookieJar(): Promise<CookieJar | null> {
   try {
     const mod = await import('next/headers');
-    return await mod.cookies() as unknown as CookieJar;
+    return await mod.cookies();
   } catch {
     return null;
   }

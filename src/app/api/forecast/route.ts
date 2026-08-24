@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   const now = Date.now();
   const openInvoices = open.map((inv: typeof open[number]) => {
     const c = custMap.get(inv.customerId);
-    const behavior = (c as any)?.paymentBehavior;
+    const behavior = c?.paymentBehavior;
     const days = Math.max(0, Math.floor((now - new Date(inv.dueDate).getTime()) / 86400000));
     return {
       amount: Number(inv.amount),
@@ -46,13 +46,13 @@ export async function POST(req: NextRequest) {
   try {
     const forecast = await generateCashFlowForecast({ openInvoices, monthlyBurn, currentCash });
     return NextResponse.json(forecast);
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Fallback is intentionally simple: weighted by customer paid rate, no LLM.
     // Surface the failure via `degraded: true` so the dashboard can show a
     // "forecast unavailable" banner instead of silently showing the heuristic
     // as if it were authoritative.
     const total = openInvoices.reduce((s: number, i: typeof openInvoices[number]) => s + i.amount * (i.customerPaidRate ?? 0.7), 0);
-    console.warn(`[forecast] AI forecast failed, using heuristic fallback: ${e?.message ?? e}`);
+    console.warn(`[forecast] AI forecast failed, using heuristic fallback: ${e instanceof Error ? e.message : String(e)}`);
     return NextResponse.json({
       week1: Math.round(total * 0.4),
       week2: Math.round(total * 0.3),

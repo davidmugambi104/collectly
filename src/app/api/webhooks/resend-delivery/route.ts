@@ -1,8 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { db } from '@/db';
-import { dunningRuns, invoices, customers } from '@/db/schema';
+import { dunningRuns, invoices, customers, dunningStatus } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+
+type DunningRunStatus = (typeof dunningStatus.enumValues)[number];
+
+// Resend's delivery-webhook payload shape (the fields this handler
+// actually reads). svix's Webhook.verify() intentionally returns
+// `unknown` -- this is the one documented assertion at the trust
+// boundary, matching the pattern in src/lib/outreach-inbound.ts.
+interface ResendDeliveryEvent {
+  type?: string;
+  data?: {
+    message_id?: string;
+    bounce?: { message?: string };
+  };
+}
 
 /**
  * Resend delivery-status webhook: email.delivered / email.opened /
@@ -30,7 +44,7 @@ const STATUS_RANK: Record<string, number> = {
   clicked: 4,
 };
 
-const EVENT_TO_STATUS: Record<string, string> = {
+const EVENT_TO_STATUS: Record<string, DunningRunStatus> = {
   'email.delivered': 'delivered',
   'email.opened': 'opened',
   'email.clicked': 'clicked',
@@ -44,15 +58,15 @@ export async function POST(req: NextRequest) {
 
   const rawBody = await req.text();
   const wh = new Webhook(secret);
-  let event: any;
+  let event: ResendDeliveryEvent;
   try {
     event = wh.verify(rawBody, {
       'svix-id': req.headers.get('svix-id') || '',
       'svix-timestamp': req.headers.get('svix-timestamp') || '',
       'svix-signature': req.headers.get('svix-signature') || '',
-    }) as any;
-  } catch (e: any) {
-    return NextResponse.json({ error: `signature verification failed: ${e?.message ?? e}` }, { status: 400 });
+    }) as ResendDeliveryEvent;
+  } catch (e: unknown) {
+    return NextResponse.json({ error: `signature verification failed: ${e instanceof Error ? e.message : e}` }, { status: 400 });
   }
 
   const type = String(event?.type || '');
@@ -89,12 +103,13 @@ export async function POST(req: NextRequest) {
       const currentRank = STATUS_RANK[run.status] ?? -1;
       const nextRank = STATUS_RANK[nextStatus] ?? -1;
       if (nextRank > currentRank) {
-        await db.update(dunningRuns).set({ status: nextStatus as any }).where(eq(dunningRuns.id, run.id));
+        await db.update(dunningRuns).set({ status: nextStatus }).where(eq(dunningRuns.id, run.id));
       }
     }
     return NextResponse.json({ received: true, matched: true, runId: run.id, type });
-  } catch (e: any) {
-    console.error('[resend-delivery] failed to update run:', e?.message ?? e);
-    return NextResponse.json({ error: e?.message ?? e }, { status: 500 });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error('[resend-delivery] failed to update run:', message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

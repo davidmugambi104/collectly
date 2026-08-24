@@ -31,7 +31,7 @@ export default async function CashFlowPage() {
     const now = Date.now();
     const openInvoices = open.map((inv: typeof open[number]) => {
       const c = custMap.get(inv.customerId);
-      const behavior = (c as any)?.paymentBehavior;
+      const behavior = c?.paymentBehavior;
       const days = Math.max(0, Math.floor((now - new Date(inv.dueDate).getTime()) / 86400000));
       return {
         amount: Number(inv.amount),

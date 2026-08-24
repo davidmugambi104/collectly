@@ -7,6 +7,23 @@ import { nanoid } from '@/lib/utils';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
+// Paystack has no official TS types package -- minimal shape for the
+// fields this handler actually reads across the event types it handles.
+interface PaystackEvent {
+  event?: string;
+  data?: {
+    id?: number | string;
+    amount?: number;
+    currency?: string;
+    channel?: string;
+    reference?: string;
+    status?: string;
+    subscription_code?: string;
+    metadata?: { invoiceId?: string };
+    customer?: { email?: string };
+  };
+}
+
 function verifySignature(body: string, signature: string | null): boolean {
   if (!PAYSTACK_SECRET || !signature) return false;
   const hash = crypto
@@ -34,7 +51,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid signature' }, { status: 401 });
   }
 
-  let event: any;
+  let event: PaystackEvent;
   try {
     event = JSON.parse(body);
   } catch {
@@ -91,9 +108,10 @@ export async function POST(req: NextRequest) {
           paidAt: new Date(),
         });
         paymentInserted = true;
-      } catch (e: any) {
+      } catch (e: unknown) {
         // Unique violation => duplicate delivery; ignore, still flip invoice if not already paid
-        if (!String(e?.message ?? '').includes('payments_paystack_charge_uniq')) {
+        const message = e instanceof Error ? e.message : String(e);
+        if (!message.includes('payments_paystack_charge_uniq')) {
           throw e;
         }
       }
@@ -112,9 +130,10 @@ export async function POST(req: NextRequest) {
 
       console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', updated.length > 0, 'email=', email);
       return NextResponse.json({ received: true, action: 'applied' });
-    } catch (e: any) {
-      console.error('[paystack] charge.success failed:', e?.message);
-      return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error('[paystack] charge.success failed:', message);
+      return NextResponse.json({ error: message }, { status: 500 });
     }
   }
 

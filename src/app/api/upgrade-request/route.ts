@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
   let data: z.infer<typeof body>;
   try {
     data = body.parse(await req.json());
-  } catch (e: any) {
-    return NextResponse.json({ error: `invalid request: ${e.message}` }, { status: 400 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: `invalid request: ${e instanceof Error ? e.message : e}` }, { status: 400 });
   }
 
   // Load org for the business name and billing email

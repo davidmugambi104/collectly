@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         replyTo: getDunningReplyToAddress(),
       });
       try {
-        const msgId = await fetchResendMessageId((sendResult as any).id);
+        const msgId = sendResult.id ? await fetchResendMessageId(sendResult.id) : null;
         if (msgId) await db.update(dunningRuns).set({ externalMessageId: msgId }).where(eq(dunningRuns.id, run.id));
       } catch (e) {
         console.error('[dunning] fetchResendMessageId failed:', e instanceof Error ? e.message : e);
@@ -90,8 +90,9 @@ export async function POST(req: NextRequest) {
     }
     await db.update(invoices).set({ lastReminderAt: new Date() }).where(eq(invoices.id, data.invoiceId));
     return NextResponse.json({ ok: true, id: run.id });
-  } catch (e: any) {
-    await db.update(dunningRuns).set({ status: 'failed', error: String(e?.message ?? e) }).where(eq(dunningRuns.id, run.id));
-    return NextResponse.json({ ok: false, error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    await db.update(dunningRuns).set({ status: 'failed', error: message }).where(eq(dunningRuns.id, run.id));
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }

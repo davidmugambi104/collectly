@@ -21,7 +21,7 @@ export async function POST() {
 
   const now = new Date();
   const { nanoid } = await import('@/lib/utils');
-  const custList: Array<{ name: string; email: string; phone: string; company: string; channel: 'email' | 'sms'; behavior: any }> = [
+  const custList: Array<{ name: string; email: string; phone: string; company: string; channel: 'email' | 'sms'; behavior: NonNullable<schema.Customer['paymentBehavior']> }> = [
     { name: 'Brightline Legal', email: 'ap@brightlinelegal.com', phone: '+14155551234', company: 'Brightline Legal LLP', channel: 'email', behavior: { avgDaysToPay: 28, paidRate: 0.95, lastPaidAt: new Date(now.getTime() - 12 * 86400000).toISOString(), riskScore: 15 } },
     { name: 'Harbor Painting Co', email: 'bills@harborpainting.com', phone: '+14155555678', company: 'Harbor Painting', channel: 'sms', behavior: { avgDaysToPay: 14, paidRate: 0.99, lastPaidAt: new Date(now.getTime() - 3 * 86400000).toISOString(), riskScore: 8 } },
     { name: 'Westgate Advisory', email: 'finance@westgate.com', phone: '+12125559001', company: 'Westgate Advisory', channel: 'email', behavior: { avgDaysToPay: 47, paidRate: 0.78, lastPaidAt: new Date(now.getTime() - 40 * 86400000).toISOString(), riskScore: 62 } },

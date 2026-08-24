@@ -13,9 +13,22 @@ import { BookOpen } from 'lucide-react';
  * If `react-plaid-link` is not installed, we fall back to a graceful
  * "configure your Plaid keys" state so the page never breaks in dev.
  */
+interface PlaidLinkHandler {
+  open(): void;
+}
+interface PlaidLinkCreateOptions {
+  token: string;
+  onSuccess: (public_token: string) => void;
+  onExit: () => void;
+  onEvent: () => void;
+}
+interface PlaidGlobal {
+  create(opts: PlaidLinkCreateOptions): PlaidLinkHandler;
+}
+
 declare global {
   interface Window {
-    Plaid?: any;
+    Plaid?: PlaidGlobal;
   }
 }
 
@@ -23,7 +36,7 @@ export function PlaidCard({ status }: { status: string }) {
   const connected = status === 'connected';
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const handlerRef = useRef<any>(null);
+  const handlerRef = useRef<PlaidLinkHandler | null>(null);
 
   useEffect(() => {
     // Lazy-load the Plaid Link SDK (1.1.2) from CDN once.
@@ -62,8 +75,9 @@ export function PlaidCard({ status }: { status: string }) {
         });
       }
 
-      // 3) Open Plaid Link
-      handlerRef.current = window.Plaid.create({
+      // 3) Open Plaid Link -- guaranteed defined here: either it was already
+      // loaded, or the promise above only resolves once window.Plaid is set.
+      handlerRef.current = window.Plaid!.create({
         token: link_token,
         onSuccess: async (public_token: string) => {
           const ex = await fetch('/api/plaid/exchange', {
@@ -84,8 +98,8 @@ export function PlaidCard({ status }: { status: string }) {
         onEvent: () => {},
       });
       handlerRef.current.open();
-    } catch (e: any) {
-      setError(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
       setOpening(false);
     }
   }

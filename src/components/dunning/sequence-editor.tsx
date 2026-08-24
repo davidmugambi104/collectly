@@ -6,7 +6,7 @@ import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw, 
 import { MessageBubble } from './message-bubble';
 import { RecipientCard } from './recipient-card';
 
-type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
+export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
 type Recipient = { name: string; email: string | null; phone: string | null; invoiceNumber: string; amount?: string; currency?: string; daysOverdue?: number };
 type Preview = { subject?: string; body: string; sample: boolean; recipient: Recipient | null };
 
@@ -90,8 +90,8 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? 'preview failed');
       setPreview({ subject: data.subject, body: data.body, sample: !!data.sample, recipient: data.recipient ?? null });
-    } catch (e: any) {
-      setPreviewError(e?.message ?? 'Preview failed');
+    } catch (e: unknown) {
+      setPreviewError(e instanceof Error ? e.message : 'Preview failed');
     } finally {
       setPreviewing(false);
     }
@@ -181,8 +181,8 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div><label className="label">Days from due</label><input type="number" min="0" value={active.daysFromDue} onChange={(e) => updateStep(activeIdx!, { daysFromDue: Number(e.target.value) })} className="input" /></div>
-              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as any })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
-              <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as any })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
+              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
+              <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
             </div>
             <div>
               <label className="label">Style hint (optional)</label>

@@ -18,7 +18,7 @@ export default async function DunningSequencesPage() {
   return (
     <AppShell title="Dunning sequence" subtitle="Edit each step's timing, channel, and tone.">
       {seq ? (
-        <SequenceEditor initialSteps={(seq.steps ?? []) as any} sequenceId={seq.id} />
+        <SequenceEditor initialSteps={seq.steps ?? []} sequenceId={seq.id} />
       ) : (
         <div className="card text-center py-10">No active sequence. The default sequence is created automatically when you turn on dunning.</div>
       )}

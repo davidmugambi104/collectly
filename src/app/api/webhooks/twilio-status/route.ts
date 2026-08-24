@@ -66,8 +66,9 @@ export async function POST(req: NextRequest) {
     // queued/sending/sent/accepted: no-op — 'sent' was already recorded
     // at send time and none of these are more informative than that.
     return NextResponse.json({ received: true, matched: true, runId: run.id, status });
-  } catch (e: any) {
-    console.error('[twilio-status] failed to update run:', e?.message ?? e);
-    return NextResponse.json({ error: e?.message ?? e }, { status: 500 });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error('[twilio-status] failed to update run:', message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

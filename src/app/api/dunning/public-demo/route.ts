@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       'https://getcollectly.app/pay/[your-invoice-id]'
     );
     return NextResponse.json(result);
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message }, { status: 400 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 400 });
   }
 }

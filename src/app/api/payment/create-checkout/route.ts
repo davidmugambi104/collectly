@@ -31,8 +31,8 @@ export async function POST(req: NextRequest) {
   let data: z.infer<typeof body>;
   try {
     data = body.parse(await req.json());
-  } catch (e: any) {
-    return NextResponse.json({ error: `invalid request: ${e.message}` }, { status: 400 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: `invalid request: ${e instanceof Error ? e.message : e}` }, { status: 400 });
   }
 
   // Load the invoice, customer, and org
@@ -61,7 +61,13 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      payment_method_types: data.method === 'ach' ? (['us_bank_transfer'] as any) : ['card'],
+      // 'us_bank_account' is Stripe's Checkout payment_method_types value
+      // for ACH Direct Debit -- 'us_bank_transfer' (a bank_transfer.type
+      // value used elsewhere, for `customer_balance`) is not a valid
+      // entry here and every ACH checkout attempt would have been
+      // rejected by Stripe's API before the `as any` cast was removed
+      // and tsc caught the mismatch.
+      payment_method_types: data.method === 'ach' ? ['us_bank_account'] : ['card'],
       customer_email: row.customer.email ?? undefined,
       line_items: [
         {
@@ -93,7 +99,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url, sessionId: session.id });
-  } catch (e: any) {
-    return NextResponse.json({ error: `payment setup failed: ${e.message ?? e}` }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: `payment setup failed: ${e instanceof Error ? e.message : e}` }, { status: 500 });
   }
 }

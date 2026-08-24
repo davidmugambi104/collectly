@@ -67,8 +67,8 @@ export async function POST(req: NextRequest) {
       );
     }
     return NextResponse.json({ ok: true, provider, ...result });
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 502 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 502 });
   }
 }
 
@@ -91,7 +91,7 @@ export async function DELETE(req: NextRequest) {
     else if (provider === 'xero') await disconnectXero(orgId);
     else await disconnectSquare(orgId);
     return NextResponse.json({ ok: true, provider });
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }

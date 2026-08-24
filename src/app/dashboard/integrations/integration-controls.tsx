@@ -33,8 +33,8 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
           ` in ${data.durationMs}ms`,
       );
       router.refresh();
-    } catch (e: any) {
-      setSyncResult(`Error: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      setSyncResult(`Error: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setSyncing(false);
     }

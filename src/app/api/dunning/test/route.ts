@@ -108,14 +108,15 @@ export async function POST(req: NextRequest) {
         }
         const sms = await sendSms({ to: row.customer.phone, body: result.body });
         await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));
-        return NextResponse.json({ ok: true, sent: true, dryRun: false, runId: run.id, ...result, smsSid: (sms as any).sid });
+        return NextResponse.json({ ok: true, sent: true, dryRun: false, runId: run.id, ...result, smsSid: sms.sid });
       }
-    } catch (sendErr: any) {
+    } catch (sendErr: unknown) {
       // Real send failure — mark run failed, surface error to caller
-      await db.update(dunningRuns).set({ status: 'failed', error: String(sendErr?.message ?? sendErr).substring(0, 500) }).where(eq(dunningRuns.id, run.id));
-      return NextResponse.json({ ok: false, error: String(sendErr?.message ?? sendErr), runId: run.id, ...result }, { status: 502 });
+      const message = sendErr instanceof Error ? sendErr.message : String(sendErr);
+      await db.update(dunningRuns).set({ status: 'failed', error: message.substring(0, 500) }).where(eq(dunningRuns.id, run.id));
+      return NextResponse.json({ ok: false, error: message, runId: run.id, ...result }, { status: 502 });
     }
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: String(e?.message) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }

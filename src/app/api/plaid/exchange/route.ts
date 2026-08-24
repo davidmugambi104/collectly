@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const tokens = await plaidExchangePublicToken(body.public_token);
     await savePlaidConnection(orgId, tokens);
     return NextResponse.json({ ok: true });
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }

@@ -33,7 +33,7 @@ export function NewInvoiceForm({ customers, defaultCustomerId }: { customers: Cu
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed');
       router.push('/dashboard/invoices');
       router.refresh();
-    } catch (e: any) { setError(e.message); setLoading(false); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : String(e)); setLoading(false); }
   }
 
   return (

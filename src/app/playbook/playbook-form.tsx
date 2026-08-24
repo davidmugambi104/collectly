@@ -34,8 +34,8 @@ export function PlaybookForm() {
       a.click();
       URL.revokeObjectURL(url);
       setDone(true);
-    } catch (err: any) {
-      setError(err?.message ?? 'Download failed.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Download failed.');
     } finally {
       setLoading(false);
     }

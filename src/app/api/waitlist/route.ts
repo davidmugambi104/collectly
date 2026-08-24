@@ -17,7 +17,7 @@ const schema = z.object({
   referrer: z.string().optional(),
 });
 
-function notify(type: 'waitlist' | 'interview', data: Record<string, any>) {
+function notify(type: 'waitlist' | 'interview', data: Record<string, unknown>) {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3030}`;
   fetch(`${base}/api/lead-notify`, {
     method: 'POST',
@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
     const [row] = await db.insert(waitlist).values({ id: nanoid(), ...data }).onConflictDoNothing({ target: waitlist.email }).returning();
     notify('waitlist', { email: data.email, name: data.name, company: data.company, meta: { country: data.country, teamSize: data.teamSize, source: data.source } });
     return NextResponse.json({ ok: true, created: !!row });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? 'Bad request' }, { status: 400 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : 'Bad request' }, { status: 400 });
   }
 }
 

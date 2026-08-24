@@ -21,8 +21,8 @@ export async function GET(req: NextRequest) {
   try {
     const result = await pollInboxReplies();
     return NextResponse.json({ ok: true, ...result, took_ms: Date.now() - t0 });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }
 

@@ -24,7 +24,7 @@ export async function GET() {
     const state = await mintOAuthState(orgId, userId, 'xero');
     const authUrl = xeroAuthUrl(state);
     return NextResponse.redirect(authUrl);
-  } catch (e: any) {
-    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
 }
