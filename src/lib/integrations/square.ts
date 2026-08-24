@@ -19,6 +19,51 @@ const SQUARE_SANDBOX_TOKEN = 'https://connect.squareupsandbox.com/oauth2/token';
 
 const SANDBOX = process.env.SQUARE_ENVIRONMENT === 'sandbox';
 
+// Minimal shapes for the fields this file actually reads/writes -- Square's
+// official SDK types are far broader than what we use here.
+interface SquareTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  expires_at: string;
+}
+interface SquareLocation {
+  id: string;
+  status?: string;
+}
+interface SquareCustomer {
+  id: string;
+  company_name?: string;
+  given_name?: string;
+  family_name?: string;
+  email_address?: string | null;
+  phone_number?: string | null;
+}
+interface SquareMoney {
+  amount?: number;
+  currency?: string;
+}
+interface SquarePaymentRequest {
+  computed_amount_money?: SquareMoney;
+  total_completed_amount_money?: SquareMoney;
+  due_date?: string;
+}
+interface SquareInvoiceRecipient {
+  customer_id?: string;
+  company_name?: string;
+  given_name?: string;
+  family_name?: string;
+  email_address?: string | null;
+  phone_number?: string | null;
+}
+interface SquareInvoice {
+  id: string;
+  status?: string;
+  invoice_number?: string;
+  created_at?: string;
+  primary_recipient?: SquareInvoiceRecipient;
+  payment_requests?: SquarePaymentRequest[];
+}
+
 function base64url(buf: Buffer) {
   return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
@@ -156,7 +201,7 @@ async function getFreshSquare(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`Square refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: any = await res.json();
+  const json: SquareTokenResponse = await res.json();
   const newExpiresAt = new Date(json.expires_at);
   await db.update(integrations).set({
     accessToken: json.access_token,
@@ -188,26 +233,26 @@ async function squareFetch(orgId: string, path: string, init?: RequestInit) {
 // -------------------------------------------------------------------
 
 /** List active location ids for this merchant — invoices/search requires them. */
-export async function squareListLocations(orgId: string) {
-  const res: any = await squareFetch(orgId, '/locations');
-  return ((res?.locations ?? []) as any[]).filter((l) => l.status !== 'INACTIVE').map((l) => l.id as string);
+export async function squareListLocations(orgId: string): Promise<string[]> {
+  const res: { locations?: SquareLocation[] } = await squareFetch(orgId, '/locations');
+  return (res?.locations ?? []).filter((l) => l.status !== 'INACTIVE').map((l) => l.id);
 }
 
 /** List customers (first page — mirrors the single-page convention used for QBO/Xero). */
-export async function squareListCustomers(orgId: string) {
-  const res: any = await squareFetch(orgId, '/customers');
-  return (res?.customers ?? []) as any[];
+export async function squareListCustomers(orgId: string): Promise<SquareCustomer[]> {
+  const res: { customers?: SquareCustomer[] } = await squareFetch(orgId, '/customers');
+  return res?.customers ?? [];
 }
 
 /** Search invoices across all of this merchant's locations. */
-export async function squareSearchInvoices(orgId: string, locationIds: string[]) {
+export async function squareSearchInvoices(orgId: string, locationIds: string[]): Promise<SquareInvoice[]> {
   if (locationIds.length === 0) return [];
-  const res: any = await squareFetch(orgId, '/invoices/search', {
+  const res: { invoices?: SquareInvoice[] } = await squareFetch(orgId, '/invoices/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: { filter: { location_ids: locationIds } } }),
   });
-  return (res?.invoices ?? []) as any[];
+  return res?.invoices ?? [];
 }
 
 // Square amounts are integer minor units (cents); our schema stores decimal dollars.
@@ -277,11 +322,11 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
   let invoicesMarkedPaid = 0;
 
   // 1. Customers
-  let squareCustomers: any[] = [];
+  let squareCustomers: SquareCustomer[] = [];
   try {
     squareCustomers = await squareListCustomers(orgId);
-  } catch (e: any) {
-    errors.push(`customers: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`customers: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   for (const c of squareCustomers) {
@@ -301,18 +346,18 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
         await db.insert(customersTbl).values({ id: nanoid(), orgId, externalId, name, email, phone });
       }
       customersUpserted++;
-    } catch (e: any) {
-      errors.push(`customer ${c?.id}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`customer ${c?.id}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
   // 2. Invoices (across all active locations)
-  let squareInvoices: any[] = [];
+  let squareInvoices: SquareInvoice[] = [];
   try {
     const locationIds = await squareListLocations(orgId);
     squareInvoices = await squareSearchInvoices(orgId, locationIds);
-  } catch (e: any) {
-    errors.push(`invoices: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   for (const inv of squareInvoices) {
@@ -351,11 +396,12 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
       // An invoice can have multiple payment_requests (installment plans) --
       // sum them for the true total/paid rather than only reading the first,
       // which would silently under-report installment invoices.
-      const requests = (inv.payment_requests ?? []) as any[];
+      const requests = inv.payment_requests ?? [];
       const total = requests.reduce((sum, r) => sum + minorUnitsToDecimal(r.computed_amount_money?.amount), 0);
       const amountPaid = requests.reduce((sum, r) => sum + minorUnitsToDecimal(r.total_completed_amount_money?.amount), 0);
       const currency = requests[0]?.computed_amount_money?.currency ?? 'USD';
-      const dueDate = requests.find((r) => r.due_date)?.due_date ? new Date(requests.find((r) => r.due_date).due_date) : new Date(inv.created_at ?? Date.now());
+      const dueDateStr = requests.find((r) => r.due_date)?.due_date;
+      const dueDate = dueDateStr ? new Date(dueDateStr) : new Date(inv.created_at ?? Date.now());
       const issueDate = inv.created_at ? new Date(inv.created_at) : dueDate;
       const number = inv.invoice_number || externalId;
 
@@ -404,8 +450,8 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
         });
       }
       invoicesUpserted++;
-    } catch (e: any) {
-      errors.push(`invoice ${inv?.id}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`invoice ${inv?.id}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 

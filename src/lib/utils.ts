@@ -46,7 +46,14 @@ export const COUNTRY_CURRENCY: Record<string, string> = {
   KE: 'KES', NG: 'NGN', ZA: 'ZAR', IN: 'INR',
 };
 
-export const PLAN_PRICING: Record<string, { monthly: number; name: string; popular?: boolean; features: string[] }> = {
+// Keys are pinned to the db schema's plan_tier enum (starter | growth |
+// scale | enterprise) as a literal duplicate rather than importing
+// PlanTier from @/db/schema, which would create a circular import
+// (schema.ts already imports nanoid from this file). The literal key
+// union (instead of the old `Record<string, ...>`) means PlanKey
+// (= keyof typeof PLAN_PRICING) downstream in billing.ts type-checks
+// against the enum without any `as any` casts.
+export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise', { monthly: number; name: string; popular?: boolean; features: string[] }> = {
   starter: { monthly: 49, name: 'Starter', features: ['AR aging dashboard', 'AI dunning (email)', '1 integration', '1 user', 'Up to 50 invoices'] },
   growth: { monthly: 99, name: 'Growth', popular: true, features: ['Everything in Starter', 'SMS dunning', 'Payment portal', 'Cash-flow forecast', '3 users', 'Unlimited invoices', 'Multi-currency'] },
   scale: { monthly: 199, name: 'Scale', features: ['Everything in Growth', 'AI collections concierge', 'Custom workflows', 'API access', 'Unlimited users', 'Priority support'] },

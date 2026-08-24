@@ -1,13 +1,37 @@
 import Stripe from 'stripe';
 import { getStripe } from '@/lib/infra';
 import { db } from '@/db';
-import { subscriptions, organizations, invoices, payments, events, disputes, timelineEvents, users } from '@/db/schema';
+import { subscriptions, organizations, invoices, payments, events, disputes, timelineEvents, users, subStatus } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { nanoid, PLAN_PRICING } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
 import { applyPayment, applyRefund } from '@/lib/billing-math';
 
 export type PlanKey = keyof typeof PLAN_PRICING;
+
+type SubStatus = (typeof subStatus.enumValues)[number];
+
+/**
+ * Map Stripe's subscription status to our db's sub_status enum. Not a
+ * 1:1 rename -- Stripe spells it "canceled" (US), our enum has
+ * "cancelled" (UK), and Stripe has three statuses ('incomplete_expired',
+ * 'paused', 'unpaid') our enum doesn't model at all. This used to be a
+ * blind `sub.status as any` cast straight into the DB column, which
+ * means every real Stripe cancellation webhook was silently trying to
+ * write the literal string "canceled" into a column whose CHECK
+ * constraint only allows "cancelled" -- a guaranteed Postgres
+ * constraint violation on the one event (subscription actually
+ * canceled) this table most needs to reflect correctly.
+ */
+function mapStripeSubscriptionStatus(status: Stripe.Subscription.Status): SubStatus {
+  switch (status) {
+    case 'canceled': return 'cancelled';
+    case 'incomplete_expired': return 'cancelled'; // never activated, treat like cancelled
+    case 'unpaid': return 'past_due';
+    case 'paused': return 'past_due'; // closest "needs attention" state we model
+    default: return status;
+  }
+}
 
 export async function createCheckoutSession(opts: { orgId: string; plan: PlanKey; customerEmail: string; successUrl: string; cancelUrl: string }) {
   const plan = PLAN_PRICING[opts.plan];
@@ -59,7 +83,7 @@ export async function handleStripeEvent(event: Stripe.Event) {
         const existing = await db.select().from(subscriptions).where(eq(subscriptions.orgId, orgId)).limit(1);
         if (existing[0]) {
           await db.update(subscriptions).set({
-            plan: plan as any, status: 'active',
+            plan, status: 'active',
             stripeCustomerId: typeof session.customer === 'string' ? session.customer : session.customer?.id,
             stripeSubscriptionId: typeof session.subscription === 'string' ? session.subscription : session.subscription?.id,
             currentPeriodStart: new Date(),
@@ -68,14 +92,14 @@ export async function handleStripeEvent(event: Stripe.Event) {
           }).where(eq(subscriptions.id, existing[0].id));
         } else {
           await db.insert(subscriptions).values({
-            id: nanoid(), orgId, plan: plan as any, status: 'active',
+            id: nanoid(), orgId, plan, status: 'active',
             stripeCustomerId: typeof session.customer === 'string' ? session.customer : session.customer?.id,
             stripeSubscriptionId: typeof session.subscription === 'string' ? session.subscription : session.subscription?.id,
             currentPeriodStart: new Date(),
             currentPeriodEnd: new Date(Date.now() + 30 * 86400000),
           });
         }
-        await db.update(organizations).set({ plan: plan as any, updatedAt: new Date() }).where(eq(organizations.id, orgId));
+        await db.update(organizations).set({ plan, updatedAt: new Date() }).where(eq(organizations.id, orgId));
       }
       break;
     }
@@ -96,9 +120,9 @@ export async function handleStripeEvent(event: Stripe.Event) {
       const orgId = sub.metadata?.orgId;
       if (orgId) {
         await db.update(subscriptions).set({
-          status: sub.status as any,
-          currentPeriodStart: new Date((sub as any).current_period_start * 1000),
-          currentPeriodEnd: new Date((sub as any).current_period_end * 1000),
+          status: mapStripeSubscriptionStatus(sub.status),
+          currentPeriodStart: new Date(sub.current_period_start * 1000),
+          currentPeriodEnd: new Date(sub.current_period_end * 1000),
           cancelAt: sub.cancel_at ? new Date(sub.cancel_at * 1000) : null,
           updatedAt: new Date(),
         }).where(eq(subscriptions.orgId, orgId));
@@ -141,7 +165,7 @@ export async function handleStripeEvent(event: Stripe.Event) {
       // Stripe-subscription invoice failed (recurring billing retry, not our customer invoices).
       // We surface this in logs and let the existing subscription.dunning flow pick it up.
       const inv = event.data.object as Stripe.Invoice;
-      const orgId = (inv.subscription_details as any)?.metadata?.orgId;
+      const orgId = inv.subscription_details?.metadata?.orgId;
       console.warn(`[stripe-webhook] invoice.payment_failed subscription=${inv.subscription} orgId=${orgId} amount=${inv.amount_due}`);
       if (orgId) {
         await db.update(subscriptions).set({ status: 'past_due', updatedAt: new Date() }).where(eq(subscriptions.orgId, orgId));
@@ -237,8 +261,8 @@ async function handleChargeDispute(dispute: Stripe.Dispute, chargeId: string | u
       });
       await notifyOwnerOfChargeback(orgId, { amount, currency, reason: dispute.reason, invoiceId, won });
     }
-  } catch (e: any) {
-    console.error(`[stripe-webhook] dispute handler error (${phase}):`, e?.message ?? e);
+  } catch (e: unknown) {
+    console.error(`[stripe-webhook] dispute handler error (${phase}):`, e instanceof Error ? e.message : e);
   }
 }
 
@@ -260,8 +284,8 @@ async function notifyOwnerOfChargeback(orgId: string, info: { amount: number; cu
         ? `<p>Good news — you won the chargeback on invoice ${info.invoiceId} (${info.amount} ${info.currency}). The invoice is marked paid again.</p>`
         : `<p>You lost the chargeback on invoice ${info.invoiceId} (${info.amount} ${info.currency}). The funds were clawed back and the invoice balance has been reopened.</p>`;
     await sendEmail({ to: owner.email, subject, html: body });
-  } catch (e: any) {
-    console.error('[stripe-webhook] chargeback notify failed:', e?.message ?? e);
+  } catch (e: unknown) {
+    console.error('[stripe-webhook] chargeback notify failed:', e instanceof Error ? e.message : e);
   }
 }
 
@@ -297,7 +321,7 @@ async function reversePaymentForInvoice({ invoiceId, refundAmount, reason }: { i
     externalId: `refund-${invoiceId}-${refundAmount}-${now.getTime()}`,
   });
   await db.update(invoices).set({
-    status: newStatus as any,
+    status: newStatus,
     amountPaid: String(newAmountPaid),
     paidAt: newStatus === 'paid' ? inv.paidAt : null,
     updatedAt: now,
@@ -393,8 +417,8 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
     try {
       const { pushPaymentToAccounting } = await import('@/lib/integrations/pushback');
       await pushPaymentToAccounting({ orgId: args.orgId, invoiceId: args.invoiceId, amount: args.amount, currency: args.currency, paymentRef: newAmountPaid.toFixed(2) });
-    } catch (e: any) {
-      console.warn(`[stripe-webhook] payment pushback to accounting failed (non-fatal): ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      console.warn(`[stripe-webhook] payment pushback to accounting failed (non-fatal): ${e instanceof Error ? e.message : e}`);
     }
   }
 

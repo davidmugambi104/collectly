@@ -22,6 +22,34 @@ const QBO_BASE = process.env.QBO_ENVIRONMENT === 'production'
 const QBO_OAUTH = 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer';
 const QBO_REVOKE = 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke';
 
+// Minimal shapes for the fields this file actually reads/writes -- QBO
+// has no official TS types package, and the full API surface is far
+// larger than what we use.
+interface QboTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+  refresh_token_expires_in?: number;
+  x_refresh_token_expires_in?: number;
+}
+interface QboCustomer {
+  Id: string;
+  DisplayName?: string;
+  CompanyName?: string;
+  PrimaryEmailAddr?: { Address?: string };
+  PrimaryPhone?: { FreeFormNumber?: string };
+}
+interface QboInvoice {
+  Id: string;
+  DocNumber?: string;
+  CustomerRef?: { value?: string; name?: string };
+  TotalAmount?: number;
+  Balance?: number;
+  CurrencyRef?: { value?: string };
+  TxnDate?: string;
+  DueDate?: string;
+}
+
 // Refresh the access token if it's within 5 min of expiry (or already past).
 // Persists the new tokens. Returns the (possibly new) integration row.
 async function getFreshQboToken(orgId: string) {
@@ -51,8 +79,8 @@ async function getFreshQboToken(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`QBO refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: any = await res.json();
-  const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
+  const json: QboTokenResponse = await res.json();
+  const newExpiresAt = new Date(now + json.expires_in * 1000);
   // P1.6 audit fix 2026-07-31: capture refresh-token expiry.
   // Intuit sends it in the `x_refresh_token_expires_in` response header
   // (HTTP/2 canonical name) or `refresh_token_expires_in` in the body
@@ -77,7 +105,7 @@ async function getFreshQboToken(orgId: string) {
     status: 'connected',
     updatedAt: new Date(),
     metadata: {
-      ...((integ.metadata as Record<string, any>) ?? {}),
+      ...((integ.metadata as Record<string, unknown>) ?? {}),
       refreshExpiresAt: newRefreshExpiresAt ? newRefreshExpiresAt.toISOString() : null,
     },
   }).where(eq(integrations.id, integ.id));
@@ -137,11 +165,11 @@ export async function qboExchangeCode(code: string, realmId: string) {
     }),
   });
   if (!res.ok) throw new Error(`QBO exchange failed: ${res.status} ${await res.text()}`);
-  const json: any = await res.json();
+  const json: QboTokenResponse = await res.json();
   return {
-    accessToken: json.access_token as string,
-    refreshToken: json.refresh_token as string,
-    expiresIn: json.expires_in as number,
+    accessToken: json.access_token,
+    refreshToken: json.refresh_token ?? '',
+    expiresIn: json.expires_in,
     realmId,
   };
 }
@@ -295,12 +323,12 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   let invoicesMarkedPaid = 0;
 
   // 1. Customers
-  let qboCustomers: any[] = [];
+  let qboCustomers: QboCustomer[] = [];
   try {
-    const res: any = await qboListCustomers(orgId);
+    const res: { QueryResponse?: { Customer?: QboCustomer[] } } = await qboListCustomers(orgId);
     qboCustomers = res?.QueryResponse?.Customer ?? [];
-  } catch (e: any) {
-    errors.push(`customers: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`customers: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   for (const c of qboCustomers) {
@@ -327,18 +355,18 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
         });
       }
       customersUpserted++;
-    } catch (e: any) {
-      errors.push(`customer ${c?.Id}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`customer ${c?.Id}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
   // 2. Invoices
-  let qboInvoices: any[] = [];
+  let qboInvoices: QboInvoice[] = [];
   try {
-    const res: any = await qboListOpenInvoices(orgId);
+    const res: { QueryResponse?: { Invoice?: QboInvoice[] } } = await qboListOpenInvoices(orgId);
     qboInvoices = res?.QueryResponse?.Invoice ?? [];
-  } catch (e: any) {
-    errors.push(`invoices: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   for (const inv of qboInvoices) {
@@ -432,8 +460,8 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
         });
       }
       invoicesUpserted++;
-    } catch (e: any) {
-      errors.push(`invoice ${inv?.Id}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`invoice ${inv?.Id}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 

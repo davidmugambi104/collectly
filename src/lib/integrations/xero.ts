@@ -19,6 +19,51 @@ import { nanoid } from '@/lib/utils';
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 const XERO_API = 'https://api.xero.com/api.xro/2.0';
 
+// Minimal shapes for the fields this file actually reads/writes -- Xero
+// has no official TS types package, and the full API surface is far
+// larger than what we use.
+interface XeroTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+}
+interface XeroConnection {
+  tenantId: string;
+  updatedDateUtc?: string;
+  createdDateUtc?: string;
+}
+interface XeroPhone {
+  PhoneType?: string;
+  PhoneNumber?: string;
+}
+interface XeroContact {
+  ContactID: string;
+  Name?: string;
+  FirstName?: string;
+  LastName?: string;
+  EmailAddress?: string | null;
+  Phones?: XeroPhone[];
+}
+interface XeroInvoice {
+  InvoiceID: string;
+  InvoiceNumber?: string;
+  Contact?: { ContactID: string; Name?: string };
+  Total?: number;
+  AmountDue?: number;
+  CurrencyCode?: string;
+  Date?: unknown;
+  DueDate?: unknown;
+}
+interface XeroPaymentBody {
+  Invoice: { InvoiceID: string };
+  Account: { Code: string };
+  Amount: number;
+  CurrencyRate: number;
+  Reference: string;
+  Date: string;
+  Currency?: { Code: string };
+}
+
 /**
  * Xero's Accounting API returns date fields (Invoice.Date, Invoice.DueDate,
  * UpdatedDateUTC, etc.) in the legacy Microsoft/.NET JSON date format —
@@ -69,8 +114,8 @@ async function getFreshXero(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`Xero refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: any = await res.json();
-  const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
+  const json: XeroTokenResponse = await res.json();
+  const newExpiresAt = new Date(now + json.expires_in * 1000);
   await db.update(integrations).set({
     accessToken: json.access_token,
     refreshToken: json.refresh_token ?? integ.refreshToken,
@@ -90,7 +135,7 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
     headers: { Authorization: `Bearer ${accessToken}`, Accept: 'application/json' },
   });
   if (!res.ok) throw new Error(`Xero connections failed: ${res.status}`);
-  const json: any = await res.json();
+  const json: XeroConnection[] = await res.json();
   // /connections returns EVERY org this Xero user has ever authorized for
   // this app, not just the one from the auth flow just completed --
   // disconnecting in our app only deletes our local row, it never revokes
@@ -100,7 +145,7 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
   // reconnecting to Xero's Demo Company kept syncing an old, empty org
   // instead). updatedDateUtc reflects the most recent (re)authorization per
   // Xero's own docs, so sort on that and take the most recent.
-  const sorted = [...(json ?? [])].sort((a: any, b: any) =>
+  const sorted = [...(json ?? [])].sort((a, b) =>
     new Date(b.updatedDateUtc ?? b.createdDateUtc ?? 0).getTime() - new Date(a.updatedDateUtc ?? a.createdDateUtc ?? 0).getTime(),
   );
   const mostRecent = sorted[0];
@@ -225,20 +270,20 @@ export async function saveXeroConnection(orgId: string, tokens: {
  * We fetch both AUTHORISED (open) and PAID (zero balance) so we can
  * detect payments the customer made outside Collectly.
  */
-export async function xeroListOpenInvoices(orgId: string) {
+export async function xeroListOpenInvoices(orgId: string): Promise<XeroInvoice[]> {
   // Fetch in two passes — Xero's filter syntax for OR is awkward
-  const auth: any = await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`);
-  const paid: any = await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`);
+  const auth: { Invoices?: XeroInvoice[] } = await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`);
+  const paid: { Invoices?: XeroInvoice[] } = await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`);
   return [
-    ...((auth?.Invoices ?? []) as any[]),
-    ...((paid?.Invoices ?? []) as any[]),
+    ...(auth?.Invoices ?? []),
+    ...(paid?.Invoices ?? []),
   ];
 }
 
 /** List all contacts (customers) from Xero. */
-export async function xeroListContacts(orgId: string) {
-  const res: any = await xeroFetch(orgId, `/Contacts?page=1`);
-  return (res?.Contacts ?? []) as any[];
+export async function xeroListContacts(orgId: string): Promise<XeroContact[]> {
+  const res: { Contacts?: XeroContact[] } = await xeroFetch(orgId, `/Contacts?page=1`);
+  return res?.Contacts ?? [];
 }
 
 // -------------------------------------------------------------------
@@ -258,7 +303,7 @@ export async function xeroRecordPayment(orgId: string, opts: {
   currency: string;
   reference: string;
 }) {
-  const body: any = {
+  const body: XeroPaymentBody = {
     Invoice: { InvoiceID: opts.xeroInvoiceId },
     Account: opts.accountCode ? { Code: opts.accountCode } : { Code: '200' }, // 200 = "Accounts Receivable" default
     Amount: opts.amount,
@@ -306,11 +351,11 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   let invoicesMarkedPaid = 0;
 
   // 1. Contacts → customers
-  let xeroContacts: any[] = [];
+  let xeroContacts: XeroContact[] = [];
   try {
     xeroContacts = await xeroListContacts(orgId);
-  } catch (e: any) {
-    errors.push(`contacts: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`contacts: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   for (const c of xeroContacts) {
@@ -318,7 +363,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
       const externalId = String(c.ContactID);
       const name = c.Name ?? (`${c.FirstName ?? ''} ${c.LastName ?? ''}`.trim() || 'Unknown');
       const email = c.EmailAddress ?? null;
-      const phone = (c.Phones ?? []).find((p: any) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
+      const phone = (c.Phones ?? []).find((p) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
       const existing = await db
         .select({ id: customersTbl.id })
         .from(customersTbl)
@@ -330,17 +375,17 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         await db.insert(customersTbl).values({ id: nanoid(), orgId, externalId, name, email, phone });
       }
       customersUpserted++;
-    } catch (e: any) {
-      errors.push(`contact ${c?.ContactID}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`contact ${c?.ContactID}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
   // 2. Invoices
-  let xeroInvoices: any[] = [];
+  let xeroInvoices: XeroInvoice[] = [];
   try {
     xeroInvoices = await xeroListOpenInvoices(orgId);
-  } catch (e: any) {
-    errors.push(`invoices: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   for (const inv of xeroInvoices) {
@@ -428,8 +473,8 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         });
       }
       invoicesUpserted++;
-    } catch (e: any) {
-      errors.push(`invoice ${inv?.InvoiceID}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`invoice ${inv?.InvoiceID}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
