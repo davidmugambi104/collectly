@@ -42,7 +42,7 @@ from datetime import datetime, timezone
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROSPECTS_CSV = os.path.join(HERE, "..", "data", "prospects.csv")
 TZ = ZoneInfo("Africa/Nairobi")  # matches the cron job's schedule tz
-MAX_LEADS_PER_DAY = int(os.environ.get("APIFY_MAX_LEADS_PER_DAY", "30"))
+MAX_LEADS_PER_DAY = int(os.environ.get("APIFY_MAX_LEADS_PER_DAY", "60"))
 MAX_DAILY_USD = float(os.environ.get("APIFY_MAX_DAILY_USD", "2.00"))
 APIFY_TOKEN_PATH = os.path.expanduser("~/.openclaw/secrets/apify/APIFY_TOKEN")
 
