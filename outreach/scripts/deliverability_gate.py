@@ -233,9 +233,36 @@ def main() -> int:
     now = _now()
     seed = _read_seed_log()
     live_snapshot = _read_live_snapshot()
-    send = live_snapshot if live_snapshot is not None else _read_send_logs(window_days=7)
     deliv_status, deliv_reason = _classify(seed)
-    gate, gate_reason, cap = _decide_gate(deliv_status, send)
+
+    if live_snapshot is not None:
+        send = live_snapshot
+        gate, gate_reason, cap = _decide_gate(deliv_status, send)
+    else:
+        # Fail closed: _read_send_logs() is blind to bounces once Resend's
+        # real send volume outruns the local outbound-send-log-*.csv files
+        # (see _read_live_snapshot's docstring) -- it silently reports a low
+        # bounce rate and would let _decide_gate() grant "allow" on data that
+        # can't be trusted. That exact failure mode ran unnoticed for about a
+        # week before this fix. Rather than risk repeating it, treat "no
+        # fresh live snapshot" as its own block reason instead of computing
+        # a gate decision from the stale fallback.
+        send = _read_send_logs(window_days=7)
+        send["source"] = "stale_local_csv_fallback_bounce_blind"
+        print(
+            "WARNING: no fresh live Resend snapshot found under "
+            f"{SNAPSHOTS} (missing, or older than {SNAPSHOT_MAX_AGE_HOURS}h). "
+            "Refusing to compute the gate from the local CSV rollup, which "
+            "undercounts bounces -- forcing gate=block until "
+            "run_daily_deliverability_monitor.py writes a fresh snapshot.",
+            file=sys.stderr,
+        )
+        gate, gate_reason, cap = (
+            "block",
+            f"no fresh live Resend snapshot (missing or >{SNAPSHOT_MAX_AGE_HOURS}h stale); "
+            "local CSV rollup is bounce-blind and not trusted for gate decisions -- fail closed",
+            0,
+        )
 
     deliv_payload = {
         "status": deliv_status,

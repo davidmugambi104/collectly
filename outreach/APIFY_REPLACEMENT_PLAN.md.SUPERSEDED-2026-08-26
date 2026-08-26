@@ -1,3 +1,11 @@
+# SUPERSEDED 2026-08-26: the paid Apify plan (STARTER, $29/month) is active
+# again, so the "Apify is dead" premise below no longer holds. Current
+# guidance for Apify-based sourcing is outreach/scripts/APIFY_PIPELINE.md
+# plus the approved-actors list in the "Collectly daily lead enrichment
+# top-up" cron job. Kept for history only -- do not use this file as
+# current guidance.
+# --- old content below ---
+
 # Collectly Marketing Push — Apify Replacement + Zero-Budget Sprint
 _Drafted: 2026-08-18 23:50 EAT (Davie live chat)_
 
