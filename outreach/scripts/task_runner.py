@@ -456,7 +456,7 @@ def cmd_cycle(args: argparse.Namespace) -> int:
     gate_exit = daily_send._check_gate()
     if gate_exit != 0:
         print("Cycle stopped: deliverability gate is not open. No prospects queued, no sends attempted.")
-        return gate_exit
+        return 0  # gate-closed is an expected flow, not an error -- exit 0 so cron doesn't flag it
 
     tasks = refresh_queue(cfg)
     usage = load_rate_usage()
