@@ -2,17 +2,21 @@ export const dynamic = 'force-dynamic';
 
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
+import { getAuth, requireAdminEmail } from '@/lib/auth-helper';
 import { upgradeRequests } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { CheckCircle2, X, Mail, Building2, Globe, Calendar, MessageSquare } from 'lucide-react';
 import { formatDate, PLAN_PRICING } from '@/lib/utils';
 
-// Admin emails allowed to view this page.
-// Add your own email here.
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? 'davie@getcollectly.app').split(',').map(e => e.trim().toLowerCase());
-
 async function markStatus(formData: FormData) {
   'use server';
+  // SECURITY: the page-level ADMIN_EMAILS gate below does NOT cover this
+  // action. A Server Action is its own POST endpoint, and both `id` and
+  // `status` come from FormData rather than from render-scope closure —
+  // so without this check any signed-in customer could flip the status of
+  // any upgrade request. Re-check the admin allowlist here.
+  const admin = await requireAdminEmail();
+  if (!admin.ok) return;
   const id = String(formData.get('id') ?? '');
   const status = String(formData.get('status') ?? '');
   if (!id || !['pending', 'invoiced', 'paid', 'cancelled'].includes(status)) return;
@@ -20,16 +24,13 @@ async function markStatus(formData: FormData) {
 }
 
 export default async function AdminUpgradeRequestsPage() {
-  // Auth check — must be a logged-in admin
-  const { getAuth } = await import('@/lib/auth-helper');
-  const { db: dbClient } = await import('@/db');
-  const { users } = await import('@/db/schema');
-  const { eq } = await import('drizzle-orm');
+  // Auth check — must be a logged-in admin. Same helper the markStatus
+  // action uses, so the page and the mutation can't drift apart.
   const { userId } = await getAuth();
   if (!userId) redirect('/sign-in');
-  const [u] = await dbClient.select({ email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
-  const userEmail = u?.email?.toLowerCase();
-  if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
+  const admin = await requireAdminEmail();
+  const userEmail = admin.email;
+  if (!admin.ok) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
         <div className="max-w-md text-center">

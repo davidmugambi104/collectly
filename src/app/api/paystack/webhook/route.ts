@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { db } from '@/db';
 import { invoices, payments, customers } from '@/db/schema';
-import { and, eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
+import { applyPayment } from '@/lib/billing-math';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
@@ -40,8 +41,13 @@ function verifySignature(body: string, signature: string | null): boolean {
  * moved from `sent`/`overdue` to `paid` automatically. P1.5 audit fix:
  * when a `charge.success` event carries `metadata.invoiceId`, we look up
  * the invoice, insert a `payments` row keyed by Paystack's `data.id`, and
- * mark the invoice paid. Idempotent — the unique partial index
+ * move the balance. Idempotent — the unique partial index
  * `payments_paystack_charge_uniq` rejects duplicate charge ids.
+ *
+ * The charge is applied to a running balance via `applyPayment`, so it only
+ * reaches 'paid' when it actually clears what's outstanding; anything less
+ * lands as 'partial'. Charges in a different currency to the invoice are
+ * refused rather than guessed at.
  */
 export async function POST(req: NextRequest) {
   const signature = req.headers.get('x-paystack-signature');
@@ -92,44 +98,78 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true, action: 'logged' });
       }
 
-      // Insert payment (idempotent via unique partial index on external_id)
-      let paymentInserted = false;
+      // SECURITY: apply what was actually charged, not the invoice total.
+      // This used to set `amountPaid` to the full invoice amount and flip the
+      // status to 'paid' for any successful charge, whatever its size — so a
+      // 1-unit payment settled the whole invoice. Amount and currency now both
+      // have to hold up before anything is marked paid.
+      if (!(amountMajor > 0)) {
+        console.log('[paystack] charge.success with a non-positive amount; skipping DB write. ref=', data?.reference);
+        return NextResponse.json({ received: true, action: 'logged' });
+      }
+
+      const invoiceCurrency = String(row.invoice.currency ?? '').toUpperCase();
+      if (invoiceCurrency && currency !== invoiceCurrency) {
+        // Applying a KES charge against a USD invoice would silently corrupt
+        // the balance. Record nothing and let it be reconciled by hand.
+        console.error(
+          '[paystack] currency mismatch — charge is', currency, 'but invoice', row.invoice.id, 'is', invoiceCurrency,
+          '. Skipping DB write. ref=', data?.reference,
+        );
+        return NextResponse.json({ received: true, action: 'currency_mismatch' }, { status: 202 });
+      }
+
+      // Insert payment first: the unique partial index on external_id is what
+      // makes this idempotent. If it rejects, this is a duplicate delivery and
+      // the balance was already moved — returning here is what stops a replay
+      // from being counted twice (the running-balance math below is additive,
+      // unlike the absolute write it replaced).
       try {
         await db.insert(payments).values({
           id: nanoid(),
           orgId: row.invoice.orgId,
           invoiceId: row.invoice.id,
           customerId: row.customer.id,
-          amount: String(amountMajor || row.invoice.amount),
+          amount: String(amountMajor),
           currency,
           method: data?.channel ?? 'card',
           reference: data?.reference ? String(data.reference) : null,
           externalId: chargeId,
           paidAt: new Date(),
         });
-        paymentInserted = true;
       } catch (e: unknown) {
-        // Unique violation => duplicate delivery; ignore, still flip invoice if not already paid
         const message = e instanceof Error ? e.message : String(e);
-        if (!message.includes('payments_paystack_charge_uniq')) {
-          throw e;
+        if (message.includes('payments_paystack_charge_uniq')) {
+          console.log('[paystack] duplicate charge delivery, already applied. charge=', chargeId);
+          return NextResponse.json({ received: true, action: 'duplicate' });
         }
+        throw e;
       }
 
-      // Mark invoice paid (idempotent: only flips non-paid invoices)
-      const updated = await db
+      // Running balance — same helper the Stripe path uses, so a part-payment
+      // lands as 'partial' and only a charge that clears the balance is 'paid'.
+      const priorPaid = Number(row.invoice.amountPaid ?? 0);
+      const totalDue = Number(row.invoice.amount);
+      const { newAmountPaid, status: newStatus } = applyPayment(priorPaid, amountMajor, totalDue);
+      const isPaidInFull = newStatus === 'paid';
+      const now = new Date();
+
+      await db
         .update(invoices)
         .set({
-          status: 'paid',
-          amountPaid: String(row.invoice.amount),
-          paidAt: new Date(),
-          updatedAt: new Date(),
+          status: newStatus,
+          amountPaid: String(newAmountPaid),
+          paidAt: isPaidInFull ? now : null,
+          updatedAt: now,
         })
-        .where(and(eq(invoices.id, row.invoice.id), sql`${invoices.status} <> 'paid'`))
-        .returning({ id: invoices.id });
+        .where(eq(invoices.id, row.invoice.id));
 
-      console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', updated.length > 0, 'email=', email);
-      return NextResponse.json({ received: true, action: 'applied' });
+      console.log(
+        '[paystack] charge.success applied. invoice=', row.invoice.id,
+        'charged=', amountMajor, currency, 'totalDue=', totalDue,
+        'newAmountPaid=', newAmountPaid, 'status=', newStatus, 'email=', email,
+      );
+      return NextResponse.json({ received: true, action: 'applied', status: newStatus });
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
       console.error('[paystack] charge.success failed:', message);

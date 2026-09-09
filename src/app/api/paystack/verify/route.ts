@@ -25,8 +25,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'reference is required' }, { status: 400 });
   }
 
+  // SECURITY: `reference` lands in the *path* of a Paystack API call that
+  // carries our secret key. Unencoded, a value like `../../customer` would
+  // traverse to a different Paystack endpoint and return data this route was
+  // never meant to expose. Paystack references are alphanumeric plus
+  // `-` `_` `.`, so reject anything else outright and encode what's left.
+  if (!/^[A-Za-z0-9._-]{1,100}$/.test(reference)) {
+    return NextResponse.json({ error: 'invalid reference' }, { status: 400 });
+  }
+
   try {
-    const res = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+    const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${PAYSTACK_SECRET}`,

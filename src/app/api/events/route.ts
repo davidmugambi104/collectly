@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+// Use the shared helper, not Clerk's `auth()` directly: the helper honours
+// the USE_DEV_AUTH dev shim (and refuses it in production), so this route
+// behaves the same as every other authenticated route in local dev.
+import { getAuth as auth } from '@/lib/auth-helper';
 import { db } from '@/db';
 import { events } from '@/db/schema';
 import { nanoid } from '@/lib/utils';

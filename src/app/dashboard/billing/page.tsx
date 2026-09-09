@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { AppShell } from '@/components/app/shell';
-import { getAuth as auth } from '@/lib/auth-helper';
+import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { organizations, subscriptions, customers, invoices, payments } from '@/db/schema';
@@ -67,13 +67,17 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
 
   async function upgrade(form: FormData) {
     'use server';
+    // Re-derive the session inside the action — the page-render guard above
+    // does not protect this POST endpoint. See requireOrgId in auth-helper.
+    const actorOrgId = await requireOrgId();
+    if (!actorOrgId) return;
     const target = String(form.get('plan') ?? '') as keyof typeof PLAN_PRICING;
     if (!target || !PLAN_PRICING[target]) return;
     // Soft-launch flow: record the upgrade request, notify Davie, show confirmation.
     // Replaced by Stripe checkout redirect once Stripe Atlas is set up.
     const { recordUpgradeRequest } = await import('@/lib/billing');
     const result = await recordUpgradeRequest({
-      orgId: orgId!,
+      orgId: actorOrgId,
       plan: target,
     });
     redirect(`/dashboard/billing?requested=1&plan=${target}&req=${result.requestId}`);
@@ -81,9 +85,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
 
   async function openPortal() {
     'use server';
+    const actorOrgId = await requireOrgId();
+    if (!actorOrgId) return;
     try {
       const session = await createCustomerPortal(
-        orgId!,
+        actorOrgId,
         `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
       );
       if (session.url) redirect(session.url);
@@ -156,7 +162,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         <div className="lg:col-span-2 card">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">Current plan</div>
+              <div className="text-2xs font-medium text-ink-500">Current plan</div>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="text-2xl font-display font-bold text-ink-950">{current.name}</span>
                 <span className="text-sm text-ink-500">${current.monthly}/mo</span>
@@ -216,11 +222,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
 
         {/* Quick links */}
         <div className="card">
-          <h3 className="font-semibold text-ink-900 text-sm">Resources</h3>
+          <h2 className="font-semibold text-ink-900 text-sm">Resources</h2>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/dashboard/invoices" className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" />View invoices</Link></li>
-            <li><Link href="/dashboard/payments" className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><CreditCard className="h-3.5 w-3.5" />View payments</Link></li>
-            <li><a href="mailto:billing@getcollectly.app" className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
+            <li><Link href="/dashboard/invoices" className="py-1.5 text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" />View invoices</Link></li>
+            <li><Link href="/dashboard/payments" className="py-1.5 text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><CreditCard className="h-3.5 w-3.5" />View payments</Link></li>
+            <li><a href="mailto:billing@getcollectly.app" className="py-1.5 text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
           </ul>
           <div className="mt-4 pt-4 border-t border-ink-100 text-xs text-ink-500">
             Questions about your plan? Email <a href="mailto:billing@getcollectly.app" className="text-brand-600">billing@getcollectly.app</a>.
@@ -265,22 +271,22 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       <div className="mt-8 card">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="h3">Receipts & payments</h2>
+            <h2 className="app-heading">Receipts & payments</h2>
             <p className="text-xs text-ink-500 mt-0.5">Customer payments you&apos;ve collected. Use these as proof of receipt for accounting.</p>
           </div>
-          <Link href="/dashboard/payments" className="text-sm text-brand-600 hover:text-brand-700">All payments →</Link>
+          <Link href="/dashboard/payments" className="inline-block py-1.5 text-sm text-brand-600 hover:text-brand-700">All payments →</Link>
         </div>
         {recentPayments.length === 0 ? (
           <div className="rounded-xl border border-dashed border-ink-200 p-8 text-center">
             <FileText className="h-8 w-8 text-ink-300 mx-auto" />
-            <h3 className="mt-2 font-semibold text-ink-900 text-sm">No payments yet</h3>
+            <h2 className="mt-2 font-semibold text-ink-900 text-sm">No payments yet</h2>
             <p className="mt-1 text-xs text-ink-600">When customers pay through your portal, receipts will appear here. Each row links to the original invoice.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-ink-500 text-xs uppercase tracking-wider">
+                <tr className="text-left text-ink-500 text-2xs font-medium">
                   <th className="pb-2 pr-4">Date</th>
                   <th className="pb-2 px-4">Customer</th>
                   <th className="pb-2 px-4">Invoice</th>
@@ -314,7 +320,7 @@ function UsageMeter({ label, used, limit }: { label: string; used: number; limit
   const isDanger = !isUnlimited && pct >= 100;
   return (
     <div className="rounded-lg border border-ink-200 p-3">
-      <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">{label}</div>
+      <div className="text-2xs font-medium text-ink-500">{label}</div>
       <div className="mt-1.5 flex items-baseline gap-1">
         <span className="text-2xl font-display font-bold text-ink-950">{used}</span>
         {isUnlimited ? (

@@ -9,8 +9,27 @@ const DEFAULTS = {
 };
 
 // In-process fallback when Upstash is not configured (local dev / tests).
+//
+// WARNING: this fallback is per-process. On Vercel each serverless instance
+// gets its own Map and instances are created and torn down freely, so in
+// production without Upstash the effective limit is "max per instance" —
+// which an attacker spreading requests across instances bypasses entirely.
+// Treat every `rateLimit()` call as unprotected until UPSTASH_REDIS_REST_URL
+// and UPSTASH_REDIS_REST_TOKEN are set. `warnIfUnprotected()` below logs this
+// once per process so it shows up in prod logs instead of failing silently.
 type Entry = { count: number; resetAt: number };
 const buckets = new Map<string, Entry>();
+
+let warnedNoRedis = false;
+function warnIfUnprotected() {
+  if (warnedNoRedis || process.env.NODE_ENV !== 'production') return;
+  warnedNoRedis = true;
+  console.error(
+    'RATE LIMIT DEGRADED: UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN are not set. ' +
+      'Falling back to a per-instance in-memory limiter, which does not hold across ' +
+      'serverless instances. Public routes are effectively unthrottled.'
+  );
+}
 
 function inProcessRateLimit(ip: string, opts: { windowMs?: number; max?: number } = {}): RateLimitResult {
   const windowMs = opts.windowMs ?? DEFAULTS.windowMs;
@@ -41,6 +60,7 @@ export async function rateLimit(
   const max = opts.max ?? DEFAULTS.max;
   const redis = getRedis();
   if (!redis) {
+    warnIfUnprotected();
     return inProcessRateLimit(ip, opts);
   }
 

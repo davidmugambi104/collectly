@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { AppShell } from '@/components/app/shell';
-import { getAuth as auth } from '@/lib/auth-helper';
+import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers } from '@/db/schema';
@@ -115,6 +115,21 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     .limit(20);
 
   const active = seq?.isActive ?? true;
+
+  async function toggleSequence() {
+    'use server';
+    // Re-derive the session inside the action — the page-render guard above
+    // does not protect this POST endpoint. See requireOrgId in auth-helper.
+    // The update is also scoped by orgId so the sequence id can never be
+    // acted on outside the caller's own tenant.
+    const actorOrgId = await requireOrgId();
+    if (!actorOrgId || !seq) return;
+    await db
+      .update(dunningSequences)
+      .set({ isActive: !active, updatedAt: new Date() })
+      .where(and(eq(dunningSequences.id, seq.id), eq(dunningSequences.orgId, actorOrgId)));
+    revalidatePath('/dashboard/dunning');
+  }
 
   // Impact strip: the numbers that make dunning feel like it's working (or
   // like it needs attention), computed once so the page opens with "here's
@@ -302,7 +317,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           <Link href="/dashboard/dunning/performance" className="btn-ghost text-sm">
             <BarChart3 className="h-3.5 w-3.5" />Full report<ChevronRight className="h-3.5 w-3.5" />
           </Link>
-          <form action={async () => { 'use server'; if (seq) { await db.update(dunningSequences).set({ isActive: !active, updatedAt: new Date() }).where(eq(dunningSequences.id, seq.id)); revalidatePath('/dashboard/dunning'); } }}>
+          <form action={toggleSequence}>
             <button className={active ? 'btn-secondary text-sm' : 'btn-brand text-sm'} type="submit">
               {active ? <><Pause className="h-3.5 w-3.5" />Pause</> : <><Play className="h-3.5 w-3.5" />Resume</>}
             </button>
@@ -313,7 +328,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       <div className="grid lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 card">
           <div>
-            <h2 className="h3">Default sequence</h2>
+            <h2 className="app-heading">Default sequence</h2>
             <p className="text-sm text-ink-600 mt-1">Customers are sent reminders in this order, starting 1 day after the invoice is due.</p>
           </div>
 
@@ -325,11 +340,11 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         <div className="card">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="h3">Recent activity</h2>
+              <h2 className="app-heading">Recent activity</h2>
               <p className="text-sm text-ink-600 mt-1">Last 20 dunning actions.</p>
             </div>
             {recentRuns.length > 0 && (
-              <Link href="/dashboard/dunning/performance" className="text-xs font-medium text-brand-600 hover:text-brand-700 shrink-0 inline-flex items-center gap-0.5">
+              <Link href="/dashboard/dunning/performance" className="py-1.5 text-xs font-medium text-brand-600 hover:text-brand-700 shrink-0 inline-flex items-center gap-0.5">
                 See all<ChevronRight className="h-3 w-3" />
               </Link>
             )}
@@ -339,7 +354,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
               <div className="text-center py-8">
                 <Sparkles className="h-6 w-6 mx-auto text-ink-300" />
                 <p className="mt-2 text-sm text-ink-500">No activity yet.</p>
-                <Link href="/dashboard/integrations" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700">
+                <Link href="/dashboard/integrations" className="mt-3 py-1.5 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700">
                   Connect an integration<ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -355,7 +370,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
                   {run.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-500 mt-0.5 shrink-0" /> : <Mail className="h-3.5 w-3.5 text-ink-500 mt-0.5 shrink-0" />}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className={`badge text-[10px] ${run.status === 'sent' || run.status === 'delivered' ? 'badge-success' : failed ? 'badge-danger' : 'badge-neutral'}`}>{run.status}</span>
+                      <span className={`badge text-2xs ${run.status === 'sent' || run.status === 'delivered' ? 'badge-success' : failed ? 'badge-danger' : 'badge-neutral'}`}>{run.status}</span>
                       <span className={`text-xs ${failed ? 'text-red-700 font-medium' : 'text-ink-500'}`}>
                         {run.sentAt ? new Date(run.sentAt).toLocaleString() : failed ? 'not sent' : 'queued'}
                       </span>
@@ -399,7 +414,7 @@ function ImpactTile({
       style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}
     >
       <div className="flex items-center justify-between">
-        <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">{label}</div>
+        <div className="text-2xs font-medium text-ink-500">{label}</div>
         <span className={`h-7 w-7 rounded-lg grid place-items-center shrink-0 ${toneClasses[tone]}`}>{icon}</span>
       </div>
       <div className="mt-2 text-2xl font-display font-bold text-ink-950">{value}</div>

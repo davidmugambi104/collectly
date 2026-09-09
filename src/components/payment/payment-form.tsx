@@ -33,11 +33,10 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
         const res = await fetch('/api/paystack/initialize', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            amount: Math.round(amount * 100), // Paystack expects the smallest currency unit
-            metadata: { invoiceId },
-          }),
+          // No amount here on purpose: the server reads the invoice's own
+          // outstanding balance. A client-supplied amount was how an
+          // underpayment could be made to settle the invoice in full.
+          body: JSON.stringify({ email, invoiceId }),
         });
         const data = await res.json();
         if (!res.ok) {

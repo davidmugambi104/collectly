@@ -8,6 +8,22 @@ export const nanoid = () => nano();
 
 export function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
+/**
+ * Escape a string for interpolation into HTML. Used for the notification
+ * emails we send ourselves — those bodies mix operator-facing markup with
+ * customer-supplied values (org names, contact names, free-text notes), so
+ * every interpolated value has to be escaped or the customer controls the
+ * markup that lands in the founder's inbox.
+ *
+ * NOTE: src/app/api/lead-notify and src/lib/outreach-inbound each still
+ * carry a private copy of this; fold them in here when they're next touched.
+ */
+export function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string
+  ));
+}
+
 export function formatCurrency(amount: number | string, currency = 'USD', locale = 'en-US') {
   const n = typeof amount === 'string' ? parseFloat(amount) : amount;
   return new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 2 }).format(n);
@@ -24,8 +40,20 @@ export function daysBetween(a: Date | string, b: Date | string) {
   return Math.floor(ms / (1000 * 60 * 60 * 24));
 }
 
+/**
+ * Whole days a due date is PAST, or 0 when it is today or still in the future.
+ *
+ * Deliberately does not use daysBetween(): that helper returns an absolute
+ * distance, so a date 26 days in the future came back as 26 and the
+ * Math.max(0, ...) clamp never saw a negative to clamp. Every not-yet-due
+ * invoice was therefore reported as 26 days overdue — the `current` aging
+ * bucket was permanently empty, the dashboard showed 100% of A/R as overdue,
+ * and the dunning templates told customers an invoice that isn't due yet was
+ * already "26 days past due". Subtract in signed order and clamp once.
+ */
 export function daysOverdue(dueDate: Date | string) {
-  return Math.max(0, daysBetween(new Date(), dueDate));
+  const ms = Date.now() - new Date(dueDate).getTime();
+  return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)));
 }
 
 export type AgingBucket = 'current' | '1-30' | '31-60' | '61-90' | '90+';

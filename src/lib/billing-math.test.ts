@@ -38,6 +38,16 @@ describe('applyPayment', () => {
     assert.equal(r.newAmountPaid, 150);
     assert.equal(r.status, 'paid');
   });
+
+  // Regression: the Paystack webhook used to set amountPaid to the invoice
+  // total and flip the status to 'paid' for any successful charge, so a token
+  // payment against a large invoice settled it in full. Both payment paths go
+  // through applyPayment now; this pins the shape of that attack.
+  test('a token payment against a large invoice does not settle it', () => {
+    const r = applyPayment(0, 0.01, 10000);
+    assert.equal(r.newAmountPaid, 0.01);
+    assert.equal(r.status, 'partial');
+  });
 });
 
 describe('applyRefund', () => {

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { AppShell } from '@/components/app/shell';
-import { getAuth as auth } from '@/lib/auth-helper';
+import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { organizations } from '@/db/schema';
@@ -17,6 +17,10 @@ export default async function SettingsPage() {
 
   async function save(form: FormData) {
     'use server';
+    // Re-derive the session inside the action — the page-render guard above
+    // does not protect this POST endpoint. See requireOrgId in auth-helper.
+    const actorOrgId = await requireOrgId();
+    if (!actorOrgId) return;
     await db.update(organizations).set({
       name: String(form.get('name') ?? ''),
       country: String(form.get('country') ?? 'US'),
@@ -24,7 +28,7 @@ export default async function SettingsPage() {
       timezone: String(form.get('timezone') ?? 'UTC'),
       businessType: String(form.get('businessType') ?? ''),
       updatedAt: new Date(),
-    }).where(eq(organizations.id, orgId!));
+    }).where(eq(organizations.id, actorOrgId));
     revalidatePath('/dashboard/settings');
   }
 

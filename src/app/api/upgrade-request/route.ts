@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { rateLimit, getIp } from '@/lib/rate-limit';
+import { getAuth } from '@/lib/auth-helper';
 import { db } from '@/db';
 import { upgradeRequests, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { sendEmail } from '@/lib/infra';
-import { PLAN_PRICING } from '@/lib/utils';
+import { PLAN_PRICING, escapeHtml } from '@/lib/utils';
 
+// SECURITY: `orgId` is deliberately NOT in this schema. It used to be read
+// straight off the request body, which let any signed-in user file an
+// upgrade request against any other tenant's org id. It now comes from the
+// caller's own session.
 const body = z.object({
-  orgId: z.string(),
   plan: z.enum(['starter', 'growth', 'scale', 'enterprise']),
-  customerName: z.string().optional(),
+  customerName: z.string().max(200).optional(),
   country: z.string().length(2).optional(),   // ISO 3166-1 alpha-2
   notes: z.string().max(2000).optional(),
 });
@@ -36,6 +40,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const { orgId } = await getAuth();
+  if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+
   let data: z.infer<typeof body>;
   try {
     data = body.parse(await req.json());
@@ -47,7 +54,7 @@ export async function POST(req: NextRequest) {
   const [org] = await db
     .select()
     .from(organizations)
-    .where(eq(organizations.id, data.orgId))
+    .where(eq(organizations.id, orgId))
     .limit(1);
 
   if (!org) {
@@ -65,7 +72,7 @@ export async function POST(req: NextRequest) {
   const [created] = await db
     .insert(upgradeRequests)
     .values({
-      orgId: data.orgId,
+      orgId,
       plan: data.plan,
       customerEmail,
       customerName: data.customerName ?? null,
@@ -84,13 +91,13 @@ export async function POST(req: NextRequest) {
       html: [
         `<p><strong>New upgrade request.</strong></p>`,
         `<table style="border-collapse:collapse">`,
-        `<tr><td style="padding:4px 12px 4px 0"><strong>Org</strong></td><td>${org.name} (${org.slug})</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Org</strong></td><td>${escapeHtml(org.name)} (${escapeHtml(org.slug)})</td></tr>`,
         `<tr><td style="padding:4px 12px 4px 0"><strong>Plan</strong></td><td>${planInfo.name} ($${planInfo.monthly}/mo)</td></tr>`,
-        `<tr><td style="padding:4px 12px 4px 0"><strong>Email</strong></td><td>${customerEmail}</td></tr>`,
-        `<tr><td style="padding:4px 12px 4px 0"><strong>Contact</strong></td><td>${data.customerName ?? 'n/a'}</td></tr>`,
-        `<tr><td style="padding:4px 12px 4px 0"><strong>Country</strong></td><td>${data.country ?? 'n/a'}</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Email</strong></td><td>${escapeHtml(customerEmail)}</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Contact</strong></td><td>${escapeHtml(data.customerName ?? 'n/a')}</td></tr>`,
+        `<tr><td style="padding:4px 12px 4px 0"><strong>Country</strong></td><td>${escapeHtml(data.country ?? 'n/a')}</td></tr>`,
         `</table>`,
-        `<p><strong>Notes from customer:</strong><br/>${(data.notes ?? '(none)').replace(/</g, '&lt;').replace(/\n/g, '<br/>')}</p>`,
+        `<p><strong>Notes from customer:</strong><br/>${escapeHtml(data.notes ?? '(none)').replace(/\n/g, '<br/>')}</p>`,
         `<p style="color:#666;font-size:12px">Request ID: ${created.id} — review at <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'}/admin/upgrade-requests">/admin/upgrade-requests</a></p>`,
       ].join('\n'),
     });

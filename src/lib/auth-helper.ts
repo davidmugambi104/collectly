@@ -118,11 +118,34 @@ export async function getAuthWithOrg() {
  * only, so they need a real allowlist check, not just "is logged in".
  * Mirrors the check already used by src/app/admin/upgrade-requests.
  */
-export async function requireAdminEmail(): Promise<{ ok: true; email: string } | { ok: false }> {
+export async function requireAdminEmail(): Promise<{ ok: true; email: string } | { ok: false; email?: string }> {
   const { userId } = await getAuth();
   if (!userId) return { ok: false };
   const [u] = await db.select({ email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
   const email = u?.email?.toLowerCase();
-  if (!email || !ADMIN_EMAILS.includes(email)) return { ok: false };
+  // On failure we still hand back the email (when we know it) so the admin
+  // page can render "ask Davie to add <you> to ADMIN_EMAILS" instead of
+  // duplicating this lookup. Callers that only branch on `.ok` are unaffected.
+  if (!email || !ADMIN_EMAILS.includes(email)) return { ok: false, email };
   return { ok: true, email };
+}
+
+/**
+ * SECURITY: gate for Server Actions.
+ *
+ * A Server Action is a POST endpoint in its own right. The auth check that
+ * guarded the *page render* does not cover it — Next.js exposes the action
+ * under a stable id, and any caller who can reach the route can invoke it.
+ * That matters most for actions that read their arguments from `FormData`
+ * (as opposed to closing over render-scope values, which Next encrypts and
+ * binds), because those arguments are fully attacker-controlled.
+ *
+ * Re-derive the session inside every action rather than trusting the
+ * enclosing render's closure. Returns null when there is no active org, so
+ * callers can bail without mutating anything.
+ */
+export async function requireOrgId(): Promise<string | null> {
+  const { userId, orgId } = await getAuth();
+  if (!userId || !orgId) return null;
+  return orgId;
 }

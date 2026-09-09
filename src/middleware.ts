@@ -33,12 +33,15 @@ const isPublicRoute = createRouteMatcher([
   '/api/exec-summary', '/api/forecast',
   // Sample data + dev seed (dev shim returns synthetic session anyway)
   '/api/seed', '/api/seed-sample',
-  '/api/reset-data',
-  '/api/support',
-  // Lead capture + admin read-only
+  // NOTE: '/api/reset-data', '/api/support' and '/api/migrate/(.*)' used to be
+  // listed here but no such routes exist. A public entry for a path that isn't
+  // implemented yet silently pre-authorizes whatever gets added there later —
+  // which for a name like /api/reset-data is exactly the wrong default. Add the
+  // entry back at the same time as the route, if it genuinely needs to be public.
+  // Lead capture + admin read-only (these enforce requireAdminEmail in-handler)
   '/api/admin/interviews/(.*)', '/api/playbook/download',
-  // Unsubscribe (CAN-SPAM/PECR compliance) and one-shot migration endpoints
-  '/api/unsubscribe', '/api/migrate/(.*)',
+  // Unsubscribe (CAN-SPAM/PECR compliance)
+  '/api/unsubscribe',
   // Outreach inbound reply webhook
   '/api/inbound',
   // Healthcheck must be public so external monitors can ping it.
