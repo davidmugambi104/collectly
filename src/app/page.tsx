@@ -7,6 +7,7 @@ import { ComparisonTable } from '@/components/marketing/comparison-table';
 import {
   ArrowRight, Sparkles, ShieldCheck, Clock, MessageSquare, Mail,
   Bot, BarChart3, CheckCircle2, Globe2, Zap, FileText, Wallet,
+  Inbox, CalendarCheck, AlertTriangle, SlidersHorizontal,
 } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
 
@@ -77,8 +78,12 @@ export default function HomePage() {
               </div>
               <h1 className="mt-5 h1">
                 Stop chasing late invoices.
-                <br />
-                <span className="text-2xl sm:text-3xl font-normal text-ink-700">AI follow-ups for 5–30 person agencies and consultancies on Xero.</span>
+                {/* block, not an inline span after a <br />: as an inline box
+                    it inherited the h1's 60px line-height strut, so each line
+                    of this 30px deck was spaced 60px apart and read as two
+                    disconnected sentences. A block box establishes its own
+                    line boxes from its own leading. */}
+                <span className="mt-3 block text-2xl sm:text-3xl font-normal leading-snug text-ink-700">AI follow-ups for 5–30 person agencies and consultancies on Xero.</span>
               </h1>
               <p className="mt-5 lead max-w-xl">
                 Collectly connects to Xero (QuickBooks in beta), identifies overdue invoices, and sends
@@ -111,13 +116,13 @@ export default function HomePage() {
 
               <div className="mt-8 flex flex-wrap items-center gap-2 text-xs text-ink-600">
                 <span className="font-medium">Accepts</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇺🇸 USD</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇬🇧 GBP</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇪🇺 EUR</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇦🇺 AUD</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇨🇦 CAD</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇰🇪 KES</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">🇳🇬 NGN</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">USD</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">GBP</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">EUR</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">AUD</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">CAD</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">KES</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">NGN</span>
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-500">
@@ -145,7 +150,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Live product status</div>
-              <h3 className="mt-1 text-xl font-display font-bold">What&apos;s live today — and what&apos;s next.</h3>
+              <h2 className="mt-1 text-xl font-display font-bold">What&apos;s live today — and what&apos;s next.</h2>
               <p className="mt-1 text-sm text-brand-100 max-w-xl">
                 Live: AI dunning, AR aging dashboard, Plaid bank feeds, Paystack payments, Resend email, 4-week cash forecast.
                 QuickBooks, Xero, Stripe, Square, and Twilio are wired and tested; we swap in your production credentials on the first setup call.
@@ -252,19 +257,19 @@ export default function HomePage() {
             Collectly is the only AR-native tool built for small B2B services at a flat, transparent price.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/vs-chaser" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+            <Link href="/vs-chaser" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               Collectly vs Chaser <ArrowRight className="h-3 w-3" />
             </Link>
-            <Link href="/vs-bill" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+            <Link href="/vs-bill" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               Collectly vs BILL <ArrowRight className="h-3 w-3" />
             </Link>
-            <Link href="/vs-melio" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+            <Link href="/vs-melio" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               Collectly vs Melio <ArrowRight className="h-3 w-3" />
             </Link>
-            <Link href="/vs-quickbooks" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+            <Link href="/vs-quickbooks" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               Collectly vs QuickBooks <ArrowRight className="h-3 w-3" />
             </Link>
-            <Link href="/compare" className="text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+            <Link href="/compare" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               See all comparisons <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
@@ -341,37 +346,37 @@ export default function HomePage() {
         <div className="container-page py-20 sm:py-28">
           <div className="max-w-2xl">
             <p className="eyebrow">Why Collectly is different</p>
-            <h2 className="mt-2 h2">Five things Collectly understands that other tools miss.</h2>
+            <h2 className="mt-2 h2">Six things Collectly understands that other tools miss.</h2>
             <p className="mt-4 lead">Most AR tools treat every overdue invoice the same. Real service businesses know that customers, relationships, and reasons for late payment are different every time.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 gap-6">
             <DifferentiatorCard
-              icon="📥"
+              icon={<Inbox className="h-5 w-5" />}
               title="AI Collections Inbox"
               body="Every customer reply lands in one place. AI classifies replies: will pay on a date, already paid, disputed, missing PO, needs a plan, or no action. Then recommends the next step so you never wonder what to do."
             />
             <DifferentiatorCard
-              icon="🤝"
+              icon={<CalendarCheck className="h-5 w-5" />}
               title="Promise-to-pay tracking"
               body={`When a customer says "we'll pay next Friday," Collectly extracts the date, pauses reminders, adds it to your forecast, and automatically restarts the sequence if payment doesn't arrive.`}
             />
             <DifferentiatorCard
-              icon="⚠️"
+              icon={<AlertTriangle className="h-5 w-5" />}
               title="Dispute and blocker management"
               body="Give customers a way to flag 'I already paid,' 'need an invoice copy,' 'amount is wrong,' or 'waiting for approval.' The invoice automatically leaves the normal dunning and enters a resolution workflow."
             />
             <DifferentiatorCard
-              icon="📊"
+              icon={<BarChart3 className="h-5 w-5" />}
               title="Explainable cash forecast"
               body="See exactly why each dollar is expected: $14K from confirmed promises, $12K from customers who always pay on time, $8K is uncertain because two invoices are disputed. Switch between conservative, expected, and optimistic."
             />
             <DifferentiatorCard
-              icon="🎯"
+              icon={<SlidersHorizontal className="h-5 w-5" />}
               title="Relationship-aware dunning"
               body="Set tone, channel, account-manager sender, and sensitivity per customer. A strategic account gets gentle handling. A high-risk account gets firm follow-up. Collectly never treats every overdue invoice as ordinary debt."
             />
             <DifferentiatorCard
-              icon="⏸️"
+              icon={<ShieldCheck className="h-5 w-5" />}
               title="Approval-before-send"
               body="Nervous about automated emails? Turn on approval mode. Collectly drafts every reminder, you review and approve. Build confidence, then graduate to autopilot when ready."
             />
@@ -467,10 +472,17 @@ function FeatureCard({ icon, title, body }: { icon: React.ReactNode; title: stri
   );
 }
 
-function DifferentiatorCard({ icon, title, body }: { icon: string; title: string; body: string }) {
+// Takes a lucide icon element rather than an emoji string. Emoji rendered as
+// tofu boxes on any client without a colour-emoji font (common on Linux and
+// on locked-down Windows builds), and even where they did render they were the
+// only emoji in an interface that uses lucide everywhere else, so the section
+// looked pasted in from a different product.
+function DifferentiatorCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
     <div className="card-lg">
-      <div className="text-3xl mb-3">{icon}</div>
+      <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100">
+        {icon}
+      </div>
       <h3 className="font-display font-bold text-lg text-ink-950 mb-2">{title}</h3>
       <p className="text-sm text-ink-700 leading-relaxed">{body}</p>
     </div>

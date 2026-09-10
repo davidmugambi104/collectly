@@ -107,12 +107,12 @@ export default async function CustomerStatementPage({
       {insight ? (
         <FollowUpPanel insight={insight} />
       ) : totalOwed <= 0 ? (
-        <div className="card mb-6 bg-emerald-50/30 border-emerald-200">
+        <div className="card mb-6">
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="h-5 w-5 text-success-600 mt-0.5 flex-shrink-0" />
             <div>
-              <div className="font-semibold text-ink-900">No open balance</div>
-              <p className="text-sm text-ink-700 mt-0.5">This customer is paid up. No follow-up needed.</p>
+              <div className="app-label">No open balance</div>
+              <p className="app-body mt-0.5">This customer is paid up. No follow-up needed.</p>
             </div>
           </div>
         </div>
@@ -120,12 +120,12 @@ export default async function CustomerStatementPage({
 
       {/* Relationship trust indicators */}
       {(brokenPromiseCount > 0 || cust.paymentBehavior?.paidRate < 0.8) && (
-        <div className="card border-amber-200 bg-amber-50/30 mb-6">
+        <div className="row-warn card mb-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 text-warn-600 mt-0.5 flex-shrink-0" />
             <div>
-              <div className="font-semibold text-ink-900 mb-1">Relationship flags</div>
-              <ul className="text-sm text-ink-700 space-y-1">
+              <div className="app-label mb-1">Relationship flags</div>
+              <ul className="app-body space-y-1">
                 {brokenPromiseCount > 0 && (
                   <li>· {brokenPromiseCount} broken promise{brokenPromiseCount === 1 ? '' : 's'} in history</li>
                 )}
@@ -173,7 +173,7 @@ export default async function CustomerStatementPage({
 
       {/* Invoices */}
       <div className="card mb-6">
-        <h2 className="h3 mb-4">All invoices ({customerInvoices.length})</h2>
+        <h2 className="app-heading mb-4">All invoices ({customerInvoices.length})</h2>
         {customerInvoices.length === 0 ? (
           <p className="text-sm text-ink-500">No invoices yet</p>
         ) : (
@@ -197,9 +197,9 @@ export default async function CustomerStatementPage({
                       <div className="text-xs text-ink-500">of {formatCurrency(amount)}</div>
                     )}
                     <span className={`badge mt-1 ${
-                      inv.status === 'paid' ? 'bg-emerald-100 text-emerald-700' :
-                      inv.status === 'disputed' ? 'bg-red-100 text-red-700' :
-                      isOverdue ? 'bg-amber-100 text-amber-700' :
+                      inv.status === 'paid' ? 'bg-success-100 text-success-700' :
+                      inv.status === 'disputed' ? 'bg-danger-100 text-danger-700' :
+                      isOverdue ? 'bg-warn-100 text-warn-700' :
                       'bg-ink-100 text-ink-700'
                     }`}>
                       {inv.status}
@@ -213,13 +213,13 @@ export default async function CustomerStatementPage({
       </div>
 
       {/* Activity timeline */}
-      <div className="card">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="h3">Activity timeline</h2>
+      <div className="section">
+        <div className="section-head">
+          <h2 className="app-heading">Activity timeline</h2>
           <AddNoteForm customerId={cust.id} />
         </div>
         {customerTimeline.length === 0 ? (
-          <p className="text-sm text-ink-500">No activity recorded yet</p>
+          <p className="app-body text-ink-500">No activity recorded yet</p>
         ) : (
           <div className="space-y-3">
             {customerTimeline.map((event: typeof timelineEvents.$inferSelect) => (
@@ -244,9 +244,9 @@ function SummaryCard({
   accent: 'emerald' | 'amber' | 'red' | 'gray';
 }) {
   const accentClasses = {
-    emerald: 'bg-emerald-50 text-emerald-700',
-    amber: 'bg-amber-50 text-amber-700',
-    red: 'bg-red-50 text-red-700',
+    emerald: 'bg-success-50 text-success-700',
+    amber: 'bg-warn-50 text-warn-700',
+    red: 'bg-danger-50 text-danger-700',
     gray: 'bg-ink-100 text-ink-600',
   };
   return (
@@ -282,12 +282,12 @@ function TimelineRow({ event }: { event: typeof timelineEvents.$inferSelect }) {
   };
 
   const colorMap: Record<string, string> = {
-    promise_fulfilled: 'text-emerald-600 bg-emerald-50',
-    promise_made: 'text-emerald-600 bg-emerald-50',
-    promise_broken: 'text-red-600 bg-red-50',
-    dispute_opened: 'text-red-600 bg-red-50',
-    payment_received: 'text-emerald-600 bg-emerald-50',
-    dispute_resolved: 'text-emerald-600 bg-emerald-50',
+    promise_fulfilled: 'text-success-600 bg-success-50',
+    promise_made: 'text-success-600 bg-success-50',
+    promise_broken: 'text-danger-600 bg-danger-50',
+    dispute_opened: 'text-danger-600 bg-danger-50',
+    payment_received: 'text-success-600 bg-success-50',
+    dispute_resolved: 'text-success-600 bg-success-50',
   };
 
   return (
@@ -316,11 +316,13 @@ function TimelineRow({ event }: { event: typeof timelineEvents.$inferSelect }) {
  * both views agree on risk level and recommended channel/tone.
  */
 function FollowUpPanel({ insight }: { insight: import('@/lib/analytics').CustomerInsight }) {
-  const riskPalette: Record<typeof insight.riskLevel, { bg: string; border: string; text: string; label: string }> = {
-    low:      { bg: 'bg-emerald-50/40', border: 'border-emerald-200', text: 'text-emerald-700', label: 'Low risk' },
-    medium:   { bg: 'bg-amber-50/40',   border: 'border-amber-200',   text: 'text-amber-700',   label: 'Medium risk' },
-    high:     { bg: 'bg-orange-50/40',  border: 'border-orange-200',  text: 'text-orange-700',  label: 'High risk' },
-    critical: { bg: 'bg-red-50/40',     border: 'border-red-200',     text: 'text-red-700',     label: 'Critical risk' },
+  // Hue now rides the badge and the icon, not a wash over the whole panel —
+  // and `high` was on raw orange-*, which has no token behind it at all.
+  const riskPalette: Record<typeof insight.riskLevel, { badge: string; text: string; label: string; edge: string }> = {
+    low:      { badge: 'badge-success', text: 'text-success-600', label: 'Low risk',      edge: '' },
+    medium:   { badge: 'badge-warn',    text: 'text-warn-600',    label: 'Medium risk',   edge: '' },
+    high:     { badge: 'badge-warn',    text: 'text-warn-700',    label: 'High risk',     edge: 'row-warn' },
+    critical: { badge: 'badge-danger',  text: 'text-danger-600',  label: 'Critical risk', edge: 'row-urgent' },
   };
   const pal = riskPalette[insight.riskLevel];
   const ChannelIcon =
@@ -329,18 +331,21 @@ function FollowUpPanel({ insight }: { insight: import('@/lib/analytics').Custome
   const predictedPct = Math.round(insight.predictedPayment7d * 100);
 
   return (
-    <div className={`card mb-6 ${pal.bg} ${pal.border}`}>
+    // The surface this page is organised around: what to do about this
+    // customer, right now. Neutral ground, severity carried by the left edge
+    // and the badge dot.
+    <div className={`card-primary mb-6 ${pal.edge}`}>
       <div className="flex items-start gap-3 mb-4">
         <Sparkles className={`h-5 w-5 ${pal.text} mt-0.5 flex-shrink-0`} />
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-ink-900">AI follow-up</span>
-            <span className={`badge ${pal.bg} ${pal.text} border ${pal.border}`}>{pal.label} · {insight.riskScore}/100</span>
-            <span className="badge bg-white text-ink-700 border-ink-200">
-              <ChannelIcon className="h-3 w-3 mr-1" /> {insight.recommendedChannel}
+            <span className="app-label">AI follow-up</span>
+            <span className={pal.badge}>{pal.label} · {insight.riskScore}/100</span>
+            <span className="badge-neutral capitalize">
+              <ChannelIcon className="h-3 w-3" /> {insight.recommendedChannel}
             </span>
           </div>
-          <p className="text-sm text-ink-800 mt-2 font-medium">{insight.recommendedAction}</p>
+          <p className="app-body mt-2 font-medium text-ink-800">{insight.recommendedAction}</p>
         </div>
       </div>
 
@@ -371,13 +376,13 @@ function FollowUpPanel({ insight }: { insight: import('@/lib/analytics').Custome
         {insight.email && (
           <a
             href={`/dashboard/dunning?customerId=${insight.customerId}&tone=${insight.riskLevel === 'critical' ? 'final' : insight.riskLevel === 'high' ? 'firm' : 'friendly'}&channel=${insight.recommendedChannel === 'phone' ? 'email' : insight.recommendedChannel}`}
-            className="btn-primary text-sm"
+            className="btn-primary btn-sm"
           >
             <Sparkles className="h-3.5 w-3.5" />
             Draft a {insight.riskLevel === 'critical' ? 'final' : insight.riskLevel === 'high' ? 'firm' : 'friendly'} message
           </a>
         )}
-        <a href={`/dashboard/dunning/sequence`} className="btn-secondary text-sm">View dunning sequence</a>
+        <a href={`/dashboard/dunning/sequence`} className="btn-secondary btn-sm">View dunning sequence</a>
       </div>
     </div>
   );

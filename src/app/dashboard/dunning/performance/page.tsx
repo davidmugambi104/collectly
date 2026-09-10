@@ -85,23 +85,23 @@ export default async function DunningPerformancePage({ searchParams }: { searchP
         <Stat icon={<Send className="h-4 w-4 text-brand-600" />} label="Reminders sent" value={String(runs.filter((r: typeof runs[number]) => r.run.status === 'sent' || r.run.status === 'delivered').length)} sub={`${runs.length} total scheduled`} />
         <Stat icon={<Mail className="h-4 w-4 text-brand-600" />} label="Email" value={String(emailRuns)} sub={`${runs.length > 0 ? Math.round((emailRuns / runs.length) * 100) : 0}% of total`} />
         <Stat icon={<MessageSquare className="h-4 w-4 text-brand-600" />} label="SMS" value={String(smsRuns)} sub={`${runs.length > 0 ? Math.round((smsRuns / runs.length) * 100) : 0}% of total`} />
-        <Stat icon={<Activity className="h-4 w-4 text-emerald-600" />} label="Last 7 days" value={String(recent.length)} sub="Reminders" />
+        <Stat icon={<Activity className="h-4 w-4 text-success-600" />} label="Last 7 days" value={String(recent.length)} sub="Reminders" />
       </div>
 
       {runs.length === 0 ? (
         <div className="card text-center py-12">
           <Sparkles className="h-8 w-8 mx-auto text-ink-300" />
-          <h3 className="mt-3 font-semibold text-ink-900">No dunning activity yet</h3>
-          <p className="mt-1 text-sm text-ink-600">Once invoices go overdue and the cron fires, you&apos;ll see reminder stats here.</p>
-          <Link href="/dashboard/dunning" className="mt-4 btn-primary text-sm inline-flex">Go to dunning →</Link>
+          <h3 className="app-heading mt-3">No dunning activity yet</h3>
+          <p className="app-body mt-1">Once invoices go overdue and the cron fires, you&apos;ll see reminder stats here.</p>
+          <Link href="/dashboard/dunning" className="mt-4 btn-primary btn-sm inline-flex">Go to dunning →</Link>
         </div>
       ) : (
         <>
-          <div className="grid lg:grid-cols-2 gap-5 mb-5">
+          <div className="mb-6 grid gap-6 lg:grid-cols-2">
             {/* Per-step performance */}
-            <div className="card">
-              <h2 className="h3">By sequence step</h2>
-              <p className="text-xs text-ink-500 mt-0.5 mb-3">How each step in your sequence performs. Use this to identify the step that converts best.</p>
+            <div className="section">
+              <h2 className="app-heading mb-3">By sequence step</h2>
+              <p className="app-meta mb-3 mt-0.5 font-normal">How each step in your sequence performs. Use this to identify the step that converts best.</p>
               <div className="space-y-3">
                 {Array.from(stepStats.entries()).sort().map(([step, s]) => {
                   const successRate = s.count > 0 ? Math.round((s.paidAfter / s.count) * 100) : 0;
@@ -112,10 +112,10 @@ export default async function DunningPerformancePage({ searchParams }: { searchP
                         <div className="text-xs text-ink-500">{s.count} sent · {s.failed} failed</div>
                       </div>
                       <div className="mt-1.5 h-2 rounded-full bg-ink-100 overflow-hidden flex">
-                        <div className="bg-emerald-500 h-full" style={{ width: `${successRate}%` }} />
-                        <div className="bg-amber-500 h-full" style={{ width: `${s.count > 0 ? Math.round((s.failed / s.count) * 100) : 0}%` }} />
+                        <div className="bg-success-500 h-full" style={{ width: `${successRate}%` }} />
+                        <div className="bg-warn-500 h-full" style={{ width: `${s.count > 0 ? Math.round((s.failed / s.count) * 100) : 0}%` }} />
                       </div>
-                      <div className="mt-1 text-xs text-emerald-700">{successRate}% paid after this step</div>
+                      <div className="mt-1 text-xs text-success-700">{successRate}% paid after this step</div>
                     </div>
                   );
                 })}
@@ -123,23 +123,23 @@ export default async function DunningPerformancePage({ searchParams }: { searchP
             </div>
 
             {/* Top customers recovered */}
-            <div className="card">
-              <h2 className="h3">Top customers recovered</h2>
-              <p className="text-xs text-ink-500 mt-0.5 mb-3">Customers whose invoices were paid after dunning. Sort by total recovered.</p>
+            <div className="section">
+              <h2 className="app-heading mb-3">Top customers recovered</h2>
+              <p className="app-meta mb-3 mt-0.5 font-normal">Customers whose invoices were paid after dunning. Sort by total recovered.</p>
               <div className="space-y-2">
                 {customerList.length === 0 ? (
                   <p className="text-sm text-ink-500">No paid-after-dunning records yet.</p>
                 ) : customerList.map((c) => (
                   <Link key={c.id} href={`/dashboard/customers/${c.id}`} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-ink-50 transition-colors">
-                    <div className="h-8 w-8 rounded-full bg-emerald-50 grid place-items-center shrink-0">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    <div className="h-8 w-8 rounded-full bg-success-50 grid place-items-center shrink-0">
+                      <CheckCircle2 className="h-4 w-4 text-success-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-ink-900 truncate">{c.name}</div>
                       <div className="text-xs text-ink-500">{c.runs} reminder{c.runs === 1 ? '' : 's'} · {c.paid} paid</div>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="text-sm font-mono font-semibold text-emerald-700">{formatCurrency(c.totalPaid)}</div>
+                      <div className="text-sm font-mono font-semibold text-success-700">{formatCurrency(c.totalPaid)}</div>
                     </div>
                   </Link>
                 ))}
@@ -149,35 +149,37 @@ export default async function DunningPerformancePage({ searchParams }: { searchP
 
           {/* Recent activity log */}
           <div className="card">
-            <h2 className="h3 mb-3">Recent activity</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <h2 className="app-heading mb-3">Recent activity</h2>
+            <div className="-mx-5 -mb-5 overflow-x-auto border-t border-ink-200">
+              <table className="app-table">
                 <thead>
-                  <tr className="text-left text-ink-500 text-xs uppercase tracking-wider">
-                    <th className="pb-2 pr-4">Customer</th>
-                    <th className="pb-2 px-4">Channel</th>
-                    <th className="pb-2 px-4">Step</th>
-                    <th className="pb-2 px-4">Status</th>
-                    <th className="pb-2 px-4">Sent</th>
-                    <th className="pb-2 pl-4 text-right">Amount</th>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Channel</th>
+                    <th>Step</th>
+                    <th>Status</th>
+                    <th>Sent</th>
+                    <th className="col-num">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
                   {runs.slice(0, 20).map((r: typeof runs[number]) => (
-                    <tr key={r.run.id} className="border-t border-ink-100">
-                      <td className="py-2.5 pr-4">
-                        <div className="font-medium text-ink-900">{r.customer.name}</div>
-                        <div className="text-xs text-ink-500">{r.invoice.number}</div>
+                    <tr key={r.run.id}>
+                      <td>
+                        <div className="font-medium text-ink-950">{r.customer.name}</div>
+                        <div className="font-mono text-2xs text-ink-500">{r.invoice.number}</div>
                       </td>
-                      <td className="py-2.5 px-4">
-                        {r.run.channel === 'sms' ? <span className="badge-neutral text-[10px] inline-flex items-center gap-1"><MessageSquare className="h-3 w-3" />SMS</span> : <span className="badge-neutral text-[10px] inline-flex items-center gap-1"><Mail className="h-3 w-3" />Email</span>}
+                      <td>
+                        {r.run.channel === 'sms'
+                          ? <span className="badge-neutral"><MessageSquare className="h-3 w-3" />SMS</span>
+                          : <span className="badge-neutral"><Mail className="h-3 w-3" />Email</span>}
                       </td>
-                      <td className="py-2.5 px-4 text-xs text-ink-700">{r.run.stepId}</td>
-                      <td className="py-2.5 px-4">
-                        <span className={`badge text-[10px] ${r.run.status === 'sent' || r.run.status === 'delivered' ? 'badge-success' : r.run.status === 'failed' ? 'badge-danger' : 'badge-neutral'}`}>{r.run.status}</span>
+                      <td className="text-ink-700">{r.run.stepId}</td>
+                      <td>
+                        <span className={r.run.status === 'sent' || r.run.status === 'delivered' ? 'badge-success' : r.run.status === 'failed' ? 'badge-danger' : 'badge-neutral'}>{r.run.status}</span>
                       </td>
-                      <td className="py-2.5 px-4 text-xs text-ink-600">{r.run.sentAt ? formatDate(r.run.sentAt) : '—'}</td>
-                      <td className="py-2.5 pl-4 text-right font-mono text-xs">{formatCurrency(r.invoice.amount, r.invoice.currency)}</td>
+                      <td className="whitespace-nowrap text-ink-600">{r.run.sentAt ? formatDate(r.run.sentAt) : '—'}</td>
+                      <td className="col-num num">{formatCurrency(r.invoice.amount, r.invoice.currency)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -192,9 +194,9 @@ export default async function DunningPerformancePage({ searchParams }: { searchP
 
 function Stat({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string; sub?: string }) {
   return (
-    <div className="card">
+    <div className="stat-tile">
       <div className="flex items-center justify-between">
-        <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">{label}</div>
+        <div className="app-meta">{label}</div>
         {icon}
       </div>
       <div className="mt-2 text-2xl font-display font-bold text-ink-950">{value}</div>

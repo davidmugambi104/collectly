@@ -350,37 +350,18 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
 
-  // 1. Contacts → customers
+  // NOTE: contacts and invoices are fetched sequentially, not in parallel --
+  // both go through xeroFetch, which refreshes the access token on demand
+  // with no locking. Two concurrent calls landing while the token is near
+  // expiry would both see "needs refresh" and race the same (single-use,
+  // rotating) refresh token, which can fail one side and mark the
+  // integration errored. Not worth it for one HTTP call's worth of latency.
   let xeroContacts: XeroContact[] = [];
   try {
     xeroContacts = await xeroListContacts(orgId);
   } catch (e: unknown) {
     errors.push(`contacts: ${e instanceof Error ? e.message : String(e)}`);
   }
-
-  for (const c of xeroContacts) {
-    try {
-      const externalId = String(c.ContactID);
-      const name = c.Name ?? (`${c.FirstName ?? ''} ${c.LastName ?? ''}`.trim() || 'Unknown');
-      const email = c.EmailAddress ?? null;
-      const phone = (c.Phones ?? []).find((p) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
-      const existing = await db
-        .select({ id: customersTbl.id })
-        .from(customersTbl)
-        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, externalId)))
-        .limit(1);
-      if (existing[0]) {
-        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existing[0].id));
-      } else {
-        await db.insert(customersTbl).values({ id: nanoid(), orgId, externalId, name, email, phone });
-      }
-      customersUpserted++;
-    } catch (e: unknown) {
-      errors.push(`contact ${c?.ContactID}: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }
-
-  // 2. Invoices
   let xeroInvoices: XeroInvoice[] = [];
   try {
     xeroInvoices = await xeroListOpenInvoices(orgId);
@@ -388,30 +369,102 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
     errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
   }
 
+  // 1. Contacts → customers. One query for every existing customer in this
+  // org instead of one SELECT per contact (was the dominant cost on a
+  // first sync: N contacts * 2 round trips each, sequential, against a DB
+  // that isn't co-located with the function -- routinely blew past the
+  // 60s function timeout on a real org and died as a bare 502 with no
+  // application error. See maxDuration comment in the sync route.)
+  const existingCustomers = await db
+    .select({ id: customersTbl.id, externalId: customersTbl.externalId })
+    .from(customersTbl)
+    .where(eq(customersTbl.orgId, orgId));
+  const customerIdByExternalId = new Map<string, string>();
+  for (const c of existingCustomers) {
+    if (c.externalId) customerIdByExternalId.set(c.externalId, c.id);
+  }
+
+  const customersToInsert: (typeof customersTbl.$inferInsert)[] = [];
+  for (const c of xeroContacts) {
+    try {
+      const externalId = String(c.ContactID);
+      const name = c.Name ?? (`${c.FirstName ?? ''} ${c.LastName ?? ''}`.trim() || 'Unknown');
+      const email = c.EmailAddress ?? null;
+      const phone = (c.Phones ?? []).find((p) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
+      const existingId = customerIdByExternalId.get(externalId);
+      if (existingId) {
+        // Steady-state re-syncs only touch a handful of changed rows --
+        // not worth batching without a unique constraint to ON CONFLICT
+        // against (would need a schema migration; see PR description).
+        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existingId));
+        customersUpserted++;
+      } else {
+        const id = nanoid();
+        customersToInsert.push({ id, orgId, externalId, name, email, phone });
+        customerIdByExternalId.set(externalId, id);
+      }
+    } catch (e: unknown) {
+      errors.push(`contact ${c?.ContactID}: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+  if (customersToInsert.length) {
+    try {
+      await db.insert(customersTbl).values(customersToInsert);
+      customersUpserted += customersToInsert.length;
+    } catch (e: unknown) {
+      // One multi-row INSERT is one statement -- a single bad row fails
+      // the whole batch. Fall back to per-row so the rest still land.
+      errors.push(`customers bulk insert: ${e instanceof Error ? e.message : String(e)}`);
+      for (const row of customersToInsert) {
+        try {
+          await db.insert(customersTbl).values(row);
+          customersUpserted++;
+        } catch (e2: unknown) {
+          errors.push(`customer ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
+        }
+      }
+    }
+  }
+
+  // 2. Invoices. Same treatment: one SELECT for all existing invoices in
+  // this org, batch the inserts, keep updates per-row.
+  const existingInvoices = await db
+    .select({ id: invoicesTbl.id, externalId: invoicesTbl.externalId, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
+    .from(invoicesTbl)
+    .where(eq(invoicesTbl.orgId, orgId));
+  const existingInvoiceByExternalId = new Map<string, (typeof existingInvoices)[number]>();
+  for (const i of existingInvoices) {
+    if (i.externalId) existingInvoiceByExternalId.set(i.externalId, i);
+  }
+
+  const invoicesToInsert: (typeof invoicesTbl.$inferInsert)[] = [];
   for (const inv of xeroInvoices) {
     try {
       const externalId = String(inv.InvoiceID);
       const contactExternalId = String(inv.Contact?.ContactID ?? '');
       if (!contactExternalId) continue;
 
-      const [localCustomer] = await db
-        .select({ id: customersTbl.id })
-        .from(customersTbl)
-        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, contactExternalId)))
-        .limit(1);
-
-      let customerId: string;
-      if (localCustomer) {
-        customerId = localCustomer.id;
-      } else {
-        const [stub] = await db.insert(customersTbl).values({
-          id: nanoid(),
-          orgId,
-          externalId: contactExternalId,
-          name: inv.Contact?.Name ?? `Xero Contact ${contactExternalId}`,
-        }).returning();
-        customerId = stub.id;
-        customersUpserted++;
+      let customerId = customerIdByExternalId.get(contactExternalId);
+      if (!customerId) {
+        // Invoice references a contact not in the contacts page we just
+        // fetched (e.g. archived contact). Create a stub so the invoice
+        // has a parent; safe to insert immediately, this id is only
+        // referenced in-memory below, not re-read from the DB.
+        const stubId = nanoid();
+        try {
+          await db.insert(customersTbl).values({
+            id: stubId,
+            orgId,
+            externalId: contactExternalId,
+            name: inv.Contact?.Name ?? `Xero Contact ${contactExternalId}`,
+          });
+          customerId = stubId;
+          customerIdByExternalId.set(contactExternalId, stubId);
+          customersUpserted++;
+        } catch (e: unknown) {
+          errors.push(`stub customer ${contactExternalId}: ${e instanceof Error ? e.message : String(e)}`);
+          continue;
+        }
       }
 
       // `||` not `??` -- Xero sometimes returns InvoiceNumber as '' (not
@@ -433,17 +486,12 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
             ? 'overdue'
             : 'sent';
 
-      const existing = await db
-        .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
-        .from(invoicesTbl)
-        .where(and(eq(invoicesTbl.orgId, orgId), eq(invoicesTbl.externalId, externalId)))
-        .limit(1);
-
-      if (existing[0]) {
-        const wasUnpaid = existing[0].status !== 'paid';
+      const existing = existingInvoiceByExternalId.get(externalId);
+      if (existing) {
+        const wasUnpaid = existing.status !== 'paid';
         // See quickbooks.ts — paidAt must not be re-stamped on every sync or
         // DSO inflates by a day per day. Preserve the original payment date.
-        const preservedPaidAt = status === 'paid' ? (existing[0].paidAt ?? new Date()) : null;
+        const preservedPaidAt = status === 'paid' ? (existing.paidAt ?? new Date()) : null;
         await db.update(invoicesTbl).set({
           number,
           amount: String(total),
@@ -454,10 +502,11 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
           status,
           paidAt: preservedPaidAt,
           updatedAt: new Date(),
-        }).where(eq(invoicesTbl.id, existing[0].id));
+        }).where(eq(invoicesTbl.id, existing.id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;
+        invoicesUpserted++;
       } else {
-        await db.insert(invoicesTbl).values({
+        invoicesToInsert.push({
           id: nanoid(),
           orgId,
           customerId,
@@ -472,9 +521,24 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
           paidAt: status === 'paid' ? new Date() : null,
         });
       }
-      invoicesUpserted++;
     } catch (e: unknown) {
       errors.push(`invoice ${inv?.InvoiceID}: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+  if (invoicesToInsert.length) {
+    try {
+      await db.insert(invoicesTbl).values(invoicesToInsert);
+      invoicesUpserted += invoicesToInsert.length;
+    } catch (e: unknown) {
+      errors.push(`invoices bulk insert: ${e instanceof Error ? e.message : String(e)}`);
+      for (const row of invoicesToInsert) {
+        try {
+          await db.insert(invoicesTbl).values(row);
+          invoicesUpserted++;
+        } catch (e2: unknown) {
+          errors.push(`invoice ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
+        }
+      }
     }
   }
 

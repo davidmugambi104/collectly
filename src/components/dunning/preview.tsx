@@ -62,10 +62,10 @@ export function DunningPreview(props: PreviewProps) {
   if (sent) {
     return (
       <div className="text-center py-4">
-        <CheckCircle2 className="h-8 w-8 mx-auto text-emerald-600" />
+        <CheckCircle2 className="h-8 w-8 mx-auto text-success-600" />
         <h3 className="mt-2 font-semibold text-ink-900">Reminder sent</h3>
         <p className="mt-1 text-sm text-ink-600">We&apos;ll pause any further reminders if they pay.</p>
-        <button onClick={props.onCancel} className="mt-3 btn-secondary text-sm">Close</button>
+        <button onClick={props.onCancel} className="mt-3 btn-secondary btn-sm">Close</button>
       </div>
     );
   }
@@ -74,10 +74,10 @@ export function DunningPreview(props: PreviewProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-ink-900">Generate reminder</h3>
+          <h3 className="app-heading">Generate reminder</h3>
           <p className="text-sm text-ink-600 mt-0.5">AI will write a {props.tone} {props.channel} reminder for {props.customerName}.</p>
         </div>
-        <button onClick={props.onCancel} className="btn-ghost text-xs"><X className="h-3.5 w-3.5" /></button>
+        <button onClick={props.onCancel} className="btn-ghost btn-sm"><X className="h-3.5 w-3.5" /></button>
       </div>
 
       <RecipientCard
@@ -94,7 +94,7 @@ export function DunningPreview(props: PreviewProps) {
           {props.channel === 'email' ? <Mail className="h-3.5 w-3.5 text-ink-400" /> : <MessageSquare className="h-3.5 w-3.5 text-ink-400" />}
           <span className="capitalize font-medium text-ink-900">{props.channel}</span>
         </span>
-        <span className={`badge text-[10px] capitalize ${props.tone === 'final' ? 'badge-danger' : props.tone === 'firm' ? 'badge-warn' : 'badge-success'}`}>{props.tone}</span>
+        <span className={`capitalize ${props.tone === 'final' ? 'badge-danger' : props.tone === 'firm' ? 'badge-warn' : 'badge-success'}`}>{props.tone}</span>
       </div>
 
       {!content ? (
@@ -106,10 +106,10 @@ export function DunningPreview(props: PreviewProps) {
         <div className="space-y-3 animate-fade-in">
           <div className={`rounded-xl border border-ink-200 overflow-hidden shadow-[0_8px_24px_-10px_rgba(16,17,20,0.18)] ${props.channel === 'sms' ? 'bg-gradient-to-b from-ink-50 to-ink-100/60' : 'bg-white'}`}>
             <div className="flex items-center gap-1.5 px-3.5 py-2 bg-ink-50 border-b border-ink-200">
-              <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-              <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-              <span className="ml-2 flex items-center gap-1 text-[11px] text-ink-400">
+              <span className="h-2.5 w-2.5 rounded-full bg-danger-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-warn-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-success-400" />
+              <span className="ml-2 flex items-center gap-1 text-2xs text-ink-400">
                 {props.channel === 'sms' ? <MessageSquare className="h-3 w-3" /> : <Mail className="h-3 w-3" />}
                 Editing what {props.customerName.split(' ')[0]} will see
               </span>
@@ -133,10 +133,10 @@ export function DunningPreview(props: PreviewProps) {
           </div>
           <div className="text-xs text-ink-500 text-right">{content.body.length} chars</div>
           <div className="flex gap-2">
-            <button onClick={generate} disabled={loading} className="btn-secondary text-sm flex-1">
+            <button onClick={generate} disabled={loading} className="btn-secondary btn-sm flex-1">
               {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}Regenerate
             </button>
-            <button onClick={send} disabled={sending || !(props.channel === 'email' ? props.email : props.phone)} className="btn-primary text-sm flex-1">
+            <button onClick={send} disabled={sending || !(props.channel === 'email' ? props.email : props.phone)} className="btn-primary btn-sm flex-1">
               {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}Send reminder
             </button>
           </div>

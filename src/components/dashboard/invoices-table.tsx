@@ -21,10 +21,19 @@ type Row = {
   customer: { id: string; name: string; email?: string | null; phone?: string | null };
 };
 
+// "Overdue" is derived from the due date, never read from invoice.status.
+// The stored status is only authoritative for the terminal states below: it is
+// written by the QBO/Xero sync and goes stale on its own, because an invoice
+// crosses into overdue purely through the passage of time, with no sync to
+// update it. Trusting it produced rows badged "Overdue" next to a due date
+// weeks in the future, which reads as a plain bug to the one user who checks.
 function StatusBadge({ invoice, days }: { invoice: Row['invoice']; days: number }) {
   if (invoice.status === 'paid') return <span className="badge-success">Paid</span>;
   if (invoice.status === 'written_off') return <span className="badge-neutral">Written off</span>;
-  if (invoice.status === 'overdue' || days > 0) return <span className="badge-danger">Overdue</span>;
+  if (days > 0) return <span className="badge-danger">Overdue</span>;
+  // Past-due status with a future due date means the stored value is stale;
+  // fall back to the neutral open-invoice label rather than echoing it.
+  if (invoice.status === 'overdue') return <span className="badge-neutral">Sent</span>;
   return <span className="badge-neutral capitalize">{invoice.status.replace(/_/g, ' ')}</span>;
 }
 
@@ -53,7 +62,7 @@ export function InvoicesTable({ rows }: { rows: Row[] }) {
                   <div className="text-xs text-ink-500">Due</div>
                   <div className="text-ink-700">{formatDate(invoice.dueDate)}</div>
                   {days > 0 && invoice.status !== 'paid' && (
-                    <div className="text-xs text-red-600 font-medium">{days} days overdue</div>
+                    <div className="text-xs text-danger-600 font-medium">{days} days overdue</div>
                   )}
                 </div>
                 <div className="text-right">
@@ -67,44 +76,62 @@ export function InvoicesTable({ rows }: { rows: Row[] }) {
         })}
       </div>
 
-      {/* Desktop: traditional table */}
-      <div className="hidden md:block card overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-ink-500 text-xs uppercase tracking-wider">
-              <th className="pb-2 pr-4">Customer</th>
-              <th className="pb-2 px-4">Invoice</th>
-              <th className="pb-2 px-4">Status</th>
-              <th className="pb-2 px-4">Due</th>
-              <th className="pb-2 px-4 text-right">Amount</th>
-              <th className="pb-2 pl-4 text-right">Balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => {
-              const { invoice, customer } = row;
-              const days = daysFromDue(invoice.dueDate);
-              const balance = Number(invoice.amount) - Number(invoice.amountPaid);
-              return (
-                <tr key={invoice.id} className="border-t border-ink-100 hover:bg-ink-50">
-                  <td className="py-3 pr-4">
-                    <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
-                      <div className="font-medium text-ink-900">{customer.name}</div>
-                      <div className="text-xs text-ink-500">{customer.email ?? customer.phone}</div>
-                    </Link>
-                  </td>
-                  <td className="py-3 px-4 font-mono text-xs text-ink-700">{invoice.number}</td>
-                  <td className="py-3 px-4">
-                    <StatusBadge invoice={invoice} days={days} />
-                  </td>
-                  <td className="py-3 px-4 text-ink-700">{formatDate(invoice.dueDate)}</td>
-                  <td className="py-3 px-4 text-right font-mono">{formatCurrency(invoice.amount, invoice.currency)}</td>
-                  <td className="py-3 pl-4 text-right font-mono font-semibold">{formatCurrency(balance, invoice.currency)}</td>
+      {/* Desktop table. Rendered in a `.panel` (a card with no padding) so the
+          table runs edge to edge and its header can stick — inside the old
+          `.card` with p-6 it threw away 48px of horizontal room and a sticky
+          header was impossible. */}
+      <div className="hidden md:block">
+        <div className="panel">
+          <div className="max-h-[calc(100vh-13rem)] overflow-auto">
+            <table className="app-table">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Invoice</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                  <th className="col-num">Amount</th>
+                  <th className="col-num">Balance</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {rows.map((row) => {
+                  const { invoice, customer } = row;
+                  const days = daysFromDue(invoice.dueDate);
+                  const balance = Number(invoice.amount) - Number(invoice.amountPaid);
+                  const settled = invoice.status === 'paid' || invoice.status === 'written_off';
+                  // Urgency reads as an edge rather than a row fill, so the row
+                  // itself stays legible while 90+ items remain scannable down
+                  // the left margin.
+                  const urgency = settled ? '' : days > 60 ? 'row-urgent' : days > 0 ? 'row-warn' : '';
+                  return (
+                    <tr key={invoice.id} className={urgency}>
+                      <td>
+                        <Link href={`/dashboard/invoices/${invoice.id}`} className="block">
+                          <div className="font-medium text-ink-950">{customer.name}</div>
+                          <div className="text-2xs text-ink-500">{customer.email ?? customer.phone}</div>
+                        </Link>
+                      </td>
+                      {/* Mono is reserved for identifiers now, not money. */}
+                      <td className="font-mono text-2xs text-ink-500">{invoice.number}</td>
+                      <td><StatusBadge invoice={invoice} days={days} /></td>
+                      <td className="whitespace-nowrap text-ink-700">
+                        {formatDate(invoice.dueDate)}
+                        {days > 0 && !settled && (
+                          <span className="ml-1.5 text-2xs font-medium tabular-nums text-danger-700">
+                            {days}d
+                          </span>
+                        )}
+                      </td>
+                      <td className="col-num text-ink-600">{formatCurrency(invoice.amount, invoice.currency)}</td>
+                      <td className="col-num font-medium text-ink-950">{formatCurrency(balance, invoice.currency)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </>
   );

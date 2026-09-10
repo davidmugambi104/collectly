@@ -322,7 +322,10 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
 
-  // 1. Customers
+  // NOTE: customers and invoices are fetched sequentially, not in parallel --
+  // see the matching note in xero.ts's syncXeroForOrg. qboFetch refreshes
+  // the access token on demand with no locking, so two concurrent calls
+  // near token expiry could race the same rotating refresh token.
   let qboCustomers: QboCustomer[] = [];
   try {
     const res: { QueryResponse?: { Customer?: QboCustomer[] } } = await qboListCustomers(orgId);
@@ -330,37 +333,6 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   } catch (e: unknown) {
     errors.push(`customers: ${e instanceof Error ? e.message : String(e)}`);
   }
-
-  for (const c of qboCustomers) {
-    try {
-      const externalId = String(c.Id);
-      const name = c.DisplayName ?? c.CompanyName ?? 'Unknown';
-      const email = c.PrimaryEmailAddr?.Address ?? null;
-      const phone = c.PrimaryPhone?.FreeFormNumber ?? null;
-      const existing = await db
-        .select({ id: customersTbl.id })
-        .from(customersTbl)
-        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, externalId)))
-        .limit(1);
-      if (existing[0]) {
-        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existing[0].id));
-      } else {
-        await db.insert(customersTbl).values({
-          id: nanoid(),
-          orgId,
-          externalId,
-          name,
-          email,
-          phone,
-        });
-      }
-      customersUpserted++;
-    } catch (e: unknown) {
-      errors.push(`customer ${c?.Id}: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }
-
-  // 2. Invoices
   let qboInvoices: QboInvoice[] = [];
   try {
     const res: { QueryResponse?: { Invoice?: QboInvoice[] } } = await qboListOpenInvoices(orgId);
@@ -369,33 +341,101 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
     errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
   }
 
+  // 1. Customers. One query for every existing customer in this org instead
+  // of one SELECT per customer -- see xero.ts for the full rationale (this
+  // was the dominant cost behind the 502-on-first-sync bug: N customers *
+  // 2 sequential round trips each against a non-co-located DB, routinely
+  // exceeding the function's 60s timeout).
+  const existingCustomers = await db
+    .select({ id: customersTbl.id, externalId: customersTbl.externalId })
+    .from(customersTbl)
+    .where(eq(customersTbl.orgId, orgId));
+  const customerIdByExternalId = new Map<string, string>();
+  for (const c of existingCustomers) {
+    if (c.externalId) customerIdByExternalId.set(c.externalId, c.id);
+  }
+
+  const customersToInsert: (typeof customersTbl.$inferInsert)[] = [];
+  for (const c of qboCustomers) {
+    try {
+      const externalId = String(c.Id);
+      const name = c.DisplayName ?? c.CompanyName ?? 'Unknown';
+      const email = c.PrimaryEmailAddr?.Address ?? null;
+      const phone = c.PrimaryPhone?.FreeFormNumber ?? null;
+      const existingId = customerIdByExternalId.get(externalId);
+      if (existingId) {
+        // Steady-state re-syncs only touch a handful of changed rows --
+        // not worth batching without a unique constraint to ON CONFLICT
+        // against (would need a schema migration).
+        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existingId));
+        customersUpserted++;
+      } else {
+        const id = nanoid();
+        customersToInsert.push({ id, orgId, externalId, name, email, phone });
+        customerIdByExternalId.set(externalId, id);
+      }
+    } catch (e: unknown) {
+      errors.push(`customer ${c?.Id}: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+  if (customersToInsert.length) {
+    try {
+      await db.insert(customersTbl).values(customersToInsert);
+      customersUpserted += customersToInsert.length;
+    } catch (e: unknown) {
+      // One multi-row INSERT is one statement -- a single bad row fails
+      // the whole batch. Fall back to per-row so the rest still land.
+      errors.push(`customers bulk insert: ${e instanceof Error ? e.message : String(e)}`);
+      for (const row of customersToInsert) {
+        try {
+          await db.insert(customersTbl).values(row);
+          customersUpserted++;
+        } catch (e2: unknown) {
+          errors.push(`customer ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
+        }
+      }
+    }
+  }
+
+  // 2. Invoices. Same treatment: one SELECT for all existing invoices in
+  // this org, batch the inserts, keep updates per-row.
+  const existingInvoices = await db
+    .select({ id: invoicesTbl.id, externalId: invoicesTbl.externalId, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
+    .from(invoicesTbl)
+    .where(eq(invoicesTbl.orgId, orgId));
+  const existingInvoiceByExternalId = new Map<string, (typeof existingInvoices)[number]>();
+  for (const i of existingInvoices) {
+    if (i.externalId) existingInvoiceByExternalId.set(i.externalId, i);
+  }
+
+  const invoicesToInsert: (typeof invoicesTbl.$inferInsert)[] = [];
   for (const inv of qboInvoices) {
     try {
       const externalId = String(inv.Id);
       const customerExternalId = String(inv.CustomerRef?.value ?? '');
       if (!customerExternalId) continue;
 
-      // Find the local customer by external id
-      const [localCustomer] = await db
-        .select({ id: customersTbl.id })
-        .from(customersTbl)
-        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, customerExternalId)))
-        .limit(1);
-
-      let customerId: string;
-      if (localCustomer) {
-        customerId = localCustomer.id;
-      } else {
+      let customerId = customerIdByExternalId.get(customerExternalId);
+      if (!customerId) {
         // Customer not in our DB (e.g. invoice references a deleted customer
-        // or sync was partial). Create a stub so the invoice has a parent.
-        const [stub] = await db.insert(customersTbl).values({
-          id: nanoid(),
-          orgId,
-          externalId: customerExternalId,
-          name: inv.CustomerRef?.name ?? `QBO Customer ${customerExternalId}`,
-        }).returning();
-        customerId = stub.id;
-        customersUpserted++;
+        // or sync was partial). Create a stub so the invoice has a parent;
+        // safe to insert immediately since this id is only referenced
+        // in-memory below, not re-read from the DB.
+        const stubId = nanoid();
+        try {
+          await db.insert(customersTbl).values({
+            id: stubId,
+            orgId,
+            externalId: customerExternalId,
+            name: inv.CustomerRef?.name ?? `QBO Customer ${customerExternalId}`,
+          });
+          customerId = stubId;
+          customerIdByExternalId.set(customerExternalId, stubId);
+          customersUpserted++;
+        } catch (e: unknown) {
+          errors.push(`stub customer ${customerExternalId}: ${e instanceof Error ? e.message : String(e)}`);
+          continue;
+        }
       }
 
       // `||` not `??` -- QuickBooks can return DocNumber as '' (not
@@ -417,20 +457,15 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
             ? 'overdue'
             : 'sent';
 
-      const existing = await db
-        .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
-        .from(invoicesTbl)
-        .where(and(eq(invoicesTbl.orgId, orgId), eq(invoicesTbl.externalId, externalId)))
-        .limit(1);
-
-      if (existing[0]) {
-        const wasUnpaid = existing[0].status !== 'paid';
+      const existing = existingInvoiceByExternalId.get(externalId);
+      if (existing) {
+        const wasUnpaid = existing.status !== 'paid';
         // IMPORTANT: paidAt records WHEN the invoice was paid, not when we
         // last synced. Overwriting it with new Date() on every sync inflates
         // DSO by one day per day and poisons customer.paymentBehavior,
         // which feeds the dunning AI. Only stamp a date on the unpaid →
         // paid transition; preserve the original payment date thereafter.
-        const paidAt = status === 'paid' ? (existing[0].paidAt ?? new Date()) : null;
+        const paidAt = status === 'paid' ? (existing.paidAt ?? new Date()) : null;
         await db.update(invoicesTbl).set({
           number,
           amount: String(total),
@@ -441,10 +476,11 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
           status,
           paidAt,
           updatedAt: new Date(),
-        }).where(eq(invoicesTbl.id, existing[0].id));
+        }).where(eq(invoicesTbl.id, existing.id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;
+        invoicesUpserted++;
       } else {
-        await db.insert(invoicesTbl).values({
+        invoicesToInsert.push({
           id: nanoid(),
           orgId,
           customerId,
@@ -459,9 +495,24 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
           paidAt: status === 'paid' ? new Date() : null,
         });
       }
-      invoicesUpserted++;
     } catch (e: unknown) {
       errors.push(`invoice ${inv?.Id}: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+  if (invoicesToInsert.length) {
+    try {
+      await db.insert(invoicesTbl).values(invoicesToInsert);
+      invoicesUpserted += invoicesToInsert.length;
+    } catch (e: unknown) {
+      errors.push(`invoices bulk insert: ${e instanceof Error ? e.message : String(e)}`);
+      for (const row of invoicesToInsert) {
+        try {
+          await db.insert(invoicesTbl).values(row);
+          invoicesUpserted++;
+        } catch (e2: unknown) {
+          errors.push(`invoice ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
+        }
+      }
     }
   }
 

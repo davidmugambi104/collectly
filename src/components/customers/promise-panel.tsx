@@ -70,16 +70,16 @@ export function PromisePanel({
   return (
     <div className="card mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="h3">Active promises to pay</h2>
+        <h2 className="app-heading">Active promises to pay</h2>
         {invoices.length > 0 && (
-          <button className="btn-secondary text-xs" onClick={() => setShowForm((v) => !v)}>
+          <button className="btn-secondary btn-sm" onClick={() => setShowForm((v) => !v)}>
             {showForm ? 'Cancel' : '+ Log a promise'}
           </button>
         )}
       </div>
 
       {showForm && (
-        <form onSubmit={submit} className="space-y-3 mb-4 border border-ink-200 rounded-lg p-3">
+        <form onSubmit={submit} className="subform mb-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label">Invoice</label>
@@ -102,32 +102,38 @@ export function PromisePanel({
               <input name="sourceText" className="input" placeholder="e.g. said on call 8/2" />
             </div>
           </div>
-          {error && <div className="rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-700">{error}</div>}
+          {error && <div role="alert" className="alert-danger">{error}</div>}
           <div className="flex justify-end">
-            <button disabled={loading} className="btn-primary text-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Save promise</button>
+            <button disabled={loading} className="btn-primary btn-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Save promise</button>
           </div>
         </form>
       )}
 
       {active.length === 0 ? (
-        <p className="text-sm text-ink-500">No active promises</p>
+        <p className="app-body text-ink-500">No active promises</p>
       ) : (
         <div className="space-y-2">
           {active.map((p) => (
-            <div key={p.id} className="flex items-center justify-between border border-emerald-200 bg-emerald-50/30 rounded-lg p-3">
-              <div>
-                <div className="font-semibold text-ink-900">
-                  {formatCurrency(parseFloat(p.promisedAmount), p.currency ?? 'USD')} by {formatDate(p.promisedDate)}
+            // Neutral row, hue carried by the badge dot. A green-tinted row per
+            // promise turned a list of five into five green slabs — the same
+            // wall-of-colour the badge system was rewritten to fix.
+            <div key={p.id} className="flex items-center justify-between gap-3 rounded-lg border border-ink-200 p-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="app-label num-strong">
+                    {formatCurrency(parseFloat(p.promisedAmount), p.currency ?? 'USD')}
+                  </span>
+                  <span className="badge-success">by {formatDate(p.promisedDate)}</span>
                 </div>
                 {p.sourceText && (
-                  <div className="text-xs text-ink-600 mt-1 italic">&quot;{p.sourceText}&quot;</div>
+                  <div className="app-meta mt-1 italic">&quot;{p.sourceText}&quot;</div>
                 )}
               </div>
               <div className="flex items-center gap-2">
                 <button
                   disabled={actingId === p.id}
                   onClick={() => setStatus(p.id, 'fulfilled')}
-                  className="btn-secondary text-xs"
+                  className="btn-secondary btn-sm"
                   title="Mark fulfilled"
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" /> Fulfilled
@@ -135,7 +141,7 @@ export function PromisePanel({
                 <button
                   disabled={actingId === p.id}
                   onClick={() => setStatus(p.id, 'broken')}
-                  className="btn-secondary text-xs"
+                  className="btn-secondary btn-sm"
                   title="Mark broken"
                 >
                   <XCircle className="h-3.5 w-3.5" /> Broken

@@ -80,7 +80,7 @@ export default function SecurityPage() {
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>
-                  <h3 className="h3">{title}</h3>
+                  <h2 className="h3">{title}</h2>
                   <p className="mt-2 text-sm text-ink-600 leading-relaxed">{body}</p>
                 </div>
               </div>

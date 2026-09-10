@@ -41,12 +41,12 @@ export function SampleDataButton() {
         {loading ? 'Loading…' : 'Load sample data'}
       </button>
       {status === 'ok' && (
-        <p className="mt-2 text-sm text-emerald-700 inline-flex items-center gap-1.5">
+        <p className="mt-2 text-sm text-success-700 inline-flex items-center gap-1.5">
           <CheckCircle2 className="h-3.5 w-3.5" /> {message} Redirecting to dashboard…
         </p>
       )}
       {status === 'err' && (
-        <p className="mt-2 text-sm text-red-700 inline-flex items-center gap-1.5">
+        <p className="mt-2 text-sm text-danger-700 inline-flex items-center gap-1.5">
           <AlertCircle className="h-3.5 w-3.5" /> {message}
         </p>
       )}

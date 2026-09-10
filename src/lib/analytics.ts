@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { invoices, customers, payments } from '@/db/schema';
-import { eq, and, sum, count, gte, lte, sql, desc } from 'drizzle-orm';
+import { eq, and, sum, gte, lte, sql, desc } from 'drizzle-orm';
 import { bucketFor, daysOverdue } from '@/lib/utils';
 
 export interface AgingReport {
@@ -46,16 +46,20 @@ export async function getAgingReport(orgId: string): Promise<AgingReport> {
     customerIds.add(inv.customerId);
   }
 
-  const [{ invoiceCount }] = await db
-    .select({ invoiceCount: count() })
-    .from(invoices)
-    .where(and(eq(invoices.orgId, orgId), eq(invoices.status, 'overdue')));
+  // Derive the overdue count from the same dueDate-based buckets the UI
+  // renders, rather than from the stored `status` column. The two disagree
+  // whenever status is stale (an invoice marked 'overdue' at import time whose
+  // due date is still in the future, or one that quietly aged past due since
+  // the last sync), which surfaced as the KPI reading "5 invoices need
+  // attention" directly above an aging table listing 8. One source of truth.
+  const invoiceCount =
+    buckets['1-30'].count + buckets['31-60'].count + buckets['61-90'].count + buckets['90+'].count;
 
   return {
     total,
     buckets,
     customerCount: customerIds.size,
-    invoiceCount: Number(invoiceCount),
+    invoiceCount,
     hasData: rows.length > 0,
   };
 }

@@ -62,7 +62,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
         <button
           onClick={onSync}
           disabled={syncing || disconnecting}
-          className="btn-secondary text-sm disabled:opacity-50"
+          className="btn-secondary btn-sm disabled:opacity-50"
           type="button"
         >
           {syncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
@@ -71,7 +71,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
         <button
           onClick={onDisconnect}
           disabled={syncing || disconnecting}
-          className="btn-ghost text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
+          className="btn-ghost btn-sm text-danger-600 hover:text-danger-700 disabled:opacity-50"
           type="button"
         >
           {disconnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Unlink className="h-3.5 w-3.5" />}

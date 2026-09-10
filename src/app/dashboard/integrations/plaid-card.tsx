@@ -105,27 +105,27 @@ export function PlaidCard({ status }: { status: string }) {
   }
 
   return (
-    <div className={`card transition-colors ${connected ? 'border-emerald-200 bg-emerald-50/30' : ''}`}>
+    <div className={`card transition-colors ${connected ? 'border-success-200 bg-success-50/30' : ''}`}>
       <div className="flex items-start gap-3">
         <div
           className={`h-10 w-10 rounded-lg grid place-items-center font-display font-bold text-sm shrink-0 ${
-            connected ? 'bg-emerald-600 text-white' : 'bg-ink-950 text-white'
+            connected ? 'bg-success-600 text-white' : 'bg-ink-950 text-white'
           }`}
         >
           P
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-ink-900">Plaid</h3>
+            <h3 className="app-heading">Plaid</h3>
             {connected ? (
-              <span className="badge-success text-[10px]">Connected</span>
+              <span className="badge-success text-2xs">Connected</span>
             ) : (
-              <span className="badge-neutral text-[10px]">Not connected</span>
+              <span className="badge-neutral text-2xs">Not connected</span>
             )}
           </div>
           <p className="mt-1 text-sm text-ink-600">Read-only bank connection. Balance/transaction sync isn&apos;t wired into the forecast yet — connecting saves your bank link for when it is.</p>
           {error && (
-            <p className="mt-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-md px-2 py-1">
+            <p className="mt-2 text-xs text-danger-700 bg-danger-50 border border-danger-200 rounded-md px-2 py-1">
               {error}
             </p>
           )}
@@ -134,11 +134,11 @@ export function PlaidCard({ status }: { status: string }) {
               type="button"
               onClick={openLink}
               disabled={opening || connected}
-              className={connected ? 'btn-secondary text-sm' : 'btn-primary text-sm'}
+              className={connected ? 'btn-secondary btn-sm' : 'btn-primary btn-sm'}
             >
               {opening ? 'Opening Plaid…' : connected ? 'Manage' : 'Connect'}
             </button>
-            <a href="https://plaid.com/docs/link/" target="_blank" rel="noreferrer" className="btn-ghost text-sm">
+            <a href="https://plaid.com/docs/link/" target="_blank" rel="noreferrer" className="btn-ghost btn-sm">
               <BookOpen className="h-3.5 w-3.5" /> Docs
             </a>
           </div>

@@ -27,7 +27,7 @@ export function WriteOffButton({ invoiceId }: { invoiceId: string }) {
   }
 
   return (
-    <button onClick={writeOff} disabled={loading} className="btn-secondary text-sm text-red-700">
+    <button onClick={writeOff} disabled={loading} className="btn-secondary btn-sm text-danger-700">
       {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
       Write off
     </button>

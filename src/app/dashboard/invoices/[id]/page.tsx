@@ -55,18 +55,26 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
         </Link>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 space-y-5">
-          {/* Status / Balance card */}
-          <div className="card">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-4 lg:col-span-2">
+          {/* Status / Balance — the surface this page is organised around. */}
+          <div className="card-primary">
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
-                <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">Status</div>
+                <div className="text-2xs font-medium text-ink-500">Status</div>
                 <div className="mt-1 flex items-center gap-2 flex-wrap">
                   {invoice.status === 'paid' ? <span className="badge-success">Paid</span>
                     : invoice.status === 'written_off' ? <span className="badge-neutral">Written off</span>
                     : isOverdue ? <span className="badge-danger">Overdue · {days}d</span>
-                    : <span className="badge-warn capitalize">{invoice.status.replace(/_/g, ' ')}</span>}
+                    /* Mirrors StatusBadge in components/dashboard/invoices-table.tsx:
+                       a stored status of 'overdue' on an invoice that is not
+                       actually past due is stale sync data, so show the neutral
+                       open-invoice label instead of echoing it. Without this the
+                       same invoice read "Sent" in the list and "Overdue" here.
+                       Neutral rather than badge-warn, so amber keeps meaning
+                       "needs attention" consistently across both views. */
+                    : invoice.status === 'overdue' ? <span className="badge-neutral">Sent</span>
+                    : <span className="badge-neutral capitalize">{invoice.status.replace(/_/g, ' ')}</span>}
                   {invoice.lastReminderAt && <span className="text-xs text-ink-500">Last reminded {formatDate(invoice.lastReminderAt)}</span>}
                 </div>
               </div>
@@ -80,7 +88,7 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
             {invoice.status !== 'paid' && invoice.status !== 'written_off' && (
               <div className="mt-4 pt-4 border-t border-ink-100 flex items-center gap-2 flex-wrap">
                 <MarkAsPaidButton invoiceId={invoice.id} />
-                <a href={portalUrl} target="_blank" rel="noopener" className="btn-secondary text-sm">
+                <a href={portalUrl} target="_blank" rel="noopener" className="btn-secondary btn-sm">
                   <ExternalLink className="h-3.5 w-3.5" />Customer pay portal
                 </a>
                 <WriteOffButton invoiceId={invoice.id} />
@@ -90,7 +98,7 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
             <div className="mt-5 pt-5 border-t border-ink-100 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
               <div><div className="text-xs text-ink-500">Issued</div><div className="font-medium">{formatDate(invoice.issueDate)}</div></div>
               <div><div className="text-xs text-ink-500">Due</div><div className="font-medium">{formatDate(invoice.dueDate)}</div></div>
-              {invoice.paidAt && <div><div className="text-xs text-ink-500">Paid</div><div className="font-medium text-emerald-600">{formatDate(invoice.paidAt)}</div></div>}
+              {invoice.paidAt && <div><div className="text-xs text-ink-500">Paid</div><div className="font-medium text-success-600">{formatDate(invoice.paidAt)}</div></div>}
               <div><div className="text-xs text-ink-500">Currency</div><div className="font-mono font-medium">{invoice.currency}</div></div>
             </div>
 
@@ -119,17 +127,21 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
           />
 
           {runs.length > 0 && (
-            <div className="card">
-              <h2 className="h3">Communication history</h2>
-              <p className="text-xs text-ink-500 mt-0.5">All reminders sent for this invoice.</p>
-              <div className="mt-3 space-y-2">
+            <div className="section">
+              <div className="section-head">
+                <div>
+                  <h2 className="app-heading">Communication history</h2>
+                  <p className="app-meta mt-0.5 font-normal">All reminders sent for this invoice.</p>
+                </div>
+              </div>
+              <div className="divide-y divide-ink-100 rounded-lg border border-ink-200 bg-white px-3">
                 {runs.map((r: typeof runs[number]) => (
-                  <div key={r.id} className="flex items-start gap-3 p-2.5 rounded-lg border border-ink-100">
+                  <div key={r.id} className="flex items-start gap-3 py-2.5">
                     {r.channel === 'sms' ? <MessageSquare className="h-4 w-4 text-ink-500 mt-0.5" /> : <Mail className="h-4 w-4 text-ink-500 mt-0.5" />}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`badge text-[10px] ${r.status === 'sent' || r.status === 'delivered' ? 'badge-success' : r.status === 'failed' ? 'badge-danger' : 'badge-neutral'}`}>{r.status}</span>
-                        <span className="text-xs text-ink-500">{r.sentAt ? new Date(r.sentAt).toLocaleString() : 'queued'}</span>
+                        <span className={r.status === 'sent' || r.status === 'delivered' ? 'badge-success' : r.status === 'failed' ? 'badge-danger' : 'badge-neutral'}>{r.status}</span>
+                        <span className="app-meta font-normal">{r.sentAt ? new Date(r.sentAt).toLocaleString() : 'queued'}</span>
                       </div>
                       {r.subject && <div className="text-xs font-medium text-ink-800 mt-1 truncate">{r.subject}</div>}
                       <div className="text-xs text-ink-600 mt-0.5 line-clamp-2">{r.body}</div>
@@ -142,12 +154,12 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
 
           {pays.length > 0 && (
             <div className="card">
-              <h2 className="h3">Payments</h2>
+              <h2 className="app-heading">Payments</h2>
               <div className="mt-3 space-y-2">
                 {pays.map((p: typeof pays[number]) => (
                   <div key={p.id} className="flex items-center justify-between p-2.5 rounded-lg border border-ink-100">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <CheckCircle2 className="h-4 w-4 text-success-600" />
                       <div>
                         <div className="text-sm font-medium text-ink-900">{formatCurrency(p.amount, p.currency)} via {p.method ?? 'manual'}</div>
                         <div className="text-xs text-ink-500">{formatDate(p.paidAt)}</div>
@@ -162,7 +174,7 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
 
         <div className="space-y-4">
           <div className="card">
-            <h2 className="font-semibold text-ink-900">Customer</h2>
+            <h2 className="app-heading">Customer</h2>
             <div className="mt-3 space-y-1.5 text-sm">
               <Link href={`/dashboard/customers/${customer.id}`} className="block font-medium text-ink-900 hover:text-brand-600">{customer.name}</Link>
               {customer.company && <div className="text-xs text-ink-500">{customer.company}</div>}
@@ -173,18 +185,18 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
               <div className="text-xs text-ink-500">Risk score</div>
               <div className="flex items-center gap-2 mt-1">
                 <div className="flex-1 h-1.5 rounded-full bg-ink-100 overflow-hidden">
-                  <div className={`h-full ${(customer.paymentBehavior?.riskScore ?? 0) > 60 ? 'bg-red-500' : (customer.paymentBehavior?.riskScore ?? 0) > 30 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${customer.paymentBehavior?.riskScore ?? 0}%` }} />
+                  <div className={`h-full ${(customer.paymentBehavior?.riskScore ?? 0) > 60 ? 'bg-danger-500' : (customer.paymentBehavior?.riskScore ?? 0) > 30 ? 'bg-warn-500' : 'bg-success-500'}`} style={{ width: `${customer.paymentBehavior?.riskScore ?? 0}%` }} />
                 </div>
                 <span className="text-xs font-mono text-ink-700">{customer.paymentBehavior?.riskScore ?? 0}</span>
               </div>
             </div>
-            <Link href={`/dashboard/customers/${customer.id}`} className="mt-3 text-xs text-brand-600 hover:text-brand-700 font-medium inline-flex items-center gap-1">
+            <Link href={`/dashboard/customers/${customer.id}`} className="link-quiet mt-3">
               View customer →
             </Link>
           </div>
 
           <div className="card">
-            <h2 className="font-semibold text-ink-900">Payment portal link</h2>
+            <h2 className="app-heading">Payment portal link</h2>
             <p className="mt-1 text-xs text-ink-600">Send this to your customer to collect online.</p>
             <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-ink-200 bg-ink-50 p-2">
               <code className="text-xs font-mono break-all flex-1">{portalUrl}</code>

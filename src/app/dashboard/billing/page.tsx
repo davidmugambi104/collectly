@@ -106,22 +106,22 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   return (
     <AppShell title="Billing" subtitle="Plans, usage, and receipts.">
       {justRequested && (
-        <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+        <div className="mb-4 rounded-lg border border-success-200 bg-success-50 p-4 text-sm text-success-900">
           <div className="flex items-start gap-2">
             <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
             <div className="flex-1">
               <div className="font-semibold">
                 {PLAN_PRICING[sp.plan as keyof typeof PLAN_PRICING]?.name ?? sp.plan} upgrade request received
               </div>
-              <p className="mt-1 text-emerald-900/80">
+              <p className="mt-1 text-success-900/80">
                 Here&apos;s what happens next:
               </p>
-              <ol className="mt-2 space-y-1 text-emerald-900/80 list-decimal list-inside">
+              <ol className="mt-2 space-y-1 text-success-900/80 list-decimal list-inside">
                 <li>David emails your invoice <b>within 12 hours</b> (bank transfer, Wise, or PayPal — your choice).</li>
                 <li>Once paid, your account is upgraded manually and you&apos;ll get a confirmation email.</li>
                 <li>You can keep using Collectly during this window — no interruption.</li>
               </ol>
-              <p className="mt-2 text-xs text-emerald-900/70">
+              <p className="mt-2 text-xs text-success-900/70">
                 Questions? Reply to the invoice email or reach David at <a href="mailto:david@getcollectly.app" className="underline">david@getcollectly.app</a>.
               </p>
             </div>
@@ -129,13 +129,13 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         </div>
       )}
       {justUpgraded && (
-        <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 flex items-center gap-2 text-sm text-emerald-800">
+        <div className="mb-4 rounded-lg border border-success-200 bg-success-50 p-3 flex items-center gap-2 text-[13px] text-success-800">
           <CheckCircle2 className="h-4 w-4" />
           <span>Plan upgraded. Welcome to {current.name}.</span>
         </div>
       )}
       {justCancelled && (
-        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 flex items-center gap-2 text-sm text-amber-800">
+        <div className="mb-4 rounded-lg border border-warn-200 bg-warn-50 p-3 flex items-center gap-2 text-[13px] text-warn-800">
           <AlertCircle className="h-4 w-4" />
           <span>Checkout cancelled. Your current plan is unchanged.</span>
         </div>
@@ -158,24 +158,24 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       </div>
 
       {/* Current plan + usage */}
-      <div className="grid lg:grid-cols-3 gap-5 mb-5">
-        <div className="lg:col-span-2 card">
+      <div className="mb-6 grid gap-6 lg:grid-cols-3">
+        <div className="card-primary lg:col-span-2">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="text-2xs font-medium text-ink-500">Current plan</div>
               <div className="mt-1 flex items-baseline gap-2">
-                <span className="text-2xl font-display font-bold text-ink-950">{current.name}</span>
-                <span className="text-sm text-ink-500">${current.monthly}/mo</span>
+                <span className="app-display">{current.name}</span>
+                <span className="app-body text-ink-500">${current.monthly}/mo</span>
               </div>
               <div className="mt-2 flex items-center gap-2 flex-wrap">
-                <span className={`badge ${isTrialing ? 'badge-warn' : 'badge-success'}`}>
+                <span className={isTrialing ? 'badge-warn' : 'badge-success'}>
                   {isTrialing ? 'Trialing' : sub?.status ?? 'active'}
                 </span>
                 {sub?.currentPeriodEnd && (
-                  <span className="text-xs text-ink-500 inline-flex items-center gap-1">
+                  <span className="app-meta inline-flex items-center gap-1 font-normal">
                     <Calendar className="h-3 w-3" />
                     {isTrialing ? 'Trial ends' : 'Renews'} {formatDate(sub.currentPeriodEnd)}
-                    {isTrialing && trialDaysLeft > 0 && <b className="text-amber-700 ml-1">({trialDaysLeft} days)</b>}
+                    {isTrialing && trialDaysLeft > 0 && <b className="text-warn-700 ml-1">({trialDaysLeft} days)</b>}
                   </span>
                 )}
                 {sub?.cancelAt && (
@@ -188,12 +188,12 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             <div className="flex flex-col gap-2 shrink-0">
               {stripeConfigured && sub?.stripeCustomerId ? (
                 <form action={openPortal}>
-                  <button type="submit" className="btn-secondary text-sm">
+                  <button type="submit" className="btn-secondary btn-sm">
                     <ExternalLink className="h-3.5 w-3.5" />Manage in Stripe
                   </button>
                 </form>
               ) : (
-                <button disabled className="btn-secondary text-sm opacity-60 cursor-not-allowed" title="Stripe not configured">
+                <button disabled className="btn-secondary btn-sm opacity-60 cursor-not-allowed" title="Stripe not configured">
                   <ExternalLink className="h-3.5 w-3.5" />Manage in Stripe
                 </button>
               )}
@@ -221,12 +221,12 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         </div>
 
         {/* Quick links */}
-        <div className="card">
-          <h2 className="font-semibold text-ink-900 text-sm">Resources</h2>
+        <div className="section">
+          <h2 className="app-heading mb-2">Resources</h2>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/dashboard/invoices" className="py-1.5 text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" />View invoices</Link></li>
-            <li><Link href="/dashboard/payments" className="py-1.5 text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><CreditCard className="h-3.5 w-3.5" />View payments</Link></li>
-            <li><a href="mailto:billing@getcollectly.app" className="py-1.5 text-brand-600 hover:text-brand-700 inline-flex items-center gap-1.5"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
+            <li><Link href="/dashboard/invoices" className="link-quiet"><FileText className="h-3.5 w-3.5" />View invoices</Link></li>
+            <li><Link href="/dashboard/payments" className="link-quiet"><CreditCard className="h-3.5 w-3.5" />View payments</Link></li>
+            <li><a href="mailto:billing@getcollectly.app" className="link-quiet"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
           </ul>
           <div className="mt-4 pt-4 border-t border-ink-100 text-xs text-ink-500">
             Questions about your plan? Email <a href="mailto:billing@getcollectly.app" className="text-brand-600">billing@getcollectly.app</a>.
@@ -248,7 +248,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                 <div className="font-display font-semibold text-ink-900">{p.name}</div>
                 <div className="mt-1 text-3xl font-display font-bold">${p.monthly}<span className="text-sm font-normal text-ink-500">/mo</span></div>
                 <ul className="mt-4 space-y-1.5 text-sm text-ink-600 flex-1">
-                  {p.features.map((f) => <li key={f} className="flex items-start gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />{f}</li>)}
+                  {p.features.map((f) => <li key={f} className="flex items-start gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-success-500 mt-0.5 flex-shrink-0" />{f}</li>)}
                 </ul>
                 <button disabled={isCurrent} className={`mt-4 w-full ${isCurrent ? 'btn-secondary opacity-50' : 'btn-primary'} text-sm`} type="submit">
                   {isCurrent ? 'Current plan' : <>Start {p.name} at ${p.monthly}/mo <ArrowUpRight className="h-3.5 w-3.5" /></>}
@@ -274,34 +274,34 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             <h2 className="app-heading">Receipts & payments</h2>
             <p className="text-xs text-ink-500 mt-0.5">Customer payments you&apos;ve collected. Use these as proof of receipt for accounting.</p>
           </div>
-          <Link href="/dashboard/payments" className="inline-block py-1.5 text-sm text-brand-600 hover:text-brand-700">All payments →</Link>
+          <Link href="/dashboard/payments" className="link-quiet">All payments →</Link>
         </div>
         {recentPayments.length === 0 ? (
           <div className="rounded-xl border border-dashed border-ink-200 p-8 text-center">
             <FileText className="h-8 w-8 text-ink-300 mx-auto" />
-            <h2 className="mt-2 font-semibold text-ink-900 text-sm">No payments yet</h2>
+            <h2 className="app-heading mt-2">No payments yet</h2>
             <p className="mt-1 text-xs text-ink-600">When customers pay through your portal, receipts will appear here. Each row links to the original invoice.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="-mx-5 -mb-5 overflow-x-auto border-t border-ink-200">
+            <table className="app-table">
               <thead>
-                <tr className="text-left text-ink-500 text-2xs font-medium">
-                  <th className="pb-2 pr-4">Date</th>
-                  <th className="pb-2 px-4">Customer</th>
-                  <th className="pb-2 px-4">Invoice</th>
-                  <th className="pb-2 px-4">Method</th>
-                  <th className="pb-2 pl-4 text-right">Amount</th>
+                <tr>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Invoice</th>
+                  <th>Method</th>
+                  <th className="col-num">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {recentPayments.map((r: typeof recentPayments[number]) => (
-                  <tr key={r.payment.id} className="border-t border-ink-100">
-                    <td className="py-2.5 pr-4 text-ink-700">{r.payment.paidAt ? formatDate(r.payment.paidAt) : '—'}</td>
-                    <td className="py-2.5 px-4 text-ink-900">{r.customer.name}</td>
-                    <td className="py-2.5 px-4 font-mono text-xs text-ink-700">{r.invoice.number}</td>
-                    <td className="py-2.5 px-4 text-xs text-ink-600 capitalize">{r.payment.method ?? 'ach'}</td>
-                    <td className="py-2.5 pl-4 text-right font-mono font-semibold text-emerald-700">+{formatCurrency(Number(r.payment.amount), r.payment.currency)}</td>
+                  <tr key={r.payment.id}>
+                    <td className="whitespace-nowrap text-ink-700">{r.payment.paidAt ? formatDate(r.payment.paidAt) : '—'}</td>
+                    <td className="text-ink-950">{r.customer.name}</td>
+                    <td className="font-mono text-2xs text-ink-500">{r.invoice.number}</td>
+                    <td className="capitalize text-ink-600">{r.payment.method ?? 'ach'}</td>
+                    <td className="col-num num-strong text-success-700">+{formatCurrency(Number(r.payment.amount), r.payment.currency)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -332,7 +332,7 @@ function UsageMeter({ label, used, limit }: { label: string; used: number; limit
       {!isUnlimited && (
         <div className="mt-2 h-1.5 rounded-full bg-ink-100 overflow-hidden">
           <div
-            className={`h-full transition-all ${isDanger ? 'bg-red-500' : isWarning ? 'bg-amber-400' : 'bg-emerald-500'}`}
+            className={`h-full transition-all ${isDanger ? 'bg-danger-500' : isWarning ? 'bg-warn-400' : 'bg-success-500'}`}
             style={{ width: `${pct}%` }}
           />
         </div>

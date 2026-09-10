@@ -105,7 +105,7 @@ export function ArCostCalculator() {
         <div className="card">
           {showCapture ? (
             <>
-              <h3 className="font-semibold text-ink-900">Get the detailed breakdown + 5-step AR playbook</h3>
+              <h2 className="font-semibold text-ink-900">Get the detailed breakdown + 5-step AR playbook</h2>
               <div className="mt-3 flex gap-2">
                 <input
                   type="email"
@@ -122,7 +122,7 @@ export function ArCostCalculator() {
             </>
           ) : (
             <>
-              <h3 className="font-semibold text-ink-900">Want to cut this number in half?</h3>
+              <h2 className="font-semibold text-ink-900">Want to cut this number in half?</h2>
               <p className="mt-1 text-sm text-ink-600">
                 Agencies that automate polite, persistent follow-up typically recover 30–40% of this drag in the first 90 days.
               </p>

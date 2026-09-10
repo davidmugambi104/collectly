@@ -64,11 +64,11 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   return (
     <AppShell title="Integrations" subtitle="Connect your accounting and payment tools. Setup takes 60 seconds.">
       {connectedProvider && (
-        <div className="mb-6 card bg-emerald-50 border-emerald-200">
+        <div className="mb-6 card bg-success-50 border-success-200">
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="h-5 w-5 text-emerald-700 shrink-0 mt-0.5" />
+            <CheckCircle2 className="h-5 w-5 text-success-700 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-emerald-900">
+              <p className="text-sm text-success-900">
                 <b>{PROVIDER_LABELS[connectedProvider]}</b> connected. Hit <b>Sync now</b> below to import your customers and invoices.
               </p>
             </div>
@@ -76,11 +76,11 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
         </div>
       )}
       {erroredProvider && (
-        <div className="mb-6 card bg-red-50 border-red-200">
+        <div className="mb-6 card bg-danger-50 border-danger-200">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-700 shrink-0 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-danger-700 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-red-900">
+              <p className="text-sm text-danger-900">
                 <b>{PROVIDER_LABELS[erroredProvider]}</b> connection failed{sp?.reason ? `: ${sp.reason}` : '.'} Try again from the card below.
               </p>
             </div>
@@ -89,9 +89,9 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       )}
 
       {customerCount === 0 && (
-        <div className="mb-6 card bg-gradient-to-br from-brand-50 to-emerald-50 border-brand-200">
+        <div className="mb-6 card bg-gradient-to-br from-brand-50 to-success-50 border-brand-200">
           <div className="flex items-start gap-4">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-500 grid place-items-center shrink-0">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-success-500 grid place-items-center shrink-0">
               <Database className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
@@ -109,10 +109,10 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       )}
 
       {needsSetup > 0 && (
-        <div className="mb-6 card bg-amber-50 border-amber-200">
+        <div className="mb-6 card bg-warn-50 border-warn-200">
           <div className="flex items-start gap-4">
-            <div className="h-10 w-10 rounded-xl bg-amber-100 grid place-items-center shrink-0">
-              <AlertCircle className="h-5 w-5 text-amber-700" />
+            <div className="h-10 w-10 rounded-xl bg-warn-100 grid place-items-center shrink-0">
+              <AlertCircle className="h-5 w-5 text-warn-700" />
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="font-display font-semibold text-ink-950 text-lg">{needsSetup} integration{needsSetup > 1 ? 's' : ''} need production setup</h2>
@@ -138,7 +138,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       </div>
 
       <div className="mt-8 card">
-        <h2 className="h3">How integrations work</h2>
+        <h2 className="app-heading">How integrations work</h2>
         <ol className="mt-3 space-y-2 text-sm text-ink-600 list-decimal pl-5">
           <li>Click <b>Connect</b> on the provider you use.</li>
           <li>Authorize Collectly in the provider&apos;s OAuth flow.</li>
@@ -157,30 +157,30 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
   const paused = status === 'paused';
   const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero' || provider === 'square');
   return (
-    <div className={`card transition-colors ${connected ? 'border-emerald-200 bg-emerald-50/30' : errored ? 'border-red-200 bg-red-50/30' : paused ? 'border-ink-200 bg-ink-50/50 opacity-70' : ''}`}>
+    <div className={`card transition-colors ${connected ? 'border-success-200 bg-success-50/30' : errored ? 'border-danger-200 bg-danger-50/30' : paused ? 'border-ink-200 bg-ink-50/50 opacity-70' : ''}`}>
       <div className="flex items-start gap-3">
-        <div className={`h-10 w-10 rounded-lg grid place-items-center font-display font-bold text-sm shrink-0 ${connected ? 'bg-emerald-600 text-white' : paused ? 'bg-ink-300 text-ink-600' : 'bg-ink-950 text-white'}`}>
+        <div className={`h-10 w-10 rounded-lg grid place-items-center font-display font-bold text-sm shrink-0 ${connected ? 'bg-success-600 text-white' : paused ? 'bg-ink-300 text-ink-600' : 'bg-ink-950 text-white'}`}>
           {logo}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-ink-900">{name}</h3>
-            {connected && <span className="badge-success text-[10px]">Connected</span>}
-            {errored && <span className="badge-danger text-[10px]">Error</span>}
-            {paused && <span className="badge-neutral text-[10px]">Paused</span>}
-            {!connected && !errored && !paused && <span className="badge-neutral text-[10px]">Not connected</span>}
+            <h3 className="app-heading">{name}</h3>
+            {connected && <span className="badge-success text-2xs">Connected</span>}
+            {errored && <span className="badge-danger text-2xs">Error</span>}
+            {paused && <span className="badge-neutral text-2xs">Paused</span>}
+            {!connected && !errored && !paused && <span className="badge-neutral text-2xs">Not connected</span>}
           </div>
           <p className="mt-1 text-sm text-ink-600">{description}</p>
           <div className="mt-3 flex items-center gap-2">
             {paused ? (
-              <span className="btn-secondary text-sm opacity-60 cursor-not-allowed" aria-disabled="true">Paused</span>
+              <span className="btn-secondary btn-sm opacity-60 cursor-not-allowed" aria-disabled="true">Paused</span>
             ) : (
-              <a href={connectHref} className={connected ? 'btn-secondary text-sm' : 'btn-primary text-sm'}>
+              <a href={connectHref} className={connected ? 'btn-secondary btn-sm' : 'btn-primary btn-sm'}>
                 {connected ? 'Manage' : ctaLabel ?? 'Connect'}
               </a>
             )}
             {docsHref !== '#' && (
-              <a href={docsHref} className="btn-ghost text-sm"><BookOpen className="h-3.5 w-3.5" />Docs</a>
+              <a href={docsHref} className="btn-ghost btn-sm"><BookOpen className="h-3.5 w-3.5" />Docs</a>
             )}
           </div>
           {showControls && (

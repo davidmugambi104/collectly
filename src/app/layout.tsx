@@ -1,9 +1,34 @@
 import type { Metadata, Viewport } from 'next';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+
 import { PostHogProvider } from '@/components/posthog-provider';
 import { ClerkProvider } from '@/components/clerk-provider';
 import { Suspense } from 'react';
 import { orgJsonLd, softwareAppJsonLd, SITE, BRAND, TAGLINE } from '@/lib/seo';
+
+// tailwind.config.ts has always named Inter and JetBrains Mono as the brand
+// faces, and globals.css sets Inter-specific OpenType features ("ss01",
+// "cv11") — but nothing ever loaded either font. There was no next/font call,
+// no <link> to Google Fonts, no @font-face and no files in public/, so every
+// client silently fell back down the stack: SF Pro on macOS, Segoe UI on
+// Windows, Roboto on Android. font-display and font-sans resolved to the same
+// face, making the display/body distinction a no-op, and the financial figures
+// marked font-mono lost JetBrains Mono's fixed advance width, which is what
+// keeps the currency columns in the dashboard tables optically aligned.
+// next/font self-hosts both at build time, so there is no runtime request to
+// Google, no extra CSP origin, and no layout shift.
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'),
@@ -126,7 +151,7 @@ const siteJsonLd = JSON.stringify([
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB">
+    <html lang="en-GB" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
         <script
           type="application/ld+json"

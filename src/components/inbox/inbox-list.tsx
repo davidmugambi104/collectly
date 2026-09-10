@@ -22,16 +22,20 @@ type InboxItem = {
   invoiceNumber: string | null;
 };
 
+// Nine bespoke coloured pills (`bg-*-100 text-*-700 border-*-200`, two of them
+// on raw blue-*/purple-* with no token behind them) became nine walls of colour
+// in a stacked list. These now map onto the system badges: a neutral chip whose
+// hue survives only in the 6px dot, with the label always carrying the meaning.
 const CLASSIFICATION_STYLE: Record<string, { label: string; className: string }> = {
-  will_pay_date: { label: 'Will pay by date', className: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-  already_paid: { label: 'Says already paid', className: 'bg-blue-100 text-blue-700 border-blue-200' },
-  disputed: { label: 'Disputed', className: 'bg-red-100 text-red-700 border-red-200' },
-  missing_po: { label: 'Needs PO / paperwork', className: 'bg-amber-100 text-amber-700 border-amber-200' },
-  wrong_contact: { label: 'Wrong contact', className: 'bg-ink-100 text-ink-700 border-ink-200' },
-  needs_payment_plan: { label: 'Wants a payment plan', className: 'bg-purple-100 text-purple-700 border-purple-200' },
-  general_question: { label: 'General question', className: 'bg-ink-100 text-ink-700 border-ink-200' },
-  no_action: { label: 'No action needed', className: 'bg-ink-100 text-ink-500 border-ink-200' },
-  unclassified: { label: 'Unclassified', className: 'bg-ink-100 text-ink-500 border-ink-200' },
+  will_pay_date: { label: 'Will pay by date', className: 'badge-success' },
+  already_paid: { label: 'Says already paid', className: 'badge-info' },
+  disputed: { label: 'Disputed', className: 'badge-danger' },
+  missing_po: { label: 'Needs PO / paperwork', className: 'badge-warn' },
+  wrong_contact: { label: 'Wrong contact', className: 'badge-neutral' },
+  needs_payment_plan: { label: 'Wants a payment plan', className: 'badge-info' },
+  general_question: { label: 'General question', className: 'badge-neutral' },
+  no_action: { label: 'No action needed', className: 'badge-neutral' },
+  unclassified: { label: 'Unclassified', className: 'badge-neutral' },
 };
 
 export function InboxList({ items }: { items: InboxItem[] }) {
@@ -69,27 +73,30 @@ export function InboxList({ items }: { items: InboxItem[] }) {
 
   return (
     <div>
-      <div className="flex gap-2 mb-5">
+      {/* Real segmented control rather than four independently-bordered pills.
+          aria-pressed carries the active state to assistive tech, which the
+          colour-only treatment never did. */}
+      <div className="segmented mb-5">
         {(['new', 'handled', 'dismissed', 'all'] as const).map((f) => (
           <button
             key={f}
+            type="button"
+            aria-pressed={filter === f}
             onClick={() => setFilter(f)}
-            className={`text-xs px-3 py-1.5 rounded-lg border capitalize ${
-              filter === f ? 'bg-brand-50 text-brand-900 border-brand-200 font-medium' : 'bg-white text-ink-600 border-ink-200 hover:bg-ink-50'
-            }`}
+            className="segmented-item capitalize"
           >
-            {f} ({counts[f]})
+            {f} <span className="segmented-count">{counts[f]}</span>
           </button>
         ))}
       </div>
 
-      {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4">{error}</div>}
+      {error && <div role="alert" className="mb-4 rounded-lg border border-danger-200 bg-danger-50 p-3 text-[13px] text-danger-700">{error}</div>}
 
       {filtered.length === 0 ? (
         <div className="card text-center py-12">
           <Mail className="h-8 w-8 mx-auto text-ink-300" />
-          <h3 className="mt-3 font-semibold text-ink-900">No {filter === 'all' ? '' : filter} messages</h3>
-          <p className="mt-1 text-sm text-ink-600">Replies to dunning emails will show up here automatically.</p>
+          <h2 className="app-heading mt-3">No {filter === 'all' ? '' : filter} messages</h2>
+          <p className="app-body mt-1">Replies to dunning emails will show up here automatically.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -100,18 +107,18 @@ export function InboxList({ items }: { items: InboxItem[] }) {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-ink-900">{m.fromName || m.fromAddress || 'Unknown sender'}</span>
-                      <span className={`badge border ${style.className}`}>{style.label}</span>
+                      <span className="app-label">{m.fromName || m.fromAddress || 'Unknown sender'}</span>
+                      <span className={style.className}>{style.label}</span>
                       {m.customerName && m.customerId && (
-                        <Link href={`/dashboard/customers/${m.customerId}`} className="text-xs text-brand-700 hover:underline">
+                        <Link href={`/dashboard/customers/${m.customerId}`} className="link-quiet">
                           {m.customerName}{m.invoiceNumber ? ` · ${m.invoiceNumber}` : ''}
                         </Link>
                       )}
                     </div>
-                    {m.subject && <div className="text-sm text-ink-700 mt-1 font-medium">{m.subject}</div>}
-                    <div className="text-sm text-ink-600 mt-1 whitespace-pre-wrap line-clamp-3">{m.body}</div>
+                    {m.subject && <div className="app-label mt-1 text-ink-700">{m.subject}</div>}
+                    <div className="app-body mt-1 whitespace-pre-wrap line-clamp-3 text-ink-600">{m.body}</div>
                     {m.aiSummary && (
-                      <div className="mt-2 bg-brand-50/60 border border-brand-100 rounded-lg p-2.5 text-xs">
+                      <div className="mt-2 rounded-lg border border-ink-200 bg-ink-50 p-2.5 text-2xs leading-4">
                         <div className="text-ink-800"><span className="font-semibold">AI summary:</span> {m.aiSummary}</div>
                         {m.aiRecommendedAction && (
                           <div className="text-ink-700 mt-1"><span className="font-semibold">Recommended:</span> {m.aiRecommendedAction}</div>
@@ -123,13 +130,13 @@ export function InboxList({ items }: { items: InboxItem[] }) {
                     )}
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="text-xs text-ink-500 whitespace-nowrap">{formatDate(m.receivedAt)}</div>
+                    <div className="app-meta whitespace-nowrap">{formatDate(m.receivedAt)}</div>
                     {m.status === 'new' && (
                       <div className="flex gap-2 mt-2">
                         <button
                           disabled={actingId === m.id}
                           onClick={() => setStatus(m.id, 'handled')}
-                          className="btn-secondary text-xs"
+                          className="btn-secondary text-[13px]"
                           title="Mark handled"
                         >
                           {actingId === m.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />} Handled
@@ -137,15 +144,16 @@ export function InboxList({ items }: { items: InboxItem[] }) {
                         <button
                           disabled={actingId === m.id}
                           onClick={() => setStatus(m.id, 'dismissed')}
-                          className="btn-secondary text-xs"
+                          className="btn-secondary text-[13px]"
                           title="Dismiss"
                         >
                           <X className="h-3.5 w-3.5" />
+                          <span className="sr-only">Dismiss</span>
                         </button>
                       </div>
                     )}
                     {m.status !== 'new' && (
-                      <span className="badge bg-ink-100 text-ink-600 border-ink-200 mt-2 inline-block capitalize">{m.status}</span>
+                      <span className="badge-neutral mt-2 capitalize">{m.status}</span>
                     )}
                   </div>
                 </div>

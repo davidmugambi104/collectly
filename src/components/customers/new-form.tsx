@@ -24,7 +24,7 @@ export function NewCustomerForm() {
 
   return (
     <form onSubmit={submit} className="card-lg max-w-2xl space-y-5">
-      <h2 className="h3">New customer</h2>
+      <h2 className="app-heading">New customer</h2>
       <div className="grid grid-cols-2 gap-3">
         <div><label className="label">Name</label><input name="name" required className="input" placeholder="Acme Studios" /></div>
         <div><label className="label">Company</label><input name="company" className="input" placeholder="Acme Studios Inc." /></div>
@@ -38,10 +38,10 @@ export function NewCustomerForm() {
           </select>
         </div>
       </div>
-      {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+      {error && <div className="rounded-lg border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">{error}</div>}
       <div className="flex justify-end gap-2">
-        <Link href="/dashboard/customers" className="btn-secondary text-sm">Cancel</Link>
-        <button disabled={loading} className="btn-primary text-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Add customer</button>
+        <Link href="/dashboard/customers" className="btn-secondary btn-sm">Cancel</Link>
+        <button disabled={loading} className="btn-primary btn-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Add customer</button>
       </div>
     </form>
   );

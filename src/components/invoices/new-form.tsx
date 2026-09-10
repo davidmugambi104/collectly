@@ -38,7 +38,7 @@ export function NewInvoiceForm({ customers, defaultCustomerId }: { customers: Cu
 
   return (
     <form onSubmit={submit} className="card-lg max-w-2xl space-y-5">
-      <h2 className="h3">New invoice</h2>
+      <h2 className="app-heading">New invoice</h2>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="label">Customer</label>
@@ -70,7 +70,7 @@ export function NewInvoiceForm({ customers, defaultCustomerId }: { customers: Cu
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="label mb-0">Line items</label>
-          <button type="button" onClick={() => setItems([...items, { description: '', quantity: 1, unitPrice: 0 }])} className="btn-ghost text-xs"><Plus className="h-3 w-3" />Add line</button>
+          <button type="button" onClick={() => setItems([...items, { description: '', quantity: 1, unitPrice: 0 }])} className="btn-ghost btn-sm"><Plus className="h-3 w-3" />Add line</button>
         </div>
         <div className="space-y-2">
           {items.map((item, i) => (
@@ -78,7 +78,7 @@ export function NewInvoiceForm({ customers, defaultCustomerId }: { customers: Cu
               <input className="input col-span-7" placeholder="Description" value={item.description} onChange={(e) => setItems(items.map((it, j) => j === i ? { ...it, description: e.target.value } : it))} />
               <input className="input col-span-2" type="number" min="1" placeholder="Qty" value={item.quantity} onChange={(e) => setItems(items.map((it, j) => j === i ? { ...it, quantity: Number(e.target.value) } : it))} />
               <input className="input col-span-2" type="number" min="0" step="0.01" placeholder="Unit price" value={item.unitPrice} onChange={(e) => setItems(items.map((it, j) => j === i ? { ...it, unitPrice: Number(e.target.value) } : it))} />
-              <button type="button" onClick={() => setItems(items.filter((_, j) => j !== i))} className="col-span-1 btn-ghost text-xs" disabled={items.length === 1}><X className="h-3 w-3" /></button>
+              <button type="button" onClick={() => setItems(items.filter((_, j) => j !== i))} className="col-span-1 btn-ghost btn-sm" disabled={items.length === 1}><X className="h-3 w-3" /></button>
             </div>
           ))}
         </div>
@@ -88,11 +88,11 @@ export function NewInvoiceForm({ customers, defaultCustomerId }: { customers: Cu
         </div>
       </div>
 
-      {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+      {error && <div className="rounded-lg border border-danger-200 bg-danger-50 p-3 text-sm text-danger-700">{error}</div>}
 
       <div className="flex justify-end gap-2">
-        <Link href="/dashboard/invoices" className="btn-secondary text-sm">Cancel</Link>
-        <button disabled={loading} className="btn-primary text-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Create invoice</button>
+        <Link href="/dashboard/invoices" className="btn-secondary btn-sm">Cancel</Link>
+        <button disabled={loading} className="btn-primary btn-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Create invoice</button>
       </div>
     </form>
   );

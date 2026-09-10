@@ -5,6 +5,73 @@
 @layer base {
   :root {
     color-scheme: light;
+
+    /* Marketing palette — the original values, unchanged. Everything outside
+       the `.app` scope below continues to render exactly as it did. */
+    --ink-50: 247 247 248;
+    --ink-100: 238 238 240;
+    --ink-200: 216 217 221;
+    --ink-300: 182 184 190;
+    --ink-400: 141 143 151;
+    --ink-500: 108 110 118;
+    --ink-600: 82 84 91;
+    --ink-700: 63 64 70;
+    --ink-800: 39 40 48;
+    --ink-900: 22 23 28;
+    --ink-950: 10 11 15;
+
+    --brand-50: 239 246 255;
+    --brand-100: 219 234 254;
+    --brand-200: 191 219 254;
+    --brand-300: 147 197 253;
+    --brand-400: 96 165 250;
+    --brand-500: 59 130 246;
+    --brand-600: 37 99 235;
+    --brand-700: 29 78 216;
+    --brand-800: 30 64 175;
+    --brand-900: 30 58 138;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* App scope. Applied by src/app/dashboard/layout.tsx, so it covers the
+     authenticated product only.
+
+     Two deliberate shifts, which together are most of what separated this
+     interface from the financial tools it is measured against:
+
+     1. A WARM neutral. The old ink ramp was a cool blue-grey — the default
+        Tailwind slate feel. Warming it is the cheapest single change that
+        stops an interface reading as an untouched template.
+     2. A VIOLET-INDIGO accent replacing what was byte-for-byte Tailwind's
+        blue ramp. Beyond being generic, blue sat close enough to the
+        semantic palette to blur with it; violet is far in hue from red,
+        amber and green, so an accent can never be misread as a status.
+
+     Both keep the existing ink and brand token names, so no call
+     site had to change. */
+  .app {
+    --ink-50: 250 249 248;
+    --ink-100: 244 242 241;
+    --ink-200: 232 230 227;
+    --ink-300: 214 211 207;
+    --ink-400: 168 162 156;
+    --ink-500: 120 113 107;
+    --ink-600: 87 83 78;
+    --ink-700: 68 64 60;
+    --ink-800: 44 42 40;
+    --ink-900: 28 26 25;
+    --ink-950: 15 14 13;
+
+    --brand-50: 242 241 253;
+    --brand-100: 230 227 251;
+    --brand-200: 205 199 247;
+    --brand-300: 168 158 240;
+    --brand-400: 138 126 241;
+    --brand-500: 107 92 232;
+    --brand-600: 87 68 214;
+    --brand-700: 70 52 180;
+    --brand-800: 60 45 149;
+    --brand-900: 50 40 118;
   }
   html, body { height: 100%; }
   body {
@@ -31,6 +98,7 @@
   .badge-success { @apply badge bg-emerald-50 text-emerald-700 border border-emerald-200; }
   .badge-warn { @apply badge bg-amber-50 text-amber-700 border border-amber-200; }
   .badge-danger { @apply badge bg-red-50 text-red-700 border border-red-200; }
+  .badge-info { @apply badge bg-info-50 text-info-700 border border-info-200; }
   .badge-neutral { @apply badge bg-ink-100 text-ink-700 border border-ink-200; }
   .link { @apply text-brand-600 hover:text-brand-700 underline-offset-2 hover:underline; }
   .h1 { @apply text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-ink-950 leading-[1.05]; }
@@ -57,6 +125,168 @@
     background-size: 32px 32px;
   }
   .stat-tile { @apply rounded-xl border border-ink-200 bg-white p-4; }
+}
+
+/* ==================================================================== */
+/* APP LAYER — authenticated product only (scoped by `.app`).
+   The classes below deliberately override the shared marketing component
+   layer. The dashboard had been borrowing marketing's sizes and surfaces
+   wholesale: card titles rendered at `.h3` (20-24px), and every surface
+   carried `shadow-sm`. A soft drop shadow on a white card over a near-white
+   canvas is the loudest "unmodified Tailwind template" signal there is, and
+   the financial products this is measured against (Ramp, Stripe, Mercury)
+   have all removed shadows entirely, expressing elevation with a 1px border
+   and a lightness step instead. Shadow is now reserved for surfaces that
+   genuinely float: menus, the command palette, the mobile drawer. */
+@layer components {
+  /* Surfaces --------------------------------------------------------- */
+  .app .card { @apply rounded-lg border border-ink-200 bg-white p-5 shadow-none; }
+  .app .card-lg { @apply rounded-xl border border-ink-200 bg-white p-6 shadow-none; }
+  .app .stat-tile { @apply rounded-lg border border-ink-200 bg-white p-4; }
+
+  /* Panel: a card with NO padding, so a table can run full-bleed to its
+     edges and its header can stick. The old markup put tables inside a
+     `.card` with p-6, which threw away 48px of horizontal room on the
+     densest screens and made a sticky header impossible. */
+  .panel { @apply rounded-lg border border-ink-200 bg-white overflow-hidden; }
+  .panel-toolbar { @apply flex items-center justify-between gap-3 h-11 px-4 border-b border-ink-200 bg-ink-50/70; }
+  .panel-body { @apply p-5; }
+
+  /* App type scale ---------------------------------------------------- */
+  /* Separate from .h1/.h2/.h3, which are marketing sizes. Weights are held
+     to 400/500/600 — heavy weight at small sizes is what makes template
+     dashboards shout. */
+  .app-display { @apply text-[26px] leading-8 font-semibold tracking-[-0.02em] text-ink-950 tabular-nums; }
+  .app-title { @apply text-xl leading-7 font-semibold tracking-[-0.015em] text-ink-950; }
+  .app-heading { @apply text-[15px] leading-[22px] font-semibold tracking-[-0.01em] text-ink-950; }
+  .app-label { @apply text-[13px] leading-[18px] font-semibold text-ink-900; }
+  .app-body { @apply text-[13px] leading-5 text-ink-700; }
+  .app-meta { @apply text-2xs leading-4 font-medium text-ink-500; }
+
+  /* Numerals: currency aligns by place value without switching typeface.
+     Rendering money in JetBrains Mono put two families in one table row and
+     read as a developer tool; Inter's tabular figures do the alignment job. */
+  .num { @apply tabular-nums; }
+  .num-strong { @apply tabular-nums font-medium text-ink-950; }
+
+  /* Table -------------------------------------------------------------- */
+  .app-table { @apply w-full text-[13px] border-collapse; }
+  .app-table thead th {
+    @apply sticky top-0 z-10 bg-ink-50/95 backdrop-blur-sm border-b border-ink-200
+           px-4 py-2.5 text-left text-2xs font-medium text-ink-500 whitespace-nowrap;
+  }
+  .app-table tbody td { @apply px-4 py-2.5 border-b border-ink-100 align-middle; }
+  .app-table tbody tr:last-child td { @apply border-b-0; }
+  .app-table tbody tr { @apply transition-colors; }
+  .app-table tbody tr:hover { @apply bg-ink-50; }
+  .app-table .col-num { @apply text-right tabular-nums whitespace-nowrap; }
+
+  /* Status --------------------------------------------------------------
+     Redefining the existing .badge-* names rather than introducing new ones,
+     so every current call site inherits the new treatment untouched.
+     Previously .badge-danger was a red pill with a red border on a red
+     background; in a table where a third of rows are overdue that became a
+     wall of red that stopped carrying information. Now every status is a
+     neutral chip and the hue survives only in a 6px dot — roughly 8px² of
+     colour per row instead of ~600px². The text label always accompanies the
+     dot, so state is never encoded in colour alone. */
+  .app .badge-success,
+  .app .badge-warn,
+  .app .badge-danger,
+  .app .badge-info,
+  .app .badge-neutral {
+    @apply inline-flex items-center gap-1.5 rounded border border-ink-200
+           bg-ink-100 px-1.5 py-0.5 text-2xs font-medium text-ink-700;
+  }
+  .app .badge-success::before,
+  .app .badge-warn::before,
+  .app .badge-danger::before,
+  .app .badge-info::before,
+  .app .badge-neutral::before {
+    content: '';
+    @apply h-1.5 w-1.5 rounded-full shrink-0;
+  }
+  .app .badge-success::before { @apply bg-success-500; }
+  .app .badge-warn::before { @apply bg-warn-500; }
+  .app .badge-danger::before { @apply bg-danger-500; }
+  .app .badge-info::before { @apply bg-info-500; }
+  .app .badge-neutral::before { @apply bg-ink-400; }
+
+  /* Row urgency reads as an edge, not a fill — a scannable column of red
+     down the left of the table that leaves the row itself legible. */
+  .row-urgent { @apply border-l-2 border-l-danger-500; }
+  .row-warn { @apply border-l-2 border-l-warn-500; }
+
+  /* Quiet link-button. Seven copies of this existed inline as a text link
+     with py-1.5 bolted on to reach a 24px tap target. */
+  .link-quiet {
+    @apply inline-flex items-center gap-1 rounded px-1.5 py-1 -mx-1.5 text-[13px]
+           font-medium text-brand-600 transition-colors hover:bg-brand-50 hover:text-brand-700;
+  }
+
+  /* Segmented filter control. The inbox built this inline as four bordered
+     pills with a bespoke active state; as a token it stays consistent with
+     the toolbar and gets a real focus ring. */
+  .segmented { @apply inline-flex items-center gap-0.5 rounded-lg border border-ink-200 bg-ink-50 p-0.5; }
+  .segmented-item {
+    @apply inline-flex items-center gap-1.5 rounded-[6px] px-2.5 py-1 text-[13px] font-medium
+           text-ink-600 transition-colors hover:text-ink-900;
+  }
+  .segmented-item[aria-pressed='true'] { @apply bg-white text-ink-950 shadow-[0_1px_2px_rgba(16,17,20,0.08)]; }
+  .segmented-count { @apply text-2xs tabular-nums text-ink-500; }
+  .segmented-item[aria-pressed='true'] .segmented-count { @apply text-ink-600; }
+
+  /* Surface tiers -----------------------------------------------------
+     The overview stacked six `.card`s — identical white box, identical 1px
+     border, identical padding — and several of them held rows that were
+     themselves bordered boxes. Card inside card, every element the same
+     weight, so nothing read as more important than anything else. That
+     sameness is what makes a dashboard feel templated.
+
+     Three tiers, matching the elevation rule this file already sets out
+     (a border and a lightness step, never a shadow):
+
+       .card-primary  the one surface a screen is organised around
+       .card          bounded content — a chart, a table
+       .section       no chrome at all: a heading on the canvas, content
+                      below. For lists whose rows already carry their own
+                      border, where a card only adds a second box.        */
+  .card-primary { @apply rounded-lg border border-ink-300 bg-white p-5; }
+
+  .section { @apply block; }
+  .section-head { @apply mb-3 flex items-center justify-between gap-3; }
+
+  /* Small button. `.btn` is fixed at text-sm/py-2.5, so 58 call sites bolted
+     `text-xs`/`text-sm` onto a btn-* class — which shrank the label but never
+     the padding, leaving "small" buttons with a full-height box that sat badly
+     next to 13px body text. Compose as `btn-secondary btn-sm`. */
+  .btn-sm { @apply gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium; }
+
+  /* Inline error. Five hand-written copies of the same bordered red block
+     existed, none of them announced to assistive tech — pair this with
+     role="alert" at the call site. */
+  .alert-danger {
+    @apply rounded-lg border border-danger-200 bg-danger-50 p-2.5 text-[13px] text-danger-700;
+  }
+
+  /* A form nested inside a card (log a promise, open a dispute). Three inline
+     copies of `border border-ink-200 rounded-lg p-3`; the tinted ground
+     separates it from the card it sits in without another border weight. */
+  .subform { @apply rounded-lg border border-ink-200 bg-ink-50/50 p-3 space-y-3; }
+
+  /* Keyboard hint chip, e.g. the ⌘K affordance in the header. */
+  .kbd {
+    @apply inline-flex items-center rounded border border-ink-200 bg-ink-100
+           px-1.5 py-0.5 font-sans text-2xs font-medium text-ink-500;
+  }
+}
+
+@layer base {
+  /* ring-offset-2 clips visibly inside 40px table rows. */
+  .app *:focus-visible { @apply ring-2 ring-brand-500/60 ring-offset-1 ring-offset-white; }
+  /* A button that bounces on press feels cheap in a dense financial table. */
+  .app .btn:active, .app .btn-primary:active, .app .btn-secondary:active,
+  .app .btn-brand:active, .app .btn-success:active { transform: none; }
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }

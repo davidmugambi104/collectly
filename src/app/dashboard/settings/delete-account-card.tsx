@@ -65,13 +65,13 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
   const matches = confirm.trim() === orgName.trim();
 
   return (
-    <div className="card max-w-2xl border-red-200 bg-red-50/40">
+    <div className="card max-w-2xl border-danger-200 bg-danger-50/40">
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 h-9 w-9 rounded-lg bg-red-100 text-red-700 grid place-items-center shrink-0">
+        <div className="mt-0.5 h-9 w-9 rounded-lg bg-danger-100 text-danger-700 grid place-items-center shrink-0">
           <AlertTriangle className="h-5 w-5" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-ink-900">Delete account</h3>
+          <h2 className="app-heading">Delete account</h2>
           <p className="text-sm text-ink-700 mt-1">
             Permanently deletes the workspace <strong>{orgName}</strong>, all
             customers, invoices, payments, dunning history, and integrations.
@@ -91,7 +91,7 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
                 reset();
                 setOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 active:scale-[0.98] disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-danger-600 text-white text-sm font-medium hover:bg-danger-700 active:scale-[0.98] disabled:opacity-60"
               disabled={pending}
             >
               <Trash2 className="h-4 w-4" />
@@ -110,7 +110,7 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
             className="bg-white rounded-xl shadow-xl max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-lg font-semibold text-ink-900">
+            <h2 className="app-title">
               Delete <span className="font-mono">{orgName}</span>?
             </h2>
             <p className="text-sm text-ink-700 mt-2">
@@ -126,7 +126,7 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
               disabled={pending}
             />
             {error && (
-              <p className="mt-2 text-sm text-red-600">{error}</p>
+              <p className="mt-2 text-sm text-danger-600">{error}</p>
             )}
             <div className="mt-5 flex justify-end gap-2">
               <button
@@ -141,7 +141,7 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
                 type="button"
                 onClick={submit}
                 disabled={!matches || pending}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 active:scale-[0.98] disabled:opacity-60"
+                className="px-4 py-2 rounded-lg bg-danger-600 text-white text-sm font-medium hover:bg-danger-700 active:scale-[0.98] disabled:opacity-60"
               >
                 {pending ? 'Deleting…' : 'Delete forever'}
               </button>

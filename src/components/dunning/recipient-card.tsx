@@ -43,13 +43,13 @@ export function RecipientCard({
         <div className="flex items-center justify-between gap-2">
           <div className="text-sm font-semibold text-ink-900 truncate">{name}</div>
           {daysOverdue !== undefined && daysOverdue !== null && (
-            <span className="badge badge-warn text-[10px] shrink-0 inline-flex items-center gap-1">
+            <span className="badge badge-warn text-2xs shrink-0 inline-flex items-center gap-1">
               <Clock className="h-2.5 w-2.5" />{daysOverdue}d overdue
             </span>
           )}
         </div>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-600">
-          <span className={`inline-flex items-center gap-1 ${hasContact ? '' : 'text-red-600 font-medium'}`}>
+          <span className={`inline-flex items-center gap-1 ${hasContact ? '' : 'text-danger-600 font-medium'}`}>
             {channel === 'email' ? <Mail className="h-3 w-3 shrink-0" /> : <MessageSquare className="h-3 w-3 shrink-0" />}
             {contact ?? `no ${channel === 'email' ? 'email' : 'phone'} on file`}
           </span>

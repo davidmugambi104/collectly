@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS timeline_events (id text PRIMARY KEY, org_id text NOT
 CREATE TABLE IF NOT EXISTS promises_to_pay (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, invoice_id text NOT NULL REFERENCES invoices(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, promised_date timestamptz, promised_amount decimal(14,2) NOT NULL DEFAULT 0, currency varchar(3) DEFAULT 'USD', status text NOT NULL DEFAULT 'active', source_text text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS disputes (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, invoice_id text NOT NULL REFERENCES invoices(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, reason text NOT NULL DEFAULT 'other', status text NOT NULL DEFAULT 'open', customer_message text, internal_notes text, resolved_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS inbox_messages (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, customer_id text REFERENCES customers(id) ON DELETE SET NULL, invoice_id text REFERENCES invoices(id) ON DELETE SET NULL, channel varchar(16) NOT NULL DEFAULT 'email', from_address text, from_name text, subject text, body text NOT NULL, raw_payload jsonb, classification text NOT NULL DEFAULT 'unclassified', classification_confidence decimal(4,3), ai_summary text, ai_recommended_action text, ai_suggested_promise_date timestamptz, status text NOT NULL DEFAULT 'new', action_taken text, action_taken_at timestamptz, action_taken_by text REFERENCES users(id), received_at timestamptz NOT NULL DEFAULT now(), created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS upgrade_requests (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, plan text NOT NULL DEFAULT 'starter', customer_email text NOT NULL, customer_name text, business_name text, country text, notes text, status text NOT NULL DEFAULT 'pending', created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS upgrade_req_org_idx ON upgrade_requests(org_id);
 CREATE INDEX IF NOT EXISTS customers_org_idx ON customers(org_id);
 CREATE INDEX IF NOT EXISTS invoices_org_idx ON invoices(org_id);
 CREATE INDEX IF NOT EXISTS invoices_status_idx ON invoices(org_id, status);
@@ -41,18 +43,35 @@ CREATE INDEX IF NOT EXISTS disputes_cust_idx ON disputes(customer_id);
 CREATE INDEX IF NOT EXISTS inbox_org_status_idx ON inbox_messages(org_id, status);
 `;
 
-let bootstrapped = false;
+// Memoized as a *promise*, not a boolean. The previous boolean flag was only
+// flipped after the awaited seed finished, so every request that arrived while
+// the first seed was still in flight sailed past the guard and ran
+// seedIfEmpty() too. Each racer read `SELECT count(*) FROM organizations` as 0
+// (nobody had committed yet) and then raced to INSERT the same fixed-id rows;
+// the losers died on `duplicate key value violates unique constraint
+// "users_pkey"`. That error was swallowed by the catch, so a partially-seeded
+// DB — organizations row present, customers/invoices missing — looked like a
+// success and the dashboard rendered $0.00 across the board. A dashboard page
+// alone fires six parallel queries, so this hit on essentially every cold
+// start. Handing every caller the *same* promise makes the seed run once.
+let bootstrapPromise: Promise<void> | null = null;
 
-export async function ensureBootstrapped() {
-  if (bootstrapped) return;
-  if (process.env.USE_PGLITE !== '1') { bootstrapped = true; return; }
-  try {
-    await client.exec(DDL);
-    await seedIfEmpty(client);
-  } catch (e) {
-    console.error('Bootstrap error:', e);
+export function ensureBootstrapped(): Promise<void> {
+  if (!bootstrapPromise) {
+    bootstrapPromise = (async () => {
+      if (process.env.USE_PGLITE !== '1') return;
+      try {
+        await client.exec(DDL);
+        await seedIfEmpty(client);
+      } catch (e) {
+        // Reset so a transient failure (rather than a genuinely-seeded DB)
+        // can be retried by the next caller instead of being cached forever.
+        bootstrapPromise = null;
+        console.error('Bootstrap error:', e);
+      }
+    })();
   }
-  bootstrapped = true;
+  return bootstrapPromise;
 }
 
 async function seedIfEmpty(client: PGlite) {
@@ -102,13 +121,21 @@ async function seedIfEmpty(client: PGlite) {
     { cust: 'Brightline Legal', number: 'INV-2410', amount: '12500.00', daysAgo: -10 },
     { cust: 'Westgate Advisory', number: 'INV-2412', amount: '8800.00', daysAgo: -2 },
   ];
+  const invMap = new Map<string, string>();
   for (const i of invoices) {
     const cid = custMap.get(i.cust);
     if (!cid) continue;
     const issue = new Date(Date.now() - i.daysAgo * 86400000).toISOString();
     const due = new Date(new Date(issue).getTime() + 30 * 86400000).toISOString();
-    const status = i.daysAgo > 0 ? 'overdue' : 'sent';
-    await client.exec(`INSERT INTO invoices (id, org_id, customer_id, number, status, amount, amount_paid, currency, issue_date, due_date, description, created_at, updated_at) VALUES ('${nanoid()}', '${orgId}', '${cid}', '${i.number}', '${status}', ${i.amount}, 0, 'USD', '${issue}', '${due}', 'Design services', '${now}', '${now}')`);
+    // daysAgo is the ISSUE-date offset and terms are net-30, so an invoice is
+    // only genuinely overdue once it was issued more than 30 days ago. Keying
+    // off `daysAgo > 0` marked invoices issued 4 days ago — due 26 days from
+    // now — as 'overdue', so the demo org rendered future due dates under a
+    // red Overdue badge.
+    const status = i.daysAgo > 30 ? 'overdue' : 'sent';
+    const invId = nanoid();
+    invMap.set(i.number, invId);
+    await client.exec(`INSERT INTO invoices (id, org_id, customer_id, number, status, amount, amount_paid, currency, issue_date, due_date, description, created_at, updated_at) VALUES ('${invId}', '${orgId}', '${cid}', '${i.number}', '${status}', ${i.amount}, 0, 'USD', '${issue}', '${due}', 'Design services', '${now}', '${now}')`);
   }
   const cust = custMap.get('Brightline Legal')!;
   const paidIssue = new Date(Date.now() - 25 * 86400000).toISOString();
@@ -125,4 +152,92 @@ async function seedIfEmpty(client: PGlite) {
   ]).replace(/'/g, "''");
   await client.exec(`INSERT INTO dunning_sequences (id, org_id, name, is_active, steps, pause_on_reply, pause_on_payment, created_at, updated_at) VALUES ('${seqId}', '${orgId}', 'Default', true, '${steps}'::jsonb, true, true, '${now}', '${now}')`);
   await client.exec(`INSERT INTO subscriptions (id, org_id, plan, status, current_period_start, current_period_end, created_at, updated_at) VALUES ('${nanoid()}', '${orgId}', 'growth', 'trialing', '${now}', '${new Date(Date.now() + 13 * 86400000).toISOString()}', '${now}', '${now}')`);
+
+  // ---------------------------------------------------------------------
+  // Collections activity. Without these the inbox, the promise and dispute
+  // panels on a customer, the dunning performance table and the upgrade
+  // requests admin screen all render only their empty states — so none of
+  // that UI could be reviewed against the dev org. Mirrors the same rows
+  // /api/seed-sample loads for a real Postgres org.
+  // ---------------------------------------------------------------------
+  const q = (v: string) => v.replace(/'/g, "''");
+  const ago = (n: number) => new Date(Date.now() - n * 86400000).toISOString();
+  const ahead = (n: number) => new Date(Date.now() + n * 86400000).toISOString();
+
+  // One row per classification so every badge variant is exercised.
+  const inbox = [
+    { cust: 'Westgate Advisory', inv: 'INV-2390', cls: 'will_pay_date', from: 'finance@westgate.com',
+      subj: 'Re: Invoice INV-2390 is now 38 days past due',
+      body: "Apologies for the delay — this slipped when our controller left. It's approved now and goes out in Friday's payment run.",
+      sum: 'Confirms payment scheduled for Friday; delay caused by staff turnover.',
+      act: 'Log a promise to pay for Friday and pause the sequence until then.', st: 'new', promise: 3 },
+    { cust: 'Harbor Painting Co', inv: 'INV-2402', cls: 'already_paid', from: 'bills@harborpainting.com',
+      subj: 'Re: Quick reminder — Invoice INV-2402',
+      body: 'We paid this by bank transfer last week, reference HP-4482. Can you check your account?',
+      sum: 'Customer says already paid by bank transfer, ref HP-4482.',
+      act: 'Reconcile against the bank feed before sending anything further.', st: 'new', promise: 0 },
+    { cust: 'Acme Studios', inv: 'INV-2370', cls: 'disputed', from: 'bills@acmestudios.com',
+      subj: 'Re: Action required: Invoice INV-2370',
+      body: "We're not paying until the scope discrepancy is resolved. The SOW covered three deliverables, we were billed for five.",
+      sum: 'Disputes the amount — billed for five deliverables against a three-deliverable SOW.',
+      act: 'Open a dispute, stop dunning, get the SOW to the account lead.', st: 'handled', promise: 0 },
+    { cust: 'Northstar Marketing', inv: 'INV-2380', cls: 'missing_po', from: 'ap@northstar.io',
+      subj: 'Re: Invoice INV-2380 is 67 days past due',
+      body: 'Our AP system rejects anything without a PO number. Please reissue with PO 88-2231 and we can process it.',
+      sum: 'Blocked in AP — needs the invoice reissued carrying PO 88-2231.',
+      act: 'Reissue with the PO number, then resume the sequence.', st: 'new', promise: 0 },
+    { cust: 'Riverstone Co.', inv: 'INV-2405', cls: 'general_question', from: 'hello@riverstone.co',
+      subj: 'Re: Invoice INV-2405',
+      body: 'Do you take ACH? The card fee is steep on an amount this size.',
+      sum: 'Asks whether ACH is available instead of card.',
+      act: 'Reply with the ACH option on the payment portal.', st: 'new', promise: 0 },
+  ];
+  for (const m of inbox) {
+    const cid = custMap.get(m.cust); const iid = invMap.get(m.inv);
+    if (!cid || !iid) continue;
+    const pd = m.promise ? `'${ahead(m.promise)}'` : 'NULL';
+    await client.exec(`INSERT INTO inbox_messages (id, org_id, customer_id, invoice_id, channel, from_address, from_name, subject, body, classification, classification_confidence, ai_summary, ai_recommended_action, ai_suggested_promise_date, status, received_at, created_at) VALUES ('${nanoid()}', '${orgId}', '${cid}', '${iid}', 'email', '${m.from}', '${q(m.cust)}', '${q(m.subj)}', '${q(m.body)}', '${m.cls}', 0.900, '${q(m.sum)}', '${q(m.act)}', ${pd}, '${m.st}', '${ago(1)}', '${now}')`);
+  }
+
+  for (const pr of [
+    { cust: 'Westgate Advisory', inv: 'INV-2390', amt: '42000.00', inDays: 3, src: 'Email reply — Friday payment run' },
+    { cust: 'Northstar Marketing', inv: 'INV-2380', amt: '7500.00', inDays: 10, src: 'Said on call — half now, half next month' },
+  ]) {
+    const cid = custMap.get(pr.cust); const iid = invMap.get(pr.inv);
+    if (!cid || !iid) continue;
+    await client.exec(`INSERT INTO promises_to_pay (id, org_id, invoice_id, customer_id, promised_date, promised_amount, currency, status, source_text, created_at, updated_at) VALUES ('${nanoid()}', '${orgId}', '${iid}', '${cid}', '${ahead(pr.inDays)}', ${pr.amt}, 'USD', 'active', '${q(pr.src)}', '${ago(1)}', '${ago(1)}')`);
+  }
+
+  for (const d of [
+    { cust: 'Acme Studios', inv: 'INV-2370', reason: 'amount_incorrect', msg: 'SOW covered three deliverables, invoice bills for five.' },
+    { cust: 'Northstar Marketing', inv: 'INV-2380', reason: 'missing_po', msg: 'AP rejects invoices with no PO number. Need PO 88-2231 on it.' },
+  ]) {
+    const cid = custMap.get(d.cust); const iid = invMap.get(d.inv);
+    if (!cid || !iid) continue;
+    await client.exec(`INSERT INTO disputes (id, org_id, invoice_id, customer_id, reason, status, customer_message, created_at, updated_at) VALUES ('${nanoid()}', '${orgId}', '${iid}', '${cid}', '${d.reason}', 'open', '${q(d.msg)}', '${ago(2)}', '${ago(2)}')`);
+  }
+
+  // stepId must vary per invoice — dunning_runs_invoice_seq_step_uniq.
+  for (const r of [
+    { inv: 'INV-2390', step: 's1', ch: 'email', st: 'delivered', d: 9 },
+    { inv: 'INV-2390', step: 's2', ch: 'email', st: 'sent', d: 2 },
+    { inv: 'INV-2380', step: 's1', ch: 'email', st: 'delivered', d: 30 },
+    { inv: 'INV-2380', step: 's3', ch: 'email', st: 'failed', d: 8 },
+    { inv: 'INV-2370', step: 's4', ch: 'sms', st: 'sent', d: 5 },
+    { inv: 'INV-2402', step: 's1', ch: 'email', st: 'delivered', d: 1 },
+  ]) {
+    const iid = invMap.get(r.inv);
+    if (!iid) continue;
+    const subj = r.ch === 'email' ? `'Invoice ${r.inv}'` : 'NULL';
+    const err = r.st === 'failed' ? `'SMTP 550: mailbox unavailable'` : 'NULL';
+    await client.exec(`INSERT INTO dunning_runs (id, org_id, invoice_id, sequence_id, step_id, channel, status, scheduled_for, sent_at, subject, body, error, created_at) VALUES ('${nanoid()}', '${orgId}', '${iid}', '${seqId}', '${r.step}', '${r.ch}', '${r.st}', '${ago(r.d)}', '${ago(r.d)}', ${subj}, 'Sample reminder body generated for the dev dataset.', ${err}, '${ago(r.d)}')`);
+  }
+
+  for (const u of [
+    { plan: 'growth', name: 'Priya Raman', biz: 'Westgate Advisory', cc: 'US', st: 'pending', notes: 'Wants to move up before quarter end. Asked about ACH.' },
+    { plan: 'starter', name: 'Tom Ackerley', biz: 'Pinecone Bakery', cc: 'GB', st: 'paid', notes: 'Invoiced via Wise, settled.' },
+  ]) {
+    const slug = u.biz.toLowerCase().replace(/[^a-z0-9]+/g, '');
+    await client.exec(`INSERT INTO upgrade_requests (id, org_id, plan, customer_email, customer_name, business_name, country, notes, status, created_at, updated_at) VALUES ('${nanoid()}', '${orgId}', '${u.plan}', 'billing@${slug}.example', '${q(u.name)}', '${q(u.biz)}', '${u.cc}', '${q(u.notes)}', '${u.st}', '${ago(6)}', '${ago(2)}')`);
+  }
 }

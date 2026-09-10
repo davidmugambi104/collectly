@@ -60,7 +60,7 @@ export default function BlogPage() {
               <p className="mt-2 text-sm text-ink-600 leading-relaxed">{p.excerpt}</p>
               <div className="mt-3 flex items-center gap-1.5 flex-wrap">
                 {p.tags.map((t) => (
-                  <span key={t} className="badge-neutral text-[10px]"><Tag className="h-2.5 w-2.5 mr-0.5" />{t}</span>
+                  <span key={t} className="badge-neutral text-2xs"><Tag className="h-2.5 w-2.5 mr-0.5" />{t}</span>
                 ))}
               </div>
             </Link>

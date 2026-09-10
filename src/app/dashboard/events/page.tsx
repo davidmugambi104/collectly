@@ -30,7 +30,7 @@ export default async function EventsPage() {
       {rows.length === 0 ? (
         <div className="card text-center py-10">
           <Sparkles className="h-6 w-6 mx-auto text-ink-400" />
-          <h3 className="mt-3 font-semibold text-ink-900">No activity yet</h3>
+          <h2 className="mt-3 font-semibold text-ink-900">No activity yet</h2>
           <p className="mt-1 text-sm text-ink-600">Connect an integration or send a reminder to start logging events.</p>
         </div>
       ) : (

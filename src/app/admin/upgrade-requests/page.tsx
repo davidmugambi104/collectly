@@ -32,9 +32,9 @@ export default async function AdminUpgradeRequestsPage() {
   const userEmail = admin.email;
   if (!admin.ok) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="app min-h-screen flex items-center justify-center p-6">
         <div className="max-w-md text-center">
-          <h1 className="h2">Not authorized</h1>
+          <h1 className="app-title">Not authorized</h1>
           <p className="mt-3 text-ink-600">This page is for the Collectly team only. If you should have access, ask Davie to add <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">{userEmail ?? 'your email'}</code> to <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">ADMIN_EMAILS</code>.</p>
         </div>
       </div>
@@ -51,16 +51,16 @@ export default async function AdminUpgradeRequestsPage() {
   const others = requests.filter((r: typeof upgradeRequests.$inferSelect) => r.status !== 'pending');
 
   return (
-    <div className="min-h-screen bg-ink-50">
+    <div className="app min-h-screen bg-ink-50">
       <div className="container-page py-10">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="h1">Upgrade requests</h1>
+            <h1 className="app-display">Upgrade requests</h1>
             <p className="mt-2 text-ink-600">Private beta — these come in via the soft-launch flow. Davie reviews and invoices manually.</p>
           </div>
           <div className="text-right">
             <div className="text-3xl font-display font-bold text-ink-950">{pending.length}</div>
-            <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">Pending</div>
+            <div className="app-meta">Pending</div>
           </div>
         </div>
 
@@ -94,7 +94,7 @@ export default async function AdminUpgradeRequestsPage() {
                         </div>
                         {r.notes && (
                           <div className="mt-3 rounded-lg bg-ink-50 p-3 text-sm text-ink-700">
-                            <div className="text-xs text-ink-500 uppercase tracking-wider font-medium mb-1 inline-flex items-center gap-1"><MessageSquare className="h-3 w-3" />Notes</div>
+                            <div className="app-meta mb-1 inline-flex items-center gap-1"><MessageSquare className="h-3 w-3" />Notes</div>
                             {r.notes}
                           </div>
                         )}
@@ -104,14 +104,14 @@ export default async function AdminUpgradeRequestsPage() {
                         <form action={markStatus}>
                           <input type="hidden" name="id" value={r.id} />
                           <input type="hidden" name="status" value="invoiced" />
-                          <button type="submit" className="btn-primary text-sm whitespace-nowrap">
+                          <button type="submit" className="btn-primary btn-sm whitespace-nowrap">
                             <CheckCircle2 className="h-3.5 w-3.5" />Mark invoiced
                           </button>
                         </form>
                         <form action={markStatus}>
                           <input type="hidden" name="id" value={r.id} />
                           <input type="hidden" name="status" value="cancelled" />
-                          <button type="submit" className="btn-secondary text-sm whitespace-nowrap">
+                          <button type="submit" className="btn-secondary btn-sm whitespace-nowrap">
                             <X className="h-3.5 w-3.5" />Cancel
                           </button>
                         </form>
@@ -126,29 +126,29 @@ export default async function AdminUpgradeRequestsPage() {
 
         {others.length > 0 && (
           <section>
-            <h2 className="h2 mb-3">Archive ({others.length})</h2>
-            <div className="overflow-x-auto card">
-              <table className="w-full text-sm">
+            <h2 className="app-heading mb-3">Archive ({others.length})</h2>
+            <div className="panel overflow-x-auto">
+              <table className="app-table">
                 <thead>
-                  <tr className="text-left text-ink-500 text-xs uppercase tracking-wider">
-                    <th className="pb-2 pr-4">When</th>
-                    <th className="pb-2 px-4">Business</th>
-                    <th className="pb-2 px-4">Plan</th>
-                    <th className="pb-2 px-4">Email</th>
-                    <th className="pb-2 px-4">Country</th>
-                    <th className="pb-2 pl-4">Status</th>
+                  <tr>
+                    <th>When</th>
+                    <th>Business</th>
+                    <th>Plan</th>
+                    <th>Email</th>
+                    <th>Country</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {others.map((r) => (
-                    <tr key={r.id} className="border-t border-ink-100">
-                      <td className="py-2.5 pr-4 text-ink-700 whitespace-nowrap">{formatDate(r.createdAt)}</td>
-                      <td className="py-2.5 px-4 text-ink-900 font-medium">{r.businessName ?? '—'}</td>
-                      <td className="py-2.5 px-4">{PLAN_PRICING[r.plan as keyof typeof PLAN_PRICING]?.name ?? r.plan}</td>
-                      <td className="py-2.5 px-4 text-xs"><a href={`mailto:${r.customerEmail}`} className="text-brand-600 hover:text-brand-700">{r.customerEmail}</a></td>
-                      <td className="py-2.5 px-4 text-xs text-ink-600">{r.country ?? '—'}</td>
-                      <td className="py-2.5 pl-4">
-                        <span className={`badge ${r.status === 'paid' ? 'badge-success' : r.status === 'cancelled' ? 'badge-danger' : 'badge-warn'}`}>
+                    <tr key={r.id}>
+                      <td className="whitespace-nowrap text-ink-700">{formatDate(r.createdAt)}</td>
+                      <td className="font-medium text-ink-950">{r.businessName ?? '—'}</td>
+                      <td className="text-ink-700">{PLAN_PRICING[r.plan as keyof typeof PLAN_PRICING]?.name ?? r.plan}</td>
+                      <td><a href={`mailto:${r.customerEmail}`} className="link-quiet">{r.customerEmail}</a></td>
+                      <td className="text-ink-600">{r.country ?? '—'}</td>
+                      <td>
+                        <span className={r.status === 'paid' ? 'badge-success' : r.status === 'cancelled' ? 'badge-danger' : 'badge-warn'}>
                           {r.status}
                         </span>
                       </td>

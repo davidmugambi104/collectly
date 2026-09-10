@@ -12,6 +12,25 @@ import { generateCashFlowForecast } from '@/lib/ai/dunning';
 import { TrendingUp, Calendar, AlertCircle } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
+// Deterministic fallback used whenever the AI forecast is unavailable or comes
+// back empty. Takes the SAME 30-day total the Overview KPI shows
+// (getCashFlowSnapshot().forecast30d, which already discounts outstanding A/R
+// by real collection velocity) and spreads it across the four weeks, so the two
+// screens can never disagree about the headline number again. Front-weighted
+// 40/30/20/10 because overdue invoices resolve sooner than the long tail. Not a
+// claim of precision — the UI labels it low confidence.
+function baselineForecast(forecast30d: number) {
+  return {
+    week1: Math.round(forecast30d * 0.4),
+    week2: Math.round(forecast30d * 0.3),
+    week3: Math.round(forecast30d * 0.2),
+    week4: Math.round(forecast30d * 0.1),
+    confidence: 'low' as const,
+    narrative:
+      'AI forecast unavailable — showing a baseline projection weighted from your outstanding A/R.',
+  };
+}
+
 export default async function CashFlowPage() {
   const { userId, orgId } = await auth();
   if (!userId) redirect('/sign-in');
@@ -41,17 +60,19 @@ export default async function CashFlowPage() {
         customerAvgDays: behavior?.avgDaysToPay ?? 30,
       };
     });
-    baseline = await generateCashFlowForecast({ openInvoices, monthlyBurn: 0, currentCash: 0 });
+    const ai = await generateCashFlowForecast({ openInvoices, monthlyBurn: 0, currentCash: 0 });
+    // generateCashFlowForecast catches its own errors and RETURNS a zeroed
+    // sentinel ({week1..4: 0, narrative: 'Insufficient data'}) rather than
+    // throwing, so the catch below never fired on a Gemini failure and this
+    // page rendered a $0.00 forecast with a flat, empty chart — while the
+    // Overview KPI showed a real figure for the same 30-day forecast, because
+    // that one comes from getCashFlowSnapshot() and never calls Gemini at all.
+    // Treat "all four weeks zero while real money is outstanding" as the
+    // degraded signal it is and fall through to the deterministic baseline.
+    const aiIsEmpty = ai.week1 + ai.week2 + ai.week3 + ai.week4 <= 0;
+    baseline = aiIsEmpty && cash.forecast30d > 0 ? baselineForecast(cash.forecast30d) : ai;
   } catch {
-    const total = cash.outstanding;
-    baseline = {
-      week1: Math.round(total * 0.4),
-      week2: Math.round(total * 0.3),
-      week3: Math.round(total * 0.2),
-      week4: Math.round(total * 0.1),
-      confidence: 'low',
-      narrative: 'Forecast unavailable — using baseline probability weighting based on outstanding A/R.',
-    };
+    baseline = baselineForecast(cash.forecast30d);
   }
 
   return (
@@ -73,12 +94,12 @@ export default async function CashFlowPage() {
 
 function Stat({ icon, label, value, danger }: { icon: React.ReactNode; label: string; value: string; danger?: boolean }) {
   return (
-    <div className="card">
+    <div className="stat-tile">
       <div className="flex items-center justify-between">
-        <div className="text-xs text-ink-500 uppercase tracking-wider font-medium">{label}</div>
-        <div className={danger ? 'text-red-500' : 'text-ink-400'}>{icon}</div>
+        <div className="app-meta">{label}</div>
+        <div className={danger ? 'text-danger-500' : 'text-ink-400'}>{icon}</div>
       </div>
-      <div className={`mt-2 text-2xl font-display font-bold ${danger ? 'text-red-600' : 'text-ink-950'}`}>{value}</div>
+      <div className={`mt-2 text-2xl font-display font-bold ${danger ? 'text-danger-600' : 'text-ink-950'}`}>{value}</div>
     </div>
   );
 }

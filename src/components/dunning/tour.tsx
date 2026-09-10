@@ -76,16 +76,49 @@ export function DunningTour() {
     if (!el) { setStepIndex((i) => (i + 1 < STEPS.length ? i + 1 : -1)); return; }
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+    // Track until the rect actually stops moving, rather than for a fixed
+    // 900ms. A smooth scrollIntoView regularly runs longer than that on a tall
+    // page or a loaded machine, and the old timeout froze the spotlight
+    // wherever the scroll happened to be at 900ms — leaving the highlight ring
+    // and its tooltip visibly offset from the step they point at.
+    let stopped = false;
+    let stableFrames = 0;
+    let last: Rect | null = null;
+    const settled = (a: Rect | null, b: Rect) =>
+      !!a && Math.abs(a.top - b.top) < 0.5 && Math.abs(a.left - b.left) < 0.5 &&
+      Math.abs(a.width - b.width) < 0.5 && Math.abs(a.height - b.height) < 0.5;
+
     function tick() {
-      if (!el) return;
-      setRect(measure(el));
-      rafRef.current = requestAnimationFrame(tick);
+      if (!el || stopped) return;
+      const next = measure(el);
+      setRect(next);
+      stableFrames = settled(last, next) ? stableFrames + 1 : 0;
+      last = next;
+      // Eight identical frames means the scroll animation has come to rest.
+      rafRef.current = stableFrames < 8 ? requestAnimationFrame(tick) : null;
     }
     rafRef.current = requestAnimationFrame(tick);
-    // Stop the per-frame tracking once things settle — no need to burn
-    // cycles on a static tooltip after the scroll animation finishes.
-    const stop = setTimeout(() => { if (rafRef.current) cancelAnimationFrame(rafRef.current); }, 900);
-    return () => { if (stop) clearTimeout(stop); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+
+    // Hard cap so a target that never settles (a looping animation, say)
+    // can't hold a rAF loop open indefinitely.
+    const cap = setTimeout(() => {
+      stopped = true;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    }, 4000);
+
+    // The old fixed window also meant that once tracking stopped, any scroll
+    // or viewport change left the spotlight stranded. These keep it attached.
+    const remeasure = () => { if (el && !stopped) setRect(measure(el)); };
+    window.addEventListener('scroll', remeasure, true);
+    window.addEventListener('resize', remeasure);
+
+    return () => {
+      stopped = true;
+      clearTimeout(cap);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('scroll', remeasure, true);
+      window.removeEventListener('resize', remeasure);
+    };
   }, [stepIndex]);
 
   // If the user clicks a real control the tour is pointing at — on their
@@ -177,7 +210,7 @@ export function DunningTour() {
           style={{ top: tooltipTop, left: tooltipLeft, width: tooltipWidth }}
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-300">
+            <span className="text-2xs font-semibold uppercase tracking-wider text-brand-300">
               Step {stepIndex + 1} of {STEPS.length}
             </span>
             <button onClick={finish} className="text-ink-400 hover:text-white -m-1 p-1" aria-label="Skip tour">

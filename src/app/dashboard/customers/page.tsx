@@ -29,7 +29,7 @@ export default async function CustomersPage() {
     <AppShell title="Customers" subtitle={`${custList.length} customer${custList.length === 1 ? '' : 's'} · ${insights.length} with open balance`}>
       <div className="flex justify-between items-center mb-5">
         <p className="text-sm text-ink-600">Sorted by risk score (highest first). AI-recommended next action for each.</p>
-        <Link href="/dashboard/customers/new" className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />Add customer</Link>
+        <Link href="/dashboard/customers/new" className="btn-brand btn-sm"><Plus className="h-3.5 w-3.5" />Add customer</Link>
       </div>
       {insights.length === 0 ? (
         <div className="card text-center py-12">

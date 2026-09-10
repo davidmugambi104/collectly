@@ -19,7 +19,7 @@ export function MarkAsPaidButton({ invoiceId }: { invoiceId: string }) {
   }
 
   if (done) {
-    return <button className="btn-success text-sm"><CheckCircle2 className="h-3.5 w-3.5" />Marked paid</button>;
+    return <button className="btn-success btn-sm"><CheckCircle2 className="h-3.5 w-3.5" />Marked paid</button>;
   }
-  return <button onClick={markPaid} disabled={loading} className="btn-success text-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Mark as paid</button>;
+  return <button onClick={markPaid} disabled={loading} className="btn-success btn-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Mark as paid</button>;
 }

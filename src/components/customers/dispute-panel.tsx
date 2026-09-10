@@ -24,6 +24,12 @@ const REASONS = [
   { value: 'other', label: 'Other' },
 ];
 
+/** The list rendered `d.reason.replace(/_/g,' ')`, i.e. the raw enum value
+ *  ("payment plan request"). REASONS already carries real labels — use it,
+ *  and fall back to the de-underscored value for any enum member added to
+ *  the DB before this array catches up. */
+const REASON_LABEL: Record<string, string> = Object.fromEntries(REASONS.map((r) => [r.value, r.label]));
+
 export function DisputePanel({
   customerId,
   invoices,
@@ -79,16 +85,16 @@ export function DisputePanel({
   return (
     <div className="card mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="h3">Open disputes</h2>
+        <h2 className="app-heading">Open disputes</h2>
         {invoices.length > 0 && (
-          <button className="btn-secondary text-xs" onClick={() => setShowForm((v) => !v)}>
+          <button className="btn-secondary btn-sm" onClick={() => setShowForm((v) => !v)}>
             {showForm ? 'Cancel' : '+ Open dispute'}
           </button>
         )}
       </div>
 
       {showForm && (
-        <form onSubmit={submit} className="space-y-3 mb-4 border border-ink-200 rounded-lg p-3">
+        <form onSubmit={submit} className="subform mb-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label">Invoice</label>
@@ -109,35 +115,39 @@ export function DisputePanel({
               <textarea name="customerMessage" className="input" rows={2} placeholder="What the customer said" />
             </div>
           </div>
-          {error && <div className="rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-700">{error}</div>}
+          {error && <div role="alert" className="alert-danger">{error}</div>}
           <div className="flex justify-end">
-            <button disabled={loading} className="btn-primary text-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Open dispute</button>
+            <button disabled={loading} className="btn-primary btn-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Open dispute</button>
           </div>
         </form>
       )}
 
       {open.length === 0 ? (
-        <p className="text-sm text-ink-500">No open disputes</p>
+        <p className="app-body text-ink-500">No open disputes</p>
       ) : (
         <div className="space-y-2">
           {open.map((d) => (
-            <div key={d.id} className="border border-red-200 bg-red-50/30 rounded-lg p-3">
+            // Urgency as a left edge (the row-urgent convention from the
+            // invoices table), not a red wash over the whole row.
+            <div key={d.id} className="row-urgent rounded-lg border border-ink-200 p-3">
               <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                  <div className="font-semibold text-ink-900">
-                    {d.reason.replace(/_/g, ' ')}
+                <div className="min-w-0 flex-1">
+                  <div className="app-label">
+                    {REASON_LABEL[d.reason] ?? d.reason.replace(/_/g, ' ')}
                   </div>
                   {d.customerMessage && (
-                    <div className="text-sm text-ink-700 mt-1 italic">&quot;{d.customerMessage}&quot;</div>
+                    <div className="app-body mt-1 italic">&quot;{d.customerMessage}&quot;</div>
                   )}
                 </div>
-                <span className="badge bg-red-100 text-red-700 border-red-200 whitespace-nowrap">
-                  {d.status}
+                <span className="badge-danger whitespace-nowrap capitalize">
+                  {d.status.replace(/_/g, ' ')}
                 </span>
               </div>
               <div className="flex items-center gap-2 mt-3">
+                <label htmlFor={`dispute-note-${d.id}`} className="sr-only">Resolution note</label>
                 <input
-                  className="input text-xs flex-1"
+                  id={`dispute-note-${d.id}`}
+                  className="input flex-1 text-[13px]"
                   placeholder="Resolution note (optional)"
                   value={notesById[d.id] ?? ''}
                   onChange={(e) => setNotesById((s) => ({ ...s, [d.id]: e.target.value }))}
@@ -145,7 +155,7 @@ export function DisputePanel({
                 <button
                   disabled={resolvingId === d.id}
                   onClick={() => resolve(d.id)}
-                  className="btn-secondary text-xs whitespace-nowrap"
+                  className="btn-secondary btn-sm whitespace-nowrap"
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" /> Resolve
                 </button>

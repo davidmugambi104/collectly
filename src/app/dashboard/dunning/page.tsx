@@ -190,7 +190,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           shown in-line so the operator gets immediate feedback instead of a
           silent composer. */}
       {targetCustomerId && (composer || composerError) && (
-        <div className="card mb-5 border-brand-200">
+        <div className="card-primary mb-6">
           <div className="flex items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-2 min-w-0">
               <Sparkles className="h-4 w-4 text-brand-600 shrink-0" />
@@ -207,15 +207,15 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
             </div>
             <Link
               href={`/dashboard/customers/${targetCustomerId}`}
-              className="btn-ghost text-xs shrink-0"
+              className="btn-ghost btn-sm shrink-0"
             >
               <ArrowLeft className="h-3 w-3" />Back to customer
             </Link>
           </div>
 
           {composerError ? (
-            <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/40 p-3 text-sm text-ink-800">
-              <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+            <div className="flex items-start gap-2 rounded-lg border border-warn-200 bg-warn-50/40 p-3 text-sm text-ink-800">
+              <AlertCircle className="h-4 w-4 text-warn-600 mt-0.5 shrink-0" />
               <span>{composerError}</span>
             </div>
           ) : (
@@ -282,14 +282,14 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           misconfigured provider. Surface that explicitly, with the real
           reason, instead of leaving it buried in a "failed" badge below. */}
       {failedTotal > 0 && (
-        <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm">
-          <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+        <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-danger-200 bg-danger-50 px-3.5 py-2.5 text-sm">
+          <AlertCircle className="h-4 w-4 text-danger-600 mt-0.5 shrink-0" />
           <div className="min-w-0">
-            <span className="font-medium text-red-900">
+            <span className="font-medium text-danger-900">
               {failedTotal} reminder{failedTotal === 1 ? '' : 's'} failed to send
             </span>
             {latestFailure?.error && (
-              <span className="text-red-800"> — {latestFailure.error}</span>
+              <span className="text-danger-800"> — {latestFailure.error}</span>
             )}
           </div>
         </div>
@@ -300,8 +300,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           attention with the primary on/off decision. */}
       <div data-tour="control" className="mb-5 card !py-4 flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
-          <span className={`relative h-9 w-9 shrink-0 rounded-full grid place-items-center ${active ? 'bg-emerald-50' : 'bg-amber-50'}`}>
-            <span className={`h-2.5 w-2.5 rounded-full ${active ? 'bg-emerald-500 animate-pulse-soft' : 'bg-amber-500'}`} />
+          <span className={`relative h-9 w-9 shrink-0 rounded-full grid place-items-center ${active ? 'bg-success-50' : 'bg-warn-50'}`}>
+            <span className={`h-2.5 w-2.5 rounded-full ${active ? 'bg-success-500 animate-pulse-soft' : 'bg-warn-500'}`} />
           </span>
           <div className="min-w-0">
             <div className="font-semibold text-ink-900">{active ? 'Automatic sending is on' : 'Automatic sending is off'}</div>
@@ -313,23 +313,23 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <ReplayTourButton className="btn-ghost text-sm" />
-          <Link href="/dashboard/dunning/performance" className="btn-ghost text-sm">
+          <ReplayTourButton className="btn-ghost btn-sm" />
+          <Link href="/dashboard/dunning/performance" className="btn-ghost btn-sm">
             <BarChart3 className="h-3.5 w-3.5" />Full report<ChevronRight className="h-3.5 w-3.5" />
           </Link>
           <form action={toggleSequence}>
-            <button className={active ? 'btn-secondary text-sm' : 'btn-brand text-sm'} type="submit">
+            <button className={active ? 'btn-secondary btn-sm' : 'btn-brand btn-sm'} type="submit">
               {active ? <><Pause className="h-3.5 w-3.5" />Pause</> : <><Play className="h-3.5 w-3.5" />Resume</>}
             </button>
           </form>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 card">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="card-primary lg:col-span-2">
           <div>
             <h2 className="app-heading">Default sequence</h2>
-            <p className="text-sm text-ink-600 mt-1">Customers are sent reminders in this order, starting 1 day after the invoice is due.</p>
+            <p className="app-body mt-1">Customers are sent reminders in this order, starting 1 day after the invoice is due.</p>
           </div>
 
           <div className="mt-5">
@@ -337,14 +337,14 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           </div>
         </div>
 
-        <div className="card">
-          <div className="flex items-center justify-between">
+        <div className="section">
+          <div className="section-head">
             <div>
               <h2 className="app-heading">Recent activity</h2>
-              <p className="text-sm text-ink-600 mt-1">Last 20 dunning actions.</p>
+              <p className="app-meta mt-0.5 font-normal">Last 20 dunning actions.</p>
             </div>
             {recentRuns.length > 0 && (
-              <Link href="/dashboard/dunning/performance" className="py-1.5 text-xs font-medium text-brand-600 hover:text-brand-700 shrink-0 inline-flex items-center gap-0.5">
+              <Link href="/dashboard/dunning/performance" className="link-quiet shrink-0">
                 See all<ChevronRight className="h-3 w-3" />
               </Link>
             )}
@@ -354,7 +354,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
               <div className="text-center py-8">
                 <Sparkles className="h-6 w-6 mx-auto text-ink-300" />
                 <p className="mt-2 text-sm text-ink-500">No activity yet.</p>
-                <Link href="/dashboard/integrations" className="mt-3 py-1.5 inline-flex items-center gap-1 text-sm font-medium text-brand-600 hover:text-brand-700">
+                <Link href="/dashboard/integrations" className="link-quiet mt-3">
                   Connect an integration<ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -365,19 +365,19 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
                 <Link
                   key={run.id}
                   href={`/dashboard/customers/${customerId}`}
-                  className={`flex items-start gap-2 text-sm -mx-2 px-2 py-1.5 rounded-lg transition-colors ${failed ? 'bg-red-50/60 hover:bg-red-50' : 'hover:bg-ink-50'}`}
+                  className={`flex items-start gap-2 text-sm -mx-2 px-2 py-1.5 rounded-lg transition-colors ${failed ? 'bg-danger-50/60 hover:bg-danger-50' : 'hover:bg-ink-50'}`}
                 >
                   {run.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-500 mt-0.5 shrink-0" /> : <Mail className="h-3.5 w-3.5 text-ink-500 mt-0.5 shrink-0" />}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className={`badge text-2xs ${run.status === 'sent' || run.status === 'delivered' ? 'badge-success' : failed ? 'badge-danger' : 'badge-neutral'}`}>{run.status}</span>
-                      <span className={`text-xs ${failed ? 'text-red-700 font-medium' : 'text-ink-500'}`}>
+                      <span className={run.status === 'sent' || run.status === 'delivered' ? 'badge-success' : failed ? 'badge-danger' : 'badge-neutral'}>{run.status}</span>
+                      <span className={`text-xs ${failed ? 'text-danger-700 font-medium' : 'text-ink-500'}`}>
                         {run.sentAt ? new Date(run.sentAt).toLocaleString() : failed ? 'not sent' : 'queued'}
                       </span>
                     </div>
                     <div className="text-xs font-medium text-ink-900 truncate">To: {customerName} · Invoice {invoiceNumber}</div>
                     {failed && run.error ? (
-                      <div className="text-xs text-red-700 truncate" title={run.error}>{run.error}</div>
+                      <div className="text-xs text-danger-700 truncate" title={run.error}>{run.error}</div>
                     ) : (
                       <div className="text-xs text-ink-700 truncate">{run.subject ?? 'SMS reminder'}</div>
                     )}
@@ -403,8 +403,8 @@ function ImpactTile({
   delay?: number;
 }) {
   const toneClasses: Record<'amber' | 'emerald' | 'brand' | 'ink', string> = {
-    amber: 'bg-amber-50 text-amber-600',
-    emerald: 'bg-emerald-50 text-emerald-600',
+    amber: 'bg-warn-50 text-warn-600',
+    emerald: 'bg-success-50 text-success-600',
     brand: 'bg-brand-50 text-brand-600',
     ink: 'bg-ink-100 text-ink-600',
   };

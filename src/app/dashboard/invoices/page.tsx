@@ -10,7 +10,7 @@ import { eq, sql, and, or, ilike } from 'drizzle-orm';
 import Link from 'next/link';
 import { Search, Plus } from 'lucide-react';
 
-export default async function InvoicesPage({ searchParams }: { searchParams: Promise<{ filter?: string; q?: string }> }) {
+export default async function InvoicesPage({ searchParams }: { searchParams: Promise<{ filter?: string; q?: string; bucket?: string }> }) {
   const { userId, orgId } = await auth();
   if (!userId) redirect('/sign-in');
   if (!orgId) redirect('/sign-in');
@@ -18,14 +18,42 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const filter = sp.filter ?? 'all';
   const q = (sp.q ?? '').trim();
+  const bucket = sp.bucket ?? '';
+
+  // Aging-bucket drill-down, so each row of the A/R aging legend on the
+  // Overview goes somewhere real. Bounds are expressed in whole days past the
+  // due date, matching daysOverdue()/bucketFor() in src/lib/utils.ts exactly —
+  // if these two ever disagree, the chart and the list it links to will
+  // disagree, which is the failure this filter exists to avoid.
+  const BUCKET_RANGES: Record<string, { min: number; max: number | null }> = {
+    current: { min: -100000, max: 0 },
+    '1-30': { min: 1, max: 30 },
+    '31-60': { min: 31, max: 60 },
+    '61-90': { min: 61, max: 90 },
+    '90+': { min: 91, max: null },
+  };
+  const range = BUCKET_RANGES[bucket];
+
+  const unpaid = sql`${invoices.status} NOT IN ('paid', 'written_off')`;
+  const daysPastDue = sql`FLOOR(EXTRACT(EPOCH FROM (NOW() - ${invoices.dueDate})) / 86400)`;
 
   // Build the base WHERE clause for the active filter
-  const filterCond =
-    filter === 'overdue'
-      ? and(eq(invoices.orgId, orgId), sql`${invoices.dueDate} < NOW()`)
+  const filterCond = range
+    ? and(
+        eq(invoices.orgId, orgId),
+        unpaid,
+        range.max === null
+          ? sql`${daysPastDue} >= ${range.min}`
+          : range.min <= 0
+            // "current" is everything not yet past due.
+            ? sql`${daysPastDue} <= 0`
+            : sql`${daysPastDue} BETWEEN ${range.min} AND ${range.max}`,
+      )
+    : filter === 'overdue'
+      ? and(eq(invoices.orgId, orgId), unpaid, sql`${invoices.dueDate} < NOW()`)
       : filter === 'paid'
-      ? and(eq(invoices.orgId, orgId), eq(invoices.status, 'paid'))
-      : eq(invoices.orgId, orgId);
+        ? and(eq(invoices.orgId, orgId), eq(invoices.status, 'paid'))
+        : eq(invoices.orgId, orgId);
 
   // Push the search query into SQL so it searches the *entire* org, not just
   // the first 100 rows. ilike is case-insensitive in Postgres. When `q` is
@@ -59,7 +87,12 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   const filtered = rows;
 
   return (
-    <AppShell title="Invoices" subtitle={`${filtered.length} invoice${filtered.length === 1 ? '' : 's'}${q ? ` matching "${q}"` : ''}`}>
+    <AppShell
+      title="Invoices"
+      subtitle={`${filtered.length} invoice${filtered.length === 1 ? '' : 's'}${
+        range ? ` · ${bucket === 'current' ? 'not yet due' : `${bucket} days past due`}` : ''
+      }${q ? ` matching "${q}"` : ''}`}
+    >
       <form action="/dashboard/invoices" method="get" className="flex flex-col sm:flex-row gap-3 mb-5">
         {filter !== 'all' && <input type="hidden" name="filter" value={filter} />}
         <div className="relative flex-1">
@@ -70,8 +103,8 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
           <Link href={q ? `/dashboard/invoices?q=${encodeURIComponent(q)}` : '/dashboard/invoices'} className={`btn text-sm ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}>All</Link>
           <Link href={`/dashboard/invoices?filter=overdue${q ? `&q=${encodeURIComponent(q)}` : ''}`} className={`btn text-sm ${filter === 'overdue' ? 'btn-primary' : 'btn-secondary'}`}>Overdue</Link>
           <Link href={`/dashboard/invoices?filter=paid${q ? `&q=${encodeURIComponent(q)}` : ''}`} className={`btn text-sm ${filter === 'paid' ? 'btn-primary' : 'btn-secondary'}`}>Paid</Link>
-          <button type="submit" className="btn-secondary text-sm">Search</button>
-          <Link href="/dashboard/invoices/new" className="btn-brand text-sm"><Plus className="h-3.5 w-3.5" />New invoice</Link>
+          <button type="submit" className="btn-secondary btn-sm">Search</button>
+          <Link href="/dashboard/invoices/new" className="btn-brand btn-sm"><Plus className="h-3.5 w-3.5" />New invoice</Link>
         </div>
       </form>
 

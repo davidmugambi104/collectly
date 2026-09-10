@@ -36,16 +36,16 @@ export function CashFlowClient({ baseline }: { baseline: Forecast }) {
     { label: 'Week 4', value: forecast.week4 },
   ];
   const max = Math.max(...weeks.map((w) => w.value), 1);
-  const confidenceColor = forecast.confidence === 'high' ? 'text-emerald-600' : forecast.confidence === 'medium' ? 'text-amber-600' : 'text-ink-500';
+  const confidenceColor = forecast.confidence === 'high' ? 'text-success-600' : forecast.confidence === 'medium' ? 'text-warn-600' : 'text-ink-500';
 
   return (
-    <div className="card">
+    <div className="card-primary">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="h3">Weekly cash forecast</h2>
-          <p className="text-sm text-ink-600 mt-1">Predicted incoming payments, weighted by customer payment history.</p>
+          <h2 className="app-heading">Weekly cash forecast</h2>
+          <p className="app-body mt-1">Predicted incoming payments, weighted by customer payment history.</p>
         </div>
-        <button onClick={refresh} disabled={loading} className="btn-secondary text-sm shrink-0">
+        <button onClick={refresh} disabled={loading} className="btn-secondary btn-sm shrink-0">
           {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
           {loading ? 'Recalculating…' : 'Recalculate'}
         </button>
@@ -66,7 +66,7 @@ export function CashFlowClient({ baseline }: { baseline: Forecast }) {
           <Sparkles className="h-4 w-4 text-brand-600 mt-0.5 shrink-0" />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-brand-900 uppercase tracking-wider">AI analysis</span>
+              <span className="app-meta text-brand-900">AI analysis</span>
               <span className={`text-xs font-medium ${confidenceColor} capitalize`}>· {forecast.confidence} confidence</span>
             </div>
             <p className="mt-1 text-sm text-brand-900">{forecast.narrative}</p>
