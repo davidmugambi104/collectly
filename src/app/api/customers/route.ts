@@ -18,11 +18,16 @@ export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const raw = await req.json();
-  const data = body.parse({ ...raw, email: raw.email || undefined });
-  const [row] = await db.insert(customers).values({
-    id: nanoid(), orgId, name: data.name, company: data.company, email: data.email, phone: data.phone,
-    preferredChannel: data.preferredChannel,
-  }).returning();
-  return NextResponse.json({ ok: true, id: row.id });
+
+  try {
+    const raw = await req.json();
+    const data = body.parse({ ...raw, email: raw.email || undefined });
+    const [row] = await db.insert(customers).values({
+      id: nanoid(), orgId, name: data.name, company: data.company, email: data.email, phone: data.phone,
+      preferredChannel: data.preferredChannel,
+    }).returning();
+    return NextResponse.json({ ok: true, id: row.id });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : 'Bad request' }, { status: 400 });
+  }
 }

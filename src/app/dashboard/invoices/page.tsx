@@ -50,6 +50,10 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
             : sql`${daysPastDue} BETWEEN ${range.min} AND ${range.max}`,
       )
     : filter === 'overdue'
+      // Missing a status exclusion here let fully-paid invoices show up
+      // under "Overdue" (with a "Paid" badge) — the 'paid' branch right
+      // below already excludes correctly, so this was an omission, not by
+      // design.
       ? and(eq(invoices.orgId, orgId), unpaid, sql`${invoices.dueDate} < NOW()`)
       : filter === 'paid'
         ? and(eq(invoices.orgId, orgId), eq(invoices.status, 'paid'))

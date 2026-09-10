@@ -3,7 +3,7 @@ import { getAuth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { payments, customers, invoices } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, sql, gte } from 'drizzle-orm';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { Receipt } from 'lucide-react';
@@ -27,16 +27,27 @@ export default async function PaymentsPage() {
     .orderBy(desc(payments.paidAt))
     .limit(100);
 
-  const total = rows.reduce((s: number, r: typeof rows[number]) => s + Number(r.payment.amount), 0);
+  // "Lifetime collected" was summed over the same 100-row page used for
+  // the table below — for any org with more than 100 payments the stat
+  // tile silently understated the real total, with nothing indicating it
+  // was capped. Real totals now come from their own unbounded aggregate
+  // queries; `rows` stays limit(100) purely for the table listing.
   const now = new Date();
-  const monthTotal = rows.reduce((s: number, r: typeof rows[number]) => {
-    const d = new Date(r.payment.paidAt);
-    if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) return s + Number(r.payment.amount);
-    return s;
-  }, 0);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const [{ total: totalRaw, count: totalCount }] = await db
+    .select({ total: sql<string>`coalesce(sum(${payments.amount}), 0)`, count: sql<string>`count(*)` })
+    .from(payments)
+    .where(eq(payments.orgId, orgId));
+  const [{ total: monthTotalRaw }] = await db
+    .select({ total: sql<string>`coalesce(sum(${payments.amount}), 0)` })
+    .from(payments)
+    .where(sql`${payments.orgId} = ${orgId} AND ${gte(payments.paidAt, startOfMonth)}`);
+  const total = parseFloat(totalRaw);
+  const monthTotal = parseFloat(monthTotalRaw);
+  const totalPaymentCount = parseInt(totalCount, 10);
 
   return (
-    <AppShell title="Payments" subtitle={`${rows.length} payment${rows.length === 1 ? '' : 's'} · ${formatCurrency(total)} lifetime`}>
+    <AppShell title="Payments" subtitle={`${totalPaymentCount} payment${totalPaymentCount === 1 ? '' : 's'} · ${formatCurrency(total)} lifetime`}>
       {/* `.stat-tile` + `.app-display`, not a `.card` with a 24px marketing
           bold. Two figures that are read together belong at the same weight,
           with only the colour of the collected-this-month figure separating
@@ -52,6 +63,9 @@ export default async function PaymentsPage() {
           <div className="app-display mt-1.5 text-success-700">{formatCurrency(monthTotal)}</div>
         </div>
       </div>
+      {totalPaymentCount > rows.length && (
+        <p className="text-xs text-ink-500 -mt-3 mb-5">Showing the latest {rows.length} of {totalPaymentCount} payments below — the totals above cover all of them.</p>
+      )}
 
       {rows.length === 0 ? (
         <div className="panel px-6 py-16 text-center">

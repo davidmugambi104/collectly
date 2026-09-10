@@ -14,6 +14,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
   const router = useRouter();
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
+  const [syncHadErrors, setSyncHadErrors] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
 
   const onSync = async () => {
@@ -27,14 +28,23 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? 'sync failed');
+      // The API can return ok:true with a non-empty `errors` array — e.g.
+      // customers imported fine but the invoice fetch itself failed, or a
+      // handful of rows were individually malformed. That used to be
+      // silently dropped here: the message only ever showed the upsert
+      // counts, so a partially-failed sync looked identical to a clean one.
+      const errorCount = Array.isArray(data.errors) ? data.errors.length : 0;
+      setSyncHadErrors(errorCount > 0);
       setSyncResult(
         `Imported ${data.customersUpserted} customers, ${data.invoicesUpserted} invoices` +
           (data.invoicesMarkedPaid ? ` (${data.invoicesMarkedPaid} marked paid)` : '') +
-          ` in ${data.durationMs}ms`,
+          ` in ${data.durationMs}ms` +
+          (errorCount > 0 ? ` — ${errorCount} error${errorCount === 1 ? '' : 's'}: ${data.errors.slice(0, 3).join('; ')}${errorCount > 3 ? '…' : ''}` : ''),
       );
       router.refresh();
-    } catch (e: unknown) {
-      setSyncResult(`Error: ${e instanceof Error ? e.message : String(e)}`);
+    } catch (e: any) {
+      setSyncHadErrors(true);
+      setSyncResult(`Error: ${e?.message ?? e}`);
     } finally {
       setSyncing(false);
     }
@@ -62,7 +72,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
         <button
           onClick={onSync}
           disabled={syncing || disconnecting}
-          className="btn-secondary btn-sm disabled:opacity-50"
+          className="btn-secondary text-sm disabled:opacity-50"
           type="button"
         >
           {syncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
@@ -71,7 +81,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
         <button
           onClick={onDisconnect}
           disabled={syncing || disconnecting}
-          className="btn-ghost btn-sm text-danger-600 hover:text-danger-700 disabled:opacity-50"
+          className="btn-ghost text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
           type="button"
         >
           {disconnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Unlink className="h-3.5 w-3.5" />}
@@ -81,7 +91,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
           <span className="text-xs text-ink-500">Last sync {new Date(lastSyncAt).toLocaleString()}</span>
         )}
       </div>
-      {syncResult && <p className="text-xs text-ink-600">{syncResult}</p>}
+      {syncResult && <p className={`text-xs ${syncHadErrors ? 'text-red-600' : 'text-ink-600'}`}>{syncResult}</p>}
     </div>
   );
 }

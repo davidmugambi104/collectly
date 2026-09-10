@@ -7,6 +7,16 @@ import { eq } from 'drizzle-orm';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
+// Disabled platform-wide (2026-08-05): this route charges through
+// Collectly's own single PAYSTACK_SECRET_KEY with no per-agency subaccount
+// or split_code — money paid here settles into Collectly's account, not
+// the business being paid, and nothing anywhere transfers it onward. Same
+// class of bug as the one fixed in /api/payment/create-checkout, except
+// no per-org connect flow exists yet to fix it properly. Gated at the API
+// level (not just hidden in the UI) so a direct POST can't route around
+// the frontend gate in src/components/payment/payment-form.tsx.
+const PAYSTACK_ENABLED = false;
+
 /**
  * SECURITY: `amount` is deliberately NOT accepted from the caller.
  *
@@ -31,13 +41,19 @@ const body = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  if (!PAYSTACK_ENABLED) {
+    return NextResponse.json(
+      { error: 'Card/bank/mobile-money payment via Paystack is temporarily unavailable. Please use wire transfer, or contact the business directly.' },
+      { status: 503 },
+    );
+  }
   if (!PAYSTACK_SECRET) {
     return NextResponse.json({ error: 'PAYSTACK_SECRET_KEY not configured' }, { status: 500 });
   }
 
   // Each call creates a real Paystack transaction, so cap it the same way the
   // Stripe checkout route is capped.
-  const rl = await rateLimit(getIp(req), { max: 5 });
+  const rl = await rateLimit(getIp(req), { max: 5, key: 'paystack-initialize' });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: 'Too many payment attempts. Please wait a minute and try again.' },

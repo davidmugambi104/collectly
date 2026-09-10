@@ -2,13 +2,12 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { reportClientError } from '@/lib/report-client-error';
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    // In production, send to Sentry/PostHog here.
-    if (typeof window !== 'undefined') {
-      console.error('App error:', error.message, error.digest);
-    }
+    console.error('App error:', error.message, error.digest);
+    reportClientError(error, { boundary: 'global-error' });
   }, [error]);
 
   return (

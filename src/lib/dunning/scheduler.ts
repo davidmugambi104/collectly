@@ -3,8 +3,8 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users, type Invoice } from '@/db/schema';
-import { eq, and, sql, lte, inArray } from 'drizzle-orm';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay } from '@/db/schema';
+import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
@@ -36,19 +36,6 @@ async function getOwnerEmail(orgId: string): Promise<string | null> {
 }
 
 type DigestEntry = { customerName: string; channel: 'email' | 'sms'; invoiceNumber: string; amount: string; currency: string };
-
-// Mirrors the inline element type of dunningSequences.steps's jsonb
-// $type<Array<{...}>>() in schema.ts. That inline type doesn't have an
-// exported name to import, and `seq.steps` didn't infer cleanly through
-// the `?? []` fallback below, so it's spelled out again here.
-type DunningStep = {
-  id: string;
-  daysFromDue: number;
-  channel: 'email' | 'sms';
-  tone: 'friendly' | 'firm' | 'final';
-  subject?: string;
-  template: string;
-};
 
 // Sends the operator ("founder") a summary of what just went out on their
 // behalf, since automatic sends otherwise happen with no human in the loop
@@ -85,8 +72,8 @@ async function notifyOwnerOfSends(orgId: string, entries: DigestEntry[]) {
         </body></html>
       `,
     });
-  } catch (e: unknown) {
-    console.error('[dunning] owner notification failed:', e instanceof Error ? e.message : e);
+  } catch (e: any) {
+    console.error('[dunning] owner notification failed:', e?.message);
   }
 }
 
@@ -110,6 +97,19 @@ export async function processDunning() {
         eq(invoices.orgId, seq.orgId),
         sql`${invoices.status} IN ('sent', 'viewed', 'overdue', 'partial')`,
         lte(invoices.dueDate, now),
+        // A customer who just promised to pay by a future date shouldn't
+        // keep getting dunned in the meantime — disputes exclude via
+        // invoices.status flipping to 'disputed', but creating a promise
+        // (POST /api/promises) never touched invoice.status, so this was
+        // the one pause condition dunning didn't actually respect. Once
+        // promisedDate passes with the invoice still unpaid, the promise
+        // stops excluding it and normal dunning resumes.
+        sql`NOT EXISTS (
+          SELECT 1 FROM ${promisesToPay}
+          WHERE ${promisesToPay.invoiceId} = ${invoices.id}
+            AND ${promisesToPay.status} = 'active'
+            AND ${promisesToPay.promisedDate} >= ${now}
+        )`,
       ));
 
     // Batch-fetch every dunning_runs row already recorded for this sequence
@@ -120,17 +120,37 @@ export async function processDunning() {
     // unique index + onConflictDoNothing on the insert further down — this
     // is purely to avoid a wasted AI-generation call for steps that are
     // already scheduled/sent.
+    //
+    // 'failed' rows are deliberately excluded from the skip set (and kept
+    // in retriableRunIds instead): the dedup key is (invoiceId, sequenceId,
+    // stepId), and since it's enforced by a DB-unique index a step could
+    // only ever be inserted once, ever, no matter how its send actually
+    // went. A transient failure (Resend 429, a Twilio error) permanently
+    // pinned that step as "already handled" — the scheduler moved on to
+    // whatever later step's threshold came due next and the failed one was
+    // never retried or backfilled, with no other retry path anywhere in
+    // the app. Retrying is intentionally scoped to 'failed' only, not
+    // 'cancelled' (no contact info on file) — retrying that would just
+    // waste an AI-generation call for the same, still-true reason.
     const invoiceIds = overdueInvoices.map(({ invoice }: typeof overdueInvoices[number]) => invoice.id);
     const existingRunKeys = new Set<string>();
+    const retriableRunIds = new Map<string, string>();
     if (invoiceIds.length > 0) {
       const existingRuns = await db
-        .select({ invoiceId: dunningRuns.invoiceId, stepId: dunningRuns.stepId })
+        .select({ invoiceId: dunningRuns.invoiceId, stepId: dunningRuns.stepId, id: dunningRuns.id, status: dunningRuns.status })
         .from(dunningRuns)
         .where(and(
           eq(dunningRuns.sequenceId, seq.id),
           inArray(dunningRuns.invoiceId, invoiceIds),
         ));
-      for (const r of existingRuns) existingRunKeys.add(`${r.invoiceId}:${r.stepId}`);
+      for (const r of existingRuns) {
+        const key = `${r.invoiceId}:${r.stepId}`;
+        if (r.status === 'failed') {
+          retriableRunIds.set(key, r.id);
+        } else {
+          existingRunKeys.add(key);
+        }
+      }
     }
 
     for (const { invoice, customer } of overdueInvoices) {
@@ -140,7 +160,7 @@ export async function processDunning() {
         continue;
       }
       const days = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
-      const dueSteps = (seq.steps ?? []).filter((s: DunningStep) => s.daysFromDue <= days);
+      const dueSteps = (seq.steps ?? []).filter((s: any) => s.daysFromDue <= days);
       if (!dueSteps.length) continue;
 
       const lastStep = dueSteps[dueSteps.length - 1];
@@ -180,33 +200,48 @@ export async function processDunning() {
       // concurrent cron invocation cannot double-schedule the same
       // (invoiceId, sequenceId, stepId). We rely on the unique index on
       // (invoice_id, sequence_id, step_id) (added in 0003 if not present;
-      // dedup is the existing convention) and ON CONFLICT DO NOTHING so
-      // the second writer sees zero returning rows and skips cleanly.
+      // dedup is the existing convention).
       // P1.4 audit fix 2026-07-31.
+      //
+      // A retry (retriableRunIds has this key -- see the batched fetch
+      // above) uses ON CONFLICT DO UPDATE instead of DO NOTHING, so a
+      // previously-failed row gets a fresh scheduledFor/subject/body and
+      // its status reset to 'scheduled' rather than being silently
+      // skipped by the same unique index that's supposed to prevent
+      // double-sends, not prevent ever retrying a real failure.
+      const retryKey = `${invoice.id}:${lastStep.id}`;
+      const isRetry = retriableRunIds.has(retryKey);
+      const insertValues = {
+        id: nanoid(),
+        orgId: seq.orgId,
+        invoiceId: invoice.id,
+        sequenceId: seq.id,
+        stepId: lastStep.id,
+        channel: lastStep.channel,
+        status: 'scheduled' as const,
+        scheduledFor: now,
+        subject: result.subject,
+        body: result.body,
+      };
       let insertedRunId: string | null = null;
       try {
-        insertedRunId = await db.transaction(async (tx: typeof db) => {
-          const [run] = await tx
-            .insert(dunningRuns)
-            .values({
-              id: nanoid(),
-              orgId: seq.orgId,
-              invoiceId: invoice.id,
-              sequenceId: seq.id,
-              stepId: lastStep.id,
-              channel: lastStep.channel,
-              status: 'scheduled',
-              scheduledFor: now,
-              subject: result.subject,
-              body: result.body,
-            })
-            .onConflictDoNothing({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId] })
-            .returning();
+        insertedRunId = await db.transaction(async (tx: any) => {
+          const query = tx.insert(dunningRuns).values(insertValues);
+          const [run] = isRetry
+            ? await query
+                .onConflictDoUpdate({
+                  target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId],
+                  set: { status: 'scheduled', scheduledFor: now, subject: result.subject, body: result.body, error: null, sentAt: null, externalMessageId: null },
+                })
+                .returning()
+            : await query
+                .onConflictDoNothing({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId] })
+                .returning();
           return run?.id ?? null;
         });
-      } catch (e: unknown) {
+      } catch (e: any) {
         errors += 1;
-        console.error('[dunning] schedule tx failed:', e instanceof Error ? e.message : e);
+        console.error('[dunning] schedule tx failed:', e?.message);
         continue;
       }
       if (!insertedRunId) continue; // another concurrent run won the race
@@ -225,7 +260,7 @@ export async function processDunning() {
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns
             // status='skipped' only when the API key is missing (a config bug).
-            if (sendResult.status === 'skipped') {
+            if ((sendResult as any).status === 'skipped') {
               await db.update(dunningRuns).set({ status: 'failed', error: 'resend api key missing' }).where(eq(dunningRuns.id, run.id));
               errors += 1;
             } else {
@@ -238,7 +273,7 @@ export async function processDunning() {
               // and a missed id here means that reply can never be matched.
               // Failure here never fails the send that already succeeded.
               try {
-                const msgId = sendResult.id ? await fetchResendMessageId(sendResult.id) : null;
+                const msgId = await fetchResendMessageId((sendResult as any).id);
                 if (msgId) await db.update(dunningRuns).set({ externalMessageId: msgId }).where(eq(dunningRuns.id, run.id));
               } catch (e) {
                 console.error('[dunning] fetchResendMessageId failed:', e instanceof Error ? e.message : e);
@@ -260,7 +295,7 @@ export async function processDunning() {
             // 'sent' in the dashboard while zero messages actually go out.
             // P0 audit fix 2026-07-31 — mirrors the email-branch guard three
             // lines above (lines 109–110).
-            if (sms.status === 'skipped') {
+            if ((sms as any).status === 'skipped') {
               await db.update(dunningRuns).set({ status: 'failed', error: 'twilio not configured' }).where(eq(dunningRuns.id, run.id));
               errors += 1;
               await recordEvent({
@@ -269,7 +304,7 @@ export async function processDunning() {
                 payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', error: 'twilio not configured' },
               });
             } else {
-              await db.update(dunningRuns).set({ status: 'sent', sentAt: now, externalMessageId: sms.sid }).where(eq(dunningRuns.id, run.id));
+              await db.update(dunningRuns).set({ status: 'sent', sentAt: now, externalMessageId: (sms as any).sid }).where(eq(dunningRuns.id, run.id));
               sent += 1;
               await recordEvent({
                 orgId: seq.orgId,
@@ -281,23 +316,33 @@ export async function processDunning() {
               orgDigest.set(seq.orgId, digest);
             }
           } else {
-            // No channel available for this customer — cancel, don't mark 'sent'
-            await db.update(dunningRuns).set({ status: 'cancelled', error: 'no email/phone on file' }).where(eq(dunningRuns.id, run.id));
+            // This step's configured channel has no matching contact info.
+            // The customer may still have the OTHER channel on file — there
+            // is no cross-channel fallback (a step configured for SMS never
+            // falls back to email even if only email is on file, or vice
+            // versa) — but the error previously said "no email/phone on
+            // file" unconditionally, which is simply false whenever the
+            // other channel *is* on file, and misleads anyone triaging
+            // cancelled runs in the dashboard into thinking the customer
+            // has no contact info at all.
+            const reason = lastStep.channel === 'email'
+              ? (customer.phone ? 'step is set to email, but only a phone number is on file' : 'no email on file')
+              : (customer.email ? 'step is set to SMS, but only an email address is on file' : 'no phone number on file');
+            await db.update(dunningRuns).set({ status: 'cancelled', error: reason }).where(eq(dunningRuns.id, run.id));
             await recordEvent({
               orgId: seq.orgId,
               type: 'dunning.run.cancelled',
-              payload: { runId: run.id, invoiceId: invoice.id, reason: 'no email/phone on file' },
+              payload: { runId: run.id, invoiceId: invoice.id, reason },
             });
           }
-        } catch (e: unknown) {
+        } catch (e: any) {
           // Real send failure (Resend 403, Twilio error_code, etc.)
-          const message = String(e instanceof Error ? e.message : e).substring(0, 500);
-          await db.update(dunningRuns).set({ status: 'failed', error: message }).where(eq(dunningRuns.id, run.id));
+          await db.update(dunningRuns).set({ status: 'failed', error: String(e?.message ?? e).substring(0, 500) }).where(eq(dunningRuns.id, run.id));
           errors += 1;
           await recordEvent({
             orgId: seq.orgId,
             type: 'dunning.run.failed',
-            payload: { runId: run.id, invoiceId: invoice.id, channel: lastStep.channel, error: message },
+            payload: { runId: run.id, invoiceId: invoice.id, channel: lastStep.channel, error: String(e?.message ?? e).substring(0, 500) },
           });
         }
         scheduled += 1;
@@ -306,7 +351,7 @@ export async function processDunning() {
           type: 'dunning.run.scheduled',
           payload: { runId: run.id, invoiceId: invoice.id, stepId: lastStep.id, days },
         });
-      } catch  {
+      } catch (e) {
         errors += 1;
       }
     }
@@ -319,7 +364,7 @@ export async function processDunning() {
   return { scheduled, sent, errors };
 }
 
-function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: Invoice; businessName: string }) {
+function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: any; businessName: string }) {
   return `
     <!doctype html>
     <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 560px; margin: 0 auto; padding: 24px;">

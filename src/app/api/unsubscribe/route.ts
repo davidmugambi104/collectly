@@ -81,10 +81,23 @@ export async function POST(req: NextRequest) {
   let token: string;
   let includeDnd = false;
   const contentType = req.headers.get('content-type') ?? '';
+  const url = new URL(req.url);
   if (contentType.includes('application/x-www-form-urlencoded')) {
+    // RFC 8058 one-click unsubscribe (the List-Unsubscribe-Post header
+    // this app sends, see dunningListUnsubscribeHeaders in infra.ts) has
+    // the mail client POST here with the token in the URL query string
+    // (?token=...) and a fixed body of exactly `List-Unsubscribe=One-Click`
+    // — not a `token` form field. This branch only ever read
+    // form.get('token'), which is null for that request shape, so every
+    // one-click unsubscribe (the automated path most major webmail
+    // clients now use, and the one anti-spam bulk-sender rules
+    // increasingly require) silently 400'd. The human "click link, then
+    // submit the confirm button" path still worked, since that rendered
+    // form does include a real `token` field — only the automated path
+    // was broken.
     const form = await req.formData();
-    token = String(form.get('token') ?? '');
-    includeDnd = form.get('includeDnd') === '1';
+    token = String(form.get('token') ?? url.searchParams.get('token') ?? '');
+    includeDnd = form.get('includeDnd') === '1' || url.searchParams.get('includeDnd') === '1';
   } else if (contentType.includes('application/json')) {
     const data = bodySchema.parse(await req.json());
     token = data.token;
@@ -92,7 +105,6 @@ export async function POST(req: NextRequest) {
     // also support ?token=... for simple one-click links (one-click is
     // technically required by some anti-spam laws; Gmail's UI shows a
     // "click to confirm" pattern)
-    const url = new URL(req.url);
     token = url.searchParams.get('token') ?? '';
     includeDnd = url.searchParams.get('includeDnd') === '1';
   }

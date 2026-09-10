@@ -4,6 +4,23 @@ import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { classifyInboundReply } from '@/lib/ai/inbox';
 
+// classifyInboundReply's Gemini call only validates suggestedPromiseDate as
+// z.string().nullable() -- no date-format check -- and the model
+// (gemini-flash-lite) has been observed to drift from the requested
+// YYYY-MM-DD format (e.g. "ASAP", "next Friday"). `new Date(x).toISOString()`
+// on an unparseable string throws RangeError, and that throw happened
+// *inside* the db.insert(inboxMessages) call below -- meaning a customer
+// reply with a bad date silently lost both the inbox message and the
+// timeline event, with only a caught error one layer up in
+// inbox-imap-poll.ts logging it. The IMAP UID cursor still advances past
+// the message regardless, so it was never retried either. Parse
+// defensively instead of trusting the model's string.
+function parseValidDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 /**
  * Handle an inbound reply from an AR customer (someone who owes an
  * invoice) replying to a dunning email. Resolves the invoice -> customer
@@ -55,7 +72,7 @@ export async function handleArCustomerReply(opts: {
     classificationConfidence: classification.confidence.toFixed(3),
     aiSummary: classification.summary,
     aiRecommendedAction: classification.recommendedAction,
-    aiSuggestedPromiseDate: classification.suggestedPromiseDate ? new Date(classification.suggestedPromiseDate) : null,
+    aiSuggestedPromiseDate: parseValidDate(classification.suggestedPromiseDate),
     status: 'new',
   }).returning();
 

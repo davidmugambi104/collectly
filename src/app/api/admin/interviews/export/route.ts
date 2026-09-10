@@ -36,6 +36,22 @@ export async function GET(req: NextRequest) {
   const header = ['id', 'created_at', 'name', 'email', 'company', 'country', 'team_size', 'tag', 'industry', 'dso', 'outstanding', 'tool', 'pain'];
   const lines = [header.join(',')];
 
+  // SECURITY: every field below except id/created_at/tag is either
+  // free-text submitted through the public, unauthenticated /interview
+  // form (name, company, industry, dso, outstanding, tool, pain — see
+  // src/app/api/interview/route.ts) or the equally public /api/ar-audit.
+  // Quoting and escaping `"` (already done below) stops CSV *parsing*
+  // issues but does nothing for formula/DDE injection: a value starting
+  // with =, +, -, or @ is still interpreted as a formula by Excel/Sheets
+  // once the cell is unquoted on open — e.g. a submitted company name of
+  // `=HYPERLINK("http://evil.example","Click")` executes when this admin
+  // opens the exported CSV. Prefixing with a straight quote is the
+  // standard mitigation: Excel/Sheets render a leading `'` as a marker
+  // that forces the cell to plain text instead of evaluating it.
+  function csvSafe(value: string): string {
+    return /^[=+\-@]/.test(value) ? `'${value}` : value;
+  }
+
   for (const r of rows) {
     const text = r.painPoint ?? '';
     const m = text.match(/\[INTERVIEW\] Industry: ([^,]+), DSO: ([^,]+), A\/R: ([^,]+), Tool: ([^\n]+)\n?([\s\S]*)/);
@@ -59,7 +75,7 @@ export async function GET(req: NextRequest) {
       tool,
       pain,
     ];
-    lines.push(fields.map((f) => `"${(f ?? '').toString().replace(/"/g, '""')}"`).join(','));
+    lines.push(fields.map((f) => `"${csvSafe((f ?? '').toString()).replace(/"/g, '""')}"`).join(','));
   }
 
   const csv = lines.join('\n');

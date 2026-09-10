@@ -6,6 +6,7 @@ import { eq, and } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
+import { recordEvent } from '@/lib/events';
 
 const schema = z.object({
   customerId: z.string(),
@@ -43,5 +44,8 @@ export async function POST(req: NextRequest) {
     issueDate: new Date(data.issueDate), dueDate: new Date(data.dueDate),
     description: data.description,
   }).returning();
+  // See the matching comment in /api/invoices/mark-paid — 'invoice.created'
+  // is a defined EventType nothing was actually recording.
+  await recordEvent({ orgId, type: 'invoice.created', payload: { invoiceId: row.id, number: row.number, amount: row.amount, customerId: data.customerId } });
   return NextResponse.json({ ok: true, id: row.id });
 }

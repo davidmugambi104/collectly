@@ -11,6 +11,7 @@ import { db } from '@/db';
 import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
+import { getRedis } from '@/lib/infra';
 
 const SQUARE_OAUTH = 'https://connect.squareup.com/oauth2/authorize';
 const SQUARE_TOKEN = 'https://connect.squareup.com/oauth2/token';
@@ -19,64 +20,31 @@ const SQUARE_SANDBOX_TOKEN = 'https://connect.squareupsandbox.com/oauth2/token';
 
 const SANDBOX = process.env.SQUARE_ENVIRONMENT === 'sandbox';
 
-// Minimal shapes for the fields this file actually reads/writes -- Square's
-// official SDK types are far broader than what we use here.
-interface SquareTokenResponse {
-  access_token: string;
-  refresh_token?: string;
-  expires_at: string;
-}
-interface SquareLocation {
-  id: string;
-  status?: string;
-}
-interface SquareCustomer {
-  id: string;
-  company_name?: string;
-  given_name?: string;
-  family_name?: string;
-  email_address?: string | null;
-  phone_number?: string | null;
-}
-interface SquareMoney {
-  amount?: number;
-  currency?: string;
-}
-interface SquarePaymentRequest {
-  computed_amount_money?: SquareMoney;
-  total_completed_amount_money?: SquareMoney;
-  due_date?: string;
-}
-interface SquareInvoiceRecipient {
-  customer_id?: string;
-  company_name?: string;
-  given_name?: string;
-  family_name?: string;
-  email_address?: string | null;
-  phone_number?: string | null;
-}
-interface SquareInvoice {
-  id: string;
-  status?: string;
-  invoice_number?: string;
-  created_at?: string;
-  primary_recipient?: SquareInvoiceRecipient;
-  payment_requests?: SquarePaymentRequest[];
-}
-
 function base64url(buf: Buffer) {
   return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export function squareAuthUrl(state: string) {
+// Dev-only fallback when Redis isn't configured — mirrors the same
+// tradeoff src/lib/oauth-state.ts documents for its own Redis-vs-fallback
+// split. Never sufficient in production: Vercel serverless functions are
+// stateless between invocations, so the connect request and the callback
+// request (separated by however long the user takes on Square's consent
+// screen) can and routinely do land on different instances with an empty
+// Map. That was the actual bug here — this was the *only* storage this
+// verifier ever had.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const devPkceStore = (globalThis as any).__squarePkce ??= new Map<string, { verifier: string; expires: number }>();
+const PKCE_TTL_SECONDS = 10 * 60;
+
+export async function squareAuthUrl(state: string): Promise<string> {
   const verifier = base64url(crypto.randomBytes(32));
   const challenge = base64url(crypto.createHash('sha256').update(verifier).digest());
-  // Stash verifier in a short-lived global keyed by state (orgId).
-  // For prod: persist in DB with TTL. For dev: in-memory is fine.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const g = globalThis as any;
-  g.__squarePkce ??= new Map<string, { verifier: string; expires: number }>();
-  g.__squarePkce.set(state, { verifier, expires: Date.now() + 10 * 60_000 });
+  const redis = getRedis();
+  if (redis) {
+    await redis.set(`square:pkce:${state}`, verifier, { ex: PKCE_TTL_SECONDS });
+  } else {
+    devPkceStore.set(state, { verifier, expires: Date.now() + PKCE_TTL_SECONDS * 1000 });
+  }
   const params = new URLSearchParams({
     client_id: process.env.SQUARE_CLIENT_ID ?? '',
     scope: 'MERCHANT_PROFILE_READ ORDERS_READ ITEMS_READ PAYMENTS_READ',
@@ -89,16 +57,18 @@ export function squareAuthUrl(state: string) {
   return `${SANDBOX ? SQUARE_SANDBOX_OAUTH : SQUARE_OAUTH}?${params.toString()}`;
 }
 
-export function squareGetPkceVerifier(state: string): string | null {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const g = globalThis as any;
-  const entry = g.__squarePkce?.get(state);
-  if (!entry) return null;
-  if (entry.expires < Date.now()) {
-    g.__squarePkce.delete(state);
-    return null;
+export async function squareGetPkceVerifier(state: string): Promise<string | null> {
+  const redis = getRedis();
+  if (redis) {
+    const verifier = await redis.get<string>(`square:pkce:${state}`);
+    if (!verifier) return null;
+    await redis.del(`square:pkce:${state}`); // single-use, same as consumeOAuthState
+    return verifier;
   }
-  g.__squarePkce.delete(state);
+  const entry = devPkceStore.get(state);
+  if (!entry) return null;
+  devPkceStore.delete(state);
+  if (entry.expires < Date.now()) return null;
   return entry.verifier;
 }
 
@@ -201,7 +171,7 @@ async function getFreshSquare(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`Square refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: SquareTokenResponse = await res.json();
+  const json: any = await res.json();
   const newExpiresAt = new Date(json.expires_at);
   await db.update(integrations).set({
     accessToken: json.access_token,
@@ -233,26 +203,30 @@ async function squareFetch(orgId: string, path: string, init?: RequestInit) {
 // -------------------------------------------------------------------
 
 /** List active location ids for this merchant — invoices/search requires them. */
-export async function squareListLocations(orgId: string): Promise<string[]> {
-  const res: { locations?: SquareLocation[] } = await squareFetch(orgId, '/locations');
-  return (res?.locations ?? []).filter((l) => l.status !== 'INACTIVE').map((l) => l.id);
+export async function squareListLocations(orgId: string) {
+  const res: any = await squareFetch(orgId, '/locations');
+  return ((res?.locations ?? []) as any[]).filter((l) => l.status !== 'INACTIVE').map((l) => l.id as string);
 }
 
 /** List customers (first page — mirrors the single-page convention used for QBO/Xero). */
-export async function squareListCustomers(orgId: string): Promise<SquareCustomer[]> {
-  const res: { customers?: SquareCustomer[] } = await squareFetch(orgId, '/customers');
-  return res?.customers ?? [];
+export async function squareListCustomers(orgId: string): Promise<{ customers: any[]; truncated: boolean }> {
+  const res: any = await squareFetch(orgId, '/customers');
+  // Square returns a `cursor` string when more pages exist — the
+  // provider's own explicit "there's more" signal, rather than guessing
+  // its default page size (which isn't fixed the way QBO's MAXRESULTS or
+  // Xero's 100-per-page are).
+  return { customers: (res?.customers ?? []) as any[], truncated: !!res?.cursor };
 }
 
 /** Search invoices across all of this merchant's locations. */
-export async function squareSearchInvoices(orgId: string, locationIds: string[]): Promise<SquareInvoice[]> {
-  if (locationIds.length === 0) return [];
-  const res: { invoices?: SquareInvoice[] } = await squareFetch(orgId, '/invoices/search', {
+export async function squareSearchInvoices(orgId: string, locationIds: string[]): Promise<{ invoices: any[]; truncated: boolean }> {
+  if (locationIds.length === 0) return { invoices: [], truncated: false };
+  const res: any = await squareFetch(orgId, '/invoices/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: { filter: { location_ids: locationIds } } }),
   });
-  return res?.invoices ?? [];
+  return { invoices: (res?.invoices ?? []) as any[], truncated: !!res?.cursor };
 }
 
 // Square amounts are integer minor units (cents); our schema stores decimal dollars.
@@ -312,6 +286,12 @@ interface SquareSyncResult {
   invoicesMarkedPaid: number;
   durationMs: number;
   errors: string[];
+  /** True if Square returned a pagination `cursor` on either list call —
+   * only the first page is ever fetched. Real cursor-following is a
+   * larger follow-up (needs a Square sandbox to verify); this at least
+   * reports the sync as known-incomplete instead of claiming a clean,
+   * complete one. */
+  truncated?: boolean;
 }
 
 export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult> {
@@ -320,13 +300,16 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let truncated = false;
 
   // 1. Customers
-  let squareCustomers: SquareCustomer[] = [];
+  let squareCustomers: any[] = [];
   try {
-    squareCustomers = await squareListCustomers(orgId);
-  } catch (e: unknown) {
-    errors.push(`customers: ${e instanceof Error ? e.message : String(e)}`);
+    const res = await squareListCustomers(orgId);
+    squareCustomers = res.customers;
+    if (res.truncated) truncated = true;
+  } catch (e: any) {
+    errors.push(`customers: ${e?.message ?? e}`);
   }
 
   for (const c of squareCustomers) {
@@ -346,18 +329,20 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
         await db.insert(customersTbl).values({ id: nanoid(), orgId, externalId, name, email, phone });
       }
       customersUpserted++;
-    } catch (e: unknown) {
-      errors.push(`customer ${c?.id}: ${e instanceof Error ? e.message : String(e)}`);
+    } catch (e: any) {
+      errors.push(`customer ${c?.id}: ${e?.message ?? e}`);
     }
   }
 
   // 2. Invoices (across all active locations)
-  let squareInvoices: SquareInvoice[] = [];
+  let squareInvoices: any[] = [];
   try {
     const locationIds = await squareListLocations(orgId);
-    squareInvoices = await squareSearchInvoices(orgId, locationIds);
-  } catch (e: unknown) {
-    errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
+    const res = await squareSearchInvoices(orgId, locationIds);
+    squareInvoices = res.invoices;
+    if (res.truncated) truncated = true;
+  } catch (e: any) {
+    errors.push(`invoices: ${e?.message ?? e}`);
   }
 
   for (const inv of squareInvoices) {
@@ -396,12 +381,11 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
       // An invoice can have multiple payment_requests (installment plans) --
       // sum them for the true total/paid rather than only reading the first,
       // which would silently under-report installment invoices.
-      const requests = inv.payment_requests ?? [];
+      const requests = (inv.payment_requests ?? []) as any[];
       const total = requests.reduce((sum, r) => sum + minorUnitsToDecimal(r.computed_amount_money?.amount), 0);
       const amountPaid = requests.reduce((sum, r) => sum + minorUnitsToDecimal(r.total_completed_amount_money?.amount), 0);
       const currency = requests[0]?.computed_amount_money?.currency ?? 'USD';
-      const dueDateStr = requests.find((r) => r.due_date)?.due_date;
-      const dueDate = dueDateStr ? new Date(dueDateStr) : new Date(inv.created_at ?? Date.now());
+      const dueDate = requests.find((r) => r.due_date)?.due_date ? new Date(requests.find((r) => r.due_date).due_date) : new Date(inv.created_at ?? Date.now());
       const issueDate = inv.created_at ? new Date(inv.created_at) : dueDate;
       const number = inv.invoice_number || externalId;
 
@@ -450,13 +434,14 @@ export async function syncSquareForOrg(orgId: string): Promise<SquareSyncResult>
         });
       }
       invoicesUpserted++;
-    } catch (e: unknown) {
-      errors.push(`invoice ${inv?.id}: ${e instanceof Error ? e.message : String(e)}`);
+    } catch (e: any) {
+      errors.push(`invoice ${inv?.id}: ${e?.message ?? e}`);
     }
   }
 
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'square')));
 
-  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors };
+  if (truncated) errors.push('sync hit Square’s page limit — some customers/invoices may not have been imported (cursor-following not yet implemented)');
+  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }

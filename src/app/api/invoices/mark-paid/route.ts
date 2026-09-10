@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
+import { recordEvent } from '@/lib/events';
 
 const schema = z.object({ invoiceId: z.string() });
 
@@ -27,5 +28,11 @@ export async function POST(req: NextRequest) {
     });
     await tx.update(invoices).set({ status: 'paid', amountPaid: String(inv.amount), paidAt: now, updatedAt: now }).where(eq(invoices.id, invoiceId));
   });
+  // /dashboard/events markets itself as an audit log of every workspace
+  // action, but this route (and invoice creation, see /api/invoices)
+  // never called recordEvent — the EventType union already defines
+  // 'invoice.paid' for exactly this, other flows (dunning, billing
+  // webhook) already use it.
+  await recordEvent({ orgId, type: 'invoice.paid', payload: { invoiceId, amount: balance, method: 'manual' } });
   return NextResponse.json({ ok: true });
 }

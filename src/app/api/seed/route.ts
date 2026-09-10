@@ -8,6 +8,15 @@ import { customers, invoices, payments, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 
+// SECURITY: this route had no dev-only gate, no idempotency check, and
+// writes rows with attacker-controlled status/amountPaid (line ~40) into
+// whatever real org the caller belongs to. Nothing in the app calls it
+// (only /api/seed-sample, a genuinely idempotent "load sample data"
+// endpoint wired to a real button, is used) — it was a dead local-testing
+// helper left reachable by any real signed-in customer in production, who
+// could corrupt their own live AR ledger with fabricated paid invoices
+// indistinguishable from real ones. Refuse outside the dev auth shim.
+
 // Arbitrary caller-supplied JSON body (dev/onboarding seed endpoint, no
 // zod schema) -- minimal shape for the fields actually read below.
 interface SeedInvoiceInput {
@@ -29,6 +38,9 @@ interface SeedCustomerInput {
 }
 
 export async function POST(req: NextRequest) {
+  if (process.env.USE_DEV_AUTH !== '1' || process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'not available' }, { status: 404 });
+  }
   const { userId, orgId } = await auth();
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!orgId) return NextResponse.json({ error: 'no org' }, { status: 400 });

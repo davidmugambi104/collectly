@@ -42,9 +42,15 @@ const FIXED: Array<{
   { path: '/for/uk-agencies', priority: 0.9, changefreq: 'monthly' },
   // High-intent tools
   { path: '/ar-audit', priority: 0.8, changefreq: 'monthly' },
-  { path: '/ar-roi', priority: 0.8, changefreq: 'monthly' },
   { path: '/tour', priority: 0.8, changefreq: 'monthly' },
-  // Free tools — capture 'free template' / 'free calculator' long-tail
+  // Free tools — capture 'free template' / 'free calculator' long-tail.
+  // /ar-roi was listed here instead of /tools/ar-roi — the real page,
+  // linked from the footer — while /ar-roi itself is only a permanent
+  // redirect alias to it (src/app/ar-roi/page.tsx). /tools/ar-cost-
+  // calculator had the same gap: a real, working, footer-linked
+  // calculator that was never in the sitemap at all.
+  { path: '/tools/ar-roi', priority: 0.8, changefreq: 'monthly' },
+  { path: '/tools/ar-cost-calculator', priority: 0.8, changefreq: 'monthly' },
   { path: '/tools/dispute-email-template', priority: 0.7, changefreq: 'monthly' },
   { path: '/tools/dso-calculator', priority: 0.7, changefreq: 'monthly' },
   // Content hubs

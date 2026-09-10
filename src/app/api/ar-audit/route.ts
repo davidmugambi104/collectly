@@ -3,7 +3,7 @@ import { rateLimit, getIp } from '@/lib/rate-limit';
 import { sendEmail } from '@/lib/infra';
 
 export async function POST(req: NextRequest) {
-  const rl = await rateLimit(getIp(req), { max: 5 });
+  const rl = await rateLimit(getIp(req), { max: 5, key: 'ar-audit' });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: 'Too many requests. Try again in a minute.' },

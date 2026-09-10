@@ -261,6 +261,42 @@ export const events = pgTable('events', {
   orgTypeIdx: index('events_org_type_idx').on(t.orgId, t.type),
 }));
 
+// Captures crashes caught by src/app/error.tsx and src/app/global-error.tsx
+// (see reportClientError in src/lib/report-client-error.ts). Vercel's
+// runtime log tail is short-lived on Hobby — a real error can age out of
+// `vercel logs` in under an hour, taking its digest and stack trace with
+// it. This table is the durable copy. orgId is nullable because a crash
+// can happen before auth resolves (root layout, marketing pages).
+export const clientErrors = pgTable('client_errors', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').references(() => organizations.id, { onDelete: 'set null' }),
+  userId: text('user_id'),
+  digest: text('digest'),
+  message: text('message').notNull(),
+  stack: text('stack'),
+  path: text('path'),
+  userAgent: text('user_agent'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  createdAtIdx: index('client_errors_created_at_idx').on(t.createdAt),
+}));
+
+// Durable record that an org was deleted — deliberately NOT a foreign key
+// to organizations.id (every other child table's FK is ON DELETE CASCADE,
+// which was the bug: the account.deleted `events` row written specifically
+// to leave "at minimum the deletion intent visible in logs" was itself
+// cascade-deleted one statement later by the same operation it was meant
+// to record, leaving zero durable evidence an org was ever deleted, by
+// whom, or why — only an ephemeral console.warn. See cascadeDeleteOrgData
+// in src/lib/account-deletion.ts.
+export const deletedOrgsLog = pgTable('deleted_orgs_log', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull(),
+  orgName: text('org_name').notNull(),
+  reason: text('reason'),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 // Cursor for the IMAP inbox poller (src/lib/inbox-imap-poll.ts). Not
 // org-scoped — one shared Zoho mailbox is polled for the whole
 // deployment, so this just tracks "highest UID processed" per mailbox to

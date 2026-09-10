@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-// Use the shared helper, not Clerk's `auth()` directly: the helper honours
-// the USE_DEV_AUTH dev shim (and refuses it in production), so this route
-// behaves the same as every other authenticated route in local dev.
-import { getAuth as auth } from '@/lib/auth-helper';
+import { getAuth } from '@/lib/auth-helper';
 import { db } from '@/db';
 import { events } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
@@ -14,12 +11,24 @@ const body = z.object({ type: z.string(), payload: z.record(z.any()).optional() 
 
 export async function POST(req: NextRequest) {
   await ensureBootstrapped();
-  const { userId, orgId } = await auth();
+  // Was importing `auth` straight from @clerk/nextjs/server instead of
+  // this app's getAuth() wrapper. getAuth() calls ensureOrgProvisioned()
+  // after every session specifically because a fresh Clerk org has no row
+  // in our own `organizations` table until something creates one — every
+  // other route uses getAuth() for exactly that reason. This route's own
+  // insert below has orgId as a NOT NULL FK to organizations.id, so a
+  // brand-new org calling this before any other org-scoped write would
+  // hit the same foreign-key-violation crash that fix exists to prevent.
+  const { userId, orgId } = await getAuth();
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!orgId) return NextResponse.json({ error: 'no org' }, { status: 400 });
-  const data = body.parse(await req.json());
-  const [row] = await db.insert(events).values({ id: nanoid(), orgId, type: data.type, payload: data.payload, actorId: userId }).returning();
-  return NextResponse.json({ ok: true, id: row.id });
+  try {
+    const data = body.parse(await req.json());
+    const [row] = await db.insert(events).values({ id: nanoid(), orgId, type: data.type, payload: data.payload, actorId: userId }).returning();
+    return NextResponse.json({ ok: true, id: row.id });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : 'Bad request' }, { status: 400 });
+  }
 }
 
 /**
@@ -28,7 +37,7 @@ export async function POST(req: NextRequest) {
  */
 export async function GET(req: NextRequest) {
   await ensureBootstrapped();
-  const { userId, orgId } = await auth();
+  const { userId, orgId } = await getAuth();
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   if (!orgId) return NextResponse.json({ error: 'no org' }, { status: 400 });
   const url = new URL(req.url);

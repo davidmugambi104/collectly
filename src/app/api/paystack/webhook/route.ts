@@ -2,28 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { db } from '@/db';
 import { invoices, payments, customers } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
-import { applyPayment } from '@/lib/billing-math';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
-
-// Paystack has no official TS types package -- minimal shape for the
-// fields this handler actually reads across the event types it handles.
-interface PaystackEvent {
-  event?: string;
-  data?: {
-    id?: number | string;
-    amount?: number;
-    currency?: string;
-    channel?: string;
-    reference?: string;
-    status?: string;
-    subscription_code?: string;
-    metadata?: { invoiceId?: string };
-    customer?: { email?: string };
-  };
-}
 
 function verifySignature(body: string, signature: string | null): boolean {
   if (!PAYSTACK_SECRET || !signature) return false;
@@ -41,13 +23,8 @@ function verifySignature(body: string, signature: string | null): boolean {
  * moved from `sent`/`overdue` to `paid` automatically. P1.5 audit fix:
  * when a `charge.success` event carries `metadata.invoiceId`, we look up
  * the invoice, insert a `payments` row keyed by Paystack's `data.id`, and
- * move the balance. Idempotent — the unique partial index
+ * mark the invoice paid. Idempotent — the unique partial index
  * `payments_paystack_charge_uniq` rejects duplicate charge ids.
- *
- * The charge is applied to a running balance via `applyPayment`, so it only
- * reaches 'paid' when it actually clears what's outstanding; anything less
- * lands as 'partial'. Charges in a different currency to the invoice are
- * refused rather than guessed at.
  */
 export async function POST(req: NextRequest) {
   const signature = req.headers.get('x-paystack-signature');
@@ -57,7 +34,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid signature' }, { status: 401 });
   }
 
-  let event: PaystackEvent;
+  let event: any;
   try {
     event = JSON.parse(body);
   } catch {
@@ -84,6 +61,14 @@ export async function POST(req: NextRequest) {
         console.log('[paystack] charge.success missing data.id; skipping DB write.');
         return NextResponse.json({ received: true, action: 'logged' });
       }
+      if (amountMajor <= 0) {
+        // Was falling back to `row.invoice.amount` below when this was 0
+        // (amountKobo missing/zero) — i.e. a charge event with no real
+        // amount on it got treated as "the full invoice, paid." Refuse
+        // instead of guessing.
+        console.error('[paystack] charge.success with amount <= 0; refusing to apply. ref=', data?.reference);
+        return NextResponse.json({ received: true, action: 'logged' });
+      }
 
       // Look up invoice + customer in one go
       const [row] = await db
@@ -98,32 +83,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true, action: 'logged' });
       }
 
-      // SECURITY: apply what was actually charged, not the invoice total.
-      // This used to set `amountPaid` to the full invoice amount and flip the
-      // status to 'paid' for any successful charge, whatever its size — so a
-      // 1-unit payment settled the whole invoice. Amount and currency now both
-      // have to hold up before anything is marked paid.
-      if (!(amountMajor > 0)) {
-        console.log('[paystack] charge.success with a non-positive amount; skipping DB write. ref=', data?.reference);
-        return NextResponse.json({ received: true, action: 'logged' });
-      }
-
-      const invoiceCurrency = String(row.invoice.currency ?? '').toUpperCase();
-      if (invoiceCurrency && currency !== invoiceCurrency) {
-        // Applying a KES charge against a USD invoice would silently corrupt
-        // the balance. Record nothing and let it be reconciled by hand.
-        console.error(
-          '[paystack] currency mismatch — charge is', currency, 'but invoice', row.invoice.id, 'is', invoiceCurrency,
-          '. Skipping DB write. ref=', data?.reference,
-        );
-        return NextResponse.json({ received: true, action: 'currency_mismatch' }, { status: 202 });
-      }
-
-      // Insert payment first: the unique partial index on external_id is what
-      // makes this idempotent. If it rejects, this is a duplicate delivery and
-      // the balance was already moved — returning here is what stops a replay
-      // from being counted twice (the running-balance math below is additive,
-      // unlike the absolute write it replaced).
+      // Insert payment (idempotent via unique partial index on external_id)
+      let paymentInserted = false;
       try {
         await db.insert(payments).values({
           id: nanoid(),
@@ -137,43 +98,47 @@ export async function POST(req: NextRequest) {
           externalId: chargeId,
           paidAt: new Date(),
         });
-      } catch (e: unknown) {
-        const message = e instanceof Error ? e.message : String(e);
-        if (message.includes('payments_paystack_charge_uniq')) {
-          console.log('[paystack] duplicate charge delivery, already applied. charge=', chargeId);
-          return NextResponse.json({ received: true, action: 'duplicate' });
+        paymentInserted = true;
+      } catch (e: any) {
+        // Unique violation => duplicate delivery; ignore, still flip invoice if not already paid
+        if (!String(e?.message ?? '').includes('payments_paystack_charge_uniq')) {
+          throw e;
         }
-        throw e;
       }
 
-      // Running balance — same helper the Stripe path uses, so a part-payment
-      // lands as 'partial' and only a charge that clears the balance is 'paid'.
-      const priorPaid = Number(row.invoice.amountPaid ?? 0);
-      const totalDue = Number(row.invoice.amount);
-      const { newAmountPaid, status: newStatus } = applyPayment(priorPaid, amountMajor, totalDue);
-      const isPaidInFull = newStatus === 'paid';
-      const now = new Date();
+      // Credit the invoice by what was actually charged, not the full
+      // invoice amount — the previous version force-set amountPaid to
+      // the full invoice total and status to 'paid' for ANY successful
+      // charge, regardless of amount. Combined with the old
+      // /api/paystack/initialize accepting a client-supplied amount, that
+      // meant a $1 charge against a $500 invoice fully discharged it.
+      // Only applied when paymentInserted is true — a redelivered webhook
+      // for a charge already recorded here must not credit the amount a
+      // second time (the DB unique-index dedup above only stops the
+      // duplicate `payments` row, not a naive re-add to amountPaid).
+      let flippedInvoice = false;
+      if (paymentInserted) {
+        const totalDue = Number(row.invoice.amount);
+        const newAmountPaid = Math.min(totalDue, Number(row.invoice.amountPaid) + amountMajor);
+        const paidInFull = newAmountPaid >= totalDue;
+        const updated = await db
+          .update(invoices)
+          .set({
+            status: paidInFull ? 'paid' : 'partial',
+            amountPaid: String(newAmountPaid),
+            paidAt: paidInFull ? new Date() : row.invoice.paidAt,
+            updatedAt: new Date(),
+          })
+          .where(and(eq(invoices.id, row.invoice.id), sql`${invoices.status} <> 'paid'`))
+          .returning({ id: invoices.id });
+        flippedInvoice = updated.length > 0;
+      }
 
-      await db
-        .update(invoices)
-        .set({
-          status: newStatus,
-          amountPaid: String(newAmountPaid),
-          paidAt: isPaidInFull ? now : null,
-          updatedAt: now,
-        })
-        .where(eq(invoices.id, row.invoice.id));
-
-      console.log(
-        '[paystack] charge.success applied. invoice=', row.invoice.id,
-        'charged=', amountMajor, currency, 'totalDue=', totalDue,
-        'newAmountPaid=', newAmountPaid, 'status=', newStatus, 'email=', email,
-      );
-      return NextResponse.json({ received: true, action: 'applied', status: newStatus });
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : String(e);
-      console.error('[paystack] charge.success failed:', message);
-      return NextResponse.json({ error: message }, { status: 500 });
+      console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', flippedInvoice, 'email=', email);
+      return NextResponse.json({ received: true, action: 'applied' });
+    } catch (e: any) {
+      console.error('[paystack] charge.success failed:', e?.message);
+      return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
     }
   }
 

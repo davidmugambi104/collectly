@@ -12,57 +12,12 @@
  *    the first one (most Xero apps are single-tenant per connection).
  */
 import { db } from '@/db';
-import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
+import { integrations, customers as customersTbl, invoices as invoicesTbl, payments as paymentsTbl } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 const XERO_API = 'https://api.xero.com/api.xro/2.0';
-
-// Minimal shapes for the fields this file actually reads/writes -- Xero
-// has no official TS types package, and the full API surface is far
-// larger than what we use.
-interface XeroTokenResponse {
-  access_token: string;
-  refresh_token?: string;
-  expires_in: number;
-}
-interface XeroConnection {
-  tenantId: string;
-  updatedDateUtc?: string;
-  createdDateUtc?: string;
-}
-interface XeroPhone {
-  PhoneType?: string;
-  PhoneNumber?: string;
-}
-interface XeroContact {
-  ContactID: string;
-  Name?: string;
-  FirstName?: string;
-  LastName?: string;
-  EmailAddress?: string | null;
-  Phones?: XeroPhone[];
-}
-interface XeroInvoice {
-  InvoiceID: string;
-  InvoiceNumber?: string;
-  Contact?: { ContactID: string; Name?: string };
-  Total?: number;
-  AmountDue?: number;
-  CurrencyCode?: string;
-  Date?: unknown;
-  DueDate?: unknown;
-}
-interface XeroPaymentBody {
-  Invoice: { InvoiceID: string };
-  Account: { Code: string };
-  Amount: number;
-  CurrencyRate: number;
-  Reference: string;
-  Date: string;
-  Currency?: { Code: string };
-}
 
 /**
  * Xero's Accounting API returns date fields (Invoice.Date, Invoice.DueDate,
@@ -114,8 +69,8 @@ async function getFreshXero(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`Xero refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: XeroTokenResponse = await res.json();
-  const newExpiresAt = new Date(now + json.expires_in * 1000);
+  const json: any = await res.json();
+  const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
   await db.update(integrations).set({
     accessToken: json.access_token,
     refreshToken: json.refresh_token ?? integ.refreshToken,
@@ -135,7 +90,7 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
     headers: { Authorization: `Bearer ${accessToken}`, Accept: 'application/json' },
   });
   if (!res.ok) throw new Error(`Xero connections failed: ${res.status}`);
-  const json: XeroConnection[] = await res.json();
+  const json: any = await res.json();
   // /connections returns EVERY org this Xero user has ever authorized for
   // this app, not just the one from the auth flow just completed --
   // disconnecting in our app only deletes our local row, it never revokes
@@ -145,7 +100,7 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
   // reconnecting to Xero's Demo Company kept syncing an old, empty org
   // instead). updatedDateUtc reflects the most recent (re)authorization per
   // Xero's own docs, so sort on that and take the most recent.
-  const sorted = [...(json ?? [])].sort((a, b) =>
+  const sorted = [...(json ?? [])].sort((a: any, b: any) =>
     new Date(b.updatedDateUtc ?? b.createdDateUtc ?? 0).getTime() - new Date(a.updatedDateUtc ?? a.createdDateUtc ?? 0).getTime(),
   );
   const mostRecent = sorted[0];
@@ -270,20 +225,28 @@ export async function saveXeroConnection(orgId: string, tokens: {
  * We fetch both AUTHORISED (open) and PAID (zero balance) so we can
  * detect payments the customer made outside Collectly.
  */
-export async function xeroListOpenInvoices(orgId: string): Promise<XeroInvoice[]> {
+const XERO_PAGE_SIZE = 100; // Xero's fixed page size for list endpoints
+
+export async function xeroListOpenInvoices(orgId: string): Promise<{ invoices: any[]; truncated: boolean }> {
   // Fetch in two passes — Xero's filter syntax for OR is awkward
-  const auth: { Invoices?: XeroInvoice[] } = await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`);
-  const paid: { Invoices?: XeroInvoice[] } = await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`);
-  return [
-    ...(auth?.Invoices ?? []),
-    ...(paid?.Invoices ?? []),
-  ];
+  const auth: any = await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`);
+  const paid: any = await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`);
+  const authInvoices = (auth?.Invoices ?? []) as any[];
+  const paidInvoices = (paid?.Invoices ?? []) as any[];
+  return {
+    invoices: [...authInvoices, ...paidInvoices],
+    // Checked per-call, not on the combined length -- 100 AUTHORISED + 40
+    // PAID is truncated (AUTHORISED hit its cap) even though the combined
+    // 140 isn't itself a round page-size multiple.
+    truncated: authInvoices.length >= XERO_PAGE_SIZE || paidInvoices.length >= XERO_PAGE_SIZE,
+  };
 }
 
 /** List all contacts (customers) from Xero. */
-export async function xeroListContacts(orgId: string): Promise<XeroContact[]> {
-  const res: { Contacts?: XeroContact[] } = await xeroFetch(orgId, `/Contacts?page=1`);
-  return res?.Contacts ?? [];
+export async function xeroListContacts(orgId: string): Promise<{ contacts: any[]; truncated: boolean }> {
+  const res: any = await xeroFetch(orgId, `/Contacts?page=1`);
+  const contacts = (res?.Contacts ?? []) as any[];
+  return { contacts, truncated: contacts.length >= XERO_PAGE_SIZE };
 }
 
 // -------------------------------------------------------------------
@@ -303,7 +266,7 @@ export async function xeroRecordPayment(orgId: string, opts: {
   currency: string;
   reference: string;
 }) {
-  const body: XeroPaymentBody = {
+  const body: any = {
     Invoice: { InvoiceID: opts.xeroInvoiceId },
     Account: opts.accountCode ? { Code: opts.accountCode } : { Code: '200' }, // 200 = "Accounts Receivable" default
     Amount: opts.amount,
@@ -341,6 +304,12 @@ interface XeroSyncResult {
   invoicesMarkedPaid: number;
   durationMs: number;
   errors: string[];
+  /** True if a list call hit Xero's fixed 100-per-page size — xeroListOpenInvoices/
+   * xeroListContacts hardcode page=1, so anything past the first page is
+   * silently missing. Real multi-page fetching is a larger follow-up
+   * (needs a Xero sandbox to verify); this at least reports the sync as
+   * known-incomplete instead of claiming a clean, complete one. */
+  truncated?: boolean;
 }
 
 export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
@@ -349,122 +318,74 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let truncated = false;
 
-  // NOTE: contacts and invoices are fetched sequentially, not in parallel --
-  // both go through xeroFetch, which refreshes the access token on demand
-  // with no locking. Two concurrent calls landing while the token is near
-  // expiry would both see "needs refresh" and race the same (single-use,
-  // rotating) refresh token, which can fail one side and mark the
-  // integration errored. Not worth it for one HTTP call's worth of latency.
-  let xeroContacts: XeroContact[] = [];
+  // 1. Contacts → customers
+  let xeroContacts: any[] = [];
   try {
-    xeroContacts = await xeroListContacts(orgId);
-  } catch (e: unknown) {
-    errors.push(`contacts: ${e instanceof Error ? e.message : String(e)}`);
-  }
-  let xeroInvoices: XeroInvoice[] = [];
-  try {
-    xeroInvoices = await xeroListOpenInvoices(orgId);
-  } catch (e: unknown) {
-    errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
+    const res = await xeroListContacts(orgId);
+    xeroContacts = res.contacts;
+    if (res.truncated) truncated = true;
+  } catch (e: any) {
+    errors.push(`contacts: ${e?.message ?? e}`);
   }
 
-  // 1. Contacts → customers. One query for every existing customer in this
-  // org instead of one SELECT per contact (was the dominant cost on a
-  // first sync: N contacts * 2 round trips each, sequential, against a DB
-  // that isn't co-located with the function -- routinely blew past the
-  // 60s function timeout on a real org and died as a bare 502 with no
-  // application error. See maxDuration comment in the sync route.)
-  const existingCustomers = await db
-    .select({ id: customersTbl.id, externalId: customersTbl.externalId })
-    .from(customersTbl)
-    .where(eq(customersTbl.orgId, orgId));
-  const customerIdByExternalId = new Map<string, string>();
-  for (const c of existingCustomers) {
-    if (c.externalId) customerIdByExternalId.set(c.externalId, c.id);
-  }
-
-  const customersToInsert: (typeof customersTbl.$inferInsert)[] = [];
   for (const c of xeroContacts) {
     try {
       const externalId = String(c.ContactID);
       const name = c.Name ?? (`${c.FirstName ?? ''} ${c.LastName ?? ''}`.trim() || 'Unknown');
       const email = c.EmailAddress ?? null;
-      const phone = (c.Phones ?? []).find((p) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
-      const existingId = customerIdByExternalId.get(externalId);
-      if (existingId) {
-        // Steady-state re-syncs only touch a handful of changed rows --
-        // not worth batching without a unique constraint to ON CONFLICT
-        // against (would need a schema migration; see PR description).
-        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existingId));
-        customersUpserted++;
+      const phone = (c.Phones ?? []).find((p: any) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
+      const existing = await db
+        .select({ id: customersTbl.id })
+        .from(customersTbl)
+        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, externalId)))
+        .limit(1);
+      if (existing[0]) {
+        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existing[0].id));
       } else {
-        const id = nanoid();
-        customersToInsert.push({ id, orgId, externalId, name, email, phone });
-        customerIdByExternalId.set(externalId, id);
+        await db.insert(customersTbl).values({ id: nanoid(), orgId, externalId, name, email, phone });
       }
-    } catch (e: unknown) {
-      errors.push(`contact ${c?.ContactID}: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }
-  if (customersToInsert.length) {
-    try {
-      await db.insert(customersTbl).values(customersToInsert);
-      customersUpserted += customersToInsert.length;
-    } catch (e: unknown) {
-      // One multi-row INSERT is one statement -- a single bad row fails
-      // the whole batch. Fall back to per-row so the rest still land.
-      errors.push(`customers bulk insert: ${e instanceof Error ? e.message : String(e)}`);
-      for (const row of customersToInsert) {
-        try {
-          await db.insert(customersTbl).values(row);
-          customersUpserted++;
-        } catch (e2: unknown) {
-          errors.push(`customer ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
-        }
-      }
+      customersUpserted++;
+    } catch (e: any) {
+      errors.push(`contact ${c?.ContactID}: ${e?.message ?? e}`);
     }
   }
 
-  // 2. Invoices. Same treatment: one SELECT for all existing invoices in
-  // this org, batch the inserts, keep updates per-row.
-  const existingInvoices = await db
-    .select({ id: invoicesTbl.id, externalId: invoicesTbl.externalId, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
-    .from(invoicesTbl)
-    .where(eq(invoicesTbl.orgId, orgId));
-  const existingInvoiceByExternalId = new Map<string, (typeof existingInvoices)[number]>();
-  for (const i of existingInvoices) {
-    if (i.externalId) existingInvoiceByExternalId.set(i.externalId, i);
+  // 2. Invoices
+  let xeroInvoices: any[] = [];
+  try {
+    const res = await xeroListOpenInvoices(orgId);
+    xeroInvoices = res.invoices;
+    if (res.truncated) truncated = true;
+  } catch (e: any) {
+    errors.push(`invoices: ${e?.message ?? e}`);
   }
 
-  const invoicesToInsert: (typeof invoicesTbl.$inferInsert)[] = [];
   for (const inv of xeroInvoices) {
     try {
       const externalId = String(inv.InvoiceID);
       const contactExternalId = String(inv.Contact?.ContactID ?? '');
       if (!contactExternalId) continue;
 
-      let customerId = customerIdByExternalId.get(contactExternalId);
-      if (!customerId) {
-        // Invoice references a contact not in the contacts page we just
-        // fetched (e.g. archived contact). Create a stub so the invoice
-        // has a parent; safe to insert immediately, this id is only
-        // referenced in-memory below, not re-read from the DB.
-        const stubId = nanoid();
-        try {
-          await db.insert(customersTbl).values({
-            id: stubId,
-            orgId,
-            externalId: contactExternalId,
-            name: inv.Contact?.Name ?? `Xero Contact ${contactExternalId}`,
-          });
-          customerId = stubId;
-          customerIdByExternalId.set(contactExternalId, stubId);
-          customersUpserted++;
-        } catch (e: unknown) {
-          errors.push(`stub customer ${contactExternalId}: ${e instanceof Error ? e.message : String(e)}`);
-          continue;
-        }
+      const [localCustomer] = await db
+        .select({ id: customersTbl.id })
+        .from(customersTbl)
+        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, contactExternalId)))
+        .limit(1);
+
+      let customerId: string;
+      if (localCustomer) {
+        customerId = localCustomer.id;
+      } else {
+        const [stub] = await db.insert(customersTbl).values({
+          id: nanoid(),
+          orgId,
+          externalId: contactExternalId,
+          name: inv.Contact?.Name ?? `Xero Contact ${contactExternalId}`,
+        }).returning();
+        customerId = stub.id;
+        customersUpserted++;
       }
 
       // `||` not `??` -- Xero sometimes returns InvoiceNumber as '' (not
@@ -486,12 +407,17 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
             ? 'overdue'
             : 'sent';
 
-      const existing = existingInvoiceByExternalId.get(externalId);
-      if (existing) {
-        const wasUnpaid = existing.status !== 'paid';
+      const existing = await db
+        .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
+        .from(invoicesTbl)
+        .where(and(eq(invoicesTbl.orgId, orgId), eq(invoicesTbl.externalId, externalId)))
+        .limit(1);
+
+      if (existing[0]) {
+        const wasUnpaid = existing[0].status !== 'paid';
         // See quickbooks.ts — paidAt must not be re-stamped on every sync or
         // DSO inflates by a day per day. Preserve the original payment date.
-        const preservedPaidAt = status === 'paid' ? (existing.paidAt ?? new Date()) : null;
+        const preservedPaidAt = status === 'paid' ? (existing[0].paidAt ?? new Date()) : null;
         await db.update(invoicesTbl).set({
           number,
           amount: String(total),
@@ -502,11 +428,10 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
           status,
           paidAt: preservedPaidAt,
           updatedAt: new Date(),
-        }).where(eq(invoicesTbl.id, existing.id));
+        }).where(eq(invoicesTbl.id, existing[0].id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;
-        invoicesUpserted++;
       } else {
-        invoicesToInsert.push({
+        await db.insert(invoicesTbl).values({
           id: nanoid(),
           orgId,
           customerId,
@@ -521,29 +446,15 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
           paidAt: status === 'paid' ? new Date() : null,
         });
       }
-    } catch (e: unknown) {
-      errors.push(`invoice ${inv?.InvoiceID}: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }
-  if (invoicesToInsert.length) {
-    try {
-      await db.insert(invoicesTbl).values(invoicesToInsert);
-      invoicesUpserted += invoicesToInsert.length;
-    } catch (e: unknown) {
-      errors.push(`invoices bulk insert: ${e instanceof Error ? e.message : String(e)}`);
-      for (const row of invoicesToInsert) {
-        try {
-          await db.insert(invoicesTbl).values(row);
-          invoicesUpserted++;
-        } catch (e2: unknown) {
-          errors.push(`invoice ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
-        }
-      }
+      invoicesUpserted++;
+    } catch (e: any) {
+      errors.push(`invoice ${inv?.InvoiceID}: ${e?.message ?? e}`);
     }
   }
 
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'xero')));
 
-  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors };
+  if (truncated) errors.push('sync hit Xero’s 100-per-page limit — some contacts/invoices may not have been imported (pagination not yet implemented)');
+  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }

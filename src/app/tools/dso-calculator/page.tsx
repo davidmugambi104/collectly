@@ -3,6 +3,7 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
 import { CheckCircle2, ArrowRight, Clock, Calculator, TrendingDown, FileText } from 'lucide-react';
+import { DsoCalculator } from './client';
 
 // Free tool — DSO calculator + benchmark explainer. SEO target:
 // "DSO calculator", "calculate days sales outstanding", "DSO formula",
@@ -153,7 +154,8 @@ export default function DsoCalculatorPage() {
           <p className="mt-3 text-sm text-ink-700">
             <span className="font-mono bg-ink-50 px-2 py-1 rounded">DSO = (Accounts Receivable ÷ Total Credit Sales) × Days</span>
           </p>
-          <div className="mt-6 grid md:grid-cols-3 gap-4">
+          <DsoCalculator benchmarks={BENCHMARKS.map((b) => ({ region: b.region, dso: b.dso }))} />
+          <div className="mt-10 grid md:grid-cols-3 gap-4">
             {FORMULA_BREAKDOWN.map((f) => (
               <div key={f.symbol} className="border border-ink-200 rounded-lg p-4">
                 <p className="font-mono font-semibold text-brand-700">{f.symbol}</p>

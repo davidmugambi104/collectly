@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { squareAuthUrl } from '@/lib/integrations/square';
 import { getAuth } from '@/lib/auth-helper';
 import { mintOAuthState } from '@/lib/oauth-state';
@@ -15,7 +15,7 @@ import { mintOAuthState } from '@/lib/oauth-state';
  * derive the org from the caller's own session and mint a server-side
  * binding for the state, so the state can never be forged.
  */
-export async function GET() {
+export async function GET(_req: NextRequest) {
   const session = await getAuth();
   const orgId = session?.orgId;
   const userId = session?.userId;
@@ -32,8 +32,8 @@ export async function GET() {
 
   try {
     const state = await mintOAuthState(orgId, userId, 'square');
-    return NextResponse.redirect(squareAuthUrl(state));
-  } catch (e: unknown) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
+    return NextResponse.redirect(await squareAuthUrl(state));
+  } catch (e: any) {
+    return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
   }
 }

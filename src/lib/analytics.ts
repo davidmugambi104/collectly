@@ -97,7 +97,12 @@ export async function getCashFlowSnapshot(orgId: string): Promise<CashFlowSnapsh
   const [{ overdue }] = await db
     .select({ overdue: sum(sql<string>`${invoices.amount} - ${invoices.amountPaid}`) })
     .from(invoices)
-    .where(and(eq(invoices.orgId, orgId), sql`${invoices.dueDate} < NOW()`));
+    // Missing the paid/written_off exclusion every sibling query here has
+    // (outstanding above, outstanding30 below, and every overdue query
+    // elsewhere in the app). Without it, writing off bad debt never
+    // reduces this number — it can even show as *higher* than
+    // "Outstanding A/R", which excludes written-off invoices correctly.
+    .where(and(eq(invoices.orgId, orgId), sql`${invoices.status} NOT IN ('paid', 'written_off')`, sql`${invoices.dueDate} < NOW()`));
 
   const [{ collectedThisMonth }] = await db
     .select({ collectedThisMonth: sum(payments.amount) })
@@ -433,12 +438,17 @@ export async function getExecSummary(orgId: string): Promise<ExecSummary> {
     ? { customer: insights[0].name, amount: insights[0].openBalance, days: insights[0].oldestInvoiceDays }
     : null;
 
-  // Top win: largest payment in the period (last 30d)
+  // Top win: largest payment in the period (last 30d). Refunds are stored
+  // as negative rows in this same table (see reversePaymentForInvoice in
+  // billing.ts) — without excluding them, a period with zero real
+  // payments but at least one refund had `ORDER BY amount DESC` pick the
+  // least-negative refund as the "win" (e.g. a customer getting money
+  // back rendered as "Acme — paid $-50").
   const topWinRow = await db
     .select({ amount: payments.amount, customerName: customers.name })
     .from(payments)
     .innerJoin(customers, eq(customers.id, payments.customerId))
-    .where(and(eq(payments.orgId, orgId), gte(payments.paidAt, new Date(now.getTime() - 30 * 86400000))))
+    .where(and(eq(payments.orgId, orgId), gte(payments.paidAt, new Date(now.getTime() - 30 * 86400000)), sql`${payments.amount} > 0`))
     .orderBy(desc(payments.amount))
     .limit(1);
 

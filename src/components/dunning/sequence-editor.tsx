@@ -5,8 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw, ChevronRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { MessageBubble } from './message-bubble';
 import { RecipientCard } from './recipient-card';
+import { DUNNING_UNSAVED_EVENT, DUNNING_ERROR_EVENT } from '@/lib/dunning/events';
 
-export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
+type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
 type Recipient = { name: string; email: string | null; phone: string | null; invoiceNumber: string; amount?: string; currency?: string; daysOverdue?: number };
 type Preview = { subject?: string; body: string; sample: boolean; recipient: Recipient | null };
 
@@ -42,12 +43,18 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
   const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const active = activeIdx !== null ? steps[activeIdx] : null;
 
+  function markUnsaved() {
+    setSaved(false);
+    try { window.dispatchEvent(new CustomEvent(DUNNING_UNSAVED_EVENT, { detail: true })); } catch {}
+  }
+
   function updateStep(idx: number, patch: Partial<Step>) {
     setSteps(steps.map((s, i) => i === idx ? { ...s, ...patch } : s));
-    setSaved(false);
+    markUnsaved();
     setPreview(null);
   }
 
@@ -56,7 +63,7 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
     const newStep: Step = { id: `s${Date.now()}`, daysFromDue: last ? last.daysFromDue + 7 : 7, channel: 'email', tone: 'firm', template: '' };
     setSteps([...steps, newStep]);
     setActiveIdx(steps.length);
-    setSaved(false);
+    markUnsaved();
     setPreview(null);
   }
 
@@ -64,17 +71,32 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
     const next = steps.filter((_, i) => i !== idx);
     setSteps(next);
     setActiveIdx(next.length === 0 ? null : Math.min(idx, next.length - 1));
-    setSaved(false);
+    markUnsaved();
     setPreview(null);
   }
 
   async function save() {
     setSaving(true);
+    setSaveError(null);
     try {
-      await fetch('/api/sequences/' + sequenceId, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ steps }) });
+      const res = await fetch('/api/sequences/' + sequenceId, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ steps }) });
+      // A failed save must never be reported as a success — this was
+      // previously unconditional, so a 500 (or any non-2xx) still showed
+      // "All changes saved" and silently discarded the edit.
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error ?? `Save failed (${res.status})`);
+      }
       setSaved(true);
+      try { window.dispatchEvent(new CustomEvent(DUNNING_UNSAVED_EVENT, { detail: false })); } catch {}
       router.refresh();
-    } finally { setSaving(false); }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Save failed';
+      setSaveError(message);
+      try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: message })); } catch {}
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function generatePreview() {
@@ -90,8 +112,11 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? 'preview failed');
       setPreview({ subject: data.subject, body: data.body, sample: !!data.sample, recipient: data.recipient ?? null });
-    } catch (e: unknown) {
-      setPreviewError(e instanceof Error ? e.message : 'Preview failed');
+      try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: null })); } catch {}
+    } catch (e: any) {
+      const message = e?.message ?? 'Preview failed';
+      setPreviewError(message);
+      try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: message })); } catch {}
     } finally {
       setPreviewing(false);
     }
@@ -104,8 +129,8 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
           The connecting chevrons are the "direction" cue: click a node to
           edit what it sends, or the dashed node at the end to extend it. */}
       <div className="mb-2 flex items-center justify-between">
-        <div className="app-meta">Automation flow</div>
-        <div className="app-meta">Click a step to edit it</div>
+        <div className="text-xs font-semibold text-ink-700 uppercase tracking-wide">Automation flow</div>
+        <div className="text-xs text-ink-500">Click a step to edit it</div>
       </div>
       <div
         data-tour="flow"
@@ -117,7 +142,7 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
             row of steps with no start or end. */}
         <div className="shrink-0 flex flex-col items-center justify-center gap-1 w-[104px] rounded-full border border-dashed border-ink-300 bg-ink-50 text-ink-500 px-2 py-2">
           <AlertTriangle className="h-3.5 w-3.5" />
-          <span className="text-2xs font-medium text-center leading-tight">Invoice overdue</span>
+          <span className="text-[10px] font-medium text-center leading-tight">Invoice overdue</span>
         </div>
         <FlowConnector delay={0} />
         {steps.map((s, i) => {
@@ -132,16 +157,16 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                 className={`relative w-[136px] rounded-xl border p-3 text-left transition-colors ${
                   isActive
-                    ? 'border-brand-500 bg-white ring-2 ring-brand-100'
-                    : 'border-ink-200 bg-white hover:border-ink-300 hover:bg-ink-50'
+                    ? 'border-brand-500 bg-white ring-2 ring-brand-100 shadow-[0_12px_28px_-12px_rgba(37,99,235,0.45)]'
+                    : 'border-ink-200 bg-white/70 hover:border-ink-300 hover:bg-white shadow-sm'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className={`h-6 w-6 rounded-full grid place-items-center text-2xs font-semibold ${isActive ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-700'}`}>{i + 1}</span>
+                  <span className={`h-6 w-6 rounded-full grid place-items-center text-[11px] font-bold ${isActive ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-700'}`}>{i + 1}</span>
                   {s.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-400" /> : <Mail className="h-3.5 w-3.5 text-ink-400" />}
                 </div>
-                <div className="app-label mt-2">Day {s.daysFromDue}</div>
-                <span className={`${TONE_BADGE[s.tone]} capitalize mt-1`}>{s.tone}</span>
+                <div className="mt-2 text-sm font-semibold text-ink-900">Day {s.daysFromDue}</div>
+                <span className={`badge ${TONE_BADGE[s.tone]} text-[10px] capitalize mt-1`}>{s.tone}</span>
               </motion.button>
               <FlowConnector delay={(i + 1) * 0.25} />
             </div>
@@ -156,12 +181,12 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
           className="shrink-0 w-[110px] rounded-xl border-2 border-dashed border-ink-300 text-ink-400 hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50/40 grid place-items-center gap-1 p-3"
         >
           <Plus className="h-4 w-4" />
-          <span className="app-meta">Add step</span>
+          <span className="text-xs font-medium">Add step</span>
         </motion.button>
         <FlowConnector delay={(steps.length + 1) * 0.25} />
-        <div className="shrink-0 flex flex-col items-center justify-center gap-1 w-[104px] rounded-full border border-success-200 bg-success-50 text-success-700 px-2 py-2">
+        <div className="shrink-0 flex flex-col items-center justify-center gap-1 w-[104px] rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 px-2 py-2">
           <CheckCircle2 className="h-3.5 w-3.5" />
-          <span className="text-2xs font-medium text-center leading-tight">Customer pays</span>
+          <span className="text-[10px] font-medium text-center leading-tight">Customer pays</span>
         </div>
       </div>
 
@@ -176,13 +201,13 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
             className="card space-y-4"
           >
             <div className="flex items-center justify-between">
-              <h3 className="app-heading">Step {activeIdx! + 1}</h3>
-              <button onClick={() => removeStep(activeIdx!)} className="btn-ghost btn-sm text-danger-600"><Trash2 className="h-3.5 w-3.5" />Delete</button>
+              <h3 className="font-semibold text-ink-900">Step {activeIdx! + 1}</h3>
+              <button onClick={() => removeStep(activeIdx!)} className="btn-ghost text-xs text-red-600"><Trash2 className="h-3.5 w-3.5" />Delete</button>
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div><label className="label">Days from due</label><input type="number" min="0" value={active.daysFromDue} onChange={(e) => updateStep(activeIdx!, { daysFromDue: Number(e.target.value) })} className="input" /></div>
-              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
-              <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
+              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as any })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
+              <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as any })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
             </div>
             <div>
               <label className="label">Style hint (optional)</label>
@@ -190,25 +215,25 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
                 value={active.template}
                 onChange={(e) => updateStep(activeIdx!, { template: e.target.value })}
                 rows={3}
-                className="input font-mono text-2xs"
+                className="input font-mono text-xs"
                 placeholder="e.g. mention we value the relationship, keep it short, sign off as 'the team' not a person"
               />
-              <div className="app-meta mt-1 leading-4">
-                Guides the AI&apos;s tone and content for this step. It does not get sent as-is — every message is
-                still written fresh by Gemini using this hint, the actual invoice, and the customer&apos;s real payment
+              <div className="mt-1 text-xs text-ink-500">
+                Guides the AI's tone and content for this step. It does not get sent as-is — every message is
+                still written fresh by Gemini using this hint, the actual invoice, and the customer's real payment
                 history. Leave blank to let the AI write with no extra guidance.
               </div>
             </div>
 
             <div className="pt-2 border-t border-ink-100">
               <div className="flex items-center justify-between mb-2">
-                <div className="app-meta">Live preview</div>
-                <button data-tour="generate-preview" onClick={generatePreview} disabled={previewing} className="btn-secondary btn-sm">
+                <div className="text-xs font-semibold text-ink-700 uppercase tracking-wide">Live preview</div>
+                <button data-tour="generate-preview" data-stuck-id="generate-preview" onClick={generatePreview} disabled={previewing} className="btn-secondary text-xs">
                   {previewing ? <Loader2 className="h-3 w-3 animate-spin" /> : preview ? <RefreshCw className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
                   {preview ? 'Regenerate' : 'Generate preview'}
                 </button>
               </div>
-              {previewError && <div role="alert" className="alert-danger">{previewError}</div>}
+              {previewError && <div className="text-xs text-red-600">{previewError}</div>}
               {preview && (
                 <div className="space-y-2">
                   {preview.recipient && (
@@ -223,7 +248,7 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
                     />
                   )}
                   <MessageBubble channel={active.channel} subject={preview.subject} body={preview.body} />
-                  <div className="app-meta flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-xs text-ink-500">
                     {preview.sample
                       ? <span>Sample data — connect your books and sync invoices to preview against a real overdue invoice.</span>
                       : <span>Generated from one of your actual overdue invoices — this is a real customer, shown above.</span>}
@@ -231,12 +256,12 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
                 </div>
               )}
               {!preview && !previewError && (
-                <div className="app-meta">No preview generated yet — click above to see what the AI would actually write for this step.</div>
+                <div className="text-xs text-ink-500">No preview generated yet — click above to see what the AI would actually write for this step.</div>
               )}
             </div>
           </motion.div>
         ) : (
-          <div className="card app-body py-10 text-center text-ink-500">Click a step to edit, or add a new one.</div>
+          <div className="card text-center text-ink-500 py-10">Click a step to edit, or add a new one.</div>
         )}
       </AnimatePresence>
 
@@ -246,19 +271,24 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
       <AnimatePresence>
         {!saved && (
           <motion.div
+            data-stuck-id="unsaved-bar"
             initial={{ y: 72, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 72, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-            className="fixed inset-x-0 bottom-0 z-30 border-t border-warn-200 bg-warn-50/95 backdrop-blur px-4 sm:px-8 py-3"
+            className={`fixed inset-x-0 bottom-0 z-30 border-t backdrop-blur px-4 sm:px-8 py-3 ${saveError ? 'border-red-200 bg-red-50/95' : 'border-amber-200 bg-amber-50/95'}`}
           >
             <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-[13px] text-warn-900">
-                <span className="h-2 w-2 rounded-full bg-warn-500 animate-pulse-soft" />
-                <span className="font-medium">Unsaved changes to this sequence</span>
+              <div className={`flex items-center gap-2 text-sm ${saveError ? 'text-red-900' : 'text-amber-900'}`}>
+                <span className={`h-2 w-2 rounded-full ${saveError ? 'bg-red-500' : 'bg-amber-500 animate-pulse-soft'}`} />
+                <span className="font-medium">
+                  {saveError
+                    ? `Save failed — your changes are NOT stored: ${saveError}`
+                    : 'Unsaved changes — nothing sends until this is saved, and saving still does not send anything'}
+                </span>
               </div>
-              <button onClick={save} disabled={saving} className="btn-primary btn-sm">
-                {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}Save sequence
+              <button data-stuck-id="save-sequence" onClick={save} disabled={saving} className="btn-primary text-sm">
+                {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}{saveError ? 'Retry save' : 'Save sequence'}
               </button>
             </div>
           </motion.div>
@@ -270,7 +300,7 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="app-meta mt-3 flex items-center gap-1.5 text-success-600"
+            className="mt-3 flex items-center gap-1.5 text-xs text-emerald-600"
           >
             <CheckCircle2 className="h-3.5 w-3.5" />All changes saved
           </motion.div>

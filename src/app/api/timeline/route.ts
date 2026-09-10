@@ -16,23 +16,28 @@ export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const data = body.parse(await req.json());
 
-  const [customer] = await db
-    .select()
-    .from(customers)
-    .where(and(eq(customers.id, data.customerId), eq(customers.orgId, orgId)))
-    .limit(1);
-  if (!customer) return NextResponse.json({ error: 'customer not found' }, { status: 404 });
+  try {
+    const data = body.parse(await req.json());
 
-  const [event] = await db.insert(timelineEvents).values({
-    id: nanoid(),
-    orgId,
-    customerId: data.customerId,
-    eventType: 'note_added',
-    title: 'Note added',
-    description: data.note,
-  }).returning();
+    const [customer] = await db
+      .select()
+      .from(customers)
+      .where(and(eq(customers.id, data.customerId), eq(customers.orgId, orgId)))
+      .limit(1);
+    if (!customer) return NextResponse.json({ error: 'customer not found' }, { status: 404 });
 
-  return NextResponse.json({ ok: true, id: event.id });
+    const [event] = await db.insert(timelineEvents).values({
+      id: nanoid(),
+      orgId,
+      customerId: data.customerId,
+      eventType: 'note_added',
+      title: 'Note added',
+      description: data.note,
+    }).returning();
+
+    return NextResponse.json({ ok: true, id: event.id });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : 'Bad request' }, { status: 400 });
+  }
 }

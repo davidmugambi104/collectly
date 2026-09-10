@@ -1,21 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
-import type { PoolClient } from 'pg';
 import { pool } from '@/db';
-
-// Resend's inbound-email webhook payload shape (the fields this file
-// actually reads). svix's Webhook.verify() intentionally returns `unknown`
-// -- it has no way to know the payload shape of whatever you're
-// verifying -- so this is the one documented assertion at the trust
-// boundary, rather than `any` leaking through everything downstream.
-interface ResendInboundEvent {
-  data?: {
-    from?: string;
-    subject?: string;
-    text?: string;
-    html?: string;
-  };
-}
 
 /**
  * Resend inbound webhook handler for outreach replies.
@@ -82,7 +67,7 @@ function classifyReply(text: string, subject: string): { state: string; nextStep
   return { state: 'replied', nextStep: 'human_review', note: 'Reply received; needs human triage' };
 }
 
-async function ensureTables(client: PoolClient) {
+async function ensureTables(client: any) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS outreach_contacts (
       id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -190,11 +175,46 @@ export async function classifyAndPersistOutreachReply(opts: {
 <hr/>
 <pre style="white-space:pre-wrap">${escapeHtml(opts.text.slice(0, 2000))}</pre>`,
       });
-    } catch (e: unknown) {
-      console.error('Failed to notify founder of reply:', e instanceof Error ? e.message : e);
+    } catch (e: any) {
+      console.error('Failed to notify founder of reply:', e?.message);
     }
 
     return { classification };
+  } finally {
+    client.release();
+  }
+}
+
+/**
+ * Idempotency guard keyed on Svix's own delivery id. Found via a burst of
+ * ~150+ POSTs to this webhook within an 8-second window in production —
+ * every one independently re-ran classifyAndPersistOutreachReply() (a new
+ * outreach_replies row, a new attempted founder-notify email each time)
+ * with no dedup, so a single event Svix decided to retry (or redeliver)
+ * fanned out into repeated processing instead of one. Self-creates its
+ * table on first use rather than depending on a separate migration step
+ * (see ensureOrgProvisioned in src/lib/auth-helper.ts for the same
+ * pattern and why: this codebase has no reliable path to run
+ * drizzle-kit push against production).
+ */
+async function wasEventAlreadyProcessed(svixId: string): Promise<boolean> {
+  if (!svixId) return false; // never block processing on a missing id
+  const client = await pool().connect();
+  try {
+    const insert = () => client.query(
+      `INSERT INTO webhook_events_seen (svix_id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING svix_id`,
+      [svixId],
+    );
+    let result;
+    try {
+      result = await insert();
+    } catch (e: unknown) {
+      const code = (e as { code?: string })?.code;
+      if (code !== '42P01') throw e; // 42P01 = undefined_table
+      await client.query(`CREATE TABLE IF NOT EXISTS webhook_events_seen (svix_id TEXT PRIMARY KEY, received_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+      result = await insert();
+    }
+    return result.rows.length === 0; // no row returned => ON CONFLICT fired => already seen
   } finally {
     client.release();
   }
@@ -210,15 +230,20 @@ export async function handleResendInboundWebhook(req: NextRequest): Promise<Next
   }
   const rawBody = await req.text();
   const wh = new Webhook(secret);
-  let event: ResendInboundEvent;
+  const svixId = req.headers.get('svix-id') || '';
+  let event: any;
   try {
     event = wh.verify(rawBody, {
-      'svix-id': req.headers.get('svix-id') || '',
+      'svix-id': svixId,
       'svix-timestamp': req.headers.get('svix-timestamp') || '',
       'svix-signature': req.headers.get('svix-signature') || '',
-    }) as ResendInboundEvent;
-  } catch (e: unknown) {
-    return NextResponse.json({ error: `signature verification failed: ${e instanceof Error ? e.message : e}` }, { status: 400 });
+    }) as any;
+  } catch (e: any) {
+    return NextResponse.json({ error: `signature verification failed: ${e?.message ?? e}` }, { status: 400 });
+  }
+
+  if (await wasEventAlreadyProcessed(svixId)) {
+    return NextResponse.json({ ok: true, deduped: true });
   }
 
   // Resend inbound wraps the actual fields under .data
@@ -239,8 +264,8 @@ export async function handleResendInboundWebhook(req: NextRequest): Promise<Next
       fromAddress, subject, text, rawPayload: event, source: 'resend_inbound',
     });
     return NextResponse.json({ ok: true, classification });
-  } catch (e: unknown) {
+  } catch (e: any) {
     console.error('Inbound webhook error:', e);
-    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

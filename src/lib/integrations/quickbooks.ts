@@ -11,8 +11,8 @@
  *    of expiry, so callers can treat tokens as always-valid.
  */
 import { db } from '@/db';
-import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { integrations, customers as customersTbl, invoices as invoicesTbl, payments as paymentsTbl } from '@/db/schema';
+import { eq, and, sql } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 
 const QBO_BASE = process.env.QBO_ENVIRONMENT === 'production'
@@ -21,34 +21,6 @@ const QBO_BASE = process.env.QBO_ENVIRONMENT === 'production'
 
 const QBO_OAUTH = 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer';
 const QBO_REVOKE = 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke';
-
-// Minimal shapes for the fields this file actually reads/writes -- QBO
-// has no official TS types package, and the full API surface is far
-// larger than what we use.
-interface QboTokenResponse {
-  access_token: string;
-  refresh_token?: string;
-  expires_in: number;
-  refresh_token_expires_in?: number;
-  x_refresh_token_expires_in?: number;
-}
-interface QboCustomer {
-  Id: string;
-  DisplayName?: string;
-  CompanyName?: string;
-  PrimaryEmailAddr?: { Address?: string };
-  PrimaryPhone?: { FreeFormNumber?: string };
-}
-interface QboInvoice {
-  Id: string;
-  DocNumber?: string;
-  CustomerRef?: { value?: string; name?: string };
-  TotalAmount?: number;
-  Balance?: number;
-  CurrencyRef?: { value?: string };
-  TxnDate?: string;
-  DueDate?: string;
-}
 
 // Refresh the access token if it's within 5 min of expiry (or already past).
 // Persists the new tokens. Returns the (possibly new) integration row.
@@ -79,8 +51,8 @@ async function getFreshQboToken(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`QBO refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: QboTokenResponse = await res.json();
-  const newExpiresAt = new Date(now + json.expires_in * 1000);
+  const json: any = await res.json();
+  const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
   // P1.6 audit fix 2026-07-31: capture refresh-token expiry.
   // Intuit sends it in the `x_refresh_token_expires_in` response header
   // (HTTP/2 canonical name) or `refresh_token_expires_in` in the body
@@ -105,7 +77,7 @@ async function getFreshQboToken(orgId: string) {
     status: 'connected',
     updatedAt: new Date(),
     metadata: {
-      ...((integ.metadata as Record<string, unknown>) ?? {}),
+      ...((integ.metadata as Record<string, any>) ?? {}),
       refreshExpiresAt: newRefreshExpiresAt ? newRefreshExpiresAt.toISOString() : null,
     },
   }).where(eq(integrations.id, integ.id));
@@ -165,11 +137,11 @@ export async function qboExchangeCode(code: string, realmId: string) {
     }),
   });
   if (!res.ok) throw new Error(`QBO exchange failed: ${res.status} ${await res.text()}`);
-  const json: QboTokenResponse = await res.json();
+  const json: any = await res.json();
   return {
-    accessToken: json.access_token,
-    refreshToken: json.refresh_token ?? '',
-    expiresIn: json.expires_in,
+    accessToken: json.access_token as string,
+    refreshToken: json.refresh_token as string,
+    expiresIn: json.expires_in as number,
     realmId,
   };
 }
@@ -306,6 +278,12 @@ interface QboSyncResult {
   invoicesMarkedPaid: number;
   durationMs: number;
   errors: string[];
+  /** True if a list query hit its MAXRESULTS cap — the sync completed
+   * without error but is known-incomplete. Real STARTPOSITION-based
+   * pagination is a larger follow-up (needs a QBO sandbox to verify the
+   * loop terminates and doesn't double-fetch); this at least stops the
+   * result from claiming a clean, complete sync when it wasn't one. */
+  truncated?: boolean;
 }
 
 /**
@@ -321,121 +299,85 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let truncated = false;
+  const QBO_PAGE_SIZE = 1000; // matches MAXRESULTS in qboListCustomers/qboListOpenInvoices
 
-  // NOTE: customers and invoices are fetched sequentially, not in parallel --
-  // see the matching note in xero.ts's syncXeroForOrg. qboFetch refreshes
-  // the access token on demand with no locking, so two concurrent calls
-  // near token expiry could race the same rotating refresh token.
-  let qboCustomers: QboCustomer[] = [];
+  // 1. Customers
+  let qboCustomers: any[] = [];
   try {
-    const res: { QueryResponse?: { Customer?: QboCustomer[] } } = await qboListCustomers(orgId);
+    const res: any = await qboListCustomers(orgId);
     qboCustomers = res?.QueryResponse?.Customer ?? [];
-  } catch (e: unknown) {
-    errors.push(`customers: ${e instanceof Error ? e.message : String(e)}`);
-  }
-  let qboInvoices: QboInvoice[] = [];
-  try {
-    const res: { QueryResponse?: { Invoice?: QboInvoice[] } } = await qboListOpenInvoices(orgId);
-    qboInvoices = res?.QueryResponse?.Invoice ?? [];
-  } catch (e: unknown) {
-    errors.push(`invoices: ${e instanceof Error ? e.message : String(e)}`);
+    if (qboCustomers.length >= QBO_PAGE_SIZE) truncated = true;
+  } catch (e: any) {
+    errors.push(`customers: ${e?.message ?? e}`);
   }
 
-  // 1. Customers. One query for every existing customer in this org instead
-  // of one SELECT per customer -- see xero.ts for the full rationale (this
-  // was the dominant cost behind the 502-on-first-sync bug: N customers *
-  // 2 sequential round trips each against a non-co-located DB, routinely
-  // exceeding the function's 60s timeout).
-  const existingCustomers = await db
-    .select({ id: customersTbl.id, externalId: customersTbl.externalId })
-    .from(customersTbl)
-    .where(eq(customersTbl.orgId, orgId));
-  const customerIdByExternalId = new Map<string, string>();
-  for (const c of existingCustomers) {
-    if (c.externalId) customerIdByExternalId.set(c.externalId, c.id);
-  }
-
-  const customersToInsert: (typeof customersTbl.$inferInsert)[] = [];
   for (const c of qboCustomers) {
     try {
       const externalId = String(c.Id);
       const name = c.DisplayName ?? c.CompanyName ?? 'Unknown';
       const email = c.PrimaryEmailAddr?.Address ?? null;
       const phone = c.PrimaryPhone?.FreeFormNumber ?? null;
-      const existingId = customerIdByExternalId.get(externalId);
-      if (existingId) {
-        // Steady-state re-syncs only touch a handful of changed rows --
-        // not worth batching without a unique constraint to ON CONFLICT
-        // against (would need a schema migration).
-        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existingId));
-        customersUpserted++;
+      const existing = await db
+        .select({ id: customersTbl.id })
+        .from(customersTbl)
+        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, externalId)))
+        .limit(1);
+      if (existing[0]) {
+        await db.update(customersTbl).set({ name, email, phone, updatedAt: new Date() }).where(eq(customersTbl.id, existing[0].id));
       } else {
-        const id = nanoid();
-        customersToInsert.push({ id, orgId, externalId, name, email, phone });
-        customerIdByExternalId.set(externalId, id);
+        await db.insert(customersTbl).values({
+          id: nanoid(),
+          orgId,
+          externalId,
+          name,
+          email,
+          phone,
+        });
       }
-    } catch (e: unknown) {
-      errors.push(`customer ${c?.Id}: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }
-  if (customersToInsert.length) {
-    try {
-      await db.insert(customersTbl).values(customersToInsert);
-      customersUpserted += customersToInsert.length;
-    } catch (e: unknown) {
-      // One multi-row INSERT is one statement -- a single bad row fails
-      // the whole batch. Fall back to per-row so the rest still land.
-      errors.push(`customers bulk insert: ${e instanceof Error ? e.message : String(e)}`);
-      for (const row of customersToInsert) {
-        try {
-          await db.insert(customersTbl).values(row);
-          customersUpserted++;
-        } catch (e2: unknown) {
-          errors.push(`customer ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
-        }
-      }
+      customersUpserted++;
+    } catch (e: any) {
+      errors.push(`customer ${c?.Id}: ${e?.message ?? e}`);
     }
   }
 
-  // 2. Invoices. Same treatment: one SELECT for all existing invoices in
-  // this org, batch the inserts, keep updates per-row.
-  const existingInvoices = await db
-    .select({ id: invoicesTbl.id, externalId: invoicesTbl.externalId, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
-    .from(invoicesTbl)
-    .where(eq(invoicesTbl.orgId, orgId));
-  const existingInvoiceByExternalId = new Map<string, (typeof existingInvoices)[number]>();
-  for (const i of existingInvoices) {
-    if (i.externalId) existingInvoiceByExternalId.set(i.externalId, i);
+  // 2. Invoices
+  let qboInvoices: any[] = [];
+  try {
+    const res: any = await qboListOpenInvoices(orgId);
+    qboInvoices = res?.QueryResponse?.Invoice ?? [];
+    if (qboInvoices.length >= QBO_PAGE_SIZE) truncated = true;
+  } catch (e: any) {
+    errors.push(`invoices: ${e?.message ?? e}`);
   }
 
-  const invoicesToInsert: (typeof invoicesTbl.$inferInsert)[] = [];
   for (const inv of qboInvoices) {
     try {
       const externalId = String(inv.Id);
       const customerExternalId = String(inv.CustomerRef?.value ?? '');
       if (!customerExternalId) continue;
 
-      let customerId = customerIdByExternalId.get(customerExternalId);
-      if (!customerId) {
+      // Find the local customer by external id
+      const [localCustomer] = await db
+        .select({ id: customersTbl.id })
+        .from(customersTbl)
+        .where(and(eq(customersTbl.orgId, orgId), eq(customersTbl.externalId, customerExternalId)))
+        .limit(1);
+
+      let customerId: string;
+      if (localCustomer) {
+        customerId = localCustomer.id;
+      } else {
         // Customer not in our DB (e.g. invoice references a deleted customer
-        // or sync was partial). Create a stub so the invoice has a parent;
-        // safe to insert immediately since this id is only referenced
-        // in-memory below, not re-read from the DB.
-        const stubId = nanoid();
-        try {
-          await db.insert(customersTbl).values({
-            id: stubId,
-            orgId,
-            externalId: customerExternalId,
-            name: inv.CustomerRef?.name ?? `QBO Customer ${customerExternalId}`,
-          });
-          customerId = stubId;
-          customerIdByExternalId.set(customerExternalId, stubId);
-          customersUpserted++;
-        } catch (e: unknown) {
-          errors.push(`stub customer ${customerExternalId}: ${e instanceof Error ? e.message : String(e)}`);
-          continue;
-        }
+        // or sync was partial). Create a stub so the invoice has a parent.
+        const [stub] = await db.insert(customersTbl).values({
+          id: nanoid(),
+          orgId,
+          externalId: customerExternalId,
+          name: inv.CustomerRef?.name ?? `QBO Customer ${customerExternalId}`,
+        }).returning();
+        customerId = stub.id;
+        customersUpserted++;
       }
 
       // `||` not `??` -- QuickBooks can return DocNumber as '' (not
@@ -457,15 +399,20 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
             ? 'overdue'
             : 'sent';
 
-      const existing = existingInvoiceByExternalId.get(externalId);
-      if (existing) {
-        const wasUnpaid = existing.status !== 'paid';
+      const existing = await db
+        .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
+        .from(invoicesTbl)
+        .where(and(eq(invoicesTbl.orgId, orgId), eq(invoicesTbl.externalId, externalId)))
+        .limit(1);
+
+      if (existing[0]) {
+        const wasUnpaid = existing[0].status !== 'paid';
         // IMPORTANT: paidAt records WHEN the invoice was paid, not when we
         // last synced. Overwriting it with new Date() on every sync inflates
         // DSO by one day per day and poisons customer.paymentBehavior,
         // which feeds the dunning AI. Only stamp a date on the unpaid →
         // paid transition; preserve the original payment date thereafter.
-        const paidAt = status === 'paid' ? (existing.paidAt ?? new Date()) : null;
+        const paidAt = status === 'paid' ? (existing[0].paidAt ?? new Date()) : null;
         await db.update(invoicesTbl).set({
           number,
           amount: String(total),
@@ -476,11 +423,10 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
           status,
           paidAt,
           updatedAt: new Date(),
-        }).where(eq(invoicesTbl.id, existing.id));
+        }).where(eq(invoicesTbl.id, existing[0].id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;
-        invoicesUpserted++;
       } else {
-        invoicesToInsert.push({
+        await db.insert(invoicesTbl).values({
           id: nanoid(),
           orgId,
           customerId,
@@ -495,24 +441,9 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
           paidAt: status === 'paid' ? new Date() : null,
         });
       }
-    } catch (e: unknown) {
-      errors.push(`invoice ${inv?.Id}: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  }
-  if (invoicesToInsert.length) {
-    try {
-      await db.insert(invoicesTbl).values(invoicesToInsert);
-      invoicesUpserted += invoicesToInsert.length;
-    } catch (e: unknown) {
-      errors.push(`invoices bulk insert: ${e instanceof Error ? e.message : String(e)}`);
-      for (const row of invoicesToInsert) {
-        try {
-          await db.insert(invoicesTbl).values(row);
-          invoicesUpserted++;
-        } catch (e2: unknown) {
-          errors.push(`invoice ${row.externalId}: ${e2 instanceof Error ? e2.message : String(e2)}`);
-        }
-      }
+      invoicesUpserted++;
+    } catch (e: any) {
+      errors.push(`invoice ${inv?.Id}: ${e?.message ?? e}`);
     }
   }
 
@@ -520,7 +451,8 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks')));
 
-  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors };
+  if (truncated) errors.push('sync hit the 1000-record page limit — some customers/invoices may not have been imported (pagination not yet implemented)');
+  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }
 
 /**

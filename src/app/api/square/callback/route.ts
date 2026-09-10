@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL(`/dashboard/integrations?err=square&reason=${encodeURIComponent(consumed.reason)}`, req.url));
   }
 
-  const verifier = squareGetPkceVerifier(state);
+  const verifier = await squareGetPkceVerifier(state);
   if (!verifier) {
     return NextResponse.json(
       { error: 'PKCE verifier missing or expired — restart the connect flow' },
