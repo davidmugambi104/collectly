@@ -1,0 +1,32 @@
+[
+  {
+    "companyName": "Victor's Office - VJP Services",
+    "domain": "vjpservices.com",
+    "website": "https://vjpservices.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "Algon Avenue, 7631, Philadelphia, 19111-3331",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@vjpservices.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12157080667"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-10T08:34:43.836Z"
+  }
+]

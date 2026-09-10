@@ -1,0 +1,33 @@
+[
+  {
+    "companyName": "Offsite Business Solutions",
+    "domain": "offsitebusiness.com",
+    "website": "https://offsitebusiness.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "Piedmont Avenue Northeast, 1874, Atlanta, 30324",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "melissa@offsitebusiness.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14042499979",
+      "4042499979"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-09-10T08:26:23.882Z"
+  }
+]

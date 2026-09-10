@@ -1,0 +1,319 @@
+[
+  {
+    "companyName": "etch.",
+    "domain": "etchcreative.co.uk",
+    "website": "https://etchcreative.co.uk/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": "Amwell Street, 63, London, EC1R 1UR",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@etchcreative.co.uk",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "careers@etchcreative.co.uk",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+442081235071"
+    ],
+    "socials": {
+      "linkedin": "https://uk.linkedin.com/company/etchcreative",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/etchcreative/",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:32:04.084Z"
+  },
+  {
+    "companyName": "Isobel",
+    "domain": "isobel.com",
+    "website": "https://isobel.com/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": "New Cavendish Street, 144, London",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "careers@isobel.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "hello@isobel.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "jamie@isobel.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+442072910969",
+      "+447947127840",
+      "+44207291096914"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/isobel/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/isobelcreative/?hl=en",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-10T08:32:04.105Z"
+  },
+  {
+    "companyName": "Amplify",
+    "domain": "weareamplify.com",
+    "website": "https://weareamplify.com/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": "Paul Street, 27, London",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "careers@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "sophy@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "maddiek@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "lara@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "jennie@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "lee@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "nico@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "mark@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "gareth@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "zoe@weareamplify.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+440207382622",
+      "+3306811464",
+      "+13238420517",
+      "+61283557355"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/weareamplify",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/weareamplify",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-09-10T08:32:04.108Z"
+  },
+  {
+    "companyName": "Bray Leino",
+    "domain": "brayleino.co.uk",
+    "website": "https://brayleino.co.uk/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@brayleino.co.uk",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "01598760700"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/bray-leino-limited",
+      "twitter": "https://twitter.com/kcox16",
+      "instagram": "https://www.instagram.com/brayleino/",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:32:04.118Z"
+  },
+  {
+    "companyName": "Mongoose",
+    "domain": "mongooseagency.com",
+    "website": "https://mongooseagency.com/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@mongooseagency.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+442086295000"
+    ],
+    "socials": {
+      "linkedin": "https://uk.linkedin.com/company/mongoose-sports-&-entertainment",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/mongooseagency/",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-10T08:32:04.133Z"
+  },
+  {
+    "companyName": "Space City Productions",
+    "domain": "spacecity.co.uk",
+    "website": "https://spacecity.co.uk/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": "Blythe Road, 77, London, W14 0HP",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "team@spacecity.co.uk",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+442073714000",
+      "+441612103330",
+      "+441179000444",
+      "02073714000",
+      "01612103330"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/space-city-adverts",
+      "twitter": "https://twitter.com/SpaceCityProds",
+      "instagram": "https://www.instagram.com/spacecityadverts/",
+      "facebook": "https://www.facebook.com/SpaceCityAdverts/",
+      "youtube": "https://www.youtube.com/user/SpaceCityCommercials"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:32:04.294Z"
+  },
+  {
+    "companyName": "Local Fame",
+    "domain": "localfame.com",
+    "website": "https://localfame.com/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": "Red Lion Street, 26, London, WC1R 4PS",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "accounts@localfame.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+442034045555",
+      "+61862252443",
+      "+17373011420"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/local-fame",
+      "twitter": "https://twitter.com/GetLocalFame",
+      "instagram": "https://www.instagram.com/localfameuk/",
+      "facebook": "https://www.facebook.com/LocalFameUK",
+      "youtube": "https://www.youtube.com/user/LocalFameUK"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:32:04.302Z"
+  },
+  {
+    "companyName": "Creative SEO Hub",
+    "domain": "creativeseohub.com",
+    "website": "https://creativeseohub.com/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": "Shelton Street, 71 - 75, London, WC2H 9JQ",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@creativeseohub.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+443302320240",
+      "03302320240"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:32:04.317Z"
+  }
+]

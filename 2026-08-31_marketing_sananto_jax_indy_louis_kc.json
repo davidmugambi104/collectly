@@ -1,0 +1,92 @@
+[
+  {
+    "companyName": "Leadhub",
+    "domain": "leadhub.net",
+    "website": "https://leadhub.net/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "San Pedro Avenue, 16404, San Antonio, 78232",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@leadhub.net",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12108889530"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:09:03.295Z"
+  },
+  {
+    "companyName": "Temerarii Media",
+    "domain": "temerarii.com",
+    "website": "https://temerarii.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "West Houston Street, 110, San Antonio, 78205",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "support@temerarii.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+18305072975"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:09:03.320Z"
+  },
+  {
+    "companyName": "Clicksmith",
+    "domain": "clicksmith.net",
+    "website": "https://clicksmith.net/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Wurzbach Road, 8930, San Antonio, 78240-1042",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@clicksmith.net",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12102014272"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:09:03.333Z"
+  }
+]

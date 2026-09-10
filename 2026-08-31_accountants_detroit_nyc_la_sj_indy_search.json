@@ -1,0 +1,88 @@
+[
+  {
+    "companyName": "CLA (CliftonLarsonAllen) | CPAs, Consultants, Wealth Advisors",
+    "domain": "claconnect.com",
+    "website": "https://claconnect.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants San Jose United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "webmaster@claconnect.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "18885292648"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/cliftonlarsonallen",
+      "twitter": "https://twitter.com/CLAconnect",
+      "instagram": "https://www.instagram.com/lifeatcla/",
+      "facebook": "https://www.facebook.com/CliftonLarsonAllen",
+      "youtube": "https://www.youtube.com/@CliftonLarsonAllen"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:10:43.026Z"
+  },
+  {
+    "companyName": "DBusiness Magazine",
+    "domain": "dbusiness.com",
+    "website": "https://dbusiness.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants Detroit United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "rjking@dbusiness.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/dbusiness-magazine",
+      "twitter": "https://twitter.com/dbusiness",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/DBusinessMagazine/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:10:43.075Z"
+  },
+  {
+    "companyName": "Fitzpatrick & Tucker",
+    "domain": "ft-cpas.com",
+    "website": "https://ft-cpas.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants San Jose United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "office@ft-cpas.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-08-31T19:10:43.111Z"
+  }
+]

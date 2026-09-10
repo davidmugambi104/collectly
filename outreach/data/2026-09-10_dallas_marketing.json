@@ -1,0 +1,129 @@
+[
+  {
+    "companyName": "The BMS Company",
+    "domain": "thebmscompany.com",
+    "website": "https://thebmscompany.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Meadow Road, 8330, Dallas, 75231",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@thebmscompany.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+19724497117",
+      "9726002702"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/the-bms-company/",
+      "twitter": "https://x.com/The_Bms_Group",
+      "instagram": "https://www.instagram.com/thebmscompany/",
+      "facebook": "https://www.facebook.com/thebmscompany/?",
+      "youtube": "https://www.youtube.com/channel/UCROhy7n1zonm6nk5T4r7TQQ"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:29:13.469Z"
+  },
+  {
+    "companyName": "LG Networks, Inc",
+    "domain": "lgnetworksinc.com",
+    "website": "https://lgnetworksinc.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Lyndon B Johnson Freeway, 9441, Dallas, 75243",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "sales@lgnetworksinc.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+19725286546",
+      "8887640688",
+      "2144915707",
+      "8172035500",
+      "9725989010",
+      "2146134040"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/lg-networks-inc/",
+      "twitter": "https://twitter.com/LGNETWORKS",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/lgnetworksinc/",
+      "youtube": "https://www.youtube.com/@lgnetworksinc.1447"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:29:13.489Z"
+  },
+  {
+    "companyName": "ProActivate",
+    "domain": "proactivate.net",
+    "website": "https://proactivate.net/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Crescent Court, 100, Dallas, 75201",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@proactivate.net",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12147209922",
+      "2147209922"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/proactivate",
+      "twitter": null,
+      "instagram": null,
+      "facebook": "https://www.facebook.com/www.proactivate.net/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:29:13.499Z"
+  },
+  {
+    "companyName": "Recreation",
+    "domain": "recreationdallas.com",
+    "website": "https://recreationdallas.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Commerce Street, 3710",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "win@recreationdallas.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "9726792594"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/recreationdallas/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/recreationdallas/",
+      "facebook": "https://www.facebook.com/RecreationDallas/",
+      "youtube": "https://www.youtube.com/channel/UCClrGk5mhZhPLl0DTMrzvVA"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:29:13.513Z"
+  }
+]

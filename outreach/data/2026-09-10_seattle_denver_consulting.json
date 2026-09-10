@@ -1,0 +1,90 @@
+[
+  {
+    "companyName": "Archbright",
+    "domain": "archbright.com",
+    "website": "https://archbright.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "6th Avenue South, 5601, Seattle, 98108",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@archbright.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12063291120"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:27:19.182Z"
+  },
+  {
+    "companyName": "ARTiculate: Real&Clear",
+    "domain": "articulaterc.com",
+    "website": "https://articulaterc.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "E Yale Ave B155, 4201, Denver, 80222",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "connect@articulaterc.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+13038683889"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/articulate-realandclear/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/articulate_coach_speak_train/",
+      "facebook": null,
+      "youtube": "https://www.youtube.com/@articulaterc1"
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-10T08:27:19.207Z"
+  },
+  {
+    "companyName": "Exergy",
+    "domain": "exergyheat.com",
+    "website": "https://exergyheat.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "Franklin Street, 3700, Denver, 80205",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@exergyheat.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": "https://x.com/exergy_",
+      "instagram": null,
+      "facebook": null,
+      "youtube": "https://www.youtube.com/watch?v=jtdJQ7uXcBk"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:27:19.213Z"
+  }
+]

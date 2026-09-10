@@ -1,0 +1,90 @@
+[
+  {
+    "companyName": "Marlies Y. Hendricks, CPA",
+    "domain": "ha-accounting.com",
+    "website": "https://ha-accounting.com/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Dundas Street West, 4899, Etobicoke, M9A 1B2",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "marlies@ha-accounting.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14167663941"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-10T08:26:03.325Z"
+  },
+  {
+    "companyName": "Liquidity Curve Systems Inc",
+    "domain": "liquiditycurve.com",
+    "website": "https://liquiditycurve.com/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Yonge Street, 4789, Toronto, M2N 0G3",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "support@liquiditycurve.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+16475565932"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-10T08:26:03.356Z"
+  },
+  {
+    "companyName": "VTAC Accounting & Tax",
+    "domain": "vtac.ca",
+    "website": "https://vtac.ca/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Jane Street, 881, Toronto, M6N 4C4",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@vtac.ca",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-10T08:26:03.395Z"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "generated_at": "2026-09-10T08:14:00Z",
+  "status": "paused",
+  "reason": "Deliverability monitor status is FAIL — 7d bounce rate 33.55% (51/152) exceeds 5% pull-back threshold. Follow-ups held pending deliverability remediation.",
+  "eligible_t2_due": 0,
+  "eligible_t2_overdue": 0,
+  "eligible_t3_due": 0,
+  "eligible_t3_overdue": 0,
+  "queued": [],
+  "notes": "139 prospects identified as due/overdue but none queued due to deliverability gate."
+}

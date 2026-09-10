@@ -24,13 +24,14 @@ import json
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 from clients import request, load_secret
 from outreach_state import can_send as state_can_send, record_send as state_record_send
+from scripts.lib import prospect_utils as pu
 import experiment
 
 PROSPECTS_CSV = f"{os.path.expanduser('~')}/.openclaw/workspace/collectly/outreach/data/prospects.csv"
@@ -92,12 +93,15 @@ def pick_prospects(tier: int, limit: int, log: List[Dict[str, str]]) -> List[Dic
             if rid not in last_sent or r["timestamp"] > last_sent[rid]:
                 last_sent[rid] = r["timestamp"]
 
-    cutoff = "2026-07-09T00:00:00Z"  # 14 days ago
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=14)).isoformat().replace("+00:00", "Z")  # 14 days ago, dynamic
+    suppressed = pu.load_suppressed_emails()
     eligible = []
     for r in all_rows:
         if (r.get("tier") or "").strip() != str(tier):
             continue
         if not r.get("email"):
+            continue
+        if r["email"].strip().lower() in suppressed:
             continue
         rid = r.get("id")
         # Cooldown: don't re-t1 within 14 days

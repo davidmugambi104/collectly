@@ -1,0 +1,387 @@
+[
+  {
+    "companyName": "Actual Size",
+    "domain": "actualsize.com",
+    "website": "https://actualsize.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Baum Boulevard, 5746, Pittsburgh, 15206",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@actualsize.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14123632100"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/actualsizers/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/actualsizers",
+      "facebook": "https://www.facebook.com/ActualSizers",
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-08-31T19:00:56.629Z"
+  },
+  {
+    "companyName": "webFEAT Complete",
+    "domain": "webfeatcomplete.com",
+    "website": "https://webfeatcomplete.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Eastern Avenue, 4907, Cincinnati, 45208",
+    "searchQuery": "osm",
+    "emailPattern": "first.last",
+    "companyEmails": [
+      {
+        "email": "sales@webfeatcomplete.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "ray.cheselka@webfeatcomplete.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "grey.gagarin@webfeatcomplete.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [
+      {
+        "name": "Michelle Selnick",
+        "title": "Founder",
+        "email": "mselnick@webfeatcomplete.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Justin Marshall",
+        "title": "Head of",
+        "email": "justin.marshall@webfeatcomplete.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Jake Ostmann",
+        "title": "Head of",
+        "email": "jake.ostmann@webfeatcomplete.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Warren Ponticos",
+        "title": "Head of",
+        "email": "warren.ponticos@webfeatcomplete.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [
+      "5132723432"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/webfeatcomplete",
+      "twitter": "http://twitter.com/webfeatcomplete",
+      "instagram": "https://www.instagram.com/webfeatcomplete/",
+      "facebook": "https://www.facebook.com/webFEATcomplete/",
+      "youtube": "https://www.youtube.com/@webFEATComplete"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:00:56.653Z"
+  },
+  {
+    "companyName": "4th Floor Creative",
+    "domain": "4thfloorcreative.com",
+    "website": "https://4thfloorcreative.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Main Street, 1417, Cincinnati, 45202",
+    "searchQuery": "osm",
+    "emailPattern": "first",
+    "companyEmails": [
+      {
+        "email": "tommyg@4thfloorcreative.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "krista@4thfloorcreative.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "benin@4thfloorcreative.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "danny@4thfloorcreative.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "grace@4thfloorcreative.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [
+      {
+        "name": "Marc Graham",
+        "title": "Vice President",
+        "email": "marc@4thfloorcreative.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Peyton Monnell",
+        "title": "Director",
+        "email": "peyton@4thfloorcreative.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Zach Cieslak Motion",
+        "title": "Designer",
+        "email": "zach@4thfloorcreative.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Collin Jung",
+        "title": "Director",
+        "email": "collin@4thfloorcreative.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Todd Huwer",
+        "title": "Manager",
+        "email": "todd@4thfloorcreative.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/tom-gelehrter-87966222",
+      "twitter": "https://twitter.com/4thFlCreative",
+      "instagram": "https://www.instagram.com/4thfloorcreative/",
+      "facebook": "https://www.facebook.com/4thFloorCreative/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:00:56.662Z"
+  },
+  {
+    "companyName": "Equator Design",
+    "domain": "equator-design.com",
+    "website": "https://equator-design.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "East 14th Street, 15, Cincinnati, 45202",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@equator-design.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+15139016305",
+      "01612201980"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/equator-design-consultants/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/equatordesign/?hl=en",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:00:56.674Z"
+  },
+  {
+    "companyName": "Zem Media",
+    "domain": "zem-media.com",
+    "website": "https://zem-media.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Helm Drive, 1677, Las Vegas, 89119",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@zem-media.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+18448041395",
+      "+17028378770"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": "https://twitter.com/magniumthemes",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/magniumthemescompany/",
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-08-31T19:00:56.701Z"
+  },
+  {
+    "companyName": "Raptor Digital Marketing",
+    "domain": "raptordigitalmarketing.com",
+    "website": "https://raptordigitalmarketing.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "South Valley View Boulevard, 1000, Las Vegas, 89107",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@raptordigitalmarketing.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17029070095"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-08-31T19:00:56.727Z"
+  },
+  {
+    "companyName": "Lightning Digital",
+    "domain": "lightningdigital.com",
+    "website": "https://lightningdigital.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "West Bonanza Road, 1111, Las Vegas, 89106",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "janette@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "tk@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "deidre@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "mark@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "makenzie@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "jennifer@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "gabriella@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "rhonda@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "brooke@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "kelly@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "kim@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17023830383"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/lightning-digital/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:00:56.744Z"
+  },
+  {
+    "companyName": "Blaine Warren Advertising",
+    "domain": null,
+    "website": null,
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Smoke Ranch Road, 7120, Las Vegas, 89128",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@blainewarren.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17024356947"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:00:56.860Z"
+  }
+]

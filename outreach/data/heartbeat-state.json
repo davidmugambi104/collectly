@@ -1,0 +1,51 @@
+{
+  "lastChecks": {
+    "replies": "2026-09-01T19:55:00Z",
+    "gate": "2026-09-01T19:55:12Z",
+    "experiment": "2026-09-01T19:55:15Z",
+    "task_queue": "2026-09-01T19:55:18Z"
+  },
+  "prevGate": "allow",
+  "prevExperiment": {
+    "A": {
+      "weight": 0.0,
+      "sent": 51,
+      "replied": 1,
+      "reply_rate": 0.0196
+    },
+    "B": {
+      "weight": 1.0,
+      "sent": 33,
+      "replied": 0,
+      "reply_rate": 0.0
+    },
+    "C": {
+      "weight": 1.0,
+      "sent": 31,
+      "replied": 0,
+      "reply_rate": 0.0
+    },
+    "D": {
+      "weight": 1.0,
+      "sent": 33,
+      "replied": 0,
+      "reply_rate": 0.0
+    },
+    "H1": {
+      "weight": 1.0,
+      "sent": 0,
+      "replied": 0,
+      "reply_rate": 0.0
+    },
+    "H2": {
+      "weight": 1.0,
+      "sent": 0,
+      "replied": 0,
+      "reply_rate": 0.0
+    }
+  },
+  "prevTaskQueue": {
+    "NEEDS_APPROVAL": 0,
+    "FAILED": 0
+  }
+}

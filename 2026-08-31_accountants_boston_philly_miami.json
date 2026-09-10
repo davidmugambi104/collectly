@@ -1,0 +1,64 @@
+[
+  {
+    "companyName": "The Fontana Group",
+    "domain": "thefontanagrp.com",
+    "website": "https://thefontanagrp.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "South Broad Street, 1723, Philadelphia, 19148",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "wegotyou@thefontanagrp.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12154676900",
+      "2154676900"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": "https://www.wix.com/studio",
+      "instagram": "https://www.instagram.com/thefontanagrp",
+      "facebook": "https://www.facebook.com/TheFontanaGrp",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T18:58:05.467Z"
+  },
+  {
+    "companyName": "Victor's Office - VJP Services",
+    "domain": "vjpservices.com",
+    "website": "https://vjpservices.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "Algon Avenue, 7631, Philadelphia, 19111-3331",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@vjpservices.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12157080667",
+      "2157080667"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-08-31T18:58:05.660Z"
+  }
+]

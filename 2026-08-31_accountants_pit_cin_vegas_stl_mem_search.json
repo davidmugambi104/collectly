@@ -1,0 +1,99 @@
+[
+  {
+    "companyName": "Rosenberg Accountancy LLC - Certified Public Accounting",
+    "domain": "rosenbergaccountancy.com",
+    "website": "https://rosenbergaccountancy.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants Pittsburgh United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "office@rosenbergaccountancy.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "jon@rosenbergaccountancy.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14126288096",
+      "+14126899470"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-08-31T19:06:33.167Z"
+  },
+  {
+    "companyName": "Abeles and Hoffman, St. Louis CPAs & Business Advisors AHCPA",
+    "domain": "ahcpa.com",
+    "website": "https://ahcpa.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants St Louis United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@ahcpa.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "3149914770"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/abeles-&-hoffman-p-c-",
+      "twitter": "https://twitter.com/AHCPAs",
+      "instagram": "https://www.instagram.com/ahcpafirm/",
+      "facebook": "https://www.facebook.com/abelesandhoffman",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:06:33.174Z"
+  },
+  {
+    "companyName": "H2R CPA",
+    "domain": "h2rcpa.com",
+    "website": "https://h2rcpa.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants Pittsburgh United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "lmercer@h2rcpa.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "4123912920",
+      "7246833400"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/h2rcpa",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": "https://www.youtube.com/channel/UC52KThR3rrHIdN3pt4OkpzQ"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:06:33.189Z"
+  }
+]

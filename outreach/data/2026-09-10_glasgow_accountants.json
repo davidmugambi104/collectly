@@ -1,0 +1,34 @@
+[
+  {
+    "companyName": "Lockshield Partners Accounting Services",
+    "domain": "lockshieldpartners.com",
+    "website": "https://lockshieldpartners.com/",
+    "country": "United Kingdom",
+    "sector": "accountants",
+    "address": "West Main Street, 501, Glasgow, 42141",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@lockshieldpartners.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12706513013",
+      "2706292046",
+      "2706513013"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": "https://www.instagram.com/lockshieldpartners/",
+      "facebook": "https://www.facebook.com/lockshieldpartners",
+      "youtube": "https://www.youtube.com/@lockshieldpartners"
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-10T08:17:58.730Z"
+  }
+]

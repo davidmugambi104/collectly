@@ -483,7 +483,7 @@ def cmd_cycle(args: argparse.Namespace) -> int:
             break
         if processed >= limit:
             break
-        if task["state"] != "PENDING":
+        if task["state"] not in ("PENDING", "QUEUED"):
             continue
         if task["next_attempt_at"] and task["next_attempt_at"] > _iso():
             continue  # still in backoff window

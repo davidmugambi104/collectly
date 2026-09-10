@@ -1,0 +1,2 @@
+email,due_touch,last_touch_ts,days_since_last,overdue,paused_reason
+,,,,,PAUSED: deliverability gate in pullback mode — bounce_rate=34.4%

@@ -59,3 +59,84 @@ mellor@duo.at,bounced_2026-08-19,,2026-08-23T17:50:00+03:00,bounced 2026-08-18T2
 jonathan@livingstonfinancial.com,bounced_2026-08-19,,2026-08-23T17:50:00+03:00,bounced 2026-08-18T23:00:02Z; from 08-18/19 T1 batch; per decision-log-2026-08-23.md section 5.6
 edward@sameaccounting.com,bounced_2026-08-19,,2026-08-23T17:50:00+03:00,bounced 2026-08-18T22:59:31Z; from 08-18/19 T1 batch; per decision-log-2026-08-23.md section 5.6
 info@molisonbusinesssolution.com,bounced_2026-08-19,,2026-08-23T17:50:00+03:00,bounced 2026-08-18T22:15:02Z; from 08-18/19 T1 batch; per decision-log-2026-08-23.md section 5.6
+hello@altago.com,bounce,,2026-09-03T10:29:26.624629+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@mgac.com,bounce,,2026-09-03T10:29:26.624664+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@malk.com,bounce,,2026-09-03T10:29:26.624669+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@bcg.com,bounce,,2026-09-03T10:29:26.624672+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@zapitiautoschool.com,bounce,,2026-09-03T10:29:26.624675+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@immigrationadvocacy.com,bounce,,2026-09-03T10:29:26.624678+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@tagtimeusa.com,bounce,,2026-09-03T10:29:26.624681+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@abrightideaonline.com,bounce,,2026-09-03T10:29:26.624684+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@glendalemarketing.com,bounce,,2026-09-03T10:29:26.624686+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@konnectagency.com,bounce,,2026-09-03T10:29:26.624689+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@andwalsh.com,bounce,,2026-09-03T10:29:26.624692+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+hello@omg.re,bounce,,2026-09-03T10:29:26.624695+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+roy@angrydragonstudios.com,bounce,,2026-09-03T10:29:26.624698+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+advancingjustice@emailsl.com,bounce,,2026-09-03T10:29:26.624701+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+info@seoprix.com,bounce,,2026-09-03T10:29:26.624703+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+houston@kellywm.com,bounce,,2026-09-03T10:29:26.624706+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+info@ahcpa.com,bounce,,2026-09-03T10:29:26.624709+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+info@blainewarren.com,bounce,,2026-09-03T10:29:26.624713+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+contact@bambrick.com.au,bounce,,2026-09-03T10:29:26.624716+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+info@eloquentagency.com,bounce,,2026-09-03T10:29:26.624719+00:00,bounced 2026-09-02/03 batch; auto-suppressed after gate pullback
+philip.young@birdmarketing.co.uk,hunter_invalid,P043,2026-09-03T13:57:16.963837+00:00,Hunter verification: invalid (score=0)
+victor@readyartwork.com,hunter_invalid,P051,2026-09-03T13:57:30.352992+00:00,Hunter verification: invalid (score=0)
+info@launchxd.com,smtp_verification_failed,97,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser 4fb4d7f45d1cf-6a7e68bffcesi106969a12.141 - gsmtp)"
+hello@mgnyconsulting.com,smtp_verification_failed,OSM-1788373380-0003,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser ffacd0b85a97d-48448e72e08si13794176f8f.83 - gsmtp)"
+hello@redwhiteandbluetax.com,smtp_verification_failed,OSM-1788373380-0004,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 Address does not exist. L0bCyKncdixc)
+hello@gotaxplus.com,smtp_verification_failed,OSM-1788373380-0005,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser a640c23a62f3a-c260d035f4asi412766b.10 - gsmtp)"
+hello@upscaleaccountingfirm.com,smtp_verification_failed,OSM-1788373380-0008,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 5.7.25 <hello@upscaleaccountingfirm.com>: Recipient address rejected: Cannot find your hostname)
+hello@fairweatheraccounting.com,smtp_verification_failed,OSM-1788373380-0026,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser a92af1059eb24-1432448cf93si1074629c88.78 - gsmtp)"
+hello@arthurfox.com,smtp_verification_failed,OSM-1788373380-0036,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 5.1.1 <hello@arthurfox.com>: Recipient address rejected: User unknown)
+hello@maagoncpa.com,smtp_verification_failed,OSM-1788373380-0045,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser a92af1059eb24-1432448158csi944658c88.75 - gsmtp)"
+hello@rojascenter.com,smtp_verification_failed,OSM-1788373380-0050,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 No Such User Here)
+hello@westernasset.com,smtp_verification_failed,OSM-1788373385-0052,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 Unknown Recipient - https://community.mimecast.com/docs/DOC-1369#550 [x8Vox4l6PUu4eQ4gjX6vcg.us157])
+hello@daddydon.com,smtp_verification_failed,OSM-1788373385-0056,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 5.1.1 <hello@daddydon.com>: Recipient address rejected: undeliverable address: host fr-int-smtpin37.hostinger.io[private/dovecot-lmtp] said: 550 5.1.1 <hello@daddydon.com> User doesn't exist: hello@daddydon.com (in reply to RCPT TO command))
+hello@jcptaxservices.com,smtp_verification_failed,OSM-1788373385-0065,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 No Such User Here)
+hello@gurrolareprographics.com,smtp_verification_failed,OSM-1788373486-0105,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (554 5.5.4 Your IP address 41.209.14.102 has a bad reputation. To unblock visit https://cloud-security.net/unblock?blocked_ip=41.209.14.102&reason=6&qid=NOQUEUE)
+info@fidel.com.au,smtp_verification_failed,P146,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 <info@fidel.com.au> No such user here)
+hello@valuecorp.ca,smtp_verification_failed,P147,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 No Such User Here)
+hello@canamtax.com,smtp_verification_failed,P150,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser ffacd0b85a97d-484495067e2si13655258f8f.395 - gsmtp)"
+support@liquiditycurve.com,smtp_verification_failed,P155,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser 5b1f17b1804b1-49cee5e60fbsi63476025e9.23 - gsmtp)"
+hello@accotax.ca,smtp_verification_failed,P168,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser 41be03b00d2f7-cc43d43cb61si4931090a12.78 - gsmtp)"
+hello@ottawabookkeeping.ca,smtp_verification_failed,P178,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 5.7.25 <hello@ottawabookkeeping.ca>: Recipient address rejected: Cannot find your hostname)
+hello@amplefinance.com.au,smtp_verification_failed,P180,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 No Such User Here)
+hello@lincaccountants.com.au,smtp_verification_failed,P182,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.4.1 Recipient address rejected: Access denied. For more information see
+https://aka.ms/EXOSmtpErrors [ML1PEPF00011309.ausprd01.prod.outlook.com
+2026-09-03T17:15:53.642Z 08DF06A565592DD9])"
+hello@sigmaaccountants.co.uk,smtp_verification_failed,P187,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (550 5.4.0 Relaying denied: <hello@sigmaaccountants.co.uk>)
+hello@sutherlandblack.co.uk,smtp_verification_failed,P193,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: smtp_invalid (554 5.5.4 Your IP address 41.209.14.102 has a bad reputation. To unblock visit https://cloud-security.net/unblock?blocked_ip=41.209.14.102&reason=6&qid=NOQUEUE)
+hello@charmaccountants.com,smtp_verification_failed,P194,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 No Such User Here"")"
+hello@mergixaccounting.com,smtp_verification_failed,P196,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser ffacd0b85a97d-485856e2988si2230123f8f.454 - gsmtp)"
+hello@shieldstaxcpa.com,smtp_verification_failed,P204,2026-09-03T16:56:39.364050+00:00,"Free SMTP verification: smtp_invalid (550 5.1.1 The email account that you tried to reach does not exist. Please try
+5.1.1 double-checking the recipient's email address for typos or
+5.1.1 unnecessary spaces. For more information, go to
+5.1.1  https://support.google.com/mail/?p=NoSuchUser ffacd0b85a97d-484495068fdsi13464990f8f.396 - gsmtp)"
+hello@atlantacpa.com,smtp_verification_failed,P205,2026-09-03T16:56:39.364050+00:00,Free SMTP verification: no_mx_invalid (No MX records for atlantacpa.com)

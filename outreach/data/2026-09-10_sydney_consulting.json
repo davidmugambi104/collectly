@@ -1,0 +1,212 @@
+[
+  {
+    "companyName": "A & H Building Designers",
+    "domain": "ahbuildingdesigners.com.au",
+    "website": "https://ahbuildingdesigners.com.au/",
+    "country": "Australia",
+    "sector": "consulting firms",
+    "address": "Willoughby Road, 119, 2065",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "enquiries@ahbuildingdesigners.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61289871989",
+      "0289871989"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": "https://www.instagram.com/a_h_building_designers_pty_ltd/",
+      "facebook": "https://www.facebook.com/ahbuildingdesigners",
+      "youtube": "https://www.youtube.com/channel/UCKZVTvypuZH1W71T56ofevg"
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-10T08:19:21.883Z"
+  },
+  {
+    "companyName": "Ascent Geotechnical Consulting",
+    "domain": "ascentgeo.com.au",
+    "website": "https://ascentgeo.com.au/",
+    "country": "Australia",
+    "sector": "consulting firms",
+    "address": "Pittwater Road, 1457",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "admin@ascentgeo.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61299133179"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": "https://www.instagram.com/ascentgeotechnical/",
+      "facebook": "http://www.facebook.com/AscentGeotechnical",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:19:21.914Z"
+  },
+  {
+    "companyName": "Edwards Heritage Consultants",
+    "domain": "edwardsheritage.com.au",
+    "website": "https://edwardsheritage.com.au/",
+    "country": "Australia",
+    "sector": "consulting firms",
+    "address": "Fitzgerald Street, 19a, 2756",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "enquiry@edwardsheritage.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61245893049"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:19:22.335Z"
+  },
+  {
+    "companyName": "Logic Projects Co.",
+    "domain": "logicprojects.co",
+    "website": "https://logicprojects.co/",
+    "country": "Australia",
+    "sector": "consulting firms",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": "first",
+    "companyEmails": [
+      {
+        "email": "enquiries@logicprojects.co",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [
+      {
+        "name": "Nathan Smith",
+        "title": "MANAGING DIRECTOR",
+        "email": "nathan@logicprojects.co",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Dylan Mahedy",
+        "title": "DIRECTOR",
+        "email": "dylan@logicprojects.co",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Emma Favretto",
+        "title": "DIRECTOR",
+        "email": "emma@logicprojects.co",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Dane Morrison",
+        "title": "DIRECTOR",
+        "email": "dane@logicprojects.co",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Matthew Bourke",
+        "title": "DIRECTOR",
+        "email": "matthew.bourke@logicprojects.co",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://au.linkedin.com/in/nathan-smith-logic-project-management",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:19:22.343Z"
+  },
+  {
+    "companyName": "Scyne Advisory",
+    "domain": "scyne.com.au",
+    "website": "https://scyne.com.au/",
+    "country": "Australia",
+    "sector": "consulting firms",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "adrian.king@scyne.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "alastair.pearson@scyne.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "nick.chiam@scyne.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "christopher.rogan@scyne.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "marcus.catchpole@scyne.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "iara.morris@scyne.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "1800519727"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/95770279",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/scyne_australia/",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:19:22.349Z"
+  }
+]

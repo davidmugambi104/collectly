@@ -1,0 +1,268 @@
+[
+  {
+    "companyName": "Vividus Marketing",
+    "domain": "vividus.com.au",
+    "website": "https://vividus.com.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Redcliffe Parade, 77",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@vividus.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61732832233",
+      "1300848438",
+      "+610734824262",
+      "0734824262"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/vividus/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/vividusmarketing/",
+      "facebook": "https://www.facebook.com/vividusmarketing/",
+      "youtube": "https://www.youtube.com/@vividusmarketing"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.192Z"
+  },
+  {
+    "companyName": "Outplacement Australia",
+    "domain": "outplacementaustralia.com.au",
+    "website": "https://outplacementaustralia.com.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Adelaide Street, 320",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@outplacementaustralia.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "1300061009",
+      "0738293003",
+      "61738293003",
+      "+61738293003"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/outplacement-australia",
+      "twitter": "https://twitter.com/outplacementaus",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/OutplacementAustralia",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.429Z"
+  },
+  {
+    "companyName": "Juno Creative",
+    "domain": "junocreative.net.au",
+    "website": "https://junocreative.net.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Light Street, 30, Brisbane, 4006",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "studio@junocreative.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61731860566",
+      "+61732571115",
+      "+61283570330",
+      "+61390713111",
+      "+61756464358"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/juno-creative",
+      "twitter": "https://twitter.com/JunoCreative",
+      "instagram": "http://instagram.com/junocreative",
+      "facebook": "https://www.facebook.com/junocreative",
+      "youtube": "https://www.youtube.com/channel/UCx51uvlVJI0KSZwa4TpGkaA"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.439Z"
+  },
+  {
+    "companyName": "Construction Safety Shop",
+    "domain": "constructionsafetyshop.com.au",
+    "website": "https://constructionsafetyshop.com.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "support@constructionsafetyshop.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.468Z"
+  },
+  {
+    "companyName": "Done Digital",
+    "domain": "donedigital.au",
+    "website": "https://donedigital.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@donedigital.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61731052821",
+      "+61744293663"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/donedigital-marketing/",
+      "twitter": null,
+      "instagram": "http://instagram.com/donedigital.au/",
+      "facebook": "https://www.facebook.com/donedigital.au",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.550Z"
+  },
+  {
+    "companyName": "CitrusAd",
+    "domain": "citrusad.com",
+    "website": "https://citrusad.com/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Melbourne Street, 99, 4101",
+    "searchQuery": "osm",
+    "emailPattern": "last",
+    "companyEmails": [
+      {
+        "email": "info@citrusad.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "sales@citrusad.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "mediasales@citrusad.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [
+      {
+        "name": "For Advertisers",
+        "title": null,
+        "email": "advertisers@citrusad.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://au.linkedin.com/company/citrusad",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.557Z"
+  },
+  {
+    "companyName": "Decoda",
+    "domain": "decoda.com",
+    "website": "https://decoda.com/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Melbourne Street, 99, 4101",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@decoda.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/decodamining/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.575Z"
+  },
+  {
+    "companyName": "Aspec Engineering",
+    "domain": "aspec.com.au",
+    "website": "https://aspec.com.au/",
+    "country": "Australia",
+    "sector": "marketing agencies",
+    "address": "Melbourne Street, 99, 4101",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "admin@aspec.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61731930400",
+      "+61249622314",
+      "+61272056411",
+      "+61863154200"
+    ],
+    "socials": {
+      "linkedin": "https://au.linkedin.com/company/aspec-engineering",
+      "twitter": null,
+      "instagram": null,
+      "facebook": "https://www.facebook.com/AspecEngineering/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:46:41.602Z"
+  }
+]

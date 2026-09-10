@@ -1,0 +1,68 @@
+[
+  {
+    "companyName": "SDG Accountants",
+    "domain": "sdgaccountant.com",
+    "website": "https://sdgaccountant.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants San Francisco United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "admin@sdgaccountant.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17867065905",
+      "+14167553000"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/samighaith/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-31T19:03:18.346Z"
+  },
+  {
+    "companyName": "Asnani CPA Tax, Bookkeeping & Accounting for Business San Francisco CA",
+    "domain": "asnanicpa.com",
+    "website": "https://asnanicpa.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": null,
+    "searchQuery": "accountants San Francisco United States",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "sasnani@asnanicpa.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "rachel@asnanicpa.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17077423299"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/asnani-cpa/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/asnanicpa/",
+      "facebook": "https://www.facebook.com/asnanicpa/",
+      "youtube": null
+    },
+    "pagesScraped": 5,
+    "scrapedAt": "2026-08-31T19:03:18.362Z"
+  }
+]

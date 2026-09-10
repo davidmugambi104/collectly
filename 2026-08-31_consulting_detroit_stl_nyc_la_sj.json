@@ -1,0 +1,30 @@
+[
+  {
+    "companyName": "ICON INCAR",
+    "domain": "iconincar.com",
+    "website": "https://iconincar.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "West Fort Street, 601, Detroit, 48226",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@iconincar.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-08-31T19:04:44.382Z"
+  }
+]

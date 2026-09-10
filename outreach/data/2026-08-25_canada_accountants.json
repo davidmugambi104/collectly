@@ -1,0 +1,243 @@
+[
+  {
+    "companyName": "Hogg, Shain & Scheck",
+    "domain": "hss-ca.com",
+    "website": "https://hss-ca.com/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Sheppard Avenue East, 2255, North York, M2J 4Y1",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "consult@hss-ca.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "4164993100"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/hogg-shain-&-scheck",
+      "twitter": "https://twitter.com/HoggShainScheck",
+      "instagram": "https://www.instagram.com/hoggshainscheck/",
+      "facebook": "https://www.facebook.com/HoggShainScheck",
+      "youtube": "https://www.youtube.com/channel/UCvrvzerlPZG7ZWp3ny6K6jQ"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:45:22.519Z"
+  },
+  {
+    "companyName": "Marlies Y. Hendricks, CPA",
+    "domain": "ha-accounting.com",
+    "website": "https://ha-accounting.com/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Dundas Street West, 4899, Etobicoke, M9A 1B2",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "marlies@ha-accounting.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14167663941",
+      "4167663941",
+      "7166943500",
+      "17166943500"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:45:22.563Z"
+  },
+  {
+    "companyName": "Troy Stanley Professional Corporation",
+    "domain": "stanleyaccounting.ca",
+    "website": "https://stanleyaccounting.ca/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Dalhousie Drive NW, 5005, Calgary, T3A 5R8",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@stanleyaccounting.ca",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": "http://wix.com/?utm_campaign=vir_created_with",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/Stanley-Accounting-Professional-Corporation-293521218183614/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:45:22.581Z"
+  },
+  {
+    "companyName": "R.J. Barrett & Co.",
+    "domain": "rjbarrett.ca",
+    "website": "https://rjbarrett.ca/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "126 Avenue SE, 5126, T2Z 0Z1",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "inquiries@rjbarrett.ca",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-08-25T06:45:22.642Z"
+  },
+  {
+    "companyName": "Scase & Partner",
+    "domain": "scase.ca",
+    "website": "https://scase.ca/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "18 Avenue NE, 2333, Calgary, T2E 8T6",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "karleen.scase@scase.ca",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "4037350735"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:45:22.664Z"
+  },
+  {
+    "companyName": "Jianyang Zhou Professional Services",
+    "domain": "commonsenseaccounting.ca",
+    "website": "https://commonsenseaccounting.ca/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Beddington Boulevard NW, 8120, Calgary, T3K 2A8",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@commonsenseaccounting.ca",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14032751012",
+      "4037190627"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:45:22.672Z"
+  },
+  {
+    "companyName": "Achen Henderson LLP",
+    "domain": "achenhenderson.ca",
+    "website": "https://achenhenderson.ca/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Fairmount Drive SE, 7005, Calgary, T2H 0K4",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@achenhenderson.ca",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14032713106",
+      "4032713106"
+    ],
+    "socials": {
+      "linkedin": " https://www.linkedin.com/company/achenhendersoncpas/",
+      "twitter": "https://twitter.com/achenhenderson",
+      "instagram": "https://www.instagram.com/achenhenderson/",
+      "facebook": "https://www.facebook.com/AchenHendersonCPAs/",
+      "youtube": "https://www.youtube.com/channel/UC26P4kKjQpu3guzoAdG1a5w/"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:45:22.691Z"
+  },
+  {
+    "companyName": "L Bloxham Professional Corporation",
+    "domain": "lbpccpa.ca",
+    "website": "https://lbpccpa.ca/",
+    "country": "Canada",
+    "sector": "accountants",
+    "address": "Hawkwood Boulevard NW, 555, Calgary, T3G 3K2",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "admin@lbpccpa.ca",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14032756651"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/lesley-bloxham-cpa-cga/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": "https://www.facebook.com/LBloxhamPC/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-08-25T06:45:22.721Z"
+  }
+]

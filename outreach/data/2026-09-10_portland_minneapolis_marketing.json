@@ -1,0 +1,123 @@
+[
+  {
+    "companyName": "Wild Pacific PR",
+    "domain": "wildpacificpr.com",
+    "website": "https://wildpacificpr.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Northwest Everett Street, 2080, Portland, 97209",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@wildpacificpr.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "karen@wildpacificpr.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": "http://instagram.com/wildpacific.pr",
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:22:17.444Z"
+  },
+  {
+    "companyName": "Magneto",
+    "domain": "magnetoworks.com",
+    "website": "https://magnetoworks.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Southwest Oak Street, 71, Portland, 97204",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@magnetoworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": "http://linkedin.com/company/magneto-brand-advertising",
+      "twitter": "https://twitter.com/MagnetoAgency",
+      "instagram": null,
+      "facebook": "http://facebook.com/pages/MAGNETO-BRAND-ADVERTISING/88694588367",
+      "youtube": "http://youtube.com/user/magnetoworks"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:22:17.478Z"
+  },
+  {
+    "companyName": "SightWorks",
+    "domain": "sightworks.com",
+    "website": "https://sightworks.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Southeast 11th Avenue, 2505, Portland, 97202",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@sightworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+15032234184"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-09-10T08:22:17.503Z"
+  },
+  {
+    "companyName": "Co Projects",
+    "domain": "co-projects.net",
+    "website": "https://co-projects.net/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "North Mississippi Avenue, 4039, Portland, 97227",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@co-projects.net",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+15035167844"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-10T08:22:17.555Z"
+  }
+]

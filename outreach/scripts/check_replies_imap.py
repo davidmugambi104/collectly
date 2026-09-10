@@ -34,6 +34,7 @@ USER = os.environ.get('GMAIL_USER', 'davidmugambi104@gmail.com')
 if not os.environ.get('GMAIL_APP_PASSWORD'):
     sys.exit('Missing GMAIL_APP_PASSWORD in .env.local — see .env.example')
 APP_PASSWORD = os.environ['GMAIL_APP_PASSWORD']
+NOTIFY_EMAIL = os.environ.get('REPLY_NOTIFY_EMAIL', 'davidmugambi104@gmail.com')
 SENDERS = [
     'jon.burdon@bertagency.co.uk',
     'jason@madebyshape.co.uk',
@@ -167,6 +168,19 @@ def send_followup(to_addr, subject, body_text, in_reply_to=None):
     server.quit()
     return msg['Message-ID']
 
+def notify_owner(subject, body_text):
+    """Email the owner a summary whenever a prospect reply comes in.
+    Runs alongside the WhatsApp cron announce, doesn't replace it."""
+    msg = email.mime.text.MIMEText(body_text, 'plain', 'utf-8')
+    msg['Subject'] = subject
+    msg['From'] = USER
+    msg['To'] = NOTIFY_EMAIL
+    server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
+    server.starttls()
+    server.login(USER, APP_PASSWORD)
+    server.send_message(msg)
+    server.quit()
+
 def append_log(row):
     exists = os.path.exists(LOG_CSV)
     with open(LOG_CSV, 'a', newline='', encoding='utf-8') as f:
@@ -227,6 +241,10 @@ def main():
         "Details:",
     ] + summaries)
     update_memory(summary_text)
+    try:
+        notify_owner(f"Collectly: {len(replies)} new reply(ies)", summary_text)
+    except Exception as e:
+        print(f"notify_owner failed: {e}")
 
     # Count totals for report
     total_pos = sum(1 for _ in open(LOG_CSV) if 'positive_' in _) if os.path.exists(LOG_CSV) else 0

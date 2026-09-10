@@ -1,0 +1,210 @@
+[
+  {
+    "companyName": "Boston Urban Partners",
+    "domain": "bosurban.com",
+    "website": "https://bosurban.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Boylston Street, 801, Boston, 02116",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@bosurban.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+16172744900"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:13:24.446Z"
+  },
+  {
+    "companyName": "SLC Interiors",
+    "domain": "slcinteriors.com",
+    "website": "https://slcinteriors.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Boylston Street, 729, Boston, 02116",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "inquiries@slcinteriors.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+19784684330"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:13:24.526Z"
+  },
+  {
+    "companyName": "Office Resources, Inc.",
+    "domain": "ori.com",
+    "website": "https://ori.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Summer Street, 263, Boston, 02210",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@ori.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+16174239100"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:13:24.535Z"
+  },
+  {
+    "companyName": "Boston Web Marketing",
+    "domain": "getfoundquick.com",
+    "website": "https://getfoundquick.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "McKinley Square, 1, Boston, 02109",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "sales@getfoundquick.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:13:24.567Z"
+  },
+  {
+    "companyName": "Just Blessed Media",
+    "domain": "justblessedmarketing.com",
+    "website": "https://justblessedmarketing.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Academy Road, 12320, Philadelphia, 19154-1928",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@justblessedmarketing.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12155986843"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:13:24.580Z"
+  },
+  {
+    "companyName": "One Water Street Apartments",
+    "domain": "seolocale.com",
+    "website": "https://seolocale.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "North Christopher Columbus Boulevard, 250, Philadelphia, 19106",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@seolocale.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12673687905"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:13:24.588Z"
+  },
+  {
+    "companyName": "M SEARCH",
+    "domain": "msearchadvisory.com",
+    "website": "https://msearchadvisory.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "NW 7th Avenue, 1951, Miami, 33136",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "connect@msearchadvisory.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+13055719590"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-08-31T19:13:24.601Z"
+  }
+]

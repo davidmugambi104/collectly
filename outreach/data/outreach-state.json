@@ -117,7 +117,7 @@
       "last_name": "Cordwell",
       "prospect_id": "P040",
       "created_at": "2026-08-01T08:21:15.762509+00:00",
-      "last_contact": "2026-08-01T08:21:15.762509+00:00",
+      "last_contact": "2026-09-05T11:45:08.550048+00:00",
       "sent_history": [
         {
           "touch": "t1",
@@ -125,6 +125,14 @@
           "message_id": "b6a95935-1df1-4128-b0aa-d807fd8a1873",
           "campaign": "agency_channel",
           "prospect_id": "P040"
+        },
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:45:08.550048+00:00",
+          "message_id": "05ca0912-8fbc-4ba2-b6bc-61a58ade8735",
+          "campaign": "tier1",
+          "prospect_id": "P040",
+          "meta": {}
         }
       ],
       "replies": [],
@@ -137,7 +145,7 @@
       "last_name": "C42D",
       "prospect_id": "P036",
       "created_at": "2026-08-01T08:32:42.721976+00:00",
-      "last_contact": "2026-08-01T08:32:42.721976+00:00",
+      "last_contact": "2026-09-05T11:40:07.944713+00:00",
       "sent_history": [
         {
           "touch": "t1",
@@ -145,6 +153,14 @@
           "message_id": "8e577f6a-3e4f-4a93-af82-da68abfe8105",
           "campaign": "agency_channel",
           "prospect_id": "P036"
+        },
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:40:07.944713+00:00",
+          "message_id": "666e68a8-8bc6-4fdc-a310-d4fe1713ac7d",
+          "campaign": "tier1",
+          "prospect_id": "P036",
+          "meta": {}
         }
       ],
       "replies": [],
@@ -157,7 +173,7 @@
       "last_name": "Moniker",
       "prospect_id": "P038",
       "created_at": "2026-08-01T08:32:51.446837+00:00",
-      "last_contact": "2026-08-01T08:32:51.446837+00:00",
+      "last_contact": "2026-09-05T11:40:09.098645+00:00",
       "sent_history": [
         {
           "touch": "t1",
@@ -165,6 +181,14 @@
           "message_id": "fb98722f-e5d4-4b1d-bc22-38e6f00b96a8",
           "campaign": "agency_channel",
           "prospect_id": "P038"
+        },
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:40:09.098645+00:00",
+          "message_id": "55dab251-e2de-446c-9320-4cd3c973457a",
+          "campaign": "tier1",
+          "prospect_id": "P038",
+          "meta": {}
         }
       ],
       "replies": [],
@@ -177,7 +201,7 @@
       "last_name": "Superco",
       "prospect_id": "P042",
       "created_at": "2026-08-01T08:33:00.168136+00:00",
-      "last_contact": "2026-08-01T08:33:00.168136+00:00",
+      "last_contact": "2026-09-05T11:45:10.270984+00:00",
       "sent_history": [
         {
           "touch": "t1",
@@ -185,6 +209,14 @@
           "message_id": "c1f56894-431c-4360-9aa3-f64f5f112557",
           "campaign": "agency_channel",
           "prospect_id": "P042"
+        },
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:45:10.270984+00:00",
+          "message_id": "7615f051-94c6-4e17-9e19-6cd7c11a8f6d",
+          "campaign": "tier1",
+          "prospect_id": "P042",
+          "meta": {}
         }
       ],
       "replies": [],
@@ -197,7 +229,7 @@
       "last_name": "Gold Front",
       "prospect_id": "P050",
       "created_at": "2026-08-01T08:33:08.881778+00:00",
-      "last_contact": "2026-08-01T08:33:08.881778+00:00",
+      "last_contact": "2026-09-05T11:50:13.729805+00:00",
       "sent_history": [
         {
           "touch": "t1",
@@ -205,6 +237,14 @@
           "message_id": "d895b931-cda3-4c81-937f-30e5c37e236b",
           "campaign": "agency_channel",
           "prospect_id": "P050"
+        },
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:50:13.729805+00:00",
+          "message_id": "be8825a7-99dd-44bf-bd92-5568c2e41908",
+          "campaign": "tier1",
+          "prospect_id": "P050",
+          "meta": {}
         }
       ],
       "replies": [],
@@ -1314,6 +1354,3542 @@
       "replies": [],
       "created_at": "2026-08-24T19:30:07.666676+00:00",
       "last_contact": "2026-08-24T19:30:07.666676+00:00"
+    },
+    "info@stanleyaccounting.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-25T06:49:36.352278+00:00",
+          "message_id": "885054e2-48d2-454a-b285-7a93c59f3dc9",
+          "campaign": "tier1",
+          "prospect_id": "PX-00e9a4272c870",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-25T06:49:36.352278+00:00",
+      "last_contact": "2026-08-25T06:49:36.352278+00:00"
+    },
+    "inquiries@rjbarrett.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-25T06:49:38.174758+00:00",
+          "message_id": "abc33b91-81f4-4691-98a3-8582cacd1127",
+          "campaign": "tier1",
+          "prospect_id": "PX-00e9a4272c871",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-25T06:49:38.174758+00:00",
+      "last_contact": "2026-08-25T06:49:38.174758+00:00"
+    },
+    "karleen.scase@scase.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-25T06:50:06.506689+00:00",
+          "message_id": "44450d5b-2c75-4e5d-bb63-f0762ddb411f",
+          "campaign": "tier1",
+          "prospect_id": "PX-00e9a4272c872",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-25T06:50:06.506689+00:00",
+      "last_contact": "2026-08-25T06:50:06.506689+00:00"
+    },
+    "hello@fellowinc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T07:23:46.224777+00:00",
+          "message_id": "e3d5be5d-66a2-4efe-8ffe-8b3ac14117e7",
+          "campaign": "tier1",
+          "prospect_id": "A096",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T07:23:46.224777+00:00",
+      "last_contact": "2026-08-26T07:23:46.224777+00:00"
+    },
+    "info@pixelandplumeagency.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T07:23:47.476791+00:00",
+          "message_id": "425e0734-758d-4705-89d2-687d2c40c88e",
+          "campaign": "tier1",
+          "prospect_id": "A097",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T07:23:47.476791+00:00",
+      "last_contact": "2026-08-26T07:23:47.476791+00:00"
+    },
+    "info@militarybrands.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T07:37:25.344945+00:00",
+          "message_id": "06cc5eb2-d584-450b-b331-f5c7ddaa340c",
+          "campaign": "tier1",
+          "prospect_id": "A098",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T07:37:25.344945+00:00",
+      "last_contact": "2026-08-26T07:37:25.344945+00:00"
+    },
+    "roy@clearchoicemarketinggroup.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T07:37:27.215419+00:00",
+          "message_id": "956d8b28-38e4-407c-9652-c6cd89bcd9b8",
+          "campaign": "tier1",
+          "prospect_id": "A099",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T07:37:27.215419+00:00",
+      "last_contact": "2026-08-26T07:37:27.215419+00:00"
+    },
+    "info@tadware.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T19:40:09.085035+00:00",
+          "message_id": "78ef98b4-b961-41db-94ee-e17db1cf8715",
+          "campaign": "tier1",
+          "prospect_id": "A100",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T19:40:09.085035+00:00",
+      "last_contact": "2026-08-26T19:40:09.085035+00:00"
+    },
+    "mail@frisk.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T19:45:35.289100+00:00",
+          "message_id": "08fc268b-6a96-45ba-8135-b57ffc829fcb",
+          "campaign": "tier1",
+          "prospect_id": "A101",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T19:45:35.289100+00:00",
+      "last_contact": "2026-08-26T19:45:35.289100+00:00"
+    },
+    "hello@figtreedigital.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T19:45:36.494731+00:00",
+          "message_id": "b3961691-8543-4829-9e99-74e157885460",
+          "campaign": "tier1",
+          "prospect_id": "A102",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T19:45:36.494731+00:00",
+      "last_contact": "2026-08-26T19:45:36.494731+00:00"
+    },
+    "enquiry@jdtaccountants.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T19:50:08.725089+00:00",
+          "message_id": "1585d4a9-7dfa-44e8-a077-4b9b49b7f491",
+          "campaign": "tier1",
+          "prospect_id": "A103",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T19:50:08.725089+00:00",
+      "last_contact": "2026-08-26T19:50:08.725089+00:00"
+    },
+    "info@ljsaccountingservices.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T19:50:09.757509+00:00",
+          "message_id": "fbe28eba-70cb-47e0-aaec-679edd4e68a6",
+          "campaign": "tier1",
+          "prospect_id": "A104",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T19:50:09.757509+00:00",
+      "last_contact": "2026-08-26T19:50:09.757509+00:00"
+    },
+    "victor@exactabts.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T19:55:08.455108+00:00",
+          "message_id": "f47425e4-da7a-4a20-b600-c5b68e65b103",
+          "campaign": "tier1",
+          "prospect_id": "A106",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T19:55:08.455108+00:00",
+      "last_contact": "2026-08-26T19:55:08.455108+00:00"
+    },
+    "info@atozfinancesolutions.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-26T20:05:06.766917+00:00",
+          "message_id": "ac444ace-c2ed-44d3-b4f8-7a2ef97e7673",
+          "campaign": "tier1",
+          "prospect_id": "A108",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-26T20:05:06.766917+00:00",
+      "last_contact": "2026-08-26T20:05:06.766917+00:00"
+    },
+    "info@eloquentagency.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-27T19:27:00.789152+00:00",
+          "message_id": "46f08fe2-b84d-4270-b46a-49bbce30812f",
+          "campaign": "tier1",
+          "prospect_id": "A107",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-27T19:27:00.789152+00:00",
+      "last_contact": "2026-08-27T19:27:00.789152+00:00"
+    },
+    "info@pmgdigital.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-27T19:27:01.994653+00:00",
+          "message_id": "a0d78786-76d5-4d01-a8dc-01bf77c0a0a0",
+          "campaign": "tier1",
+          "prospect_id": "A112",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-27T19:27:01.994653+00:00",
+      "last_contact": "2026-08-27T19:27:01.994653+00:00"
+    },
+    "contact@bambrick.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-27T19:30:14.428939+00:00",
+          "message_id": "fb99e474-fe4d-447d-91db-328b05c39b2f",
+          "campaign": "tier1",
+          "prospect_id": "A113",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-27T19:30:14.428939+00:00",
+      "last_contact": "2026-08-27T19:30:14.428939+00:00"
+    },
+    "info@judgeaccountants.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-27T19:30:16.096066+00:00",
+          "message_id": "23a9710f-b441-4cf6-807e-73df37ddf718",
+          "campaign": "tier1",
+          "prospect_id": "P103",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-27T19:30:16.096066+00:00",
+      "last_contact": "2026-08-27T19:30:16.096066+00:00"
+    },
+    "admin@ascentgeo.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-27T21:40:14.024654+00:00",
+          "message_id": "a8f6248e-efff-4cb4-8596-37c0afd7140e",
+          "campaign": "tier1",
+          "prospect_id": "A109",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-27T21:40:14.024654+00:00",
+      "last_contact": "2026-08-27T21:40:14.024654+00:00"
+    },
+    "enquiry@edwardsheritage.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-27T21:40:14.757473+00:00",
+          "message_id": "4c151a62-db45-4408-9a75-3e9a981ff152",
+          "campaign": "tier1",
+          "prospect_id": "A110",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-27T21:40:14.757473+00:00",
+      "last_contact": "2026-08-27T21:40:14.757473+00:00"
+    },
+    "admin@lbpccpa.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:29:17.050797+00:00",
+          "message_id": "05e4719d-58ec-4140-9ba9-60a14f50e4f6",
+          "campaign": "tier1",
+          "prospect_id": "P097",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:29:17.050797+00:00",
+      "last_contact": "2026-08-28T05:29:17.050797+00:00"
+    },
+    "marlies@ha-accounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:29:18.591596+00:00",
+          "message_id": "084049af-5c21-4f3e-9649-09c0ee4dbba3",
+          "campaign": "tier1",
+          "prospect_id": "P101",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:29:18.591596+00:00",
+      "last_contact": "2026-08-28T05:29:18.591596+00:00"
+    },
+    "anja@wolthersaccounting.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:30:06.030143+00:00",
+          "message_id": "5df30d4d-e0b3-46e5-bee6-1700c55ebaa3",
+          "campaign": "tier1",
+          "prospect_id": "P104",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:30:06.030143+00:00",
+      "last_contact": "2026-08-28T05:30:06.030143+00:00"
+    },
+    "pdc@pdcaccounting.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:30:07.248247+00:00",
+          "message_id": "e65c01ad-450e-4806-bf60-748010b5516e",
+          "campaign": "tier1",
+          "prospect_id": "P107",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:30:07.248247+00:00",
+      "last_contact": "2026-08-28T05:30:07.248247+00:00"
+    },
+    "info@countryscape.org": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:35:05.632121+00:00",
+          "message_id": "c894d970-e220-4cf0-838f-d90c835e6d62",
+          "campaign": "tier1",
+          "prospect_id": "P109",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:35:05.632121+00:00",
+      "last_contact": "2026-08-28T05:35:05.632121+00:00"
+    },
+    "lauren@yourcreative.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:35:07.341485+00:00",
+          "message_id": "c510df07-4fbc-424b-86a3-7da54ea14298",
+          "campaign": "tier1",
+          "prospect_id": "P110",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:35:07.341485+00:00",
+      "last_contact": "2026-08-28T05:35:07.341485+00:00"
+    },
+    "info@qubik.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:40:05.513419+00:00",
+          "message_id": "bdc2b5f7-fa30-47bd-a9b8-24ebe7859673",
+          "campaign": "tier1",
+          "prospect_id": "P112",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:40:05.513419+00:00",
+      "last_contact": "2026-08-28T05:40:05.513419+00:00"
+    },
+    "admin@curiofinancial.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:40:08.245083+00:00",
+          "message_id": "4bf78681-98ba-4d44-9b5a-3bb92f894ed1",
+          "campaign": "tier1",
+          "prospect_id": "P113",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:40:08.245083+00:00",
+      "last_contact": "2026-08-28T05:40:08.245083+00:00"
+    },
+    "stscharke@ventureprivateadvisory.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:45:11.841571+00:00",
+          "message_id": "c6f08bc8-b97f-40e9-bbdf-ab40061d451c",
+          "campaign": "tier1",
+          "prospect_id": "P114",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:45:11.841571+00:00",
+      "last_contact": "2026-08-28T05:45:11.841571+00:00"
+    },
+    "info@gohrencpa.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:45:13.479967+00:00",
+          "message_id": "cfe3f778-3e63-4849-b34e-efb47a316c21",
+          "campaign": "tier1",
+          "prospect_id": "P115",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:45:13.479967+00:00",
+      "last_contact": "2026-08-28T05:45:13.479967+00:00"
+    },
+    "katalyst@katalystcpa.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:50:10.959693+00:00",
+          "message_id": "4844e92d-8209-4e75-a188-6c231f6d8710",
+          "campaign": "tier1",
+          "prospect_id": "P116",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:50:10.959693+00:00",
+      "last_contact": "2026-08-28T05:50:10.959693+00:00"
+    },
+    "scott@scottkeeverseo.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:50:11.657274+00:00",
+          "message_id": "7539f8ea-6e17-4c36-95c2-437691bd0fd1",
+          "campaign": "tier1",
+          "prospect_id": "P117",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:50:11.657274+00:00",
+      "last_contact": "2026-08-28T05:50:11.657274+00:00"
+    },
+    "info@vividus.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-28T05:55:07.128177+00:00",
+          "message_id": "1d4a1aa1-fe1f-4c0a-bea0-f77363b2a7e5",
+          "campaign": "tier1",
+          "prospect_id": "P118",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-28T05:55:07.128177+00:00",
+      "last_contact": "2026-08-28T05:55:07.128177+00:00"
+    },
+    "info@vtac.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T07:59:26.814984+00:00",
+          "message_id": "3f42988a-c339-4236-a2ca-e4179d63041e",
+          "campaign": "tier1",
+          "prospect_id": "P102",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T07:59:26.814984+00:00",
+      "last_contact": "2026-08-29T07:59:26.814984+00:00"
+    },
+    "info@taxsrvcsrgg.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T07:59:28.351755+00:00",
+          "message_id": "1b76cc49-a182-4ed1-8028-1dfbe59a1c3a",
+          "campaign": "tier1",
+          "prospect_id": "P119",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T07:59:28.351755+00:00",
+      "last_contact": "2026-08-29T07:59:28.351755+00:00"
+    },
+    "info@gbac.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T07:59:30.393298+00:00",
+          "message_id": "1fed93d4-6d2c-4f0b-bfd7-1ad9cea6ff8a",
+          "campaign": "tier1",
+          "prospect_id": "P122",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T07:59:30.393298+00:00",
+      "last_contact": "2026-08-29T07:59:30.393298+00:00"
+    },
+    "contact@a3marketing.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T07:59:31.499424+00:00",
+          "message_id": "a9d41334-4a05-4d05-8dcc-c0b4149cfa3e",
+          "campaign": "tier1",
+          "prospect_id": "P125",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T07:59:31.499424+00:00",
+      "last_contact": "2026-08-29T07:59:31.499424+00:00"
+    },
+    "info@latitudeaccountants.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T08:01:03.180576+00:00",
+          "message_id": "7117e3e7-bc9f-4725-af16-aca5241b15fd",
+          "campaign": "tier1",
+          "prospect_id": "P126",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T08:01:03.180576+00:00",
+      "last_contact": "2026-08-29T08:01:03.180576+00:00"
+    },
+    "info@mgrw.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T08:01:04.876075+00:00",
+          "message_id": "cbe44e63-ae84-4946-b9e8-afdaccd11734",
+          "campaign": "tier1",
+          "prospect_id": "P124",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T08:01:04.876075+00:00",
+      "last_contact": "2026-08-29T08:01:04.876075+00:00"
+    },
+    "gburgess@burgesscpas.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T08:10:05.181506+00:00",
+          "message_id": "0b5f456d-5810-443a-b538-8bfaccd578b5",
+          "campaign": "tier1",
+          "prospect_id": "P127",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T08:10:05.181506+00:00",
+      "last_contact": "2026-08-29T08:10:05.181506+00:00"
+    },
+    "enquiries@syersmcgill.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T08:10:06.713040+00:00",
+          "message_id": "2d840b73-da2d-4bac-bf84-0a9bf4e99eed",
+          "campaign": "tier1",
+          "prospect_id": "P128",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T08:10:06.713040+00:00",
+      "last_contact": "2026-08-29T08:10:06.713040+00:00"
+    },
+    "consult@hss-ca.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T08:15:07.146475+00:00",
+          "message_id": "a4ec0fbf-8075-4b1d-9212-dc34bbd9b5fb",
+          "campaign": "tier1",
+          "prospect_id": "P129",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T08:15:07.146475+00:00",
+      "last_contact": "2026-08-29T08:15:07.146475+00:00"
+    },
+    "talbot@talbotcpa.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T08:15:08.477941+00:00",
+          "message_id": "8acd4726-f122-4b9a-9d81-bbfbedd64225",
+          "campaign": "tier1",
+          "prospect_id": "P130",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T08:15:08.477941+00:00",
+      "last_contact": "2026-08-29T08:15:08.477941+00:00"
+    },
+    "admin@tonkinaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T08:20:06.002585+00:00",
+          "message_id": "6d896521-d70a-4bcd-b5ef-599ffacee21f",
+          "campaign": "tier1",
+          "prospect_id": "P132",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T08:20:06.002585+00:00",
+      "last_contact": "2026-08-29T08:20:06.002585+00:00"
+    },
+    "info@neonrain.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-29T12:45:07.671574+00:00",
+          "message_id": "7b1e4850-89f4-4969-a79e-ac9bd14b245f",
+          "campaign": "tier1",
+          "prospect_id": "P131",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-29T12:45:07.671574+00:00",
+      "last_contact": "2026-08-29T12:45:07.671574+00:00"
+    },
+    "contact@slcservices.biz": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-30T08:48:32.043793+00:00",
+          "message_id": "a195d776-b5a3-4ec6-9970-f78234b219d5",
+          "campaign": "tier1",
+          "prospect_id": "P133",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-30T08:48:32.043793+00:00",
+      "last_contact": "2026-08-30T08:48:32.043793+00:00"
+    },
+    "info@deadsimpleaccounting.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-30T08:48:33.821275+00:00",
+          "message_id": "8a6ba8bd-1535-4da8-800e-afee3cd5d0e4",
+          "campaign": "tier1",
+          "prospect_id": "P134",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-30T08:48:33.821275+00:00",
+      "last_contact": "2026-08-30T08:48:33.821275+00:00"
+    },
+    "tax@harpercpaplus.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-30T08:50:06.818189+00:00",
+          "message_id": "e4e9c603-60ad-4e98-af06-7a07ede463dd",
+          "campaign": "tier1",
+          "prospect_id": "P135",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-30T08:50:06.818189+00:00",
+      "last_contact": "2026-08-30T08:50:06.818189+00:00"
+    },
+    "info@plummedia.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-30T08:50:07.925778+00:00",
+          "message_id": "930a6b43-5550-49f5-a0b7-52ae079f4714",
+          "campaign": "tier1",
+          "prospect_id": "P136",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-30T08:50:07.925778+00:00",
+      "last_contact": "2026-08-30T08:50:07.925778+00:00"
+    },
+    "hello@actualsize.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:16:03.819459+00:00",
+          "message_id": "b24212bf-305a-4d06-80d3-6f0561a20fc6",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:16:03.819459+00:00",
+      "last_contact": "2026-08-31T19:16:03.819459+00:00"
+    },
+    "sales@webfeatcomplete.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:16:05.533092+00:00",
+          "message_id": "760e59c5-2a62-4cd0-acb9-068b62fdb880",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:16:05.533092+00:00",
+      "last_contact": "2026-08-31T19:16:05.533092+00:00"
+    },
+    "tommyg@4thfloorcreative.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:28:26.391828+00:00",
+          "message_id": "730eef71-c88b-40b0-998b-d69567b82670",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:28:26.391828+00:00",
+      "last_contact": "2026-08-31T19:28:26.391828+00:00"
+    },
+    "janette@lightningdigital.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:28:28.105690+00:00",
+          "message_id": "ae2abe88-caed-49fd-8b64-aacd8817b967",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:28:28.105690+00:00",
+      "last_contact": "2026-08-31T19:28:28.105690+00:00"
+    },
+    "info@blainewarren.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:30:47.196121+00:00",
+          "message_id": "ddfabd6a-62eb-491f-b0ba-8477a04bd226",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:30:47.196121+00:00",
+      "last_contact": "2026-08-31T19:30:47.196121+00:00"
+    },
+    "info@ahcpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:30:48.398313+00:00",
+          "message_id": "e9aff711-da63-44ae-aa8d-8f9ac8783ac6",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:30:48.398313+00:00",
+      "last_contact": "2026-08-31T19:30:48.398313+00:00"
+    },
+    "contact@leadhub.net": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:35:16.693510+00:00",
+          "message_id": "3c3f5952-0271-4c57-baa3-4b4a9afd3e46",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:35:16.693510+00:00",
+      "last_contact": "2026-08-31T19:35:16.693510+00:00"
+    },
+    "sales@getfoundquick.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-08-31T19:35:19.345002+00:00",
+          "message_id": "edf7f1a7-1a6e-4f96-8459-b51f78264a35",
+          "campaign": "tier1",
+          "prospect_id": "",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-08-31T19:35:19.345002+00:00",
+      "last_contact": "2026-08-31T19:35:19.345002+00:00"
+    },
+    "connect@articulaterc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-01T16:32:15.984063+00:00",
+          "message_id": "027c7f18-29e2-485e-87a4-e42a6697a8a4",
+          "campaign": "tier1",
+          "prospect_id": "P137",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-01T16:32:15.984063+00:00",
+      "last_contact": "2026-09-01T16:32:15.984063+00:00"
+    },
+    "service@architechllc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-01T16:32:17.102919+00:00",
+          "message_id": "8c39c38c-8ace-42da-b4f0-107c6dfb61e0",
+          "campaign": "tier1",
+          "prospect_id": "P138",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-01T16:32:17.102919+00:00",
+      "last_contact": "2026-09-01T16:32:17.102919+00:00"
+    },
+    "tracy@tracyfishercpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-01T16:35:42.833943+00:00",
+          "message_id": "7d31e278-23b6-4b49-beeb-033b58baf499",
+          "campaign": "tier1",
+          "prospect_id": "P139",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-01T16:35:42.833943+00:00",
+      "last_contact": "2026-09-01T16:35:42.833943+00:00"
+    },
+    "info@veritypc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-01T16:35:44.391996+00:00",
+          "message_id": "9ef8d5cf-4a29-4d59-a234-6d5b03b7b7e5",
+          "campaign": "tier1",
+          "prospect_id": "P140",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-01T16:35:44.391996+00:00",
+      "last_contact": "2026-09-01T16:35:44.391996+00:00"
+    },
+    "info@ascendllp.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T17:24:09.820810+00:00",
+          "message_id": "0d6ff35a-f5db-4915-88a6-e8777fcd9fdd",
+          "campaign": "tier1",
+          "prospect_id": "106",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T17:24:09.820810+00:00",
+      "last_contact": "2026-09-02T17:24:09.820810+00:00"
+    },
+    "rusrekadm@gmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T18:55:35.522017+00:00",
+          "message_id": "01a06379-ffe2-70c8-85a8-33c24634a7bd",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373380-0021",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T18:55:35.522017+00:00",
+      "last_contact": "2026-09-02T18:55:35.522017+00:00"
+    },
+    "info@goldenwebmedia.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T18:55:36.682963+00:00",
+          "message_id": "01a0637a-0705-726c-b95e-a6f26078eaad",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373380-0046",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T18:55:36.682963+00:00",
+      "last_contact": "2026-09-02T18:55:36.682963+00:00"
+    },
+    "marketing@amp3pr.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:00:17.024072+00:00",
+          "message_id": "01a0637e-4590-75af-9c82-171b0bb1ef7d",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373380-0049",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:00:17.024072+00:00",
+      "last_contact": "2026-09-02T19:00:17.024072+00:00"
+    },
+    "lindsay@digitaltraffikagency.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:00:18.619153+00:00",
+          "message_id": "01a0637e-52aa-7059-b904-5064167e52b9",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0062",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:00:18.619153+00:00",
+      "last_contact": "2026-09-02T19:00:18.619153+00:00"
+    },
+    "info@berbay.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:05:06.454930+00:00",
+          "message_id": "01a06382-b209-76fe-b14d-9925ad8f0ba7",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0066",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:05:06.454930+00:00",
+      "last_contact": "2026-09-02T19:05:06.454930+00:00"
+    },
+    "support@seorankmedia.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:05:08.504203+00:00",
+          "message_id": "01a06382-bd38-703f-a7c4-88849fae9d45",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0070",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:05:08.504203+00:00",
+      "last_contact": "2026-09-02T19:05:08.504203+00:00"
+    },
+    "info@losangelesseoinc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:10:07.826648+00:00",
+          "message_id": "01a06387-469e-77f2-8d0e-d7c4b350259e",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0073",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:10:07.826648+00:00",
+      "last_contact": "2026-09-02T19:10:07.826648+00:00"
+    },
+    "4thwalldigital@gmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:10:08.951064+00:00",
+          "message_id": "01a06387-5686-742e-8cee-9e7cedec1405",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0083",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:10:08.951064+00:00",
+      "last_contact": "2026-09-02T19:10:08.951064+00:00"
+    },
+    "hello@mouthwash.co": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:15:08.652259+00:00",
+          "message_id": "01a0638b-e3c6-7567-870a-21c50fced4c6",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0085",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:15:08.652259+00:00",
+      "last_contact": "2026-09-02T19:15:08.652259+00:00"
+    },
+    "houston@kellywm.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:15:10.198462+00:00",
+          "message_id": "01a0638b-eda1-71ef-a667-2b81204d0b8d",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373486-0097",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:15:10.198462+00:00",
+      "last_contact": "2026-09-02T19:15:10.198462+00:00"
+    },
+    "info@seoprix.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:20:11.523703+00:00",
+          "message_id": "01a06390-8345-768d-b976-366254b293c9",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373380-0042",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:20:11.523703+00:00",
+      "last_contact": "2026-09-02T19:20:11.523703+00:00"
+    },
+    "advancingjustice@emailsl.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:20:13.984141+00:00",
+          "message_id": "01a06390-8fdf-710d-b074-fcf8c2e48c33",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373385-0055",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:20:13.984141+00:00",
+      "last_contact": "2026-09-02T19:20:13.984141+00:00"
+    },
+    "info@kb-rx.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:25:07.878793+00:00",
+          "message_id": "01a06395-0b06-73db-a392-d19ce883efe7",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373385-0079",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:25:07.878793+00:00",
+      "last_contact": "2026-09-02T19:25:07.878793+00:00"
+    },
+    "sei@stivereng.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:25:09.441141+00:00",
+          "message_id": "01a06395-1236-74a5-ba81-c0648780c67a",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373486-0098",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:25:09.441141+00:00",
+      "last_contact": "2026-09-02T19:25:09.441141+00:00"
+    },
+    "contact@jasontheriot.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:30:12.176368+00:00",
+          "message_id": "01a06399-af90-7121-8751-ca38916b1b5b",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373486-0103",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:30:12.176368+00:00",
+      "last_contact": "2026-09-02T19:30:12.176368+00:00"
+    },
+    "info@nuventraconsulting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:30:14.214430+00:00",
+          "message_id": "01a06399-b52a-705c-a6a0-4dc0d968a266",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373486-0107",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:30:14.214430+00:00",
+      "last_contact": "2026-09-02T19:30:14.214430+00:00"
+    },
+    "philreeseaz@gmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:35:07.906688+00:00",
+          "message_id": "01a0639e-32e9-7138-82ef-a2437e27e890",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373503-0118",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:35:07.906688+00:00",
+      "last_contact": "2026-09-02T19:35:07.906688+00:00"
+    },
+    "roy@angrydragonstudios.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:35:09.117174+00:00",
+          "message_id": "01a0639e-3875-761d-b05b-3f1b0a9af59b",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373486-0101",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:35:09.117174+00:00",
+      "last_contact": "2026-09-02T19:35:09.117174+00:00"
+    },
+    "contact@bitwolfmedia.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:40:07.159050+00:00",
+          "message_id": "01a063a2-be9a-7005-ae3d-493adda39077",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373503-0117",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:40:07.159050+00:00",
+      "last_contact": "2026-09-02T19:40:07.159050+00:00"
+    },
+    "info@vignyc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:40:08.914367+00:00",
+          "message_id": "01a063a2-cbb0-7628-8215-d9308cbf4e84",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373380-0014",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:40:08.914367+00:00",
+      "last_contact": "2026-09-02T19:40:08.914367+00:00"
+    },
+    "hello@omg.re": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:45:09.399873+00:00",
+          "message_id": "01a063a7-6099-757e-bc47-e12aa4543571",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373380-0018",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:45:09.399873+00:00",
+      "last_contact": "2026-09-02T19:45:09.399873+00:00"
+    },
+    "info@fullpointgraphics.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:45:10.608819+00:00",
+          "message_id": "01a063a7-679e-706e-9691-33b963a3dca8",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373380-0029",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:45:10.608819+00:00",
+      "last_contact": "2026-09-02T19:45:10.608819+00:00"
+    },
+    "hello@andwalsh.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:50:07.374200+00:00",
+          "message_id": "01a063ab-e956-777d-b612-bfbf1cca42c6",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373380-0048",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:50:07.374200+00:00",
+      "last_contact": "2026-09-02T19:50:07.374200+00:00"
+    },
+    "hello@konnectagency.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:50:08.660961+00:00",
+          "message_id": "01a063ab-f393-7794-a644-806a1b9f8ff9",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0058",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:50:08.660961+00:00",
+      "last_contact": "2026-09-02T19:50:08.660961+00:00"
+    },
+    "hello@glendalemarketing.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:55:07.249973+00:00",
+          "message_id": "01a063b0-7fce-72e3-842d-2d852967ca1c",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0063",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:55:07.249973+00:00",
+      "last_contact": "2026-09-02T19:55:07.249973+00:00"
+    },
+    "contact@prhollywood.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T19:55:09.439125+00:00",
+          "message_id": "01a063b0-86f8-70d9-9e47-0dccfd37a9cb",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0068",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T19:55:09.439125+00:00",
+      "last_contact": "2026-09-02T19:55:09.439125+00:00"
+    },
+    "hello@abrightideaonline.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:00:11.501840+00:00",
+          "message_id": "01a063b5-16fc-77f9-bbe5-91818b71c23b",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0069",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:00:11.501840+00:00",
+      "last_contact": "2026-09-02T20:00:11.501840+00:00"
+    },
+    "hello@andava.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:00:13.114276+00:00",
+          "message_id": "01a063b5-2b70-70af-b555-71be67f2b8ae",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0071",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:00:13.114276+00:00",
+      "last_contact": "2026-09-02T20:00:13.114276+00:00"
+    },
+    "hello@tagtimeusa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:05:08.042378+00:00",
+          "message_id": "01a063b9-ad3c-7736-b490-7eeedebe773c",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373385-0078",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:05:08.042378+00:00",
+      "last_contact": "2026-09-02T20:05:08.042378+00:00"
+    },
+    "hello@immigrationadvocacy.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:05:09.607071+00:00",
+          "message_id": "01a063b9-b1c2-76cd-9944-4ab8601ae6ac",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373380-0020",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:05:09.607071+00:00",
+      "last_contact": "2026-09-02T20:05:09.607071+00:00"
+    },
+    "hello@zapitiautoschool.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:10:08.264788+00:00",
+          "message_id": "01a063be-3ef8-756f-8a4b-b2a54f1ea5dc",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373380-0028",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:10:08.264788+00:00",
+      "last_contact": "2026-09-02T20:10:08.264788+00:00"
+    },
+    "hello@bcg.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:10:10.007436+00:00",
+          "message_id": "01a063be-46e2-736e-8776-f63473a9db19",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373380-0034",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:10:10.007436+00:00",
+      "last_contact": "2026-09-02T20:10:10.007436+00:00"
+    },
+    "hello@mckinsey.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:15:09.650981+00:00",
+          "message_id": "01a063c2-db30-7412-a353-be6163adcffb",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373380-0038",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:15:09.650981+00:00",
+      "last_contact": "2026-09-02T20:15:09.650981+00:00"
+    },
+    "hello@malk.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:15:11.892271+00:00",
+          "message_id": "01a063c2-e078-761e-a3a9-46421493bb41",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373380-0051",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:15:11.892271+00:00",
+      "last_contact": "2026-09-02T20:15:11.892271+00:00"
+    },
+    "hello@mgac.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:20:06.475933+00:00",
+          "message_id": "01a063c7-610f-77e1-b150-26a6cf522e9f",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373385-0064",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:20:06.475933+00:00",
+      "last_contact": "2026-09-02T20:20:06.475933+00:00"
+    },
+    "hello@altago.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:20:07.634426+00:00",
+          "message_id": "01a063c7-673f-7176-a170-037754cb028f",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373385-0074",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:20:07.634426+00:00",
+      "last_contact": "2026-09-02T20:20:07.634426+00:00"
+    },
+    "info@monatshirt.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:25:09.642664+00:00",
+          "message_id": "01a063cc-0314-7309-97e3-9d1b56e73313",
+          "campaign": "tier2",
+          "prospect_id": "OSM-1788373486-0096",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:25:09.642664+00:00",
+      "last_contact": "2026-09-02T20:25:09.642664+00:00"
+    },
+    "sales@improving.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-02T20:25:10.789957+00:00",
+          "message_id": "01a063cc-077b-7301-aae6-b92aeea798a5",
+          "campaign": "tier3",
+          "prospect_id": "OSM-1788373486-0099",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-02T20:25:10.789957+00:00",
+      "last_contact": "2026-09-02T20:25:10.789957+00:00"
+    },
+    "design@bpdinc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-03T10:28:43.296078+00:00",
+          "message_id": "01a066d0-4aac-77ad-8a34-e6a5b9f495ab",
+          "campaign": "tier1",
+          "prospect_id": "107",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-03T10:28:43.296078+00:00",
+      "last_contact": "2026-09-03T10:28:43.296078+00:00"
+    },
+    "hello@ghostbureau.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-03T10:28:45.289335+00:00",
+          "message_id": "01a066d0-50a9-7428-820d-5cfd83b14cee",
+          "campaign": "tier1",
+          "prospect_id": "108",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-03T10:28:45.289335+00:00",
+      "last_contact": "2026-09-03T10:28:45.289335+00:00"
+    },
+    "hi@kziq.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-03T10:31:57.978917+00:00",
+          "message_id": "01a066d3-4127-74f2-bb2e-b921435a887f",
+          "campaign": "tier1",
+          "prospect_id": "109",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-03T10:31:57.978917+00:00",
+      "last_contact": "2026-09-03T10:31:57.978917+00:00"
+    },
+    "melissa@offsitebusiness.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-03T10:31:59.143953+00:00",
+          "message_id": "01a066d3-4923-73f2-be58-d155fa019781",
+          "campaign": "tier1",
+          "prospect_id": "111",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-03T10:31:59.143953+00:00",
+      "last_contact": "2026-09-03T10:31:59.143953+00:00"
+    },
+    "dan@miamisem.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-03T10:35:07.794137+00:00",
+          "message_id": "01a066d6-28a7-747a-b5e7-db07dcfdc27c",
+          "campaign": "tier1",
+          "prospect_id": "112",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-03T10:35:07.794137+00:00",
+      "last_contact": "2026-09-03T10:35:07.794137+00:00"
+    },
+    "cpa@accountancygroup.biz": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-03T10:35:09.090647+00:00",
+          "message_id": "01a066d6-2d42-75f8-9deb-c940ff77e007",
+          "campaign": "tier1",
+          "prospect_id": "114",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-03T10:35:09.090647+00:00",
+      "last_contact": "2026-09-03T10:35:09.090647+00:00"
+    },
+    "courtney.dodds@edna.studio": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:20:08.959869+00:00",
+          "message_id": "068500af-4bc4-4871-b302-4bf95f304e4b",
+          "campaign": "tier1",
+          "prospect_id": "P002",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:20:08.959869+00:00",
+      "last_contact": "2026-09-05T11:20:08.959869+00:00"
+    },
+    "jason@foundrybend.org": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:20:09.844605+00:00",
+          "message_id": "99337036-216b-4392-8950-b268fc93c758",
+          "campaign": "tier1",
+          "prospect_id": "P004",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:20:09.844605+00:00",
+      "last_contact": "2026-09-05T11:20:09.844605+00:00"
+    },
+    "bev@brandbritain.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:25:07.464470+00:00",
+          "message_id": "3002d223-0d5f-46a4-9057-4235089468bd",
+          "campaign": "tier1",
+          "prospect_id": "P008",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:25:07.464470+00:00",
+      "last_contact": "2026-09-05T11:25:07.464470+00:00"
+    },
+    "jon.burdon@bertagency.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:25:08.701942+00:00",
+          "message_id": "be788432-a46f-43c7-be3b-914143ff520a",
+          "campaign": "tier1",
+          "prospect_id": "P009",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:25:08.701942+00:00",
+      "last_contact": "2026-09-05T11:25:08.701942+00:00"
+    },
+    "andy@o8.agency": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:30:07.794821+00:00",
+          "message_id": "49ff6ac9-2d2e-4bfa-b319-f24429edf720",
+          "campaign": "tier1",
+          "prospect_id": "P019",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:30:07.794821+00:00",
+      "last_contact": "2026-09-05T11:30:07.794821+00:00"
+    },
+    "devin@fluencyfirm.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:30:09.309640+00:00",
+          "message_id": "5e76e5ca-0060-403f-ae66-b8fd1e9ddedc",
+          "campaign": "tier1",
+          "prospect_id": "P023",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:30:09.309640+00:00",
+      "last_contact": "2026-09-05T11:30:09.309640+00:00"
+    },
+    "morgan@workshopdigital.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:35:12.876892+00:00",
+          "message_id": "bf94512a-a6c6-4e18-800f-dce4217b1ba1",
+          "campaign": "tier1",
+          "prospect_id": "P026",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:35:12.876892+00:00",
+      "last_contact": "2026-09-05T11:35:12.876892+00:00"
+    },
+    "anjelika@dd.nyc": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:35:13.653227+00:00",
+          "message_id": "8078f577-5b77-4ac0-b8ff-0d17979eee09",
+          "campaign": "tier1",
+          "prospect_id": "P029",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:35:13.653227+00:00",
+      "last_contact": "2026-09-05T11:35:13.653227+00:00"
+    },
+    "info@wearescs.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:50:15.924363+00:00",
+          "message_id": "b6b65736-41ba-47bb-ba80-33cebe3cce23",
+          "campaign": "tier1",
+          "prospect_id": "98",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:50:15.924363+00:00",
+      "last_contact": "2026-09-05T11:50:15.924363+00:00"
+    },
+    "info@pay-tech.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:55:07.033936+00:00",
+          "message_id": "337c8f26-fd0b-4edc-a3bd-87a4f30aa996",
+          "campaign": "tier1",
+          "prospect_id": "99",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:55:07.033936+00:00",
+      "last_contact": "2026-09-05T11:55:07.033936+00:00"
+    },
+    "fiotaxinc@gmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T11:55:08.211764+00:00",
+          "message_id": "b1574217-3c57-4c86-82ef-e3688e645d23",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0006",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T11:55:08.211764+00:00",
+      "last_contact": "2026-09-05T11:55:08.211764+00:00"
+    },
+    "alice@pvttaxaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:00:10.106841+00:00",
+          "message_id": "c9c08df4-5e1d-403b-a956-9088d1f549c3",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0012",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:00:10.106841+00:00",
+      "last_contact": "2026-09-05T12:00:10.106841+00:00"
+    },
+    "christa@auxiliaaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:00:13.851005+00:00",
+          "message_id": "6bdb0dda-36f9-41a2-902a-7343ded16c7e",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0015",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:00:13.851005+00:00",
+      "last_contact": "2026-09-05T12:00:13.851005+00:00"
+    },
+    "customercare@atax.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:05:09.213385+00:00",
+          "message_id": "db460d2e-d8fe-4f3c-8cc6-254456e763a4",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0017",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:05:09.213385+00:00",
+      "last_contact": "2026-09-05T12:05:09.213385+00:00"
+    },
+    "merchaninsurance@gmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:05:10.414584+00:00",
+          "message_id": "868fa8b5-5e6c-4a36-a23a-cbc506ff8c6f",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0023",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:05:10.414584+00:00",
+      "last_contact": "2026-09-05T12:05:10.414584+00:00"
+    },
+    "info@qataxsolutions.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:10:10.552351+00:00",
+          "message_id": "877d8ea1-6d2e-4c85-adfa-4b1721943093",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0024",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:10:10.552351+00:00",
+      "last_contact": "2026-09-05T12:10:10.552351+00:00"
+    },
+    "support@lgtax.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:10:12.637734+00:00",
+          "message_id": "dadb79c3-e0f0-4d07-88b4-46cefd752f48",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0027",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:10:12.637734+00:00",
+      "last_contact": "2026-09-05T12:10:12.637734+00:00"
+    },
+    "aerotax@hotmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:15:10.832616+00:00",
+          "message_id": "f11d03d5-278a-48aa-88a5-7b2f5da134b4",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0032",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:15:10.832616+00:00",
+      "last_contact": "2026-09-05T12:15:10.832616+00:00"
+    },
+    "mssavingsolutions1@gmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:15:12.046426+00:00",
+          "message_id": "d0c4287f-4847-4163-82f5-6cf089d53335",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0033",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:15:12.046426+00:00",
+      "last_contact": "2026-09-05T12:15:12.046426+00:00"
+    },
+    "info@goldcrestcpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:20:26.652841+00:00",
+          "message_id": "ca3f41f7-f487-424e-9a31-2e4d04fca84c",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0037",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:20:26.652841+00:00",
+      "last_contact": "2026-09-05T12:20:26.652841+00:00"
+    },
+    "team@oberlanderandco.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:20:27.773501+00:00",
+          "message_id": "8195b254-003e-4e0c-91fa-80a6cd1a63b6",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0039",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:20:27.773501+00:00",
+      "last_contact": "2026-09-05T12:20:27.773501+00:00"
+    },
+    "info@cpafirmnyc.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:25:09.461610+00:00",
+          "message_id": "8c2ab2ab-ae21-445f-b3d1-daa90583da18",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0040",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:25:09.461610+00:00",
+      "last_contact": "2026-09-05T12:25:09.461610+00:00"
+    },
+    "info@pwcpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:25:10.111149+00:00",
+          "message_id": "7e93579d-d384-4993-a465-086e09898b9e",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0043",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:25:10.111149+00:00",
+      "last_contact": "2026-09-05T12:25:10.111149+00:00"
+    },
+    "kevin@parkslopetaxes.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:30:11.059481+00:00",
+          "message_id": "07b5413f-2695-45e6-9ad0-71b7f68c4954",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373380-0047",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:30:11.059481+00:00",
+      "last_contact": "2026-09-05T12:30:11.059481+00:00"
+    },
+    "qdisparte@dispartetaxlaw.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-05T12:30:12.626387+00:00",
+          "message_id": "71052566-4c14-4c8f-8a38-2d54fb523fb8",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0053",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-05T12:30:12.626387+00:00",
+      "last_contact": "2026-09-05T12:30:12.626387+00:00"
+    },
+    "info@qbcure.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:00:20.412196+00:00",
+          "message_id": "2d445628-bd93-47c7-a2f5-1697a72159f7",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0054",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:00:20.412196+00:00",
+      "last_contact": "2026-09-06T00:00:20.412196+00:00"
+    },
+    "info@arroyoinvestmentgroup.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:00:22.864739+00:00",
+          "message_id": "b905ee6b-f929-4994-b65b-820a317b3c52",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0057",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:00:22.864739+00:00",
+      "last_contact": "2026-09-06T00:00:22.864739+00:00"
+    },
+    "tmn@thomasneches.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:05:14.494220+00:00",
+          "message_id": "b283801d-ff9a-45f8-a5ff-044ea20fd5cc",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0067",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:05:14.494220+00:00",
+      "last_contact": "2026-09-06T00:05:14.494220+00:00"
+    },
+    "drichner@churchillmanagement.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:05:16.526820+00:00",
+          "message_id": "48b7076e-167d-4310-aed7-4e39781ae373",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0072",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:05:16.526820+00:00",
+      "last_contact": "2026-09-06T00:05:16.526820+00:00"
+    },
+    "info@cnccpallp.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:10:09.509028+00:00",
+          "message_id": "18d10964-0f15-4f63-8427-0d4da1a932df",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0075",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:10:09.509028+00:00",
+      "last_contact": "2026-09-06T00:10:09.509028+00:00"
+    },
+    "alex@alexlopeztaxservices.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:10:11.135618+00:00",
+          "message_id": "7eb3a7d0-6e91-4928-b951-868a52ab3464",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0076",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:10:11.135618+00:00",
+      "last_contact": "2026-09-06T00:10:11.135618+00:00"
+    },
+    "contact@firstfinancial.is": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:15:10.167289+00:00",
+          "message_id": "9b832954-3d9d-4494-85df-c2766a90cbe1",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0077",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:15:10.167289+00:00",
+      "last_contact": "2026-09-06T00:15:10.167289+00:00"
+    },
+    "email.alanwen@aokoousa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:15:11.876461+00:00",
+          "message_id": "26909930-f43e-4c6a-848b-8a9cfa515a3d",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0080",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:15:11.876461+00:00",
+      "last_contact": "2026-09-06T00:15:11.876461+00:00"
+    },
+    "cfsinc@cfsincca.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:20:15.674126+00:00",
+          "message_id": "5a452ba9-a4fc-440d-a2f8-379c3b32b6e1",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0081",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:20:15.674126+00:00",
+      "last_contact": "2026-09-06T00:20:15.674126+00:00"
+    },
+    "info@wangmicpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:20:16.479252+00:00",
+          "message_id": "3989f35f-feff-4351-a30b-7cc8863c46ab",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0086",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:20:16.479252+00:00",
+      "last_contact": "2026-09-06T00:20:16.479252+00:00"
+    },
+    "info@adnant.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:25:12.406631+00:00",
+          "message_id": "a90865a1-64bf-401c-a593-a41d8534c42a",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373385-0087",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:25:12.406631+00:00",
+      "last_contact": "2026-09-06T00:25:12.406631+00:00"
+    },
+    "cashier@rice.edu": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:25:13.739261+00:00",
+          "message_id": "6df0f954-3e8e-47ed-ac5b-9263a9befddf",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373486-0094",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:25:13.739261+00:00",
+      "last_contact": "2026-09-06T00:25:13.739261+00:00"
+    },
+    "contact@oxenfinancial.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:30:11.196953+00:00",
+          "message_id": "d5dde299-8b36-4f1b-b620-05594d261c7b",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373486-0100",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:30:11.196953+00:00",
+      "last_contact": "2026-09-06T00:30:11.196953+00:00"
+    },
+    "owlees33366@gmail.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:30:12.745315+00:00",
+          "message_id": "1b75cfd5-0acd-42bc-b2c4-ed6f765dad1d",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373486-0106",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:30:12.745315+00:00",
+      "last_contact": "2026-09-06T00:30:12.745315+00:00"
+    },
+    "julie@essentialnumbersaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:35:07.294572+00:00",
+          "message_id": "958507f1-91a7-435d-8ff3-d7d0ca0d94c7",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373503-0112",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:35:07.294572+00:00",
+      "last_contact": "2026-09-06T00:35:07.294572+00:00"
+    },
+    "ken@lindowcpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:35:08.522604+00:00",
+          "message_id": "99ba1588-7199-4ccb-b832-6bb906df461a",
+          "campaign": "tier1",
+          "prospect_id": "OSM-1788373503-0114",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:35:08.522604+00:00",
+      "last_contact": "2026-09-06T00:35:08.522604+00:00"
+    },
+    "info@valuecorp.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:40:10.412008+00:00",
+          "message_id": "bf79ff71-0e2b-441f-8eb5-d331d02d95b1",
+          "campaign": "tier1",
+          "prospect_id": "P141",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:40:10.412008+00:00",
+      "last_contact": "2026-09-06T00:40:10.412008+00:00"
+    },
+    "advice@whitingsadvisors.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T00:40:12.088861+00:00",
+          "message_id": "8238481e-b7b0-48ec-a97a-af74060e25a5",
+          "campaign": "tier1",
+          "prospect_id": "P142",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T00:40:12.088861+00:00",
+      "last_contact": "2026-09-06T00:40:12.088861+00:00"
+    },
+    "tax@gwsaccountants.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:03:41.163737+00:00",
+          "message_id": "df13f3a5-267e-461d-8872-dae120374d18",
+          "campaign": "tier1",
+          "prospect_id": "P143",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:03:41.163737+00:00",
+      "last_contact": "2026-09-06T07:03:41.163737+00:00"
+    },
+    "info@pnccpa.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:03:42.852938+00:00",
+          "message_id": "975e1496-bbee-4beb-81f5-59f928d4792b",
+          "campaign": "tier1",
+          "prospect_id": "P144",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:03:42.852938+00:00",
+      "last_contact": "2026-09-06T07:03:42.852938+00:00"
+    },
+    "info@pivotadvantage.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:05:40.356354+00:00",
+          "message_id": "ea2ac9ea-52f4-4fd9-9b77-3aa49cac05c7",
+          "campaign": "tier1",
+          "prospect_id": "P145",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:05:40.356354+00:00",
+      "last_contact": "2026-09-06T07:05:40.356354+00:00"
+    },
+    "info@fidel.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:05:42.019727+00:00",
+          "message_id": "c72aa895-e1ba-4a37-a0bd-7641180c5406",
+          "campaign": "tier1",
+          "prospect_id": "P146",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:05:42.019727+00:00",
+      "last_contact": "2026-09-06T07:05:42.019727+00:00"
+    },
+    "hello@valuecorp.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:10:11.787185+00:00",
+          "message_id": "0dbb3359-b76d-4066-ae99-bd053604fc39",
+          "campaign": "tier1",
+          "prospect_id": "P147",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:10:11.787185+00:00",
+      "last_contact": "2026-09-06T07:10:11.787185+00:00"
+    },
+    "hello@deethco.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:10:13.865194+00:00",
+          "message_id": "cf2d9ee5-71e2-48bf-9d6f-113e6db4c927",
+          "campaign": "tier1",
+          "prospect_id": "P148",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:10:13.865194+00:00",
+      "last_contact": "2026-09-06T07:10:13.865194+00:00"
+    },
+    "hello@thetaxman.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:15:13.520707+00:00",
+          "message_id": "a7761dcc-5c93-459e-950a-7b4c457b65f9",
+          "campaign": "tier1",
+          "prospect_id": "P149",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:15:13.520707+00:00",
+      "last_contact": "2026-09-06T07:15:13.520707+00:00"
+    },
+    "hello@canamtax.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:15:15.698013+00:00",
+          "message_id": "5e2a292b-aa9b-4e93-b361-94ae65b21611",
+          "campaign": "tier1",
+          "prospect_id": "P150",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:15:15.698013+00:00",
+      "last_contact": "2026-09-06T07:15:15.698013+00:00"
+    },
+    "hello@helpingbusinesses.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:20:11.777086+00:00",
+          "message_id": "dd2cda76-eedb-451a-b9a0-f96b7a15f678",
+          "campaign": "tier1",
+          "prospect_id": "P151",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:20:11.777086+00:00",
+      "last_contact": "2026-09-06T07:20:11.777086+00:00"
+    },
+    "hello@jamesbridge.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:20:13.109715+00:00",
+          "message_id": "54ccd26a-9065-4ec6-a1d8-5283e3f443b0",
+          "campaign": "tier1",
+          "prospect_id": "P152",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:20:13.109715+00:00",
+      "last_contact": "2026-09-06T07:20:13.109715+00:00"
+    },
+    "hello@percivalgroup.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:25:11.912142+00:00",
+          "message_id": "4bbf1992-7fdf-4ddb-9d10-837160a6647a",
+          "campaign": "tier1",
+          "prospect_id": "P153",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:25:11.912142+00:00",
+      "last_contact": "2026-09-06T07:25:11.912142+00:00"
+    },
+    "hello@rgcga.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-06T07:25:12.729302+00:00",
+          "message_id": "44e2bd32-0c15-4827-95ee-ffb88d434ff2",
+          "campaign": "tier1",
+          "prospect_id": "P154",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-06T07:25:12.729302+00:00",
+      "last_contact": "2026-09-06T07:25:12.729302+00:00"
+    },
+    "support@liquiditycurve.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T09:39:47.044071+00:00",
+          "message_id": "66bc4112-5e1f-4755-9f34-5532ea408e08",
+          "campaign": "tier1",
+          "prospect_id": "P155",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T09:39:47.044071+00:00",
+      "last_contact": "2026-09-07T09:39:47.044071+00:00"
+    },
+    "info@mudharcpa.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T09:39:47.792337+00:00",
+          "message_id": "96599385-7e16-41ae-8ddf-f36b66742bc1",
+          "campaign": "tier1",
+          "prospect_id": "P156",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T09:39:47.792337+00:00",
+      "last_contact": "2026-09-07T09:39:47.792337+00:00"
+    },
+    "admin@puetzconstruction.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:04:43.778717+00:00",
+          "message_id": "3f32cbed-a9b8-4232-9389-0dcc4e50c37a",
+          "campaign": "tier1",
+          "prospect_id": "P157",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:04:43.778717+00:00",
+      "last_contact": "2026-09-07T10:04:43.778717+00:00"
+    },
+    "hello@mirandaaccounting.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:04:44.922701+00:00",
+          "message_id": "7cc4ee2c-4339-4725-a62e-01069521c9c3",
+          "campaign": "tier1",
+          "prospect_id": "P158",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:04:44.922701+00:00",
+      "last_contact": "2026-09-07T10:04:44.922701+00:00"
+    },
+    "hello@markandu.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:07:08.804069+00:00",
+          "message_id": "8c6dcf64-6e84-4591-8f80-6c84781cbf32",
+          "campaign": "tier1",
+          "prospect_id": "P159",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:07:08.804069+00:00",
+      "last_contact": "2026-09-07T10:07:08.804069+00:00"
+    },
+    "hello@debtfreenorth.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:07:10.696199+00:00",
+          "message_id": "8a1a892f-290d-4de2-b689-5f5caf2e4c5b",
+          "campaign": "tier1",
+          "prospect_id": "P161",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:07:10.696199+00:00",
+      "last_contact": "2026-09-07T10:07:10.696199+00:00"
+    },
+    "hello@cascadefinancialgroup.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:10:11.127113+00:00",
+          "message_id": "11d3042d-4428-48ac-8f12-f270d2aded17",
+          "campaign": "tier1",
+          "prospect_id": "P162",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:10:11.127113+00:00",
+      "last_contact": "2026-09-07T10:10:11.127113+00:00"
+    },
+    "hello@solefinancial.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:10:12.211302+00:00",
+          "message_id": "2cd6992a-e59b-49ab-afae-0b2f56e8c39b",
+          "campaign": "tier1",
+          "prospect_id": "P163",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:10:12.211302+00:00",
+      "last_contact": "2026-09-07T10:10:12.211302+00:00"
+    },
+    "hello@t2inc.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:15:11.118193+00:00",
+          "message_id": "171d49c9-89e2-4b2a-a3d0-9c7cebd9c2e9",
+          "campaign": "tier1",
+          "prospect_id": "P164",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:15:11.118193+00:00",
+      "last_contact": "2026-09-07T10:15:11.118193+00:00"
+    },
+    "hello@squareaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:15:12.287968+00:00",
+          "message_id": "26f090fa-03e1-4410-8422-adb232e51779",
+          "campaign": "tier1",
+          "prospect_id": "P165",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:15:12.287968+00:00",
+      "last_contact": "2026-09-07T10:15:12.287968+00:00"
+    },
+    "info@booksmr.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:20:10.601238+00:00",
+          "message_id": "e782f3ab-6986-4040-b32b-5ee4215abbc7",
+          "campaign": "tier1",
+          "prospect_id": "P166",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:20:10.601238+00:00",
+      "last_contact": "2026-09-07T10:20:10.601238+00:00"
+    },
+    "hello@accountingmontreal.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:20:12.164850+00:00",
+          "message_id": "6896672b-682d-4efc-988c-44877d32443e",
+          "campaign": "tier1",
+          "prospect_id": "P167",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:20:12.164850+00:00",
+      "last_contact": "2026-09-07T10:20:12.164850+00:00"
+    },
+    "hello@accotax.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:25:06.355107+00:00",
+          "message_id": "f65dc75a-9f95-4ab4-8d4a-56252ae13950",
+          "campaign": "tier1",
+          "prospect_id": "P168",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:25:06.355107+00:00",
+      "last_contact": "2026-09-07T10:25:06.355107+00:00"
+    },
+    "hello@786vcpa.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:25:07.959004+00:00",
+          "message_id": "5f4c4e46-dde5-4de2-b927-226a30d74b89",
+          "campaign": "tier1",
+          "prospect_id": "P169",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:25:07.959004+00:00",
+      "last_contact": "2026-09-07T10:25:07.959004+00:00"
+    },
+    "hello@kdprofessional.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:30:08.896596+00:00",
+          "message_id": "feec0848-5188-4c47-b6b0-671234061bc4",
+          "campaign": "tier1",
+          "prospect_id": "P170",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:30:08.896596+00:00",
+      "last_contact": "2026-09-07T10:30:08.896596+00:00"
+    },
+    "hello@focusllp.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:30:09.645007+00:00",
+          "message_id": "0102c2ac-cabb-4523-8d62-cf4ccc94b61a",
+          "campaign": "tier1",
+          "prospect_id": "P171",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:30:09.645007+00:00",
+      "last_contact": "2026-09-07T10:30:09.645007+00:00"
+    },
+    "hello@versatileaccounting.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:35:09.364225+00:00",
+          "message_id": "0396ccb7-dab1-42b0-a4a2-a38af0c25a35",
+          "campaign": "tier1",
+          "prospect_id": "P172",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:35:09.364225+00:00",
+      "last_contact": "2026-09-07T10:35:09.364225+00:00"
+    },
+    "hello@saraccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:35:10.465383+00:00",
+          "message_id": "69c0e870-e756-42f6-b262-2cc928d32341",
+          "campaign": "tier1",
+          "prospect_id": "P173",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:35:10.465383+00:00",
+      "last_contact": "2026-09-07T10:35:10.465383+00:00"
+    },
+    "hello@geibco.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:40:12.047446+00:00",
+          "message_id": "ecfa1909-6c19-43c6-ac3d-6d4d95b1ac87",
+          "campaign": "tier1",
+          "prospect_id": "P174",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:40:12.047446+00:00",
+      "last_contact": "2026-09-07T10:40:12.047446+00:00"
+    },
+    "hello@plugcpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:40:13.438409+00:00",
+          "message_id": "fbd0414e-68f1-4ec9-af0a-42f428e9f491",
+          "campaign": "tier1",
+          "prospect_id": "P175",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:40:13.438409+00:00",
+      "last_contact": "2026-09-07T10:40:13.438409+00:00"
+    },
+    "hello@hataccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:45:11.117922+00:00",
+          "message_id": "c67b9147-5f0b-482f-ac06-f3f730dc960a",
+          "campaign": "tier1",
+          "prospect_id": "P176",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:45:11.117922+00:00",
+      "last_contact": "2026-09-07T10:45:11.117922+00:00"
+    },
+    "hello@numetricacity.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:45:13.415633+00:00",
+          "message_id": "283a12e5-6a16-4f81-af5c-09da5e4bd4f9",
+          "campaign": "tier1",
+          "prospect_id": "P177",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:45:13.415633+00:00",
+      "last_contact": "2026-09-07T10:45:13.415633+00:00"
+    },
+    "hello@ottawabookkeeping.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:50:09.168471+00:00",
+          "message_id": "21718244-c18e-4a00-b97e-c6034e489624",
+          "campaign": "tier1",
+          "prospect_id": "P178",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:50:09.168471+00:00",
+      "last_contact": "2026-09-07T10:50:09.168471+00:00"
+    },
+    "hello@withaccounting.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:50:09.905390+00:00",
+          "message_id": "be0a429d-b4a3-44b2-8ef8-3c0a38b128e2",
+          "campaign": "tier1",
+          "prospect_id": "P179",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:50:09.905390+00:00",
+      "last_contact": "2026-09-07T10:50:09.905390+00:00"
+    },
+    "hello@amplefinance.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:55:08.806444+00:00",
+          "message_id": "f74f7e8b-8dba-4e3e-bf1d-191f855e8b68",
+          "campaign": "tier1",
+          "prospect_id": "P180",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:55:08.806444+00:00",
+      "last_contact": "2026-09-07T10:55:08.806444+00:00"
+    },
+    "hello@wiselinkaccountants.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T10:55:11.058911+00:00",
+          "message_id": "62aed07c-9471-49cd-8911-f2f9258f1a3f",
+          "campaign": "tier1",
+          "prospect_id": "P181",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T10:55:11.058911+00:00",
+      "last_contact": "2026-09-07T10:55:11.058911+00:00"
+    },
+    "hello@lincaccountants.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T11:00:18.126030+00:00",
+          "message_id": "65f5f6b5-dcae-4208-aac9-f0998212f326",
+          "campaign": "tier1",
+          "prospect_id": "P182",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T11:00:18.126030+00:00",
+      "last_contact": "2026-09-07T11:00:18.126030+00:00"
+    },
+    "hello@darcyservices.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T11:00:18.903021+00:00",
+          "message_id": "bae62013-68b8-42f7-9db3-dc2386ebad71",
+          "campaign": "tier1",
+          "prospect_id": "P183",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T11:00:18.903021+00:00",
+      "last_contact": "2026-09-07T11:00:18.903021+00:00"
+    },
+    "hello@dpsaccounting.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T11:05:13.021004+00:00",
+          "message_id": "848f99ae-83b9-4dc0-8609-2c901e3355f6",
+          "campaign": "tier1",
+          "prospect_id": "P184",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T11:05:13.021004+00:00",
+      "last_contact": "2026-09-07T11:05:13.021004+00:00"
+    },
+    "hello@carbongroup.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T11:05:13.706201+00:00",
+          "message_id": "881a07aa-78a3-41a6-be05-c53a5aa345ab",
+          "campaign": "tier1",
+          "prospect_id": "P185",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T11:05:13.706201+00:00",
+      "last_contact": "2026-09-07T11:05:13.706201+00:00"
+    },
+    "hello@thekalculators.com.au": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:05.564297+00:00",
+          "message_id": "90c40a8a-22a8-4f19-afe2-17ee5b0fb48a",
+          "campaign": "tier1",
+          "prospect_id": "P186",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:05.564297+00:00",
+      "last_contact": "2026-09-07T22:16:05.564297+00:00"
+    },
+    "hello@sigmaaccountants.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:07.396564+00:00",
+          "message_id": "f4538814-e323-4641-b3d1-4ba1f0308926",
+          "campaign": "tier1",
+          "prospect_id": "P187",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:07.396564+00:00",
+      "last_contact": "2026-09-07T22:16:07.396564+00:00"
+    },
+    "hello@naseems.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:08.382266+00:00",
+          "message_id": "1c65d575-1a51-4c46-b7a6-51ef375e2688",
+          "campaign": "tier1",
+          "prospect_id": "P188",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:08.382266+00:00",
+      "last_contact": "2026-09-07T22:16:08.382266+00:00"
+    },
+    "hello@sfaccountants.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:09.149523+00:00",
+          "message_id": "98a7a5be-2da3-4cf0-903e-13dfbe67fc8a",
+          "campaign": "tier1",
+          "prospect_id": "P189",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:09.149523+00:00",
+      "last_contact": "2026-09-07T22:16:09.149523+00:00"
+    },
+    "hello@bondca.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:09.822343+00:00",
+          "message_id": "70146bd2-e94e-40e6-b1f1-fa80f6371608",
+          "campaign": "tier1",
+          "prospect_id": "P190",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:09.822343+00:00",
+      "last_contact": "2026-09-07T22:16:09.822343+00:00"
+    },
+    "info@factsandfigures.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:11.525811+00:00",
+          "message_id": "a43e9fc7-f8c5-40b2-8cbe-0294e9fd6846",
+          "campaign": "tier1",
+          "prospect_id": "P191",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:11.525811+00:00",
+      "last_contact": "2026-09-07T22:16:11.525811+00:00"
+    },
+    "info@foreveraccounts.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:12.705969+00:00",
+          "message_id": "5da088dc-c078-487c-9c0a-18c9d69c1b84",
+          "campaign": "tier1",
+          "prospect_id": "P192",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:12.705969+00:00",
+      "last_contact": "2026-09-07T22:16:12.705969+00:00"
+    },
+    "hello@sutherlandblack.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:13.441691+00:00",
+          "message_id": "c50271aa-2fac-41c0-9380-53ac6801fb06",
+          "campaign": "tier1",
+          "prospect_id": "P193",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:13.441691+00:00",
+      "last_contact": "2026-09-07T22:16:13.441691+00:00"
+    },
+    "hello@charmaccountants.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:14.135586+00:00",
+          "message_id": "90f3c808-573d-4ef0-bdfd-59a2c58ba928",
+          "campaign": "tier1",
+          "prospect_id": "P194",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:14.135586+00:00",
+      "last_contact": "2026-09-07T22:16:14.135586+00:00"
+    },
+    "hello@accountantsbook.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:14.972657+00:00",
+          "message_id": "5049b409-328d-44d9-afcd-44e44a9bdc2a",
+          "campaign": "tier1",
+          "prospect_id": "P195",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:14.972657+00:00",
+      "last_contact": "2026-09-07T22:16:14.972657+00:00"
+    },
+    "hello@mergixaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:15.683720+00:00",
+          "message_id": "a9ac7d33-f991-472d-bb8c-f93f99755ae3",
+          "campaign": "tier1",
+          "prospect_id": "P196",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:15.683720+00:00",
+      "last_contact": "2026-09-07T22:16:15.683720+00:00"
+    },
+    "hello@drexlertax.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:16.742066+00:00",
+          "message_id": "46a33dd2-209c-428b-baee-14d094cb1e4b",
+          "campaign": "tier1",
+          "prospect_id": "P197",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:16.742066+00:00",
+      "last_contact": "2026-09-07T22:16:16.742066+00:00"
+    },
+    "hello@cpa-firm-denver.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:17.778604+00:00",
+          "message_id": "80ad94d9-92dc-4a8f-9766-fb8f16bf5c22",
+          "campaign": "tier1",
+          "prospect_id": "P198",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:17.778604+00:00",
+      "last_contact": "2026-09-07T22:16:17.778604+00:00"
+    },
+    "hello@dencpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:18.694790+00:00",
+          "message_id": "58b6cc7b-309e-4105-9c9e-37a41f6c096f",
+          "campaign": "tier1",
+          "prospect_id": "P199",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:18.694790+00:00",
+      "last_contact": "2026-09-07T22:16:18.694790+00:00"
+    },
+    "hello@oconnorcpafirm.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:19.476883+00:00",
+          "message_id": "fe07cd3b-2182-4934-b6f8-94c27530cb6d",
+          "campaign": "tier1",
+          "prospect_id": "P200",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:19.476883+00:00",
+      "last_contact": "2026-09-07T22:16:19.476883+00:00"
+    },
+    "hello@team-80.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:20.475882+00:00",
+          "message_id": "d4c2eaea-2ef6-4703-9479-f1d6c86b99f5",
+          "campaign": "tier1",
+          "prospect_id": "P201",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:20.475882+00:00",
+      "last_contact": "2026-09-07T22:16:20.475882+00:00"
+    },
+    "hello@accountingprose.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:21.149700+00:00",
+          "message_id": "df7809bd-1f85-48ee-a3f5-bb83ac49d5f5",
+          "campaign": "tier1",
+          "prospect_id": "P202",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:21.149700+00:00",
+      "last_contact": "2026-09-07T22:16:21.149700+00:00"
+    },
+    "hello@4corners.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:21.878864+00:00",
+          "message_id": "e8b6ab54-357c-46bf-beb4-bd86df83e825",
+          "campaign": "tier1",
+          "prospect_id": "P203",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:21.878864+00:00",
+      "last_contact": "2026-09-07T22:16:21.878864+00:00"
+    },
+    "hello@shieldstaxcpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:22.675375+00:00",
+          "message_id": "866c0178-6610-4e23-9124-f6a08b6d5c16",
+          "campaign": "tier1",
+          "prospect_id": "P204",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:22.675375+00:00",
+      "last_contact": "2026-09-07T22:16:22.675375+00:00"
+    },
+    "hello@atlantacpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:23.362546+00:00",
+          "message_id": "d057fd94-227e-4bc8-9a25-39c47c3fdf35",
+          "campaign": "tier1",
+          "prospect_id": "P205",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:23.362546+00:00",
+      "last_contact": "2026-09-07T22:16:23.362546+00:00"
+    },
+    "hello@miamiaccounting.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:24.086262+00:00",
+          "message_id": "a2a3e405-aadd-41eb-b812-8ac757a7777f",
+          "campaign": "tier1",
+          "prospect_id": "P206",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:24.086262+00:00",
+      "last_contact": "2026-09-07T22:16:24.086262+00:00"
+    },
+    "znevar@wasabimedia.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:24.802147+00:00",
+          "message_id": "7570e971-d09c-466b-863c-092161831546",
+          "campaign": "tier1",
+          "prospect_id": "110",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:24.802147+00:00",
+      "last_contact": "2026-09-07T22:16:24.802147+00:00"
+    },
+    "office@missionmorph.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:25.782303+00:00",
+          "message_id": "54afce93-880a-4cd9-b65e-643f11ea087f",
+          "campaign": "tier1",
+          "prospect_id": "113",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:25.782303+00:00",
+      "last_contact": "2026-09-07T22:16:25.782303+00:00"
+    },
+    "info@exg.ca": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-07T22:16:26.491071+00:00",
+          "message_id": "82d5999c-7956-4c37-ae34-574653d00798",
+          "campaign": "tier3",
+          "prospect_id": "P160",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-07T22:16:26.491071+00:00",
+      "last_contact": "2026-09-07T22:16:26.491071+00:00"
+    },
+    "sales@dnicorp.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-10T17:05:06.085659+00:00",
+          "message_id": "5b895467-caa0-4993-91da-d49d438e0cd0",
+          "campaign": "tier1",
+          "prospect_id": "100",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-10T17:05:06.085659+00:00",
+      "last_contact": "2026-09-10T17:05:06.085659+00:00"
+    },
+    "dtr@pda.studio": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-10T17:05:07.257384+00:00",
+          "message_id": "76a91205-518f-48cf-9a21-0821dccfff69",
+          "campaign": "tier1",
+          "prospect_id": "101",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-10T17:05:07.257384+00:00",
+      "last_contact": "2026-09-10T17:05:07.257384+00:00"
+    },
+    "interns@triple8mgmt.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-10T17:10:08.579557+00:00",
+          "message_id": "3f87fa09-5028-4590-8ade-448199ad02f2",
+          "campaign": "tier1",
+          "prospect_id": "103",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-10T17:10:08.579557+00:00",
+      "last_contact": "2026-09-10T17:10:08.579557+00:00"
+    },
+    "info@clinkclink.co.uk": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-10T17:10:11.192417+00:00",
+          "message_id": "4a2f932b-c4c6-495c-b5b9-79a4ac73ad72",
+          "campaign": "tier1",
+          "prospect_id": "104",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-10T17:10:11.192417+00:00",
+      "last_contact": "2026-09-10T17:10:11.192417+00:00"
+    },
+    "hello@nuewaystudios.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-10T17:15:08.602636+00:00",
+          "message_id": "438e694f-0b53-4e5b-acd9-5d6edd594fd2",
+          "campaign": "tier1",
+          "prospect_id": "96",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-10T17:15:08.602636+00:00",
+      "last_contact": "2026-09-10T17:15:08.602636+00:00"
+    },
+    "info@launchxd.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-10T17:15:10.437832+00:00",
+          "message_id": "10692020-1a0a-4807-aaad-9b704bcd1984",
+          "campaign": "tier1",
+          "prospect_id": "97",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-10T17:15:10.437832+00:00",
+      "last_contact": "2026-09-10T17:15:10.437832+00:00"
     }
   },
   "emails": {
@@ -1391,7 +4967,233 @@
     "info@supple.com.au:t1": "2026-08-24T17:56:37.993397+00:00",
     "info@ondemandgroup.com:t1": "2026-08-24T17:56:40.236860+00:00",
     "contact@clientek.com:t1": "2026-08-24T17:56:41.811949+00:00",
-    "info@thomsoncooper.com:t1": "2026-08-24T19:30:07.666676+00:00"
+    "info@thomsoncooper.com:t1": "2026-08-24T19:30:07.666676+00:00",
+    "info@stanleyaccounting.ca:t1": "2026-08-25T06:49:36.352278+00:00",
+    "inquiries@rjbarrett.ca:t1": "2026-08-25T06:49:38.174758+00:00",
+    "karleen.scase@scase.ca:t1": "2026-08-25T06:50:06.506689+00:00",
+    "hello@fellowinc.com:t1": "2026-08-26T07:23:46.224777+00:00",
+    "info@pixelandplumeagency.com:t1": "2026-08-26T07:23:47.476791+00:00",
+    "info@militarybrands.com:t1": "2026-08-26T07:37:25.344945+00:00",
+    "roy@clearchoicemarketinggroup.com:t1": "2026-08-26T07:37:27.215419+00:00",
+    "info@tadware.com:t1": "2026-08-26T19:40:09.085035+00:00",
+    "mail@frisk.com.au:t1": "2026-08-26T19:45:35.289100+00:00",
+    "hello@figtreedigital.com.au:t1": "2026-08-26T19:45:36.494731+00:00",
+    "enquiry@jdtaccountants.co.uk:t1": "2026-08-26T19:50:08.725089+00:00",
+    "info@ljsaccountingservices.com:t1": "2026-08-26T19:50:09.757509+00:00",
+    "victor@exactabts.com:t1": "2026-08-26T19:55:08.455108+00:00",
+    "info@atozfinancesolutions.co.uk:t1": "2026-08-26T20:05:06.766917+00:00",
+    "info@eloquentagency.com:t1": "2026-08-27T19:27:00.789152+00:00",
+    "info@pmgdigital.com.au:t1": "2026-08-27T19:27:01.994653+00:00",
+    "contact@bambrick.com.au:t1": "2026-08-27T19:30:14.428939+00:00",
+    "info@judgeaccountants.com.au:t1": "2026-08-27T19:30:16.096066+00:00",
+    "admin@ascentgeo.com.au:t1": "2026-08-27T21:40:14.024654+00:00",
+    "enquiry@edwardsheritage.com.au:t1": "2026-08-27T21:40:14.757473+00:00",
+    "admin@lbpccpa.ca:t1": "2026-08-28T05:29:17.050797+00:00",
+    "marlies@ha-accounting.com:t1": "2026-08-28T05:29:18.591596+00:00",
+    "anja@wolthersaccounting.com.au:t1": "2026-08-28T05:30:06.030143+00:00",
+    "pdc@pdcaccounting.com.au:t1": "2026-08-28T05:30:07.248247+00:00",
+    "info@countryscape.org:t1": "2026-08-28T05:35:05.632121+00:00",
+    "lauren@yourcreative.com.au:t1": "2026-08-28T05:35:07.341485+00:00",
+    "info@qubik.com.au:t1": "2026-08-28T05:40:05.513419+00:00",
+    "admin@curiofinancial.au:t1": "2026-08-28T05:40:08.245083+00:00",
+    "stscharke@ventureprivateadvisory.com.au:t1": "2026-08-28T05:45:11.841571+00:00",
+    "info@gohrencpa.ca:t1": "2026-08-28T05:45:13.479967+00:00",
+    "katalyst@katalystcpa.ca:t1": "2026-08-28T05:50:10.959693+00:00",
+    "scott@scottkeeverseo.com:t1": "2026-08-28T05:50:11.657274+00:00",
+    "info@vividus.com.au:t1": "2026-08-28T05:55:07.128177+00:00",
+    "info@vtac.ca:t1": "2026-08-29T07:59:26.814984+00:00",
+    "info@taxsrvcsrgg.com:t1": "2026-08-29T07:59:28.351755+00:00",
+    "info@gbac.co.uk:t1": "2026-08-29T07:59:30.393298+00:00",
+    "contact@a3marketing.com:t1": "2026-08-29T07:59:31.499424+00:00",
+    "info@latitudeaccountants.com.au:t1": "2026-08-29T08:01:03.180576+00:00",
+    "info@mgrw.co.uk:t1": "2026-08-29T08:01:04.876075+00:00",
+    "gburgess@burgesscpas.com:t1": "2026-08-29T08:10:05.181506+00:00",
+    "enquiries@syersmcgill.co.uk:t1": "2026-08-29T08:10:06.713040+00:00",
+    "consult@hss-ca.com:t1": "2026-08-29T08:15:07.146475+00:00",
+    "talbot@talbotcpa.ca:t1": "2026-08-29T08:15:08.477941+00:00",
+    "admin@tonkinaccounting.com:t1": "2026-08-29T08:20:06.002585+00:00",
+    "info@neonrain.com:t1": "2026-08-29T12:45:07.671574+00:00",
+    "contact@slcservices.biz:t1": "2026-08-30T08:48:32.043793+00:00",
+    "info@deadsimpleaccounting.co.uk:t1": "2026-08-30T08:48:33.821275+00:00",
+    "tax@harpercpaplus.com:t1": "2026-08-30T08:50:06.818189+00:00",
+    "info@plummedia.com:t1": "2026-08-30T08:50:07.925778+00:00",
+    "hello@actualsize.com:t1": "2026-08-31T19:16:03.819459+00:00",
+    "sales@webfeatcomplete.com:t1": "2026-08-31T19:16:05.533092+00:00",
+    "tommyg@4thfloorcreative.com:t1": "2026-08-31T19:28:26.391828+00:00",
+    "janette@lightningdigital.com:t1": "2026-08-31T19:28:28.105690+00:00",
+    "info@blainewarren.com:t1": "2026-08-31T19:30:47.196121+00:00",
+    "info@ahcpa.com:t1": "2026-08-31T19:30:48.398313+00:00",
+    "contact@leadhub.net:t1": "2026-08-31T19:35:16.693510+00:00",
+    "sales@getfoundquick.com:t1": "2026-08-31T19:35:19.345002+00:00",
+    "connect@articulaterc.com:t1": "2026-09-01T16:32:15.984063+00:00",
+    "service@architechllc.com:t1": "2026-09-01T16:32:17.102919+00:00",
+    "tracy@tracyfishercpa.com:t1": "2026-09-01T16:35:42.833943+00:00",
+    "info@veritypc.com:t1": "2026-09-01T16:35:44.391996+00:00",
+    "info@ascendllp.com:t1": "2026-09-02T17:24:09.820810+00:00",
+    "rusrekadm@gmail.com:t1": "2026-09-02T18:55:35.522017+00:00",
+    "info@goldenwebmedia.com:t1": "2026-09-02T18:55:36.682963+00:00",
+    "marketing@amp3pr.com:t1": "2026-09-02T19:00:17.024072+00:00",
+    "lindsay@digitaltraffikagency.com:t1": "2026-09-02T19:00:18.619153+00:00",
+    "info@berbay.com:t1": "2026-09-02T19:05:06.454930+00:00",
+    "support@seorankmedia.com:t1": "2026-09-02T19:05:08.504203+00:00",
+    "info@losangelesseoinc.com:t1": "2026-09-02T19:10:07.826648+00:00",
+    "4thwalldigital@gmail.com:t1": "2026-09-02T19:10:08.951064+00:00",
+    "hello@mouthwash.co:t1": "2026-09-02T19:15:08.652259+00:00",
+    "houston@kellywm.com:t1": "2026-09-02T19:15:10.198462+00:00",
+    "info@seoprix.com:t1": "2026-09-02T19:20:11.523703+00:00",
+    "advancingjustice@emailsl.com:t1": "2026-09-02T19:20:13.984141+00:00",
+    "info@kb-rx.com:t1": "2026-09-02T19:25:07.878793+00:00",
+    "sei@stivereng.com:t1": "2026-09-02T19:25:09.441141+00:00",
+    "contact@jasontheriot.com:t1": "2026-09-02T19:30:12.176368+00:00",
+    "info@nuventraconsulting.com:t1": "2026-09-02T19:30:14.214430+00:00",
+    "philreeseaz@gmail.com:t1": "2026-09-02T19:35:07.906688+00:00",
+    "roy@angrydragonstudios.com:t1": "2026-09-02T19:35:09.117174+00:00",
+    "contact@bitwolfmedia.com:t1": "2026-09-02T19:40:07.159050+00:00",
+    "info@vignyc.com:t1": "2026-09-02T19:40:08.914367+00:00",
+    "hello@omg.re:t1": "2026-09-02T19:45:09.399873+00:00",
+    "info@fullpointgraphics.com:t1": "2026-09-02T19:45:10.608819+00:00",
+    "hello@andwalsh.com:t1": "2026-09-02T19:50:07.374200+00:00",
+    "hello@konnectagency.com:t1": "2026-09-02T19:50:08.660961+00:00",
+    "hello@glendalemarketing.com:t1": "2026-09-02T19:55:07.249973+00:00",
+    "contact@prhollywood.com:t1": "2026-09-02T19:55:09.439125+00:00",
+    "hello@abrightideaonline.com:t1": "2026-09-02T20:00:11.501840+00:00",
+    "hello@andava.com:t1": "2026-09-02T20:00:13.114276+00:00",
+    "hello@tagtimeusa.com:t1": "2026-09-02T20:05:08.042378+00:00",
+    "hello@immigrationadvocacy.com:t1": "2026-09-02T20:05:09.607071+00:00",
+    "hello@zapitiautoschool.com:t1": "2026-09-02T20:10:08.264788+00:00",
+    "hello@bcg.com:t1": "2026-09-02T20:10:10.007436+00:00",
+    "hello@mckinsey.com:t1": "2026-09-02T20:15:09.650981+00:00",
+    "hello@malk.com:t1": "2026-09-02T20:15:11.892271+00:00",
+    "hello@mgac.com:t1": "2026-09-02T20:20:06.475933+00:00",
+    "hello@altago.com:t1": "2026-09-02T20:20:07.634426+00:00",
+    "info@monatshirt.com:t1": "2026-09-02T20:25:09.642664+00:00",
+    "sales@improving.com:t1": "2026-09-02T20:25:10.789957+00:00",
+    "design@bpdinc.com:t1": "2026-09-03T10:28:43.296078+00:00",
+    "hello@ghostbureau.com:t1": "2026-09-03T10:28:45.289335+00:00",
+    "hi@kziq.ca:t1": "2026-09-03T10:31:57.978917+00:00",
+    "melissa@offsitebusiness.com:t1": "2026-09-03T10:31:59.143953+00:00",
+    "dan@miamisem.com:t1": "2026-09-03T10:35:07.794137+00:00",
+    "cpa@accountancygroup.biz:t1": "2026-09-03T10:35:09.090647+00:00",
+    "courtney.dodds@edna.studio:t1": "2026-09-05T11:20:08.959869+00:00",
+    "jason@foundrybend.org:t1": "2026-09-05T11:20:09.844605+00:00",
+    "bev@brandbritain.co.uk:t1": "2026-09-05T11:25:07.464470+00:00",
+    "jon.burdon@bertagency.co.uk:t1": "2026-09-05T11:25:08.701942+00:00",
+    "andy@o8.agency:t1": "2026-09-05T11:30:07.794821+00:00",
+    "devin@fluencyfirm.com:t1": "2026-09-05T11:30:09.309640+00:00",
+    "morgan@workshopdigital.com:t1": "2026-09-05T11:35:12.876892+00:00",
+    "anjelika@dd.nyc:t1": "2026-09-05T11:35:13.653227+00:00",
+    "david@c42d.com:t1": "2026-09-05T11:40:07.944713+00:00",
+    "brent@monikersf.com:t1": "2026-09-05T11:40:09.098645+00:00",
+    "daniel@visionsdesign.co.uk:t1": "2026-09-05T11:45:08.550048+00:00",
+    "tom@superco.io:t1": "2026-09-05T11:45:10.270984+00:00",
+    "josh@goldfront.com:t1": "2026-09-05T11:50:13.729805+00:00",
+    "info@wearescs.com:t1": "2026-09-05T11:50:15.924363+00:00",
+    "info@pay-tech.com:t1": "2026-09-05T11:55:07.033936+00:00",
+    "fiotaxinc@gmail.com:t1": "2026-09-05T11:55:08.211764+00:00",
+    "alice@pvttaxaccounting.com:t1": "2026-09-05T12:00:10.106841+00:00",
+    "christa@auxiliaaccounting.com:t1": "2026-09-05T12:00:13.851005+00:00",
+    "customercare@atax.com:t1": "2026-09-05T12:05:09.213385+00:00",
+    "merchaninsurance@gmail.com:t1": "2026-09-05T12:05:10.414584+00:00",
+    "info@qataxsolutions.com:t1": "2026-09-05T12:10:10.552351+00:00",
+    "support@lgtax.com:t1": "2026-09-05T12:10:12.637734+00:00",
+    "aerotax@hotmail.com:t1": "2026-09-05T12:15:10.832616+00:00",
+    "mssavingsolutions1@gmail.com:t1": "2026-09-05T12:15:12.046426+00:00",
+    "info@goldcrestcpa.com:t1": "2026-09-05T12:20:26.652841+00:00",
+    "team@oberlanderandco.com:t1": "2026-09-05T12:20:27.773501+00:00",
+    "info@cpafirmnyc.com:t1": "2026-09-05T12:25:09.461610+00:00",
+    "info@pwcpa.com:t1": "2026-09-05T12:25:10.111149+00:00",
+    "kevin@parkslopetaxes.com:t1": "2026-09-05T12:30:11.059481+00:00",
+    "qdisparte@dispartetaxlaw.com:t1": "2026-09-05T12:30:12.626387+00:00",
+    "info@qbcure.com:t1": "2026-09-06T00:00:20.412196+00:00",
+    "info@arroyoinvestmentgroup.com:t1": "2026-09-06T00:00:22.864739+00:00",
+    "tmn@thomasneches.com:t1": "2026-09-06T00:05:14.494220+00:00",
+    "drichner@churchillmanagement.com:t1": "2026-09-06T00:05:16.526820+00:00",
+    "info@cnccpallp.com:t1": "2026-09-06T00:10:09.509028+00:00",
+    "alex@alexlopeztaxservices.com:t1": "2026-09-06T00:10:11.135618+00:00",
+    "contact@firstfinancial.is:t1": "2026-09-06T00:15:10.167289+00:00",
+    "email.alanwen@aokoousa.com:t1": "2026-09-06T00:15:11.876461+00:00",
+    "cfsinc@cfsincca.com:t1": "2026-09-06T00:20:15.674126+00:00",
+    "info@wangmicpa.com:t1": "2026-09-06T00:20:16.479252+00:00",
+    "info@adnant.com:t1": "2026-09-06T00:25:12.406631+00:00",
+    "cashier@rice.edu:t1": "2026-09-06T00:25:13.739261+00:00",
+    "contact@oxenfinancial.com:t1": "2026-09-06T00:30:11.196953+00:00",
+    "owlees33366@gmail.com:t1": "2026-09-06T00:30:12.745315+00:00",
+    "julie@essentialnumbersaccounting.com:t1": "2026-09-06T00:35:07.294572+00:00",
+    "ken@lindowcpa.com:t1": "2026-09-06T00:35:08.522604+00:00",
+    "info@valuecorp.ca:t1": "2026-09-06T00:40:10.412008+00:00",
+    "advice@whitingsadvisors.com.au:t1": "2026-09-06T00:40:12.088861+00:00",
+    "tax@gwsaccountants.com.au:t1": "2026-09-06T07:03:41.163737+00:00",
+    "info@pnccpa.ca:t1": "2026-09-06T07:03:42.852938+00:00",
+    "info@pivotadvantage.com:t1": "2026-09-06T07:05:40.356354+00:00",
+    "info@fidel.com.au:t1": "2026-09-06T07:05:42.019727+00:00",
+    "hello@valuecorp.ca:t1": "2026-09-06T07:10:11.787185+00:00",
+    "hello@deethco.com:t1": "2026-09-06T07:10:13.865194+00:00",
+    "hello@thetaxman.ca:t1": "2026-09-06T07:15:13.520707+00:00",
+    "hello@canamtax.com:t1": "2026-09-06T07:15:15.698013+00:00",
+    "hello@helpingbusinesses.com:t1": "2026-09-06T07:20:11.777086+00:00",
+    "hello@jamesbridge.ca:t1": "2026-09-06T07:20:13.109715+00:00",
+    "hello@percivalgroup.com:t1": "2026-09-06T07:25:11.912142+00:00",
+    "hello@rgcga.com:t1": "2026-09-06T07:25:12.729302+00:00",
+    "support@liquiditycurve.com:t1": "2026-09-07T09:39:47.044071+00:00",
+    "info@mudharcpa.ca:t1": "2026-09-07T09:39:47.792337+00:00",
+    "admin@puetzconstruction.com:t1": "2026-09-07T10:04:43.778717+00:00",
+    "hello@mirandaaccounting.ca:t1": "2026-09-07T10:04:44.922701+00:00",
+    "hello@markandu.com:t1": "2026-09-07T10:07:08.804069+00:00",
+    "hello@debtfreenorth.com:t1": "2026-09-07T10:07:10.696199+00:00",
+    "hello@cascadefinancialgroup.com:t1": "2026-09-07T10:10:11.127113+00:00",
+    "hello@solefinancial.ca:t1": "2026-09-07T10:10:12.211302+00:00",
+    "hello@t2inc.ca:t1": "2026-09-07T10:15:11.118193+00:00",
+    "hello@squareaccounting.com:t1": "2026-09-07T10:15:12.287968+00:00",
+    "info@booksmr.ca:t1": "2026-09-07T10:20:10.601238+00:00",
+    "hello@accountingmontreal.ca:t1": "2026-09-07T10:20:12.164850+00:00",
+    "hello@accotax.ca:t1": "2026-09-07T10:25:06.355107+00:00",
+    "hello@786vcpa.ca:t1": "2026-09-07T10:25:07.959004+00:00",
+    "hello@kdprofessional.ca:t1": "2026-09-07T10:30:08.896596+00:00",
+    "hello@focusllp.ca:t1": "2026-09-07T10:30:09.645007+00:00",
+    "hello@versatileaccounting.ca:t1": "2026-09-07T10:35:09.364225+00:00",
+    "hello@saraccounting.com:t1": "2026-09-07T10:35:10.465383+00:00",
+    "hello@geibco.com:t1": "2026-09-07T10:40:12.047446+00:00",
+    "hello@plugcpa.com:t1": "2026-09-07T10:40:13.438409+00:00",
+    "hello@hataccounting.com:t1": "2026-09-07T10:45:11.117922+00:00",
+    "hello@numetricacity.ca:t1": "2026-09-07T10:45:13.415633+00:00",
+    "hello@ottawabookkeeping.ca:t1": "2026-09-07T10:50:09.168471+00:00",
+    "hello@withaccounting.com.au:t1": "2026-09-07T10:50:09.905390+00:00",
+    "hello@amplefinance.com.au:t1": "2026-09-07T10:55:08.806444+00:00",
+    "hello@wiselinkaccountants.com.au:t1": "2026-09-07T10:55:11.058911+00:00",
+    "hello@lincaccountants.com.au:t1": "2026-09-07T11:00:18.126030+00:00",
+    "hello@darcyservices.com.au:t1": "2026-09-07T11:00:18.903021+00:00",
+    "hello@dpsaccounting.com.au:t1": "2026-09-07T11:05:13.021004+00:00",
+    "hello@carbongroup.com.au:t1": "2026-09-07T11:05:13.706201+00:00",
+    "hello@thekalculators.com.au:t1": "2026-09-07T22:16:05.564297+00:00",
+    "hello@sigmaaccountants.co.uk:t1": "2026-09-07T22:16:07.396564+00:00",
+    "hello@naseems.co.uk:t1": "2026-09-07T22:16:08.382266+00:00",
+    "hello@sfaccountants.co.uk:t1": "2026-09-07T22:16:09.149523+00:00",
+    "hello@bondca.co.uk:t1": "2026-09-07T22:16:09.822343+00:00",
+    "info@factsandfigures.co.uk:t1": "2026-09-07T22:16:11.525811+00:00",
+    "info@foreveraccounts.com:t1": "2026-09-07T22:16:12.705969+00:00",
+    "hello@sutherlandblack.co.uk:t1": "2026-09-07T22:16:13.441691+00:00",
+    "hello@charmaccountants.com:t1": "2026-09-07T22:16:14.135586+00:00",
+    "hello@accountantsbook.co.uk:t1": "2026-09-07T22:16:14.972657+00:00",
+    "hello@mergixaccounting.com:t1": "2026-09-07T22:16:15.683720+00:00",
+    "hello@drexlertax.com:t1": "2026-09-07T22:16:16.742066+00:00",
+    "hello@cpa-firm-denver.com:t1": "2026-09-07T22:16:17.778604+00:00",
+    "hello@dencpa.com:t1": "2026-09-07T22:16:18.694790+00:00",
+    "hello@oconnorcpafirm.com:t1": "2026-09-07T22:16:19.476883+00:00",
+    "hello@team-80.com:t1": "2026-09-07T22:16:20.475882+00:00",
+    "hello@accountingprose.com:t1": "2026-09-07T22:16:21.149700+00:00",
+    "hello@4corners.com:t1": "2026-09-07T22:16:21.878864+00:00",
+    "hello@shieldstaxcpa.com:t1": "2026-09-07T22:16:22.675375+00:00",
+    "hello@atlantacpa.com:t1": "2026-09-07T22:16:23.362546+00:00",
+    "hello@miamiaccounting.com:t1": "2026-09-07T22:16:24.086262+00:00",
+    "znevar@wasabimedia.ca:t1": "2026-09-07T22:16:24.802147+00:00",
+    "office@missionmorph.com:t1": "2026-09-07T22:16:25.782303+00:00",
+    "info@exg.ca:t1": "2026-09-07T22:16:26.491071+00:00",
+    "sales@dnicorp.com:t1": "2026-09-10T17:05:06.085659+00:00",
+    "dtr@pda.studio:t1": "2026-09-10T17:05:07.257384+00:00",
+    "interns@triple8mgmt.com:t1": "2026-09-10T17:10:08.579557+00:00",
+    "info@clinkclink.co.uk:t1": "2026-09-10T17:10:11.192417+00:00",
+    "hello@nuewaystudios.com:t1": "2026-09-10T17:15:08.602636+00:00",
+    "info@launchxd.com:t1": "2026-09-10T17:15:10.437832+00:00"
   },
   "notes": []
 }

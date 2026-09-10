@@ -8,6 +8,8 @@ import csv
 import re
 import socket
 import ssl
+import sys
+import time
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,6 +18,11 @@ from urllib.parse import urlparse
 HERE = Path(__file__).resolve().parent
 DATA = HERE.parent / "data"
 OUTPUT = HERE.parent / "outputs"
+
+sys.path.insert(0, str(HERE.parent))
+from scripts.lib import prospect_utils as pu
+
+SLEEP_BETWEEN = 0.6
 
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
 TIMEOUT = 15
@@ -116,35 +123,89 @@ def scrape_domain(domain: str) -> dict:
     }
 
 
-def main():
+def pick_best_email(res: dict, suppressed: set) -> tuple:
+    """Return (email, first, last) -- prefer an email that matches a
+    detected founder/exec's name; otherwise the highest-scoring domain
+    email (non-generic > generic); skip anything suppressed."""
+    domain = res.get("domain", "")
+    candidates = [e for e in res.get("domain_emails", []) if not pu.is_suppressed(e, suppressed)]
+    if not candidates:
+        return "", "", ""
+
+    for person in res.get("people", []):
+        first, last = person["first"].lower(), person["last"].lower()
+        for e in candidates:
+            local = e.split("@", 1)[0].lower()
+            if first in local and (last in local or len(last) == 0):
+                return e, person["first"], person["last"]
+
+    candidates.sort(key=lambda e: pu.score_email(e, domain), reverse=True)
+    best = candidates[0]
+    local = best.split("@", 1)[0]
+    if "." in local and not any(local.startswith(g) for g in pu.GENERIC_LOCALPARTS):
+        first, last = (local.split(".", 1) + [""])[:2]
+        return best, first.capitalize(), last.capitalize()
+    return best, "", ""
+
+
+def main(limit=None):
     with open(DATA / "prospects.csv", newline="") as f:
         prospects = list(csv.DictReader(f))
 
     targets = []
     for p in prospects:
-        if not p.get("email"):
-            domain = normalize_domain(p.get("website", ""))
-            if domain:
-                targets.append({"id": p["id"], "domain": domain, "row": p})
+        if p.get("email"):
+            continue
+        domain = pu.extract_domain(p)
+        if domain:
+            targets.append({"id": p["id"], "domain": domain, "row": p})
+    if limit:
+        targets = targets[:limit]
 
     print(f"Scraping {len(targets)} domains for missing emails...")
+    suppressed = pu.load_suppressed_emails()
     results = []
-    for t in targets:
-        print(f"\n{t['id']} {t['domain']}")
+    updates = {}
+    found = 0
+    for i, t in enumerate(targets):
+        print(f"\n[{i+1}/{len(targets)}] {t['id']} {t['domain']}")
         res = scrape_domain(t["domain"])
         print(f"  emails: {res.get('domain_emails', [])}")
-        print(f"  people: {res.get('people', [])[:3]}")
         results.append({**t, **res})
+
+        email, first, last = pick_best_email(res, suppressed)
+        if email:
+            update = {"email": email}
+            if first:
+                update["first_name"] = first
+                update["last_name"] = last
+            existing_notes = t["row"].get("notes") or ""
+            update["notes"] = (existing_notes + " | website_scrape_email_found").strip(" |")
+            updates[t["id"]] = update
+            found += 1
+            print(f"  -> matched {email}")
+        time.sleep(SLEEP_BETWEEN)
+
+    changed = pu.update_rows_by_id(updates)
+    print(f"\n[csv] updated {changed} rows in prospects.csv with emails found on their own site")
 
     out_path = OUTPUT / f"website-scrape-results-{datetime.now(timezone.utc).strftime('%Y-%m-%dT%H%M')}.csv"
     OUTPUT.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["id", "domain", "emails_found", "people_found"])
+        w.writerow(["id", "domain", "emails_found", "people_found", "chosen_email"])
         for r in results:
-            w.writerow([r["id"], r["domain"], "; ".join(r.get("domain_emails", [])), str(r.get("people", []))])
-    print(f"\nWrote results to {out_path}")
+            chosen = updates.get(r["id"], {}).get("email", "")
+            w.writerow([r["id"], r["domain"], "; ".join(r.get("domain_emails", [])), str(r.get("people", []))[:300], chosen])
+    print(f"[log] wrote audit trail to {out_path}")
+    print(f"\n=== scrape_agency_websites report ===")
+    print(f"  domains scraped: {len(targets)}")
+    print(f"  emails found: {found}")
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--limit", type=int, default=None)
+    args = ap.parse_args()
+    main(limit=args.limit)

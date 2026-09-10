@@ -1,0 +1,308 @@
+[
+  {
+    "companyName": "Fretzin, Inc.",
+    "domain": "fretzin.com",
+    "website": "https://fretzin.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "North Clark Street, 161, Chicago, 60601",
+    "searchQuery": "osm",
+    "emailPattern": "first",
+    "companyEmails": [],
+    "persons": [
+      {
+        "name": "Steve Fretzin",
+        "title": "LAWYER",
+        "email": "steve@fretzin.com",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [
+      "+18476026911",
+      "8476026911",
+      "8057777740"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/stevefretzin/",
+      "twitter": "https://twitter.com/stevefretzin",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/fretzinsteve",
+      "youtube": "https://www.youtube.com/user/SalesResultsInc"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:23:37.826Z"
+  },
+  {
+    "companyName": "Kittys",
+    "domain": "kittys.co",
+    "website": "https://kittys.co/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "South Clark Street, 125, Chicago, 60603",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hello@kittys.co",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+13128009645"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-09-10T08:23:37.841Z"
+  },
+  {
+    "companyName": "Kurman Communications",
+    "domain": "kurman.com",
+    "website": "https://kurman.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "West Windsor Avenue, 2751, Chicago, 60625",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@kurman.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+13125433928",
+      "3126519000"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/kurman-communications/",
+      "twitter": "https://twitter.com/kurmanpr",
+      "instagram": "https://www.instagram.com/kurmanpr/",
+      "facebook": "https://www.facebook.com/KurmanCommunications/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:23:37.856Z"
+  },
+  {
+    "companyName": "ArchiTech Consulting, Inc",
+    "domain": "architechllc.com",
+    "website": "https://architechllc.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "West Wilson Avenue, 1822, Chicago, 60640",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "service@architechllc.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/yanzhaophd",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:23:37.894Z"
+  },
+  {
+    "companyName": "seoClarity & LocalClarity",
+    "domain": "seoclarity.net",
+    "website": "https://seoclarity.net/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "North Wacker Drive, 101, Chicago, 60606",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@seoclarity.net",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "sales@seoclarity.net",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/seoclarity/",
+      "twitter": "https://twitter.com/seoClarity",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/seoClarity",
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-10T08:23:37.902Z"
+  },
+  {
+    "companyName": "Thoughtworks",
+    "domain": "thoughtworks.com",
+    "website": "https://thoughtworks.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "East Randolph Street, 200, Chicago, 60601",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "peoplesupport-china@thoughtworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "sg-th-sharedservices@thoughtworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "ukpeoplesupport@thoughtworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "backgroundverification-india@thoughtworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "peoplesupport-na@thoughtworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "peoplesupport-apac@thoughtworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "shared-services-americas-people-support@thoughtworks.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/thoughtworks/",
+      "twitter": "https://x.com/thoughtworks/",
+      "instagram": "https://www.instagram.com/thoughtworks/",
+      "facebook": "https://www.facebook.com/Thoughtworks",
+      "youtube": "https://www.youtube.com/user/thoughtworks"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:23:37.908Z"
+  },
+  {
+    "companyName": "HOP Models & Talent Agency",
+    "domain": "hopmodels.syngency.com",
+    "website": "https://hopmodels.syngency.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "North Green Street, 120, Chicago, 60607",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "support@syngency.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+13127715438",
+      "+16505604580"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-09-10T08:23:37.914Z"
+  },
+  {
+    "companyName": "allevi8marketing",
+    "domain": "allevi8marketing.com",
+    "website": "https://allevi8marketing.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "South University Avenue, 6127, Chicago, 60637",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@allevi8marketing.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+13124451251",
+      "3124451251"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": "https://twitter.com/allevi8_mktg",
+      "instagram": "https://www.instagram.com/allevi8_mktg/",
+      "facebook": "https://www.facebook.com/Allevi8Marketing/",
+      "youtube": "https://www.youtube.com/channel/UC9NsZEpvWubv5P-qvm0py6w"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:23:37.998Z"
+  },
+  {
+    "companyName": "Surgical Directions",
+    "domain": "surgicaldirections.com",
+    "website": "https://surgicaldirections.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "North Stetson Avenue, 180, Chicago, 60601",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@surgicaldirections.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+13128705600"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/surgicaldirections/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": "https://www.youtube.com/channel/UCJwVV2HWya6e_F1f9n3YxZA"
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-10T08:23:38.020Z"
+  }
+]
