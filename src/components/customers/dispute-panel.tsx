@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, CheckCircle2 } from 'lucide-react';
+import { Loader2, CheckCircle2, Plus, ShieldAlert } from 'lucide-react';
 
 type Invoice = { id: string; number: string };
 type Dispute = {
@@ -11,6 +11,11 @@ type Dispute = {
   customerMessage: string | null;
   internalNotes: string | null;
 };
+
+/* Same two local recipes as the promise panel — a list row at one step below
+   card weight, and an outlined empty state. */
+const ROW = 'relative border bg-white [border-color:var(--hair)] lift-1';
+const EMPTY = 'rounded-[10px] border border-dashed border-ink-300/70 px-4 py-6 text-center';
 
 // Must match the live `dispute_reason` Postgres enum exactly.
 const REASONS = [
@@ -83,67 +88,95 @@ export function DisputePanel({
   }
 
   return (
-    <div className="card mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="app-heading">Open disputes</h2>
+    // `.section` for the same reason as the promise panel: the rows carry their
+    // own edge, so a card around them would be a box inside a box.
+    <section className="section" aria-labelledby="disputes-heading">
+      <div className="section-head">
+        <div>
+          <h2 id="disputes-heading" className="app-heading">Open disputes</h2>
+          <p className="app-meta mt-0.5 font-normal">Blocking payment until they are answered.</p>
+        </div>
         {invoices.length > 0 && (
-          <button className="btn-secondary btn-sm" onClick={() => setShowForm((v) => !v)}>
-            {showForm ? 'Cancel' : '+ Open dispute'}
+          <button
+            className="btn-secondary btn-sm"
+            aria-expanded={showForm}
+            aria-controls="dispute-form"
+            onClick={() => setShowForm((v) => !v)}
+          >
+            {showForm ? 'Cancel' : <><Plus aria-hidden="true" className="h-3.5 w-3.5" />Open dispute</>}
           </button>
         )}
       </div>
 
       {showForm && (
-        <form onSubmit={submit} className="subform mb-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="label">Invoice</label>
-              <select name="invoiceId" required className="input">
-                {invoices.map((inv) => (
-                  <option key={inv.id} value={inv.id}>{inv.number}</option>
-                ))}
-              </select>
+        <form id="dispute-form" onSubmit={submit} className="subform mb-3 animate-rise">
+          <fieldset className="m-0 w-full min-w-0 space-y-3 border-0 p-0">
+            <legend className="app-label mb-1">New dispute</legend>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="dispute-invoice" className="label">Invoice</label>
+                <select id="dispute-invoice" name="invoiceId" required className="input">
+                  {invoices.map((inv) => (
+                    <option key={inv.id} value={inv.id}>{inv.number}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="dispute-reason" className="label">Reason</label>
+                <select id="dispute-reason" name="reason" required className="input" defaultValue="other">
+                  {REASONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                </select>
+              </div>
+              <div className="sm:col-span-2">
+                {/* The optional field says so; the required ones don't need to
+                    each carry a mark to make the point. */}
+                <label htmlFor="dispute-message" className="label">
+                  Customer&apos;s message <span className="ml-1 font-normal text-ink-400">Optional</span>
+                </label>
+                <textarea id="dispute-message" name="customerMessage" className="input" rows={2} placeholder="What the customer said" />
+              </div>
             </div>
-            <div>
-              <label className="label">Reason</label>
-              <select name="reason" required className="input" defaultValue="other">
-                {REASONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-              </select>
+            {error && <div role="alert" className="alert-danger">{error}</div>}
+            <div className="flex items-center justify-end gap-1 border-t border-ink-200 pt-3">
+              <button type="button" onClick={() => setShowForm(false)} className="btn-ghost btn-sm">Cancel</button>
+              <button disabled={loading} aria-busy={loading} className="btn-primary btn-sm">
+                {loading && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Open dispute
+              </button>
             </div>
-            <div className="col-span-2">
-              <label className="label">Customer&apos;s message (optional)</label>
-              <textarea name="customerMessage" className="input" rows={2} placeholder="What the customer said" />
-            </div>
-          </div>
-          {error && <div role="alert" className="alert-danger">{error}</div>}
-          <div className="flex justify-end">
-            <button disabled={loading} className="btn-primary btn-sm">{loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}Open dispute</button>
-          </div>
+          </fieldset>
         </form>
       )}
 
       {open.length === 0 ? (
-        <p className="app-body text-ink-500">No open disputes</p>
+        <div className={EMPTY}>
+          <ShieldAlert aria-hidden="true" className="mx-auto h-4 w-4 text-ink-400" />
+          <p className="app-body mt-1.5 text-ink-500">No open disputes</p>
+        </div>
       ) : (
-        <div className="space-y-2">
+        <ul className="space-y-1.5">
           {open.map((d) => (
             // Urgency as a left edge (the row-urgent convention from the
-            // invoices table), not a red wash over the whole row.
-            <div key={d.id} className="row-urgent rounded-lg border border-ink-200 p-3">
-              <div className="flex items-start justify-between gap-3">
+            // invoices table) rather than a red wash — drawn as an element,
+            // because a row with a hairline on all four sides declares the
+            // `border` shorthand and would erase a border-left utility.
+            <li key={d.id} className={`overflow-hidden rounded-[10px] ${ROW}`}>
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-2 left-0 w-[3px] rounded-r-full bg-danger-500" />
+              <div className="flex items-start justify-between gap-3 px-3.5 py-3">
                 <div className="min-w-0 flex-1">
                   <div className="app-label">
                     {REASON_LABEL[d.reason] ?? d.reason.replace(/_/g, ' ')}
                   </div>
                   {d.customerMessage && (
-                    <div className="app-body mt-1 italic">&quot;{d.customerMessage}&quot;</div>
+                    <div className="app-body mt-1 italic text-ink-600">&quot;{d.customerMessage}&quot;</div>
                   )}
                 </div>
                 <span className="badge-danger whitespace-nowrap capitalize">
                   {d.status.replace(/_/g, ' ')}
                 </span>
               </div>
-              <div className="flex items-center gap-2 mt-3">
+              {/* Resolving is the row's own small form, so it sits in a recessed
+                  foot rather than floating among the row's text. */}
+              <div className="flex items-center gap-2 border-t border-ink-200/70 bg-ink-50/70 px-3.5 py-2.5">
                 <label htmlFor={`dispute-note-${d.id}`} className="sr-only">Resolution note</label>
                 <input
                   id={`dispute-note-${d.id}`}
@@ -154,16 +187,20 @@ export function DisputePanel({
                 />
                 <button
                   disabled={resolvingId === d.id}
+                  aria-busy={resolvingId === d.id}
                   onClick={() => resolve(d.id)}
                   className="btn-secondary btn-sm whitespace-nowrap"
                 >
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Resolve
+                  {resolvingId === d.id
+                    ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />
+                    : <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" />}
+                  Resolve
                 </button>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </section>
   );
 }

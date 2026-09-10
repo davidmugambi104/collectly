@@ -33,7 +33,7 @@ export function MessageBubble({
   }
 
   return (
-    <div className={`animate-fade-in rounded-xl border border-ink-200 bg-white shadow-[0_8px_24px_-8px_rgba(16,17,20,0.18)] overflow-hidden ${className}`}>
+    <div className={`animate-fade-in rounded-[14px] border border-[color:var(--hair)] bg-white lift-3 overflow-hidden ${className}`}>
       <div className="flex items-center gap-1.5 px-3.5 py-2 bg-ink-50 border-b border-ink-200">
         <span className="h-2.5 w-2.5 rounded-full bg-danger-400" />
         <span className="h-2.5 w-2.5 rounded-full bg-warn-400" />

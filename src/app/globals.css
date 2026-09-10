@@ -73,6 +73,43 @@
     --brand-800: 60 45 149;
     --brand-900: 50 40 118;
   }
+
+  /* ------------------------------------------------------------------ */
+  /* DEPTH.
+     What separated this interface from a 2015 admin template was not its
+     palette — it was that every surface was a flat white rectangle with a
+     hard 1px grey border on a grey canvas. No material, no light source, no
+     sense that anything sits above anything else.
+
+     Real interfaces model a light source. A raised surface catches light on
+     its top edge (an inset white highlight) and casts a short, wide, very
+     soft shadow. The shadow is almost invisible on its own; what the eye
+     reads is the *combination* of highlight and shadow, which is why the
+     two are always applied together below.
+
+     Shadows are tinted with the neutral's own hue rather than pure black —
+     black over a warm ground reads as dirt, not depth. */
+  .app {
+    --shade: 28 26 25;               /* ink-900, the shadow's hue          */
+    --lift-1:
+      0 1px 2px -1px rgb(var(--shade) / 0.06),
+      0 1px 1px    rgb(var(--shade) / 0.04);
+    --lift-2:
+      0 2px 4px -2px rgb(var(--shade) / 0.06),
+      0 4px 12px -4px rgb(var(--shade) / 0.08);
+    --lift-3:
+      0 4px 8px  -4px rgb(var(--shade) / 0.06),
+      0 12px 28px -8px rgb(var(--shade) / 0.12);
+    --lift-4:
+      0 8px 16px -8px rgb(var(--shade) / 0.08),
+      0 24px 48px -12px rgb(var(--shade) / 0.18);
+    /* The top-edge catchlight. Applied with the shadows, never alone. */
+    --catch: inset 0 1px 0 0 rgb(255 255 255 / 0.9);
+    /* Hairline. A border at full strength draws a box; at 60% it describes
+       an edge and lets the shadow do the separating. */
+    --hair: rgb(var(--ink-300) / 0.55);
+  }
+
   html, body { height: 100%; }
   body {
     @apply bg-ink-50 text-ink-900 antialiased;
@@ -140,16 +177,42 @@
    genuinely float: menus, the command palette, the mobile drawer. */
 @layer components {
   /* Surfaces --------------------------------------------------------- */
-  .app .card { @apply rounded-lg border border-ink-200 bg-white p-5 shadow-none; }
-  .app .card-lg { @apply rounded-xl border border-ink-200 bg-white p-6 shadow-none; }
-  .app .stat-tile { @apply rounded-lg border border-ink-200 bg-white p-4; }
+  /* Surfaces are lit, not outlined. Each carries a hairline (not a full-
+     strength border), a top catchlight, and a soft shadow — the three read
+     together as a physical card. Radii step up with size: a 10px tile and a
+     14px panel keep the corner *arc* visually constant, which a single
+     radius across every box size does not. */
+  .app .card {
+    border-radius: 12px;
+    border: 1px solid var(--hair);
+    box-shadow: var(--catch), var(--lift-1);
+    @apply bg-white p-5;
+  }
+  .app .card-lg {
+    border-radius: 16px;
+    border: 1px solid var(--hair);
+    box-shadow: var(--catch), var(--lift-2);
+    @apply bg-white p-6;
+  }
+  .app .stat-tile {
+    border-radius: 10px;
+    border: 1px solid var(--hair);
+    box-shadow: var(--catch), var(--lift-1);
+    @apply bg-white p-4 transition-shadow duration-200;
+  }
+  .app .stat-tile:hover { box-shadow: var(--catch), var(--lift-2); }
 
   /* Panel: a card with NO padding, so a table can run full-bleed to its
      edges and its header can stick. The old markup put tables inside a
      `.card` with p-6, which threw away 48px of horizontal room on the
      densest screens and made a sticky header impossible. */
-  .panel { @apply rounded-lg border border-ink-200 bg-white overflow-hidden; }
-  .panel-toolbar { @apply flex items-center justify-between gap-3 h-11 px-4 border-b border-ink-200 bg-ink-50/70; }
+  .panel {
+    border-radius: 14px;
+    border: 1px solid var(--hair);
+    box-shadow: var(--catch), var(--lift-2);
+    @apply overflow-hidden bg-white;
+  }
+  .panel-toolbar { @apply flex h-11 items-center justify-between gap-3 border-b border-ink-200/70 bg-ink-50/60 px-4 backdrop-blur-sm; }
   .panel-body { @apply p-5; }
 
   /* App type scale ---------------------------------------------------- */
@@ -170,16 +233,51 @@
   .num-strong { @apply tabular-nums font-medium text-ink-950; }
 
   /* Table -------------------------------------------------------------- */
-  .app-table { @apply w-full text-[13px] border-collapse; }
+  /* Table. The measurements below were duplicated verbatim as an
+     arbitrary-variant string across three call sites before being folded in
+     here, because none of them was a per-table decision:
+
+       36px header / 44px rows — one predictable pitch is what lets the eye
+         drop down a column instead of re-finding each row.
+       ink-200/60 separator — ink-100 is invisible on white, and a rule you
+         can actually see is what makes zebra striping unnecessary.
+       uppercase 11px tracked heads — at that size it is the cheapest way to
+         make a heading unmistakably not-data.
+       20px first/last gutter — so names don't touch the panel edge and
+         figures don't hang off it.
+       ink-100/70 hover — one warm step, not a highlight. Rows get hovered
+         constantly while scanning. */
+  .app-table { @apply w-full border-collapse text-[13px]; }
   .app-table thead th {
-    @apply sticky top-0 z-10 bg-ink-50/95 backdrop-blur-sm border-b border-ink-200
-           px-4 py-2.5 text-left text-2xs font-medium text-ink-500 whitespace-nowrap;
+    @apply sticky top-0 z-10 h-9 whitespace-nowrap border-b border-ink-200 bg-ink-50/95
+           px-4 py-0 text-left text-2xs font-medium uppercase tracking-[0.06em]
+           text-ink-500 backdrop-blur-sm;
   }
-  .app-table tbody td { @apply px-4 py-2.5 border-b border-ink-100 align-middle; }
+  .app-table tbody td { @apply h-11 border-b border-ink-200/60 px-4 py-1 align-middle; }
+  .app-table tr > *:first-child { @apply pl-5; }
+  .app-table tr > *:last-child { @apply pr-5; }
   .app-table tbody tr:last-child td { @apply border-b-0; }
   .app-table tbody tr { @apply transition-colors; }
-  .app-table tbody tr:hover { @apply bg-ink-50; }
-  .app-table .col-num { @apply text-right tabular-nums whitespace-nowrap; }
+  .app-table tbody tr:hover { @apply bg-ink-100/70; }
+  .app-table .col-num { @apply whitespace-nowrap text-right tabular-nums; }
+
+  /* A pinned header flush with the first row reads as *being* the first row;
+     it has to lift once rows pass beneath it. Scroll-linked animation, so
+     there is no listener, no state and no work on the scroll thread —
+     browsers without scroll timelines keep the flush header. */
+  @supports (animation-timeline: scroll()) {
+    @keyframes app-head-lift {
+      from { box-shadow: 0 0 0 0 rgb(var(--shade) / 0); }
+      to   { box-shadow: 0 6px 10px -6px rgb(var(--shade) / 0.24); }
+    }
+    .app .head-lift thead th {
+      animation: app-head-lift 1s;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+      animation-timeline: scroll(nearest block);
+      animation-range: 0px 20px;
+    }
+  }
 
   /* Status --------------------------------------------------------------
      Redefining the existing .badge-* names rather than introducing new ones,
@@ -214,8 +312,31 @@
 
   /* Row urgency reads as an edge, not a fill — a scannable column of red
      down the left of the table that leaves the row itself legible. */
-  .row-urgent { @apply border-l-2 border-l-danger-500; }
-  .row-warn { @apply border-l-2 border-l-warn-500; }
+  /* Severity edge.
+     Drawn as a background gradient, not a left border, for two reasons that
+     both bit in practice:
+
+     1. A border was silently erased on any bordered surface. `.app .card`
+        declares the `border` shorthand at specificity 0-2-0; `.row-urgent`
+        was 0-1-0, so the shorthand reset border-left-width back to 1px and
+        recoloured it. `card-primary row-warn` and `row-urgent border` were
+        both rendering with no edge at all.
+     2. A border occupies layout, so a severe table row shunted its first cell
+        2px right of its neighbours and the first column stopped being a
+        column — which then needed a `.row-quiet` counterweight on every
+        unsevere row to stay aligned.
+
+     `background-image` is touched by nothing else here (surfaces set
+     background-*color*), so the stripe survives borders, shadows, hover
+     backgrounds and the utilities layer, and costs no layout. */
+  .row-urgent, .row-warn {
+    background-repeat: no-repeat;
+    background-size: 3px 100%;
+    background-position: left center;
+  }
+  .row-urgent { background-image: linear-gradient(theme('colors.danger.500'), theme('colors.danger.500')); }
+  .row-warn { background-image: linear-gradient(theme('colors.warn.500'), theme('colors.warn.500')); }
+
 
   /* Quiet link-button. Seven copies of this existed inline as a text link
      with py-1.5 bolted on to reach a 24px tap target. */
@@ -251,16 +372,156 @@
        .section       no chrome at all: a heading on the canvas, content
                       below. For lists whose rows already carry their own
                       border, where a card only adds a second box.        */
-  .card-primary { @apply rounded-lg border border-ink-300 bg-white p-5; }
+  .card-primary {
+    border-radius: 14px;
+    border: 1px solid rgb(var(--ink-300) / 0.7);
+    box-shadow: var(--catch), var(--lift-3);
+    @apply relative bg-white p-5;
+  }
+  /* A hairline of accent along the top edge. One pixel, but it is what makes
+     the eye land here first — the Von Restorff effect doing the work that a
+     heavier border or a coloured background would do far more loudly. */
+  .card-primary::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-[14px];
+    background: linear-gradient(90deg,
+      transparent,
+      rgb(var(--brand-500) / 0.5) 20%,
+      rgb(var(--brand-400) / 0.7) 50%,
+      rgb(var(--brand-500) / 0.5) 80%,
+      transparent);
+  }
 
   .section { @apply block; }
   .section-head { @apply mb-3 flex items-center justify-between gap-3; }
+
+  /* Reusable material patterns ---------------------------------------
+     These exist as classes rather than arbitrary utilities for a concrete
+     reason: `shadow-[var(--lift-1)]` does NOT work. Tailwind resolves a bare
+     `var()` inside `shadow-[...]` as a *colour*, emitting
+     `--tw-shadow-color: var(--lift-1)` and no box-shadow at all — so the
+     shadow silently never renders. The escape hatch is
+     `shadow-[shadow:var(--lift-1)]`, which is easy to forget and easier to
+     get wrong. A named class removes the trap. */
+
+  /* A row that is clickable: rests lifted, rises on hover. */
+  .lift-1 { box-shadow: var(--catch), var(--lift-1); }
+  .lift-2 { box-shadow: var(--catch), var(--lift-2); }
+  .lift-3 { box-shadow: var(--catch), var(--lift-3); }
+  .lift-4 { box-shadow: var(--catch), var(--lift-4); }
+
+  .app .lift-row {
+    border-radius: 10px;
+    border: 1px solid var(--hair);
+    box-shadow: var(--catch), var(--lift-1);
+    @apply bg-white transition-all duration-200;
+  }
+  .app .lift-row:hover {
+    box-shadow: var(--catch), var(--lift-2);
+    transform: translateY(-1px);
+  }
+
+  /* A brand-filled chip that is lit rather than flat: a white catchlight on
+     its top edge and a short brand-tinted glow beneath. Hand-rolled as an
+     inline style in five places (sidebar logo, org monogram, the AI mark, the
+     first-run numerals) with five slightly different opacities. */
+  .app .chip-brand {
+    @apply grid shrink-0 place-items-center rounded-[8px] bg-brand-600 text-white;
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.24),
+      0 2px 6px -2px rgb(var(--brand-700) / 0.55);
+  }
+
+  /* Icon seat. An icon floating loose at a card corner reads as clip-art;
+     seated in a recessed well it reads as part of the instrument. */
+  .app .chip-icon {
+    @apply grid shrink-0 place-items-center rounded-[8px] bg-ink-50 ring-1 ring-inset ring-ink-200/80;
+  }
+
+  /* Meter: recessed track, lit fill. Hand-rolled in three places (trial
+     usage, risk score, aging bar) with three different treatments. */
+  .app .meter {
+    @apply overflow-hidden rounded-full bg-ink-100;
+    box-shadow: inset 0 1px 2px 0 rgb(var(--shade) / 0.10);
+  }
+  .app .meter > * {
+    @apply h-full rounded-full;
+    box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.28);
+  }
+
+  /* Modal scrim. Blur plus a tint, so what is behind reads as *behind*
+     rather than merely dimmed. */
+  .app .scrim, .scrim {
+    @apply fixed inset-0 backdrop-blur-[3px];
+    background: rgb(var(--ink-950) / 0.28);
+  }
+
+  /* Empty state. Five call sites had five different centred-text blocks. One
+     shape: a seated icon, a heading, one measured line, and the action that
+     actually resolves the emptiness. */
+  .app .empty-state { @apply px-6 py-16 text-center; }
+  .app .empty-state > .chip-icon { @apply mx-auto h-10 w-10; }
+  .app .empty-state h2, .app .empty-state h3 { @apply app-heading mt-3; }
+  .app .empty-state p { @apply app-body mx-auto mt-1.5 max-w-sm text-ink-500; }
+  .app .empty-state .empty-actions { @apply mt-5 flex flex-wrap items-center justify-center gap-2; }
+
+  /* The hairline as a border utility. Needed because `border-[color:var(--hair)]`
+     cannot be hovered and an inline style cannot either. */
+  .border-hair { border-color: var(--hair); }
 
   /* Small button. `.btn` is fixed at text-sm/py-2.5, so 58 call sites bolted
      `text-xs`/`text-sm` onto a btn-* class — which shrank the label but never
      the padding, leaving "small" buttons with a full-height box that sat badly
      next to 13px body text. Compose as `btn-secondary btn-sm`. */
-  .btn-sm { @apply gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium; }
+  .btn-sm { @apply gap-1.5 rounded-[7px] px-2.5 py-1.5 text-[13px] font-medium; }
+
+  /* Buttons obey the same light model as surfaces: a catchlight on the top
+     edge, a short shadow beneath, and a 1px downward press. Flat fills that
+     only change hue on hover are the single most template-looking control on
+     a page — the press has no physicality, so the click never feels landed. */
+  .app .btn-primary, .app .btn-brand, .app .btn-success {
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.16),
+      var(--lift-1);
+    @apply transition-all duration-150;
+  }
+  .app .btn-secondary {
+    box-shadow: var(--catch), var(--lift-1);
+    border-color: var(--hair);
+    @apply transition-all duration-150;
+  }
+  .app .btn-primary:hover, .app .btn-brand:hover,
+  .app .btn-success:hover, .app .btn-secondary:hover {
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.16),
+      var(--lift-2);
+    transform: translateY(-0.5px);
+  }
+  .app .btn-primary:active, .app .btn-brand:active,
+  .app .btn-success:active, .app .btn-secondary:active {
+    box-shadow: inset 0 1px 2px 0 rgb(var(--shade) / 0.14);
+    transform: translateY(0.5px);
+  }
+  .app .btn:disabled, .app .btn-primary:disabled, .app .btn-secondary:disabled,
+  .app .btn-brand:disabled, .app .btn-success:disabled {
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* Inputs read as recessed — the inverse of a raised surface. A field that
+     sits flush with the card gives the eye nothing to say "you can type
+     here"; a shallow inset does it without a heavy border. */
+  .app .input {
+    border-radius: 8px;
+    border-color: var(--hair);
+    box-shadow: inset 0 1px 2px 0 rgb(var(--shade) / 0.05);
+    @apply transition-shadow duration-150;
+  }
+  .app .input:focus {
+    box-shadow:
+      inset 0 1px 2px 0 rgb(var(--shade) / 0.04),
+      0 0 0 3px rgb(var(--brand-500) / 0.14);
+  }
 
   /* Inline error. Five hand-written copies of the same bordered red block
      existed, none of them announced to assistive tech — pair this with
@@ -281,13 +542,73 @@
   }
 }
 
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes rise { 0% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: translateY(0); } }
+
+@layer components {
+  /* Skeletons that sweep. A placeholder which only pulses reads as a broken
+     element; one with a travelling highlight reads as work in progress. */
+  .app .skel {
+    @apply rounded-md bg-ink-100;
+    background-image: linear-gradient(90deg,
+      transparent 0%, rgb(255 255 255 / 0.65) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  /* Staggered entrance for a list. Each child arrives ~24ms after the one
+     above it, so the eye tracks down the list instead of having the whole
+     block appear at once. Capped at 8 — past that the last row feels late. */
+  .app .stagger > * { animation: rise 0.22s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .app .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .app .stagger > *:nth-child(2) { animation-delay: 24ms; }
+  .app .stagger > *:nth-child(3) { animation-delay: 48ms; }
+  .app .stagger > *:nth-child(4) { animation-delay: 72ms; }
+  .app .stagger > *:nth-child(5) { animation-delay: 96ms; }
+  .app .stagger > *:nth-child(6) { animation-delay: 120ms; }
+  .app .stagger > *:nth-child(7) { animation-delay: 144ms; }
+  .app .stagger > *:nth-child(n+8) { animation-delay: 168ms; }
+}
+
 @layer base {
-  /* ring-offset-2 clips visibly inside 40px table rows. */
-  .app *:focus-visible { @apply ring-2 ring-brand-500/60 ring-offset-1 ring-offset-white; }
+  /* Focus. `ring-offset` on a light ring over white is nearly invisible at a
+     glance; a two-tone ring (white gap, then accent) stays legible on any
+     surface the app puts a control on, and ring-offset-2 clipped visibly
+     inside 40px table rows. */
+  .app *:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px rgb(255 255 255 / 0.95),
+      0 0 0 4px rgb(var(--brand-500) / 0.55);
+  }
+
+  /* Motion respects the OS setting. Everything above is decoration; none of
+     it carries meaning that is lost when it is switched off. */
+  @media (prefers-reduced-motion: reduce) {
+    .app *, .app *::before, .app *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
   /* A button that bounces on press feels cheap in a dense financial table. */
   .app .btn:active, .app .btn-primary:active, .app .btn-secondary:active,
   .app .btn-brand:active, .app .btn-success:active { transform: none; }
 }
+
+/* The app's own scrollbars are thinner and only assert themselves on hover —
+   a permanent 10px grey track inside every scrolling panel is a lot of
+   furniture for something you use twice a page. */
+.app ::-webkit-scrollbar { width: 8px; height: 8px; }
+.app ::-webkit-scrollbar-track { background: transparent; }
+.app ::-webkit-scrollbar-thumb {
+  background: rgb(var(--ink-300) / 0.7);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.app ::-webkit-scrollbar-thumb:hover { background: rgb(var(--ink-400) / 0.9); background-clip: content-box; }
+.app { scrollbar-width: thin; scrollbar-color: rgb(var(--ink-300) / 0.8) transparent; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }

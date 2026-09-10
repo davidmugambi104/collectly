@@ -95,15 +95,33 @@ const config: Config = {
         display: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
+      // Motion. The 0.5-0.6s ease-out entrances below are marketing timings —
+      // on an interface you use all day they read as lag. App motion is fast
+      // (140-220ms) and eased so it decelerates into place: the eye should
+      // register that something arrived, never wait for it. `rise` is the
+      // standard entrance; `settle` overshoots a hair, which is what makes a
+      // panel feel physical rather than faded-in.
+      transitionTimingFunction: {
+        'out-soft': 'cubic-bezier(0.22, 1, 0.36, 1)',
+        'settle': 'cubic-bezier(0.34, 1.4, 0.64, 1)',
+      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.6s ease-out',
         'pulse-soft': 'pulseSoft 2.4s ease-in-out infinite',
+        rise: 'rise 0.22s cubic-bezier(0.22, 1, 0.36, 1) both',
+        settle: 'settle 0.26s cubic-bezier(0.34, 1.4, 0.64, 1) both',
+        shimmer: 'shimmer 1.6s linear infinite',
       },
       keyframes: {
         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         slideUp: { '0%': { opacity: '0', transform: 'translateY(8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
         pulseSoft: { '0%,100%': { opacity: '1' }, '50%': { opacity: '0.6' } },
+        rise: { '0%': { opacity: '0', transform: 'translateY(4px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+        settle: { '0%': { opacity: '0', transform: 'translateY(6px) scale(0.995)' }, '100%': { opacity: '1', transform: 'translateY(0) scale(1)' } },
+        // Loading placeholders that sweep read as "working"; ones that only
+        // pulse read as broken.
+        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
       },
     },
   },

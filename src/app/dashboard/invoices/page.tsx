@@ -8,7 +8,7 @@ import { db } from '@/db';
 import { invoices, customers } from '@/db/schema';
 import { eq, sql, and, or, ilike } from 'drizzle-orm';
 import Link from 'next/link';
-import { Search, Plus } from 'lucide-react';
+import { Search, SearchX, Plus, FileText } from 'lucide-react';
 
 export default async function InvoicesPage({ searchParams }: { searchParams: Promise<{ filter?: string; q?: string; bucket?: string }> }) {
   const { userId, orgId } = await auth();
@@ -86,6 +86,12 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   // No more post-fetch JS filter — the SQL already handled it.
   const filtered = rows;
 
+  const FILTERS = [
+    { key: 'all', label: 'All', href: q ? `/dashboard/invoices?q=${encodeURIComponent(q)}` : '/dashboard/invoices' },
+    { key: 'overdue', label: 'Overdue', href: `/dashboard/invoices?filter=overdue${q ? `&q=${encodeURIComponent(q)}` : ''}` },
+    { key: 'paid', label: 'Paid', href: `/dashboard/invoices?filter=paid${q ? `&q=${encodeURIComponent(q)}` : ''}` },
+  ];
+
   return (
     <AppShell
       title="Invoices"
@@ -93,27 +99,83 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
         range ? ` · ${bucket === 'current' ? 'not yet due' : `${bucket} days past due`}` : ''
       }${q ? ` matching "${q}"` : ''}`}
     >
-      <form action="/dashboard/invoices" method="get" className="flex flex-col sm:flex-row gap-3 mb-5">
+      {/* One toolbar on a single 32px baseline. This was five full-height
+          `btn text-sm` controls in a row — the shrink-the-label-not-the-padding
+          pattern — with the three view filters looking exactly as clickable as
+          the two actions beside them. The filters are one control now (a
+          segmented switch: mutually exclusive, one visibly selected), which
+          leaves search on the left and the only real action on the right. */}
+      <form action="/dashboard/invoices" method="get" className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {filter !== 'all' && <input type="hidden" name="filter" value={filter} />}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-400" />
-          <input name="q" defaultValue={q} placeholder="Search invoice #, customer, email..." className="input pl-9" aria-label="Search invoices" />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1 sm:w-72 sm:flex-none">
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-400" />
+            <input
+              name="q"
+              defaultValue={q}
+              placeholder="Search invoice #, customer, email..."
+              className="input h-8 py-0 pl-9 text-[13px]"
+              aria-label="Search invoices"
+            />
+          </div>
+          <button type="submit" className="btn-secondary btn-sm h-8">Search</button>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <Link href={q ? `/dashboard/invoices?q=${encodeURIComponent(q)}` : '/dashboard/invoices'} className={`btn text-sm ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}>All</Link>
-          <Link href={`/dashboard/invoices?filter=overdue${q ? `&q=${encodeURIComponent(q)}` : ''}`} className={`btn text-sm ${filter === 'overdue' ? 'btn-primary' : 'btn-secondary'}`}>Overdue</Link>
-          <Link href={`/dashboard/invoices?filter=paid${q ? `&q=${encodeURIComponent(q)}` : ''}`} className={`btn text-sm ${filter === 'paid' ? 'btn-primary' : 'btn-secondary'}`}>Paid</Link>
-          <button type="submit" className="btn-secondary btn-sm">Search</button>
-          <Link href="/dashboard/invoices/new" className="btn-brand btn-sm"><Plus className="h-3.5 w-3.5" />New invoice</Link>
+        <div className="flex items-center gap-2">
+          {/* Links, so aria-current carries the selected view rather than
+              aria-pressed, which a link cannot honestly claim. */}
+          <div className="segmented">
+            {FILTERS.map((f) => {
+              const active = filter === f.key;
+              return (
+                <Link
+                  key={f.key}
+                  href={f.href}
+                  aria-current={active ? 'page' : undefined}
+                  className={`segmented-item h-7 ${active ? 'bg-white text-ink-950 lift-1' : ''}`}
+                >
+                  {f.label}
+                </Link>
+              );
+            })}
+          </div>
+          <Link href="/dashboard/invoices/new" className="btn-brand btn-sm h-8"><Plus aria-hidden="true" className="h-3.5 w-3.5" />New invoice</Link>
         </div>
       </form>
 
       {filtered.length === 0 ? (
-        <div className="card text-center py-12 text-ink-500">
+        /* Two different empty states, because they are two different problems:
+           a search that matched nothing needs the search cleared, an org with no
+           data needs the import. Both get the same shape — a mark, one line of
+           explanation, and the action that resolves it. */
+        <div className="panel px-6 py-16 text-center">
+          <div className="chip-icon mx-auto h-11 w-11">
+            {q ? (
+              <SearchX aria-hidden="true" className="h-5 w-5 text-ink-400" />
+            ) : (
+              <FileText aria-hidden="true" className="h-5 w-5 text-brand-500" />
+            )}
+          </div>
           {q ? (
-            <>No invoices matching <b>&quot;{q}&quot;</b>. <Link href="/dashboard/invoices" className="link">Clear search</Link></>
+            <>
+              <h2 className="app-heading mt-4">No invoices matching &quot;{q}&quot;</h2>
+              <p className="app-body mx-auto mt-1.5 max-w-sm text-ink-500">
+                Search covers invoice number, customer name, email and amount across the whole workspace.
+              </p>
+              <div className="mt-5">
+                <Link href="/dashboard/invoices" className="btn-secondary btn-sm h-8">Clear search</Link>
+              </div>
+            </>
           ) : (
-            <>No invoices yet. <Link href="/dashboard/integrations" className="link">Connect QuickBooks or Xero</Link> to import.</>
+            <>
+              <h2 className="app-heading mt-4">No invoices yet</h2>
+              <p className="app-body mx-auto mt-1.5 max-w-sm text-ink-500">
+                Connect QuickBooks or Xero to import your open receivables, or add the first one by hand.
+              </p>
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                <Link href="/dashboard/integrations" className="btn-primary btn-sm h-8">Connect QuickBooks or Xero</Link>
+                <Link href="/dashboard/invoices/new" className="btn-secondary btn-sm h-8"><Plus aria-hidden="true" className="h-3.5 w-3.5" />New invoice</Link>
+              </div>
+            </>
           )}
         </div>
       ) : (

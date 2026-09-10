@@ -106,7 +106,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   return (
     <AppShell title="Billing" subtitle="Plans, usage, and receipts.">
       {justRequested && (
-        <div className="mb-4 rounded-lg border border-success-200 bg-success-50 p-4 text-sm text-success-900">
+        <div className="mb-4 rounded-[10px] border border-success-200/70 bg-success-50/70 p-4 text-[13px] text-success-900 lift-1 animate-settle">
           <div className="flex items-start gap-2">
             <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
             <div className="flex-1">
@@ -142,7 +142,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       )}
 
       {/* Soft-launch billing banner */}
-      <div className="mb-5 rounded-lg border border-brand-200 bg-brand-50/60 p-4 text-sm text-brand-900">
+      <div className="mb-6 rounded-[10px] border border-brand-200/70 bg-brand-50/60 p-4 text-[13px] text-brand-900 lift-1">
         <div className="flex items-start gap-3">
           <Sparkles className="h-4 w-4 text-brand-600 mt-0.5 shrink-0" />
           <div>
@@ -277,7 +277,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           <Link href="/dashboard/payments" className="link-quiet">All payments →</Link>
         </div>
         {recentPayments.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-ink-200 p-8 text-center">
+          <div className="rounded-[14px] border border-dashed border-ink-300/70 bg-ink-50/40 p-10 text-center">
             <FileText className="h-8 w-8 text-ink-300 mx-auto" />
             <h2 className="app-heading mt-2">No payments yet</h2>
             <p className="mt-1 text-xs text-ink-600">When customers pay through your portal, receipts will appear here. Each row links to the original invoice.</p>
@@ -319,7 +319,7 @@ function UsageMeter({ label, used, limit }: { label: string; used: number; limit
   const isWarning = !isUnlimited && pct >= 80;
   const isDanger = !isUnlimited && pct >= 100;
   return (
-    <div className="rounded-lg border border-ink-200 p-3">
+    <div className="rounded-[10px] border border-[color:var(--hair)] bg-white p-3 lift-1">
       <div className="text-2xs font-medium text-ink-500">{label}</div>
       <div className="mt-1.5 flex items-baseline gap-1">
         <span className="text-2xl font-display font-bold text-ink-950">{used}</span>

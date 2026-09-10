@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, Trash2 } from 'lucide-react';
+import { AlertTriangle, Trash2, Check } from 'lucide-react';
 
 /**
  * Danger Zone card on /dashboard/settings. Lets the user wipe their tenant.
@@ -17,7 +17,27 @@ import { AlertTriangle, Trash2 } from 'lucide-react';
  * We intentionally do NOT use a server action for this. Server actions
  * mutate in place; a destructive operation should have a clear URL
  * boundary, JSON contract, and a single response shape we can audit.
+ *
+ * Visual weighting: the card is a normal white surface with a danger edge and
+ * a danger glyph — not a red panel. A permanently red block on a settings page
+ * is background noise within a week, and noise is the opposite of caution. The
+ * weight is spent where the decision actually happens: a small, quiet trigger,
+ * then a modal that names the consequences and will not arm its button until
+ * the workspace name has been typed back.
  */
+
+/* No `.btn-danger` token exists yet, so the danger fill is composed here from
+   the same light model the other buttons use: a catchlight on the top edge and
+   a short shadow that grows on hover. */
+const DANGER_BTN =
+  'btn bg-danger-600 text-white transition-all duration-150 hover:bg-danger-700 ' +
+  '[box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.16),var(--lift-1)] ' +
+  'hover:[box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.16),var(--lift-2)] ' +
+  'disabled:opacity-50 disabled:[box-shadow:none]';
+
+// What deletion actually takes with it. Enumerated rather than run into a
+// sentence: five nouns in a row read as one blur, five items read as five.
+const WIPED = ['Customers', 'Invoices', 'Payments', 'Dunning history', 'Integrations'];
 
 export function DeleteAccountCard({ orgName }: { orgName: string }) {
   const router = useRouter();
@@ -36,6 +56,20 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
     reset();
     setOpen(false);
   }
+
+  // Escape closes the dialog — expected of anything modal, and the only way out
+  // for a keyboard user who opened it by accident.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !pending) {
+        reset();
+        setOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, pending]);
 
   function submit() {
     setError(null);
@@ -65,25 +99,41 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
   const matches = confirm.trim() === orgName.trim();
 
   return (
-    <div className="card max-w-2xl border-danger-200 bg-danger-50/40">
+    <div className="card relative">
+      {/* Severity as a 3px edge. `.row-urgent` would be erased here: `.card`
+          declares the `border` shorthand, which resets border-left. */}
+      <span aria-hidden="true" className="pointer-events-none absolute inset-y-3 left-0 w-[3px] rounded-r-full bg-danger-500" />
+
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 h-9 w-9 rounded-lg bg-danger-100 text-danger-700 grid place-items-center shrink-0">
-          <AlertTriangle className="h-5 w-5" />
-        </div>
-        <div className="flex-1">
+        <span
+          aria-hidden="true"
+          className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-danger-50 text-danger-600 ring-1 ring-danger-100"
+        >
+          <AlertTriangle className="h-4 w-4" />
+        </span>
+        <div className="min-w-0 flex-1">
           <h2 className="app-heading">Delete account</h2>
-          <p className="text-sm text-ink-700 mt-1">
-            Permanently deletes the workspace <strong>{orgName}</strong>, all
-            customers, invoices, payments, dunning history, and integrations.
-            This cannot be undone.
+          <p className="app-body mt-1">
+            Permanently deletes the workspace <strong className="font-semibold text-ink-950">{orgName}</strong> and
+            everything in it. This cannot be undone.
           </p>
-          <p className="text-xs text-ink-600 mt-2">
+
+          <ul className="mt-3 flex flex-wrap gap-1.5">
+            {WIPED.map((item) => (
+              <li key={item} className="badge-neutral">{item}</li>
+            ))}
+          </ul>
+
+          <p className="app-meta mt-3 font-normal">
             See our{' '}
-            <a href="/privacy" className="underline">
+            <a href="/privacy" className="text-brand-600 underline underline-offset-2 hover:text-brand-700">
               privacy notice
             </a>{' '}
             for the data we hold and how long backups persist.
           </p>
+
+          {/* Small and quiet on purpose: the inverse of Fitts, since nobody
+              should reach this by momentum. */}
           <div className="mt-4">
             <button
               type="button"
@@ -91,10 +141,10 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
                 reset();
                 setOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-danger-600 text-white text-sm font-medium hover:bg-danger-700 active:scale-[0.98] disabled:opacity-60"
+              className={`${DANGER_BTN} btn-sm`}
               disabled={pending}
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 aria-hidden="true" className="h-3.5 w-3.5" />
               Delete account
             </button>
           </div>
@@ -103,37 +153,73 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-ink-950/50 flex items-center justify-center p-4"
+          className="scrim z-50 flex items-center justify-center p-4"
           onClick={close}
         >
           <div
-            className="bg-white rounded-xl shadow-xl max-w-md w-full p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+            aria-describedby="delete-account-desc"
+            className="w-full max-w-md animate-settle rounded-2xl border bg-white p-6 [border-color:var(--hair)] lift-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="app-title">
-              Delete <span className="font-mono">{orgName}</span>?
-            </h2>
-            <p className="text-sm text-ink-700 mt-2">
-              Type the workspace name exactly to confirm. We&apos;ll remove the
-              application data and the associated Clerk organization.
-            </p>
-            <input
-              autoFocus
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              placeholder={orgName}
-              className="mt-4 w-full px-3 py-2 rounded-lg border border-ink-200 focus:border-ink-400 outline-none text-sm"
-              disabled={pending}
-            />
+            <div className="flex items-start gap-3">
+              <span
+                aria-hidden="true"
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-danger-50 text-danger-600 ring-1 ring-danger-100"
+              >
+                <AlertTriangle className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <h2 id="delete-account-title" className="app-title">
+                  Delete <span className="font-mono">{orgName}</span>?
+                </h2>
+                <p id="delete-account-desc" className="app-body mt-1.5">
+                  Type the workspace name exactly to confirm. We&apos;ll remove the
+                  application data and the associated Clerk organization.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label htmlFor="delete-account-confirm" className="label">Workspace name</label>
+              <input
+                id="delete-account-confirm"
+                autoFocus
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                placeholder={orgName}
+                autoComplete="off"
+                spellCheck={false}
+                aria-describedby="delete-account-match"
+                className="input font-mono"
+                disabled={pending}
+              />
+              {/* Confirmation of the one thing standing between the user and an
+                  irreversible action, so it is stated rather than left to the
+                  button's disabled state to imply. */}
+              <p id="delete-account-match" role="status" className="app-meta mt-1.5 min-h-4 font-normal">
+                {matches ? (
+                  <span className="inline-flex items-center gap-1 text-success-700">
+                    <Check aria-hidden="true" className="h-3 w-3" />Name matches
+                  </span>
+                ) : confirm.length > 0 ? (
+                  'Not an exact match yet.'
+                ) : null}
+              </p>
+            </div>
+
             {error && (
-              <p className="mt-2 text-sm text-danger-600">{error}</p>
+              <p role="alert" className="alert-danger mt-2">{error}</p>
             )}
-            <div className="mt-5 flex justify-end gap-2">
+
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={close}
                 disabled={pending}
-                className="px-4 py-2 rounded-lg bg-white text-ink-900 border border-ink-200 hover:border-ink-300 hover:bg-ink-50 text-sm font-medium disabled:opacity-60"
+                className="btn-secondary w-full justify-center sm:w-auto"
               >
                 Cancel
               </button>
@@ -141,7 +227,8 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
                 type="button"
                 onClick={submit}
                 disabled={!matches || pending}
-                className="px-4 py-2 rounded-lg bg-danger-600 text-white text-sm font-medium hover:bg-danger-700 active:scale-[0.98] disabled:opacity-60"
+                aria-busy={pending}
+                className={`${DANGER_BTN} w-full justify-center sm:w-auto`}
               >
                 {pending ? 'Deleting…' : 'Delete forever'}
               </button>

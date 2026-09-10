@@ -89,17 +89,17 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       )}
 
       {customerCount === 0 && (
-        <div className="mb-6 card bg-gradient-to-br from-brand-50 to-success-50 border-brand-200">
+        <div className="card-primary mb-6">
           <div className="flex items-start gap-4">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-success-500 grid place-items-center shrink-0">
-              <Database className="h-5 w-5 text-white" />
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[10px] bg-brand-600 text-white shadow-[inset_0_1px_0_0_rgb(255_255_255/0.2)]">
+              <Database className="h-5 w-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="font-display font-semibold text-ink-950 text-lg">No data yet</h2>
-              <p className="mt-1 text-sm text-ink-700">Connect your accounting tool to import customers, invoices, and payment history. Or load sample data to explore the product with realistic A/R — every dashboard, every AI insight, every workflow.</p>
+              <h2 className="app-title">No data yet</h2>
+              <p className="app-body mt-1.5">Connect your accounting tool to import customers, invoices, and payment history. Or load sample data to explore the product with realistic A/R — every dashboard, every AI insight, every workflow.</p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <SampleDataButton />
-                <Link href="#providers" className="text-sm text-ink-600 hover:text-ink-900 inline-flex items-center gap-1">
+                <Link href="#providers" className="link-quiet">
                   Or connect a provider below <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -109,20 +109,20 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       )}
 
       {needsSetup > 0 && (
-        <div className="mb-6 card bg-warn-50 border-warn-200">
+        <div className="row-warn card mb-6">
           <div className="flex items-start gap-4">
-            <div className="h-10 w-10 rounded-xl bg-warn-100 grid place-items-center shrink-0">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[10px] bg-warn-50 ring-1 ring-warn-200">
               <AlertCircle className="h-5 w-5 text-warn-700" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="font-display font-semibold text-ink-950 text-lg">{needsSetup} integration{needsSetup > 1 ? 's' : ''} need production setup</h2>
-              <p className="mt-1 text-sm text-ink-700">These providers are wired in the code but their developer-app credentials aren&apos;t configured in this environment. OAuth won&apos;t complete until they&apos;re set.</p>
-              <ul className="mt-3 space-y-1 text-xs text-ink-700">
+              <h2 className="app-title">{needsSetup} integration{needsSetup > 1 ? 's' : ''} need production setup</h2>
+              <p className="app-body mt-1.5">These providers are wired in the code but their developer-app credentials aren&apos;t configured in this environment. OAuth won&apos;t complete until they&apos;re set.</p>
+              <ul className="app-meta mt-3 space-y-1 font-normal">
                 {Object.entries(providerStatus).filter(([, s]) => !s.ready).map(([k, s]) => (
                   <li key={k}><b className="capitalize">{k}:</b> {s.reason}</li>
                 ))}
               </ul>
-              <p className="mt-3 text-xs text-ink-600">For the production app, each provider needs: (1) a developer app on the platform&apos;s site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@getcollectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
+              <p className="app-meta mt-3 font-normal leading-4">For the production app, each provider needs: (1) a developer app on the platform&apos;s site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@getcollectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
             </div>
           </div>
         </div>
@@ -157,20 +157,20 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
   const paused = status === 'paused';
   const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero' || provider === 'square');
   return (
-    <div className={`card transition-colors ${connected ? 'border-success-200 bg-success-50/30' : errored ? 'border-danger-200 bg-danger-50/30' : paused ? 'border-ink-200 bg-ink-50/50 opacity-70' : ''}`}>
+    <div className={`card transition-all duration-200 hover:lift-2 ${errored ? 'row-urgent' : ''} ${paused ? 'opacity-65' : ''}`}>
       <div className="flex items-start gap-3">
-        <div className={`h-10 w-10 rounded-lg grid place-items-center font-display font-bold text-sm shrink-0 ${connected ? 'bg-success-600 text-white' : paused ? 'bg-ink-300 text-ink-600' : 'bg-ink-950 text-white'}`}>
+        <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-[10px] text-[13px] font-semibold shadow-[inset_0_1px_0_0_rgb(255_255_255/0.18)] ${connected ? 'bg-success-600 text-white' : paused ? 'bg-ink-200 text-ink-500' : 'bg-ink-900 text-white'}`}>
           {logo}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="app-heading">{name}</h3>
-            {connected && <span className="badge-success text-2xs">Connected</span>}
-            {errored && <span className="badge-danger text-2xs">Error</span>}
-            {paused && <span className="badge-neutral text-2xs">Paused</span>}
-            {!connected && !errored && !paused && <span className="badge-neutral text-2xs">Not connected</span>}
+            {connected && <span className="badge-success">Connected</span>}
+            {errored && <span className="badge-danger">Error</span>}
+            {paused && <span className="badge-neutral">Paused</span>}
+            {!connected && !errored && !paused && <span className="badge-neutral">Not connected</span>}
           </div>
-          <p className="mt-1 text-sm text-ink-600">{description}</p>
+          <p className="app-body mt-1">{description}</p>
           <div className="mt-3 flex items-center gap-2">
             {paused ? (
               <span className="btn-secondary btn-sm opacity-60 cursor-not-allowed" aria-disabled="true">Paused</span>

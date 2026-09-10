@@ -26,9 +26,21 @@ export function WriteOffButton({ invoiceId }: { invoiceId: string }) {
     }
   }
 
+  /* Giving up on a debt is irreversible, so it must never be the easiest thing
+     on the row — but a red button shouted at every invoice is melodrama, and
+     operators stop reading it. The resting state is a plain ghost control and
+     the danger colour only arrives on hover/focus, at the moment of intent. */
   return (
-    <button onClick={writeOff} disabled={loading} className="btn-secondary btn-sm text-danger-700">
-      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
+    <button
+      onClick={writeOff}
+      disabled={loading}
+      aria-busy={loading}
+      title="Write off — stops dunning and cannot be undone here"
+      className="btn-ghost text-ink-600 transition-colors hover:bg-danger-50 hover:text-danger-700 focus-visible:bg-danger-50 focus-visible:text-danger-700"
+    >
+      {loading
+        ? <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
+        : <XCircle aria-hidden="true" className="h-4 w-4" />}
       Write off
     </button>
   );

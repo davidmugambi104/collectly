@@ -27,15 +27,26 @@ export default async function CustomersPage() {
 
   return (
     <AppShell title="Customers" subtitle={`${custList.length} customer${custList.length === 1 ? '' : 's'} · ${insights.length} with open balance`}>
-      <div className="flex justify-between items-center mb-5">
-        <p className="text-sm text-ink-600">Sorted by risk score (highest first). AI-recommended next action for each.</p>
-        <Link href="/dashboard/customers/new" className="btn-brand btn-sm"><Plus className="h-3.5 w-3.5" />Add customer</Link>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <p className="app-body text-ink-500">Sorted by risk score (highest first). AI-recommended next action for each.</p>
+        <Link href="/dashboard/customers/new" className="btn-brand btn-sm h-8"><Plus aria-hidden="true" className="h-3.5 w-3.5" />Add customer</Link>
       </div>
       {insights.length === 0 ? (
-        <div className="card text-center py-12">
-          <Sparkles className="h-8 w-8 mx-auto text-ink-300" />
-          <h3 className="mt-3 font-semibold text-ink-900">No open balances</h3>
-          <p className="mt-1 text-sm text-ink-600">All your customers are paid up. Add an invoice or import data to see insights.</p>
+        /* "Nothing outstanding" is good news on this screen, so the state says
+           so and then offers the two things that would give it something to
+           analyse — the same shape as every other empty state in the app. */
+        <div className="panel px-6 py-16 text-center">
+          <div className="chip-icon mx-auto h-11 w-11">
+            <Sparkles aria-hidden="true" className="h-5 w-5 text-brand-500" />
+          </div>
+          <h2 className="app-heading mt-4">No open balances</h2>
+          <p className="app-body mx-auto mt-1.5 max-w-sm text-ink-500">
+            All your customers are paid up. Add an invoice or import data to see insights.
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <Link href="/dashboard/invoices/new" className="btn-primary btn-sm h-8"><Plus aria-hidden="true" className="h-3.5 w-3.5" />New invoice</Link>
+            <Link href="/dashboard/integrations" className="btn-secondary btn-sm h-8">Import data</Link>
+          </div>
         </div>
       ) : (
         <CustomersTable insights={insights} noDebt={noDebt} />

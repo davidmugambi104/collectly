@@ -49,7 +49,7 @@ export default async function InboxPage() {
       title="Inbox"
       subtitle={`${items.length} customer repl${items.length === 1 ? 'y' : 'ies'}${newCount > 0 ? ` · ${newCount} new` : ''}`}
     >
-      <p className="text-sm text-ink-600 mb-5">Every reply to a dunning email lands here, classified by AI with a recommended next step.</p>
+      <p className="app-body mb-4 max-w-2xl text-ink-500">Every reply to a dunning email lands here, classified by AI with a recommended next step.</p>
       <InboxList items={items} />
     </AppShell>
   );
