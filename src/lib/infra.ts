@@ -81,7 +81,21 @@ export async function fetchResendMessageId(resendId: string): Promise<string | n
   }
 }
 
-export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }) {
+/**
+ * Both senders return a discriminated union: a `skipped` stub when the
+ * provider is unconfigured, or a real result. Naming the union here is what
+ * lets callers switch on `status` — the dunning scheduler was reaching for
+ * `(result as any).status` because the inferred type was a bare union with
+ * no shared discriminant to narrow on.
+ */
+export type SendEmailResult =
+  | { id: string; status: 'skipped' }
+  | { id: string | undefined; status: 'sent' };
+export type SendSmsResult =
+  | { sid: string; status: 'skipped' }
+  | { sid: string; status: 'sent' };
+
+export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }): Promise<SendEmailResult> {
   if (!process.env.RESEND_API_KEY) {
     console.warn('[email] RESEND_API_KEY missing — skipping send');
     return { id: 'dev-stub', status: 'skipped' as const };
@@ -112,7 +126,7 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
   return { id: data?.id, status: 'sent' as const };
 }
 
-export async function sendSms(opts: { to: string; body: string }) {
+export async function sendSms(opts: { to: string; body: string }): Promise<SendSmsResult> {
   if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_FROM_NUMBER) {
     // Symmetric with sendEmail's missing-key path. The dunning scheduler
     // (src/lib/dunning/scheduler.ts) checks status === 'skipped' to mark

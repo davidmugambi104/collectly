@@ -11,9 +11,39 @@
  *    of expiry, so callers can treat tokens as always-valid.
  */
 import { db } from '@/db';
-import { integrations, customers as customersTbl, invoices as invoicesTbl, payments as paymentsTbl } from '@/db/schema';
-import { eq, and, sql } from 'drizzle-orm';
-import { nanoid } from '@/lib/utils';
+import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
+import { eq, and } from 'drizzle-orm';
+import { nanoid, errorMessage } from '@/lib/utils';
+
+/* Intuit ships no types package for the QBO REST surface. These describe only
+   the fields this module reads — narrower than `any`, and an upstream rename
+   becomes a compile error instead of a silent undefined written to the DB. */
+type QboTokenResponse = {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  refresh_token_expires_in?: number;
+  x_refresh_token_expires_in?: number;
+};
+type QboCustomer = {
+  Id: string;
+  DisplayName?: string;
+  CompanyName?: string;
+  PrimaryEmailAddr?: { Address?: string };
+  PrimaryPhone?: { FreeFormNumber?: string };
+};
+type QboInvoice = {
+  Id: string;
+  DocNumber?: string;
+  TxnDate?: string;
+  DueDate?: string;
+  TotalAmount?: number;
+  Balance?: number;
+  CurrencyRef?: { value?: string };
+  CustomerRef?: { value?: string; name?: string };
+};
+type QboQuery<K extends string, T> = { QueryResponse?: Partial<Record<K, T[]>> };
+
 
 const QBO_BASE = process.env.QBO_ENVIRONMENT === 'production'
   ? 'https://quickbooks.api.intuit.com'
@@ -51,8 +81,8 @@ async function getFreshQboToken(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`QBO refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: any = await res.json();
-  const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
+  const json = (await res.json()) as QboTokenResponse;
+  const newExpiresAt = new Date(now + json.expires_in * 1000);
   // P1.6 audit fix 2026-07-31: capture refresh-token expiry.
   // Intuit sends it in the `x_refresh_token_expires_in` response header
   // (HTTP/2 canonical name) or `refresh_token_expires_in` in the body
@@ -77,7 +107,7 @@ async function getFreshQboToken(orgId: string) {
     status: 'connected',
     updatedAt: new Date(),
     metadata: {
-      ...((integ.metadata as Record<string, any>) ?? {}),
+      ...((integ.metadata as Record<string, unknown>) ?? {}),
       refreshExpiresAt: newRefreshExpiresAt ? newRefreshExpiresAt.toISOString() : null,
     },
   }).where(eq(integrations.id, integ.id));
@@ -137,11 +167,11 @@ export async function qboExchangeCode(code: string, realmId: string) {
     }),
   });
   if (!res.ok) throw new Error(`QBO exchange failed: ${res.status} ${await res.text()}`);
-  const json: any = await res.json();
+  const json = (await res.json()) as QboTokenResponse;
   return {
-    accessToken: json.access_token as string,
-    refreshToken: json.refresh_token as string,
-    expiresIn: json.expires_in as number,
+    accessToken: json.access_token,
+    refreshToken: json.refresh_token,
+    expiresIn: json.expires_in,
     realmId,
   };
 }
@@ -303,13 +333,13 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   const QBO_PAGE_SIZE = 1000; // matches MAXRESULTS in qboListCustomers/qboListOpenInvoices
 
   // 1. Customers
-  let qboCustomers: any[] = [];
+  let qboCustomers: QboCustomer[] = [];
   try {
-    const res: any = await qboListCustomers(orgId);
+    const res = (await qboListCustomers(orgId)) as QboQuery<'Customer', QboCustomer>;
     qboCustomers = res?.QueryResponse?.Customer ?? [];
     if (qboCustomers.length >= QBO_PAGE_SIZE) truncated = true;
-  } catch (e: any) {
-    errors.push(`customers: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`customers: ${errorMessage(e)}`);
   }
 
   for (const c of qboCustomers) {
@@ -336,19 +366,19 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
         });
       }
       customersUpserted++;
-    } catch (e: any) {
-      errors.push(`customer ${c?.Id}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`customer ${c?.Id}: ${errorMessage(e)}`);
     }
   }
 
   // 2. Invoices
-  let qboInvoices: any[] = [];
+  let qboInvoices: QboInvoice[] = [];
   try {
-    const res: any = await qboListOpenInvoices(orgId);
+    const res = (await qboListOpenInvoices(orgId)) as QboQuery<'Invoice', QboInvoice>;
     qboInvoices = res?.QueryResponse?.Invoice ?? [];
     if (qboInvoices.length >= QBO_PAGE_SIZE) truncated = true;
-  } catch (e: any) {
-    errors.push(`invoices: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`invoices: ${errorMessage(e)}`);
   }
 
   for (const inv of qboInvoices) {
@@ -442,8 +472,8 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
         });
       }
       invoicesUpserted++;
-    } catch (e: any) {
-      errors.push(`invoice ${inv?.Id}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`invoice ${inv?.Id}: ${errorMessage(e)}`);
     }
   }
 

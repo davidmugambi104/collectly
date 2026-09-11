@@ -18,6 +18,20 @@ export function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
  * NOTE: src/app/api/lead-notify and src/lib/outreach-inbound each still
  * carry a private copy of this; fold them in here when they're next touched.
  */
+/**
+ * Narrow an unknown thrown value to a message string.
+ *
+ * `catch (e: unknown)` then `errorMessage(e)` appeared in 23 places. It is not just a
+ * lint complaint: `any` silences the check that the thing you caught is an
+ * Error at all, and a thrown string or a rejected fetch Response would render
+ * as "undefined" through that path rather than saying anything useful.
+ */
+export function errorMessage(e: unknown): string {
+  if (e instanceof Error) return e.message;
+  if (typeof e === 'string') return e;
+  try { return JSON.stringify(e) ?? String(e); } catch { return String(e); }
+}
+
 export function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string

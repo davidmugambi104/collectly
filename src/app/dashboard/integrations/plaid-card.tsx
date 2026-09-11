@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { BookOpen } from 'lucide-react';
+import { errorMessage } from '@/lib/utils';
 
 /**
  * Plaid integration card.
@@ -13,9 +14,20 @@ import { BookOpen } from 'lucide-react';
  * If `react-plaid-link` is not installed, we fall back to a graceful
  * "configure your Plaid keys" state so the page never breaks in dev.
  */
+/** The slice of Plaid Link's CDN global this component actually calls. */
+type PlaidLinkHandler = { open(): void; exit(): void; destroy(): void };
+type PlaidLinkOptions = {
+  token: string;
+  onSuccess: (publicToken: string) => void;
+  onExit?: () => void;
+  onEvent?: () => void;
+};
+
 declare global {
   interface Window {
-    Plaid?: any;
+    // Plaid Link arrives from a CDN <script>, so there is no package to
+    // import types from. Declare only the surface this file touches.
+    Plaid?: { create(opts: PlaidLinkOptions): PlaidLinkHandler };
   }
 }
 
@@ -23,7 +35,7 @@ export function PlaidCard({ status }: { status: string }) {
   const connected = status === 'connected';
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const handlerRef = useRef<any>(null);
+  const handlerRef = useRef<PlaidLinkHandler | null>(null);
 
   useEffect(() => {
     // Lazy-load the Plaid Link SDK (1.1.2) from CDN once.
@@ -80,6 +92,9 @@ export function PlaidCard({ status }: { status: string }) {
       }
 
       // 3) Open Plaid Link
+      // The CDN script may not have executed yet — `window.Plaid` being
+      // optional is real, not a typing artefact.
+      if (!window.Plaid) throw new Error('Plaid Link failed to load. Check your connection and retry.');
       handlerRef.current = window.Plaid.create({
         token: link_token,
         onSuccess: async (public_token: string) => {
@@ -101,8 +116,8 @@ export function PlaidCard({ status }: { status: string }) {
         onEvent: () => {},
       });
       handlerRef.current.open();
-    } catch (e: any) {
-      setError(e?.message ?? String(e));
+    } catch (e: unknown) {
+      setError(errorMessage(e));
       setOpening(false);
     }
   }
@@ -126,7 +141,7 @@ export function PlaidCard({ status }: { status: string }) {
               <span className="badge-neutral text-[10px]">Not connected</span>
             )}
           </div>
-          <p className="mt-1 text-sm text-ink-600">Read-only bank connection. Balance/transaction sync isn't wired into the forecast yet — connecting saves your bank link for when it is.</p>
+          <p className="mt-1 text-sm text-ink-600">Read-only bank connection. Balance/transaction sync isn&apos;t wired into the forecast yet — connecting saves your bank link for when it is.</p>
           {error && (
             <p className="mt-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-md px-2 py-1">
               {error}

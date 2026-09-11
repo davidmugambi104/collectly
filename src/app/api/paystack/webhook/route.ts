@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { db } from '@/db';
 import { invoices, payments, customers } from '@/db/schema';
 import { and, eq, sql } from 'drizzle-orm';
-import { nanoid } from '@/lib/utils';
+import { nanoid, errorMessage } from '@/lib/utils';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
@@ -26,6 +26,24 @@ function verifySignature(body: string, signature: string | null): boolean {
  * mark the invoice paid. Idempotent — the unique partial index
  * `payments_paystack_charge_uniq` rejects duplicate charge ids.
  */
+// Paystack ships no types package. This is the exact surface this handler
+// reads — narrower than `any`, and it makes a field rename upstream show up
+// as a compile error instead of a silent undefined at runtime.
+interface PaystackEvent {
+  event?: string;
+  data?: {
+    id?: number | string;
+    amount?: number;
+    currency?: string;
+    channel?: string;
+    reference?: string;
+    status?: string;
+    subscription_code?: string;
+    metadata?: { invoiceId?: string };
+    customer?: { email?: string };
+  };
+}
+
 export async function POST(req: NextRequest) {
   const signature = req.headers.get('x-paystack-signature');
   const body = await req.text();
@@ -34,7 +52,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid signature' }, { status: 401 });
   }
 
-  let event: any;
+  let event: PaystackEvent;
   try {
     event = JSON.parse(body);
   } catch {
@@ -99,9 +117,9 @@ export async function POST(req: NextRequest) {
           paidAt: new Date(),
         });
         paymentInserted = true;
-      } catch (e: any) {
+      } catch (e: unknown) {
         // Unique violation => duplicate delivery; ignore, still flip invoice if not already paid
-        if (!String(e?.message ?? '').includes('payments_paystack_charge_uniq')) {
+        if (!errorMessage(e).includes('payments_paystack_charge_uniq')) {
           throw e;
         }
       }
@@ -136,9 +154,9 @@ export async function POST(req: NextRequest) {
 
       console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', flippedInvoice, 'email=', email);
       return NextResponse.json({ received: true, action: 'applied' });
-    } catch (e: any) {
-      console.error('[paystack] charge.success failed:', e?.message);
-      return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
+    } catch (e: unknown) {
+      console.error('[paystack] charge.success failed:', errorMessage(e));
+      return NextResponse.json({ error: errorMessage(e) }, { status: 500 });
     }
   }
 

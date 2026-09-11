@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw, Unlink, Loader2 } from 'lucide-react';
+import { errorMessage } from '@/lib/utils';
 
 /**
  * Inline controls for an already-connected accounting integration.
@@ -42,9 +43,9 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
           (errorCount > 0 ? ` — ${errorCount} error${errorCount === 1 ? '' : 's'}: ${data.errors.slice(0, 3).join('; ')}${errorCount > 3 ? '…' : ''}` : ''),
       );
       router.refresh();
-    } catch (e: any) {
+    } catch (e: unknown) {
       setSyncHadErrors(true);
-      setSyncResult(`Error: ${e?.message ?? e}`);
+      setSyncResult(`Error: ${errorMessage(e)}`);
     } finally {
       setSyncing(false);
     }

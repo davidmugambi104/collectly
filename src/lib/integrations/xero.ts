@@ -12,9 +12,9 @@
  *    the first one (most Xero apps are single-tenant per connection).
  */
 import { db } from '@/db';
-import { integrations, customers as customersTbl, invoices as invoicesTbl, payments as paymentsTbl } from '@/db/schema';
+import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { nanoid } from '@/lib/utils';
+import { nanoid, errorMessage } from '@/lib/utils';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 const XERO_API = 'https://api.xero.com/api.xro/2.0';
@@ -69,7 +69,7 @@ async function getFreshXero(orgId: string) {
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
     throw new Error(`Xero refresh failed: ${res.status} ${await res.text()}`);
   }
-  const json: any = await res.json();
+  const json = (await res.json()) as XeroTokenResponse;
   const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
   await db.update(integrations).set({
     accessToken: json.access_token,
@@ -90,7 +90,7 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
     headers: { Authorization: `Bearer ${accessToken}`, Accept: 'application/json' },
   });
   if (!res.ok) throw new Error(`Xero connections failed: ${res.status}`);
-  const json: any = await res.json();
+  const json = (await res.json()) as XeroTenant[];
   // /connections returns EVERY org this Xero user has ever authorized for
   // this app, not just the one from the auth flow just completed --
   // disconnecting in our app only deletes our local row, it never revokes
@@ -100,7 +100,7 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
   // reconnecting to Xero's Demo Company kept syncing an old, empty org
   // instead). updatedDateUtc reflects the most recent (re)authorization per
   // Xero's own docs, so sort on that and take the most recent.
-  const sorted = [...(json ?? [])].sort((a: any, b: any) =>
+  const sorted = [...(json ?? [])].sort((a: XeroTenant, b: XeroTenant) =>
     new Date(b.updatedDateUtc ?? b.createdDateUtc ?? 0).getTime() - new Date(a.updatedDateUtc ?? a.createdDateUtc ?? 0).getTime(),
   );
   const mostRecent = sorted[0];
@@ -108,6 +108,32 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
   await db.update(integrations).set({ tenantId: mostRecent.tenantId, updatedAt: new Date() }).where(eq(integrations.id, integrationId));
   return mostRecent.tenantId as string;
 }
+
+/* Xero ships no types package for the surface this module uses. These cover
+   only the fields actually read — narrower than `any`, and an upstream rename
+   fails the build instead of silently writing undefined to the DB. */
+type XeroTokenResponse = { access_token: string; refresh_token: string; expires_in: number };
+type XeroTenant = { tenantId: string; tenantName?: string; createdDateUtc?: string; updatedDateUtc?: string };
+type XeroPhone = { PhoneType?: string; PhoneNumber?: string };
+type XeroContact = {
+  ContactID: string;
+  Name?: string;
+  FirstName?: string;
+  LastName?: string;
+  EmailAddress?: string;
+  Phones?: XeroPhone[];
+};
+type XeroInvoice = {
+  InvoiceID: string;
+  InvoiceNumber?: string;
+  Date?: string;
+  DueDate?: string;
+  Total?: number;
+  AmountDue?: number;
+  CurrencyCode?: string;
+  Contact?: { ContactID?: string; Name?: string };
+};
+type XeroList = { Contacts?: XeroContact[]; Invoices?: XeroInvoice[] };
 
 async function xeroFetch(orgId: string, path: string, init?: RequestInit) {
   const integ = await getFreshXero(orgId);
@@ -227,12 +253,12 @@ export async function saveXeroConnection(orgId: string, tokens: {
  */
 const XERO_PAGE_SIZE = 100; // Xero's fixed page size for list endpoints
 
-export async function xeroListOpenInvoices(orgId: string): Promise<{ invoices: any[]; truncated: boolean }> {
+export async function xeroListOpenInvoices(orgId: string): Promise<{ invoices: XeroInvoice[]; truncated: boolean }> {
   // Fetch in two passes — Xero's filter syntax for OR is awkward
-  const auth: any = await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`);
-  const paid: any = await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`);
-  const authInvoices = (auth?.Invoices ?? []) as any[];
-  const paidInvoices = (paid?.Invoices ?? []) as any[];
+  const auth = (await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`)) as XeroList;
+  const paid = (await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`)) as XeroList;
+  const authInvoices = auth?.Invoices ?? [];
+  const paidInvoices = paid?.Invoices ?? [];
   return {
     invoices: [...authInvoices, ...paidInvoices],
     // Checked per-call, not on the combined length -- 100 AUTHORISED + 40
@@ -243,9 +269,9 @@ export async function xeroListOpenInvoices(orgId: string): Promise<{ invoices: a
 }
 
 /** List all contacts (customers) from Xero. */
-export async function xeroListContacts(orgId: string): Promise<{ contacts: any[]; truncated: boolean }> {
-  const res: any = await xeroFetch(orgId, `/Contacts?page=1`);
-  const contacts = (res?.Contacts ?? []) as any[];
+export async function xeroListContacts(orgId: string): Promise<{ contacts: XeroContact[]; truncated: boolean }> {
+  const res = (await xeroFetch(orgId, `/Contacts?page=1`)) as XeroList;
+  const contacts = res?.Contacts ?? [];
   return { contacts, truncated: contacts.length >= XERO_PAGE_SIZE };
 }
 
@@ -266,7 +292,7 @@ export async function xeroRecordPayment(orgId: string, opts: {
   currency: string;
   reference: string;
 }) {
-  const body: any = {
+  const body: Record<string, unknown> = {
     Invoice: { InvoiceID: opts.xeroInvoiceId },
     Account: opts.accountCode ? { Code: opts.accountCode } : { Code: '200' }, // 200 = "Accounts Receivable" default
     Amount: opts.amount,
@@ -321,13 +347,13 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   let truncated = false;
 
   // 1. Contacts → customers
-  let xeroContacts: any[] = [];
+  let xeroContacts: XeroContact[] = [];
   try {
     const res = await xeroListContacts(orgId);
     xeroContacts = res.contacts;
     if (res.truncated) truncated = true;
-  } catch (e: any) {
-    errors.push(`contacts: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`contacts: ${errorMessage(e)}`);
   }
 
   for (const c of xeroContacts) {
@@ -335,7 +361,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
       const externalId = String(c.ContactID);
       const name = c.Name ?? (`${c.FirstName ?? ''} ${c.LastName ?? ''}`.trim() || 'Unknown');
       const email = c.EmailAddress ?? null;
-      const phone = (c.Phones ?? []).find((p: any) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
+      const phone = (c.Phones ?? []).find((p: XeroPhone) => p.PhoneType === 'MOBILE' || p.PhoneType === 'DEFAULT')?.PhoneNumber ?? null;
       const existing = await db
         .select({ id: customersTbl.id })
         .from(customersTbl)
@@ -347,19 +373,19 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         await db.insert(customersTbl).values({ id: nanoid(), orgId, externalId, name, email, phone });
       }
       customersUpserted++;
-    } catch (e: any) {
-      errors.push(`contact ${c?.ContactID}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`contact ${c?.ContactID}: ${errorMessage(e)}`);
     }
   }
 
   // 2. Invoices
-  let xeroInvoices: any[] = [];
+  let xeroInvoices: XeroInvoice[] = [];
   try {
     const res = await xeroListOpenInvoices(orgId);
     xeroInvoices = res.invoices;
     if (res.truncated) truncated = true;
-  } catch (e: any) {
-    errors.push(`invoices: ${e?.message ?? e}`);
+  } catch (e: unknown) {
+    errors.push(`invoices: ${errorMessage(e)}`);
   }
 
   for (const inv of xeroInvoices) {
@@ -447,8 +473,8 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         });
       }
       invoicesUpserted++;
-    } catch (e: any) {
-      errors.push(`invoice ${inv?.InvoiceID}: ${e?.message ?? e}`);
+    } catch (e: unknown) {
+      errors.push(`invoice ${inv?.InvoiceID}: ${errorMessage(e)}`);
     }
   }
 

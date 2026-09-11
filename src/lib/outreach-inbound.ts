@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { pool } from '@/db';
+import { errorMessage } from '@/lib/utils';
 
 /**
  * Resend inbound webhook handler for outreach replies.
@@ -67,7 +68,18 @@ function classifyReply(text: string, subject: string): { state: string; nextStep
   return { state: 'replied', nextStep: 'human_review', note: 'Reply received; needs human triage' };
 }
 
-async function ensureTables(client: any) {
+/* Resend's inbound webhook payload, limited to the fields read below.
+   svix's verify() returns `unknown` by design — this is the one documented
+   assertion at the trust boundary, made narrow rather than `any`. */
+interface ResendInboundEvent {
+  data?: { from?: string; subject?: string; text?: string; html?: string };
+}
+
+/** Just the query surface used here — a node-postgres PoolClient or the
+ *  PGlite equivalent both satisfy it, which is why this is structural. */
+type SqlClient = { query(sql: string, params?: unknown[]): Promise<{ rows: unknown[] }> };
+
+async function ensureTables(client: SqlClient) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS outreach_contacts (
       id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -175,8 +187,8 @@ export async function classifyAndPersistOutreachReply(opts: {
 <hr/>
 <pre style="white-space:pre-wrap">${escapeHtml(opts.text.slice(0, 2000))}</pre>`,
       });
-    } catch (e: any) {
-      console.error('Failed to notify founder of reply:', e?.message);
+    } catch (e: unknown) {
+      console.error('Failed to notify founder of reply:', errorMessage(e));
     }
 
     return { classification };
@@ -231,15 +243,15 @@ export async function handleResendInboundWebhook(req: NextRequest): Promise<Next
   const rawBody = await req.text();
   const wh = new Webhook(secret);
   const svixId = req.headers.get('svix-id') || '';
-  let event: any;
+  let event: ResendInboundEvent;
   try {
     event = wh.verify(rawBody, {
       'svix-id': svixId,
       'svix-timestamp': req.headers.get('svix-timestamp') || '',
       'svix-signature': req.headers.get('svix-signature') || '',
-    }) as any;
-  } catch (e: any) {
-    return NextResponse.json({ error: `signature verification failed: ${e?.message ?? e}` }, { status: 400 });
+    }) as ResendInboundEvent;
+  } catch (e: unknown) {
+    return NextResponse.json({ error: `signature verification failed: ${errorMessage(e)}` }, { status: 400 });
   }
 
   if (await wasEventAlreadyProcessed(svixId)) {
@@ -264,8 +276,8 @@ export async function handleResendInboundWebhook(req: NextRequest): Promise<Next
       fromAddress, subject, text, rawPayload: event, source: 'resend_inbound',
     });
     return NextResponse.json({ ok: true, classification });
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Inbound webhook error:', e);
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ error: errorMessage(e) }, { status: 500 });
   }
 }

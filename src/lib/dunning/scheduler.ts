@@ -3,12 +3,25 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay } from '@/db/schema';
-import { eq, and, sql, lte, isNull, gt, inArray } from 'drizzle-orm';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, type Invoice } from '@/db/schema';
+import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
-import { nanoid } from '@/lib/utils';
+import { nanoid, errorMessage } from '@/lib/utils';
+
+// Mirrors the inline element type of dunningSequences.steps's jsonb
+// $type<Array<{...}>>() in schema.ts. That inline type has no exported name
+// to import, and `seq.steps` does not infer cleanly through the `?? []`
+// fallback below, so it is spelled out again here.
+type DunningStep = {
+  id: string;
+  daysFromDue: number;
+  channel: 'email' | 'sms';
+  tone: 'friendly' | 'firm' | 'final';
+  subject?: string;
+  template: string;
+};
 
 // Cache org names per process to avoid re-querying on every invoice
 const orgNameCache = new Map<string, string>();
@@ -72,8 +85,8 @@ async function notifyOwnerOfSends(orgId: string, entries: DigestEntry[]) {
         </body></html>
       `,
     });
-  } catch (e: any) {
-    console.error('[dunning] owner notification failed:', e?.message);
+  } catch (e: unknown) {
+    console.error('[dunning] owner notification failed:', errorMessage(e));
   }
 }
 
@@ -160,7 +173,7 @@ export async function processDunning() {
         continue;
       }
       const days = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
-      const dueSteps = (seq.steps ?? []).filter((s: any) => s.daysFromDue <= days);
+      const dueSteps = (seq.steps ?? []).filter((s: DunningStep) => s.daysFromDue <= days);
       if (!dueSteps.length) continue;
 
       const lastStep = dueSteps[dueSteps.length - 1];
@@ -225,7 +238,7 @@ export async function processDunning() {
       };
       let insertedRunId: string | null = null;
       try {
-        insertedRunId = await db.transaction(async (tx: any) => {
+        insertedRunId = await db.transaction(async (tx: typeof db) => {
           const query = tx.insert(dunningRuns).values(insertValues);
           const [run] = isRetry
             ? await query
@@ -239,9 +252,9 @@ export async function processDunning() {
                 .returning();
           return run?.id ?? null;
         });
-      } catch (e: any) {
+      } catch (e: unknown) {
         errors += 1;
-        console.error('[dunning] schedule tx failed:', e?.message);
+        console.error('[dunning] schedule tx failed:', errorMessage(e));
         continue;
       }
       if (!insertedRunId) continue; // another concurrent run won the race
@@ -260,7 +273,7 @@ export async function processDunning() {
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns
             // status='skipped' only when the API key is missing (a config bug).
-            if ((sendResult as any).status === 'skipped') {
+            if (sendResult.status === 'skipped') {
               await db.update(dunningRuns).set({ status: 'failed', error: 'resend api key missing' }).where(eq(dunningRuns.id, run.id));
               errors += 1;
             } else {
@@ -273,9 +286,9 @@ export async function processDunning() {
               // and a missed id here means that reply can never be matched.
               // Failure here never fails the send that already succeeded.
               try {
-                const msgId = await fetchResendMessageId((sendResult as any).id);
+                const msgId = sendResult.id ? await fetchResendMessageId(sendResult.id) : null;
                 if (msgId) await db.update(dunningRuns).set({ externalMessageId: msgId }).where(eq(dunningRuns.id, run.id));
-              } catch (e) {
+              } catch (e: unknown) {
                 console.error('[dunning] fetchResendMessageId failed:', e instanceof Error ? e.message : e);
               }
               await recordEvent({
@@ -295,7 +308,7 @@ export async function processDunning() {
             // 'sent' in the dashboard while zero messages actually go out.
             // P0 audit fix 2026-07-31 — mirrors the email-branch guard three
             // lines above (lines 109–110).
-            if ((sms as any).status === 'skipped') {
+            if (sms.status === 'skipped') {
               await db.update(dunningRuns).set({ status: 'failed', error: 'twilio not configured' }).where(eq(dunningRuns.id, run.id));
               errors += 1;
               await recordEvent({
@@ -304,7 +317,7 @@ export async function processDunning() {
                 payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', error: 'twilio not configured' },
               });
             } else {
-              await db.update(dunningRuns).set({ status: 'sent', sentAt: now, externalMessageId: (sms as any).sid }).where(eq(dunningRuns.id, run.id));
+              await db.update(dunningRuns).set({ status: 'sent', sentAt: now, externalMessageId: sms.sid }).where(eq(dunningRuns.id, run.id));
               sent += 1;
               await recordEvent({
                 orgId: seq.orgId,
@@ -335,14 +348,14 @@ export async function processDunning() {
               payload: { runId: run.id, invoiceId: invoice.id, reason },
             });
           }
-        } catch (e: any) {
+        } catch (e: unknown) {
           // Real send failure (Resend 403, Twilio error_code, etc.)
-          await db.update(dunningRuns).set({ status: 'failed', error: String(e?.message ?? e).substring(0, 500) }).where(eq(dunningRuns.id, run.id));
+          await db.update(dunningRuns).set({ status: 'failed', error: errorMessage(e).substring(0, 500) }).where(eq(dunningRuns.id, run.id));
           errors += 1;
           await recordEvent({
             orgId: seq.orgId,
             type: 'dunning.run.failed',
-            payload: { runId: run.id, invoiceId: invoice.id, channel: lastStep.channel, error: String(e?.message ?? e).substring(0, 500) },
+            payload: { runId: run.id, invoiceId: invoice.id, channel: lastStep.channel, error: errorMessage(e).substring(0, 500) },
           });
         }
         scheduled += 1;
@@ -351,7 +364,7 @@ export async function processDunning() {
           type: 'dunning.run.scheduled',
           payload: { runId: run.id, invoiceId: invoice.id, stepId: lastStep.id, days },
         });
-      } catch (e) {
+      } catch {
         errors += 1;
       }
     }
@@ -364,7 +377,7 @@ export async function processDunning() {
   return { scheduled, sent, errors };
 }
 
-function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: any; businessName: string }) {
+function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: Invoice; businessName: string }) {
   return `
     <!doctype html>
     <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 560px; margin: 0 auto; padding: 24px;">
