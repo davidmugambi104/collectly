@@ -58,12 +58,16 @@ def pattern_emails(first: str, last: str, domain: str) -> list:
     l = re.sub(r"[^a-z0-9]", "", last.lower())
     fi = f[0] if f else ""
     li = l[0] if l else ""
+    # `hello@{domain}` used to be the last entry here. It is a guess at a
+    # domain rather than a person, and generating it is how 198 role addresses
+    # reached the send list and drove a 34.2% 7-day bounce rate. A pattern
+    # built from a REAL name found on the site is a defensible guess; a
+    # generic mailbox is not a guess about anybody.
     patterns = [
         f"{f}@{domain}",
         f"{f}.{l}@{domain}",
         f"{fi}{l}@{domain}",
         f"{f}{li}@{domain}",
-        f"hello@{domain}",
     ]
     seen = set()
     out = []
@@ -139,13 +143,25 @@ def pick_best_email(res: dict, suppressed: set) -> tuple:
             if first in local and (last in local or len(last) == 0):
                 return e, person["first"], person["last"]
 
+    # No person matched. Previously this fell through to "highest-scoring
+    # domain email", which returned a role mailbox with an empty name — the
+    # single line responsible for most of the bad list. A prospect we cannot
+    # attach to a named human is not a prospect; return nothing and let the
+    # domain be retried later by a source that can name someone.
     candidates.sort(key=lambda e: pu.score_email(e, domain), reverse=True)
     best = candidates[0]
-    local = best.split("@", 1)[0]
-    if "." in local and not any(local.startswith(g) for g in pu.GENERIC_LOCALPARTS):
+    local = best.split("@", 1)[0].lower()
+    if local in pu.GENERIC_LOCALPARTS or any(local.startswith(g) for g in pu.GENERIC_LOCALPARTS):
+        return "", "", ""
+    if "." in local:
         first, last = (local.split(".", 1) + [""])[:2]
         return best, first.capitalize(), last.capitalize()
-    return best, "", ""
+    # A single-word non-generic local part (e.g. "sarah@") is only usable if
+    # the site actually showed us that person.
+    for person in res.get("people", []):
+        if person["first"].lower() == local:
+            return best, person["first"], person["last"]
+    return "", "", ""
 
 
 def main(limit=None):

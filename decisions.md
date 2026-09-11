@@ -74,3 +74,37 @@
 - **Owner:** OpenClaw
 - **Status:** Done
 - **Next:** Schedule weekly cron via `collectly-secret-rotation-auditor`
+## 2026-09-11 — Stop sending to guessed role addresses; list rebuilt
+
+- **Decision:** Role/generic addresses (`hello@`, `info@`, `contact@`, `admin@`,
+  `support@`, `sales@`, …) are no longer a valid prospect. 198 were moved out of
+  tiers 1–3 to `tier=quarantined_role_address`, and the 38 addresses that had
+  bounced inside the live 7-day Resend window without ever reaching the
+  suppression list were suppressed.
+- **Approver:** Davie, 2026-09-11 — asked Claude to own outreach *strategy*
+  while OpenClaw keeps execution; sends remain gated on Davie's approval.
+- **Why:** Bounce rate was 34.2% (52/152 over 7d), 6.8× the 5% policy threshold,
+  and the gate had been in `pullback` for 8 days. 65% of the pool (253/385) was
+  guessed role addresses; 37 of the 38 unsuppressed bounces were role addresses;
+  the most recent batch on 2026-09-10 was still sending to `hello@`/`info@`
+  eight days into a crisis those addresses caused. The loop was not
+  self-correcting because nothing in `pick_prospects()` filters on address
+  shape — it checks tier, presence of an email, suppression and a 14-day
+  cooldown, and a guessed address passes all four.
+- **Effect:** genuinely sendable pool is **112**, not 385. Zero role addresses
+  remain in tiers 1–3.
+- **Standing rule:** an address is only sendable if it belongs to a named person.
+  Pattern-guessed addresses may be *collected*, but must sit in
+  `quarantined_role_address` until verified against a real individual.
+
+## 2026-09-11 — Cold-email experiment declared dead, not restarted
+
+- **Decision:** Stop running the A/B/C/D subject-line matrix. Do not start a new
+  copy test until the list is rebuilt and the bounce rate is back under 5%.
+- **Why:** 313 sends produced 1 reply (0.32%). All four variants are past the
+  50-send kill threshold. The result is not evidence that the copy is bad —
+  with two-thirds of the list undeliverable there was never enough signal for
+  the test to measure anything. Testing message wording against addresses that
+  do not exist burns domain reputation to learn nothing.
+- **Next:** rebuild the list against named contacts, re-establish deliverability,
+  then test copy on a list that can actually receive it.

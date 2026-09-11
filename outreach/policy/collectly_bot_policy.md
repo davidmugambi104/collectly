@@ -32,6 +32,33 @@ Purpose: this file is the bot's brain for every decision it currently stops to a
 
 ---
 
+## 0b. ADDRESS QUALITY — HARD RULE (added 2026-09-11)
+
+**Never send to a guessed role address.** `hello@`, `info@`, `contact@`,
+`admin@`, `support@`, `sales@`, `team@`, `office@`, `accounts@`, `billing@`
+and similar are not prospects. They are a pattern guess at a domain, and they
+are what produced a 34.2% bounce rate (52/152 over 7 days) against a 5%
+threshold.
+
+An address is sendable only if it belongs to **a named person**. Collecting a
+role address is fine; sending to one is not. Park it at
+`tier=quarantined_role_address` in `prospects.csv` until it has been verified
+against a real individual — `pick_prospects()` only selects tiers 1-3, so
+parking it there is sufficient to keep it out of every send.
+
+Note for whoever automates this next: nothing in the send path checks address
+shape. `pick_prospects()` filters on tier, presence of an email, the
+suppression list and a 14-day cooldown — a guessed address passes all four.
+Until that function grows a shape check, this rule lives in the data.
+
+**Before any batch goes out, reconcile suppression against the live Resend
+bounce list.** On 2026-09-11, 38 addresses that had already hard-bounced inside
+the 7-day window were still absent from `suppression.csv` and would have been
+sent to again. Re-bouncing a known-bad address is the most expensive possible
+send.
+
+---
+
 ## 1. WHO TO CONTACT (ICP — no asking, just filter)
 
 **Tier 1 — send immediately, no confirmation needed:**

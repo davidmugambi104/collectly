@@ -19,9 +19,20 @@ FREE_WEBMAIL_DOMAINS = {
     "gmail.com", "yahoo.com", "hotmail.com", "outlook.com",
     "icloud.com", "aol.com", "live.com", "msn.com", "protonmail.com",
 }
+# Role addresses. These are never a prospect: they are a guess at a domain,
+# not a person. Sending to them produced a 34.2% bounce rate (52/152 over 7
+# days) against a 5% threshold — see decisions.md 2026-09-11. Widened from the
+# original ten because `accounts@`/`billing@`/`ap@` were slipping through and
+# are exactly the mailboxes an AR pitch gets ignored in anyway.
 GENERIC_LOCALPARTS = {
     "info", "contact", "hello", "admin", "team", "support",
     "sales", "office", "enquiries", "enquiry",
+    "accounts", "billing", "accounting", "finance", "ar", "ap",
+    "mail", "email", "help", "service", "services", "general",
+    "reception", "front desk", "frontdesk", "hi", "hey", "ask",
+    "no-reply", "noreply", "donotreply", "marketing", "press", "media",
+    "careers", "jobs", "recruitment", "privacy", "legal", "webmaster",
+    "postmaster", "abuse", "newsletter", "subscribe", "bookings", "booking",
 }
 
 DOMAIN_IN_NOTES_RE = re.compile(r"domain=([a-zA-Z0-9.\-]+)")
