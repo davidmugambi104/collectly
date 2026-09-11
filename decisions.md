@@ -108,3 +108,34 @@
   do not exist burns domain reputation to learn nothing.
 - **Next:** rebuild the list against named contacts, re-establish deliverability,
   then test copy on a list that can actually receive it.
+
+## 2026-09-11 — Sends held to zero until the Hunter reset (2026-09-20)
+
+- **Decision:** `daily_send_cap` set to **0** via `task_runner.py set-cap 0 --yes`.
+  No outbound cold email until 2026-09-20 at the earliest. The v5 sequence
+  (`outreach/messages/t1-v5-restart.md`) starts its ramp after that date, not
+  before.
+- **Approver:** Davie, 2026-09-11 ("start the ramp after the hunter reset").
+- **Why the cap and not the gate:** the gate recomputes itself from live bounce
+  data on every run. As the Sept 2–10 bounces age out of the rolling 7-day
+  window, bounce rate falls, the gate flips `pullback` → `allow`, and sends
+  resume on their own — the opposite of what was asked for. `task_runner.py`
+  uses `effective_cap = min(daily_send_cap, gate_cap())`, so a configured cap
+  of 0 is stricter than any gate state and survives the recomputation.
+  Verified against all three gate caps (100/30/0): first send blocked in each.
+- **Side effect, and it is the point:** nine days of zero sends empties the
+  rolling 7-day bounce window. Bounce rate is computed over sends in that
+  window, so with no sends the denominator and numerator both go to zero and
+  the metric resets rather than decays. Deliverability recovery here is a
+  function of *time not sending*, which is why holding costs nothing.
+- **To resume:** `python3 outreach/scripts/task_runner.py set-cap 5 --yes`
+  — 5, not 100. The v5 ramp is 5 → 8 → 12 → 15 over ten days; the old default
+  of 100 was never a sane starting point after a 34% bounce rate.
+
+**Before the first v5 batch, in order:**
+1. Reconcile `suppression.csv` against the live Resend bounce list.
+2. Confirm the 7-day bounce rate and that the gate reads `allow`.
+3. Segment the 112 on `first_name != ""` — 65 have no first name and the
+   sender substitutes an empty string, so a `Hi {{first_name}},` template
+   renders `Hi ,` for them. v5 bodies anchor on `{{company}}` to avoid this.
+4. Set the cap to 5.
