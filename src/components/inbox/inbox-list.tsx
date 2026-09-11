@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, CheckCircle2, X, Mail, Sparkles, CalendarClock } from 'lucide-react';
+import { Loader2, CheckCircle2, X, Mail, AlertTriangle, Sparkles, CalendarClock } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
 type InboxItem = {
@@ -38,7 +38,7 @@ const CLASSIFICATION_STYLE: Record<string, { label: string; className: string }>
   unclassified: { label: 'Unclassified', className: 'badge-neutral' },
 };
 
-export function InboxList({ items }: { items: InboxItem[] }) {
+export function InboxList({ items, configured }: { items: InboxItem[]; configured: boolean }) {
   const router = useRouter();
   const [filter, setFilter] = useState<'new' | 'handled' | 'dismissed' | 'all'>('new');
   const [actingId, setActingId] = useState<string | null>(null);
@@ -97,16 +97,40 @@ export function InboxList({ items }: { items: InboxItem[] }) {
            sentence explaining why the list is empty, and the action that would
            put something in it. */
         <div className="panel px-6 py-16 text-center">
-          <div className="chip-icon mx-auto h-11 w-11">
-            <Mail aria-hidden="true" className="h-5 w-5 text-brand-500" />
+          {/* "No messages" and "no mailbox is being polled" look identical to
+              the reader, and they are completely different situations: one is
+              a quiet week, the other means no reply can EVER arrive here. The
+              page computes whether AR_DUNNING_IMAP_USER is set; without this
+              branch it passed that answer in and the component dropped it, so
+              an inbox that could never receive anything sat looking merely
+              empty. Say which one it is. */}
+          <div className={`chip-icon mx-auto h-11 w-11 ${configured ? '' : 'ring-warn-200'}`}>
+            {configured
+              ? <Mail aria-hidden="true" className="h-5 w-5 text-brand-500" />
+              : <AlertTriangle aria-hidden="true" className="h-5 w-5 text-warn-600" />}
           </div>
-          <h2 className="app-heading mt-4">No {filter === 'all' ? '' : filter} messages</h2>
-          <p className="app-body mx-auto mt-1.5 max-w-sm text-ink-500">
-            Replies to dunning emails will show up here automatically.
-          </p>
-          <div className="mt-5">
-            <Link href="/dashboard/dunning" className="btn-secondary btn-sm h-8">Send a reminder</Link>
-          </div>
+          {configured ? (
+            <>
+              <h2 className="app-heading mt-4">No {filter === 'all' ? '' : filter} messages</h2>
+              <p className="app-body mx-auto mt-1.5 max-w-sm text-ink-500">
+                Replies to dunning emails land here automatically, usually within
+                a few minutes of a customer hitting reply.
+              </p>
+              <div className="mt-5">
+                <Link href="/dashboard/dunning" className="btn-secondary btn-sm h-8">Send a reminder</Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="app-heading mt-4">Reply inbox isn&apos;t connected</h2>
+              <p className="app-body mx-auto mt-1.5 max-w-md text-ink-500">
+                No mailbox is being polled, so customer replies will never appear
+                here — they go to your normal inbox instead. This page stays empty
+                until <code className="font-mono text-2xs">AR_DUNNING_IMAP_USER</code> is
+                set on the deployment.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         /* One panel of hairline-separated rows, not a stack of free-floating

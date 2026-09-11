@@ -7,7 +7,7 @@ import { MessageBubble } from './message-bubble';
 import { RecipientCard } from './recipient-card';
 import { DUNNING_UNSAVED_EVENT, DUNNING_ERROR_EVENT } from '@/lib/dunning/events';
 
-type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
+export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
 type Recipient = { name: string; email: string | null; phone: string | null; invoiceNumber: string; amount?: string; currency?: string; daysOverdue?: number };
 type Preview = { subject?: string; body: string; sample: boolean; recipient: Recipient | null };
 
@@ -34,7 +34,7 @@ const TONE_BADGE: Record<Step['tone'], string> = {
   final: 'badge-danger',
 };
 
-export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Step[]; sequenceId: string }) {
+export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { initialSteps: Step[]; sequenceId: string; smsReady?: boolean }) {
   const router = useRouter();
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [activeIdx, setActiveIdx] = useState<number | null>(0);
@@ -113,8 +113,8 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
       if (!res.ok) throw new Error(data?.error ?? 'preview failed');
       setPreview({ subject: data.subject, body: data.body, sample: !!data.sample, recipient: data.recipient ?? null });
       try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: null })); } catch {}
-    } catch (e: any) {
-      const message = e?.message ?? 'Preview failed';
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Preview failed';
       setPreviewError(message);
       try { window.dispatchEvent(new CustomEvent(DUNNING_ERROR_EVENT, { detail: message })); } catch {}
     } finally {
@@ -157,16 +157,33 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                 className={`relative w-[136px] rounded-xl border p-3 text-left transition-colors ${
                   isActive
-                    ? 'border-brand-500 bg-white ring-2 ring-brand-100 shadow-[0_12px_28px_-12px_rgba(37,99,235,0.45)]'
-                    : 'border-ink-200 bg-white/70 hover:border-ink-300 hover:bg-white shadow-sm'
+                    ? 'border-brand-500 bg-white ring-2 ring-brand-100 lift-2'
+                    : 'border-hair bg-white hover:border-ink-300 hover:bg-ink-50'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className={`h-6 w-6 rounded-full grid place-items-center text-[11px] font-bold ${isActive ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-700'}`}>{i + 1}</span>
-                  {s.channel === 'sms' ? <MessageSquare className="h-3.5 w-3.5 text-ink-400" /> : <Mail className="h-3.5 w-3.5 text-ink-400" />}
+                  <span className={`grid h-6 w-6 place-items-center rounded-full text-2xs font-semibold ${isActive ? 'bg-brand-600 text-white' : 'bg-ink-100 text-ink-700'}`}>{i + 1}</span>
+                  {/* A step that cannot physically send has to say so here, on
+                      the node — not fail quietly at 14:00 UTC. An SMS step with
+                      no Twilio credentials records a failed run and moves on,
+                      and because each step fires at most once per invoice, that
+                      invoice never gets another chance at it. */}
+                  {s.channel === 'sms' && !smsReady ? (
+                    <span className="text-warn-600" title="SMS is not configured — this step will fail">
+                      <AlertTriangle className="h-3.5 w-3.5" />
+                      <span className="sr-only">SMS not configured, this step will fail</span>
+                    </span>
+                  ) : s.channel === 'sms' ? (
+                    <MessageSquare aria-hidden="true" className="h-3.5 w-3.5 text-ink-400" />
+                  ) : (
+                    <Mail aria-hidden="true" className="h-3.5 w-3.5 text-ink-400" />
+                  )}
                 </div>
-                <div className="mt-2 text-sm font-semibold text-ink-900">Day {s.daysFromDue}</div>
-                <span className={`badge ${TONE_BADGE[s.tone]} text-[10px] capitalize mt-1`}>{s.tone}</span>
+                <div className="app-label mt-2">Day {s.daysFromDue}</div>
+                {/* The node said "Day 7 / firm" and never named the channel in
+                    words — the only cue was a 14px glyph. */}
+                <div className="app-meta font-normal">{s.channel === 'sms' ? 'SMS' : 'Email'}</div>
+                <span className={`${TONE_BADGE[s.tone]} mt-1 capitalize`}>{s.tone}</span>
               </motion.button>
               <FlowConnector delay={(i + 1) * 0.25} />
             </div>
@@ -206,8 +223,8 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div><label className="label">Days from due</label><input type="number" min="0" value={active.daysFromDue} onChange={(e) => updateStep(activeIdx!, { daysFromDue: Number(e.target.value) })} className="input" /></div>
-              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as any })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
-              <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as any })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
+              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
+              <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
             </div>
             <div>
               <label className="label">Style hint (optional)</label>
@@ -219,8 +236,8 @@ export function SequenceEditor({ initialSteps, sequenceId }: { initialSteps: Ste
                 placeholder="e.g. mention we value the relationship, keep it short, sign off as 'the team' not a person"
               />
               <div className="mt-1 text-xs text-ink-500">
-                Guides the AI's tone and content for this step. It does not get sent as-is — every message is
-                still written fresh by Gemini using this hint, the actual invoice, and the customer's real payment
+                Guides the AI&apos;s tone and content for this step. It does not get sent as-is — every message is
+                still written fresh by Gemini using this hint, the actual invoice, and the customer&apos;s real payment
                 history. Leave blank to let the AI write with no extra guidance.
               </div>
             </div>

@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { getAuth, requireAdminEmail } from '@/lib/auth-helper';
 import { upgradeRequests } from '@/db/schema';

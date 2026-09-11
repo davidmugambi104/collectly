@@ -9,7 +9,7 @@ import { eq, and, sql, desc } from 'drizzle-orm';
 import { nanoid, daysOverdue, formatCurrency } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
-import { Sparkles, Mail, MessageSquare, Pause, Play, BarChart3, AlertCircle, ArrowLeft, ShieldAlert, TrendingUp, Send, Target, ChevronRight } from 'lucide-react';
+import { AlertCircle, ArrowLeft, BarChart3, CheckCircle2, ChevronRight, Mail, MessageSquare, Pause, Play, Send, ShieldAlert, Sparkles, Target, TrendingUp } from 'lucide-react';
 import { DunningPreview } from '@/components/dunning/preview';
 import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor';
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
@@ -172,6 +172,35 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       .orderBy(desc(dunningRuns.createdAt))
       .limit(1),
   ]);
+  /* ------------------------------------------------------------------
+     What the machine will actually do, and when.
+
+     The page used to say "Automatic sending is on" and stop there, which
+     answers none of the questions someone has before letting software email
+     their customers. Three facts are computed here because all three are
+     things the code genuinely determines, and none of them were on screen:
+
+     1. WHEN. vercel.json runs /api/cron/dunning at 14:00 UTC, once a day.
+        Nothing sends between runs, so "on" means "at most once daily".
+     2. WHETHER IT CAN RUN AT ALL. That route fails closed: with no
+        CRON_SECRET it returns 503 and nothing is ever sent. A deploy missing
+        that variable shows a green "on" light over a system that is inert —
+        the worst possible combination, and exactly the thing a status light
+        is supposed to prevent.
+     3. WHAT IS DUE NEXT. Which open invoices have crossed a step boundary
+        they have not been sent yet, i.e. what the next run will actually do.
+     ------------------------------------------------------------------ */
+  const cronConfigured = !!process.env.CRON_SECRET;
+  const nextRun = (() => {
+    const now = new Date();
+    const next = new Date(Date.UTC(
+      now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 14, 0, 0, 0,
+    ));
+    if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
+    const hours = Math.round((next.getTime() - now.getTime()) / 3600000);
+    return { at: next, inHours: hours };
+  })();
+
   const revenueAtRisk = parseFloat(riskRow?.total ?? '0');
   const recoveredTotal = parseFloat(recoveredRow?.total ?? '0');
   const sentLast7d = parseInt(sentRow?.count ?? '0', 10);
@@ -247,9 +276,9 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           delay={0}
           icon={<ShieldAlert className="h-4 w-4" />}
           tone="amber"
-          label="Revenue at risk"
+          label="Open balance"
           value={formatCurrency(revenueAtRisk)}
-          sub="Open balance, unpaid invoices"
+          sub="All unpaid invoices — not all of them are overdue yet"
         />
         <ImpactTile
           delay={60}
@@ -265,7 +294,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           tone="brand"
           label="Reminders sent"
           value={String(sentLast7d)}
-          sub="Last 7 days"
+          sub="In the last 7 days"
         />
         <ImpactTile
           delay={180}
@@ -273,7 +302,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           tone="ink"
           label="Recovery rate"
           value={recoveryRate === null ? '—' : `${recoveryRate}%`}
-          sub={dunnedCount > 0 ? `${dunnedPaidCount} of ${dunnedCount} invoices dunned` : 'No dunning history yet'}
+          sub={dunnedCount > 0 ? `${dunnedPaidCount} of ${dunnedCount} chased invoices paid, all time` : 'No dunning history yet'}
         />
       </div>
 
@@ -282,15 +311,28 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           misconfigured provider. Surface that explicitly, with the real
           reason, instead of leaving it buried in a "failed" badge below. */}
       {failedTotal > 0 && (
-        <div className="mb-4 flex items-start gap-2.5 rounded-lg border border-danger-200 bg-danger-50 px-3.5 py-2.5 text-sm">
-          <AlertCircle className="h-4 w-4 text-danger-600 mt-0.5 shrink-0" />
-          <div className="min-w-0">
-            <span className="font-medium text-danger-900">
+        <div role="alert" className="row-urgent mb-4 flex items-start gap-2.5 rounded-lg border border-hair bg-white px-3.5 py-2.5 lift-1">
+          <AlertCircle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-danger-600" />
+          <div className="min-w-0 flex-1">
+            <span className="app-label text-danger-900">
               {failedTotal} reminder{failedTotal === 1 ? '' : 's'} failed to send
             </span>
             {latestFailure?.error && (
-              <span className="text-danger-800"> — {latestFailure.error}</span>
+              <p className="app-meta mt-0.5 font-normal leading-4">
+                Most recent: <span className="font-mono text-2xs text-ink-700">{latestFailure.error}</span>
+              </p>
             )}
+            {/* A failure with no route out of it is a dead end. Say what the
+                system does next on its own — it does NOT retry, the step is
+                marked used and will not fire again for that invoice — and
+                where to go to act on it. */}
+            <p className="app-meta mt-1 font-normal leading-4">
+              These are not retried. Each step fires once per invoice, so a failed
+              step stays failed until you send that one by hand.
+            </p>
+            <Link href="/dashboard/dunning/performance" className="link-quiet mt-1">
+              See which invoices failed <ChevronRight className="h-3 w-3" />
+            </Link>
           </div>
         </div>
       )}
@@ -298,17 +340,27 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       {/* Control panel — the one switch that matters on this page, plus a
           secondary route to the deeper report so it doesn't compete for
           attention with the primary on/off decision. */}
-      <div data-tour="control" className="mb-5 card !py-4 flex items-center justify-between gap-3 flex-wrap">
+      <div data-tour="control" className="card-primary mb-5 !py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <span className={`relative h-9 w-9 shrink-0 rounded-full grid place-items-center ${active ? 'bg-success-50' : 'bg-warn-50'}`}>
-            <span className={`h-2.5 w-2.5 rounded-full ${active ? 'bg-success-500 animate-pulse-soft' : 'bg-warn-500'}`} />
+          {/* Three states, not two. A green light over a system that cannot
+              run is worse than no light at all, so "on but unable to fire"
+              gets its own colour rather than borrowing the healthy one. */}
+          <span className={`relative grid h-9 w-9 shrink-0 place-items-center rounded-full ${!cronConfigured ? 'bg-danger-50' : active ? 'bg-success-50' : 'bg-warn-50'}`}>
+            <span className={`h-2.5 w-2.5 rounded-full ${!cronConfigured ? 'bg-danger-500' : active ? 'bg-success-500 animate-pulse-soft' : 'bg-warn-500'}`} />
           </span>
           <div className="min-w-0">
-            <div className="font-semibold text-ink-900">{active ? 'Automatic sending is on' : 'Automatic sending is off'}</div>
-            <p className="text-xs text-ink-600 mt-0.5 truncate">
-              {active
-                ? 'Steps below fire on their own, by days overdue — no one has to click send.'
-                : 'Nothing sends on its own right now. One-off reminders below still work.'}
+            <div className="app-label">
+              {!cronConfigured
+                ? 'Automatic sending cannot run'
+                : active ? 'Automatic sending is on' : 'Automatic sending is paused'}
+            </div>
+            <p className="app-meta mt-0.5 font-normal">
+              {!cronConfigured
+                ? 'CRON_SECRET is not set on this deployment, so the scheduler returns 503 and nothing is ever sent.'
+                : active
+                  ? <>Runs once a day at 14:00 UTC — <span className="text-ink-700">next run in about {nextRun.inHours}h</span>. Nothing sends in between.</>
+                  : 'Nothing sends on its own. One-off reminders below still work.'}
             </p>
           </div>
         </div>
@@ -323,6 +375,36 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
             </button>
           </form>
         </div>
+        </div>
+
+        {/* What actually stops a sequence. This is the question people ask
+            before trusting automation with their customer relationships, and
+            it was answered nowhere. Stated exactly as the code behaves —
+            including the one that does NOT work, because a false reassurance
+            here is worse than silence. */}
+        <div className="mt-3.5 grid gap-2 border-t border-hair pt-3 sm:grid-cols-3">
+          <div className="flex items-start gap-2">
+            <CheckCircle2 aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0 text-success-600" />
+            <p className="app-meta font-normal leading-4">
+              <span className="text-ink-800">Payment stops it.</span> A paid or written-off
+              invoice drops out of the queue before the next run.
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <Pause aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0 text-ink-500" />
+            <p className="app-meta font-normal leading-4">
+              <span className="text-ink-800">Pausing stops everything</span> for every invoice,
+              immediately, until you resume.
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <AlertCircle aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0 text-warn-600" />
+            <p className="app-meta font-normal leading-4">
+              <span className="text-ink-800">A reply does not stop it.</span> Replies land in
+              the Inbox but the sequence keeps going — pause it yourself.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -330,6 +412,21 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           <div>
             <h2 className="app-heading">Default sequence</h2>
             <p className="app-body mt-1">Customers are sent reminders in this order, starting 1 day after the invoice is due.</p>
+            {/* The scheduler filters steps to `daysFromDue <= daysOverdue` and
+                then fires only the LAST match — not each step in turn. So an
+                invoice that is already months overdue when it first enters the
+                sequence jumps straight to the final step and never receives
+                the friendly one. Nothing on this page hinted at that, and it
+                is the behaviour most likely to embarrass someone in front of a
+                customer. */}
+            <p className="app-meta mt-2 flex items-start gap-1.5 font-normal leading-4">
+              <AlertCircle aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0 text-warn-600" />
+              <span>
+                An invoice only ever gets the <span className="text-ink-800">latest step it qualifies for</span>,
+                not every step before it. Something already 40 days overdue starts at
+                Day 30 — it never receives the Day 1 note.
+              </span>
+            </p>
           </div>
 
           <div className="mt-5">
