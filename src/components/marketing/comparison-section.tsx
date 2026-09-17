@@ -1,4 +1,5 @@
-import { ComparisonTable, hasComparisonColumn, type CompetitorKey } from '@/components/marketing/comparison-table';
+import { ComparisonTable } from '@/components/marketing/comparison-table';
+import { hasComparisonColumn, type CompetitorKey } from '@/components/marketing/comparison-data';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';

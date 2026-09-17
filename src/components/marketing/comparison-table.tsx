@@ -1,6 +1,7 @@
 'use client';
 import { Check, X } from 'lucide-react';
 import { PLAN_PRICING } from '@/lib/utils';
+import { COMPETITORS, type CompetitorKey } from './comparison-data';
 
 // Scope note: this table compares Collectly to the AR/invoicing tools SMBs
 // actually evaluate (Chaser, BILL, Melio, QuickBooks AR, FreshBooks). We
@@ -9,7 +10,6 @@ import { PLAN_PRICING } from '@/lib/utils';
 // 5–30 person agency we sell to. If you're an enterprise buyer, see the
 // per-page comparisons under /compare.
 
-export type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
 
 const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
@@ -29,21 +29,7 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Support model', 'Email + founder', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
 ];
 
-const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolean }> = [
-  { key: 'us', label: 'Collectly', highlight: true },
-  { key: 'chaser', label: 'Chaser' },
-  { key: 'bill', label: 'BILL' },
-  { key: 'melio', label: 'Melio' },
-  { key: 'qb', label: 'QuickBooks AR' },
-  { key: 'freshbooks', label: 'FreshBooks' },
-];
 
-
-/** Whether the matrix has a column for this competitor. Enterprise platforms
- *  (Gaviti, Growfin, HighRadius) deliberately have none — see the scope note. */
-export function hasComparisonColumn(key: string): key is CompetitorKey {
-  return COMPETITORS.some((c) => c.key === key && !c.highlight);
-}
 
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   const isYes = value === '✓';
