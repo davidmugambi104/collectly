@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Sparkles, Loader2, Mail, MessageSquare, RefreshCw, Check } from 'lucide-react';
 
 type Tone = 'friendly' | 'firm' | 'final';
@@ -12,7 +12,25 @@ export function DunningDemo() {
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState<{ subject?: string; body: string } | null>(null);
 
+  // Regenerate whenever the inputs change. The tone buttons used to call
+  // setTone() and nothing else, so a visitor could click "friendly" after
+  // generating and watch the preview not change by a single character — the
+  // one gesture the section explicitly invites, ignored. Debounced because the
+  // days slider fires continuously while dragging.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      void generate();
+    }, 250);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tone, channel, amount, days]);
+
+  // Guards against a slow earlier request landing after a newer one and
+  // overwriting the preview with a stale tone.
+  const requestId = useRef(0);
+
   async function generate() {
+    const id = ++requestId.current;
     setLoading(true);
     try {
       // Use the public preview endpoint — we just need the fallback template
@@ -22,11 +40,13 @@ export function DunningDemo() {
         body: JSON.stringify({ amount, daysOverdue: days, tone, channel }),
       });
       const data = await res.json();
+      if (id !== requestId.current) return;
       setOutput({ subject: data.subject, body: data.body });
     } catch  {
+      if (id !== requestId.current) return;
       setOutput({ body: 'Error generating message.' });
     } finally {
-      setLoading(false);
+      if (id === requestId.current) setLoading(false);
     }
   }
 
@@ -87,10 +107,20 @@ export function DunningDemo() {
           )}
         </div>
         {!output ? (
-          <div className="mt-8 text-center text-ink-500 text-sm">
-            <Sparkles className="h-8 w-8 mx-auto text-ink-300 mb-3" />
-            <p>Click &quot;Generate message&quot; to see what Collectly sends.</p>
-            <p className="mt-1 text-xs text-ink-400">No data is stored. No signup required.</p>
+          // A skeleton, not an instruction. This panel used to be a 400px void
+          // reading "Click Generate message to see what Collectly sends" — the
+          // most persuasive artifact the site owns, an actual AI-written
+          // reminder, hidden behind a click most visitors never made. It now
+          // populates itself on mount, so this state lasts a few hundred
+          // milliseconds rather than forever.
+          <div className="mt-4 space-y-3" aria-hidden>
+            <div className="h-3 w-24 rounded bg-ink-100 animate-pulse" />
+            <div className="h-5 w-3/4 rounded bg-ink-100 animate-pulse" />
+            <div className="rounded-lg bg-ink-50 border border-ink-200 p-3 space-y-2">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className={`h-3 rounded bg-ink-100 animate-pulse ${i === 4 ? 'w-2/5' : 'w-full'}`} />
+              ))}
+            </div>
           </div>
         ) : (
           <div className="mt-4 space-y-3">
@@ -100,7 +130,7 @@ export function DunningDemo() {
                 <div className="font-semibold text-ink-900">{output.subject}</div>
               </div>
             )}
-            <div>
+            <div className={loading ? 'opacity-40 transition-opacity duration-200' : 'opacity-100 transition-opacity duration-200'}>
               <div className="text-xs text-ink-500 mb-1">{channel === 'email' ? 'Body' : 'Message'}</div>
               <div className={`rounded-lg bg-ink-50 border border-ink-200 p-3 text-sm text-ink-800 whitespace-pre-wrap font-sans ${channel === 'sms' ? 'font-mono text-xs' : ''}`}>
                 {output.body}
