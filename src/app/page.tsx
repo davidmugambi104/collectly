@@ -10,30 +10,13 @@ import {
   Inbox, CalendarCheck, AlertTriangle, SlidersHorizontal,
 } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 
-export const metadata = pageMetadata({
-  title: 'Stop chasing late invoices — AR automation for small agencies',
-  description:
-    'Connect Collectly to Xero or QuickBooks. It drafts client-safe invoice ' +
-    'reminders, pauses when customers reply or pay, tracks promised-payment ' +
-    'dates, and separates disputes from ordinary late payment. Built for ' +
-    `5-30 person agencies, consultancies and bookkeeping practices. From $${PLAN_PRICING.starter.monthly}/mo.`,
-  path: '/',
-  keywords: [
-    'Xero invoice reminder',
-    'QuickBooks AR automation',
-    'agency invoice chasing',
-    'Chaser alternative',
-    'AI dunning for small business',
-    'promise to pay tracking',
-  ],
-});
-
-// Homepage FAQ — matches "what is", "does it work with X", "how much" type
-// queries. Renders as FAQPage JSON-LD; does not duplicate copy visible below.
-const homeJsonLd = JSON.stringify(
-  faqJsonLd([
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup below and the
+// visible <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
     {
       q: 'Does Collectly work with Xero?',
       a: 'Yes. Collectly connects to Xero via official OAuth, reads open invoices, contacts, due dates and payment status, and writes back the payment-pause marker. Xero integration is the most-tested connection in the product.',
@@ -58,7 +41,30 @@ const homeJsonLd = JSON.stringify(
       q: 'What happens when a customer replies "we\'ll pay next Friday"?',
       a: 'Collectly detects the reply, pauses the reminder sequence, extracts the promised date, and asks a human to confirm before logging it. The promised date shows up in your work queue. After that Friday passes without payment, the next reminder is queued — not auto-sent.',
     },
-  ]),
+];
+
+export const metadata = pageMetadata({
+  title: 'Stop chasing late invoices — AR automation for small agencies',
+  description:
+    'Connect Collectly to Xero or QuickBooks. It drafts client-safe invoice ' +
+    'reminders, pauses when customers reply or pay, tracks promised-payment ' +
+    'dates, and separates disputes from ordinary late payment. Built for ' +
+    `5-30 person agencies, consultancies and bookkeeping practices. From $${PLAN_PRICING.starter.monthly}/mo.`,
+  path: '/',
+  keywords: [
+    'Xero invoice reminder',
+    'QuickBooks AR automation',
+    'agency invoice chasing',
+    'Chaser alternative',
+    'AI dunning for small business',
+    'promise to pay tracking',
+  ],
+});
+
+// Homepage FAQ — matches "what is", "does it work with X", "how much" type
+// queries. Renders as FAQPage JSON-LD; does not duplicate copy visible below.
+const homeJsonLd = JSON.stringify(
+  faqJsonLd(FAQS),
 );
 
 export default function HomePage() {
@@ -444,6 +450,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <FaqSection items={FAQS} title="Frequently asked" />
 
       <MarketingFooter />
     </div>

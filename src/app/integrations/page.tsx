@@ -3,6 +3,29 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Database, MessageSquare, BarChart3, Lock, Server } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
+
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup below and the
+// visible <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
+    {
+      q: 'Which accounting platforms does Collectly integrate with?',
+      a: 'Xero is in production (live OAuth sync). QuickBooks Online is built and tested in sandbox; production credentials pending the Intuit App Assessment Questionnaire review.',
+    },
+    {
+      q: 'Do you integrate with Stripe?',
+      a: 'Stripe is wired and in test mode. Payment links and branded checkout work end-to-end; live keys are swapped in alongside the production rollout.',
+    },
+    {
+      q: 'Do you integrate with Twilio for SMS?',
+      a: 'Twilio is wired and in test mode. SMS is offered to founding customers as a pass-through-cost add-on until we unlock the production tier.',
+    },
+    {
+      q: 'Do you integrate with Plaid?',
+      a: 'Plaid integration is built for cash-flow forecasting but not yet enabled by default for founding customers. Will roll out in a later tier once we have signal on demand.',
+    },
+];
 
 export const metadata = pageMetadata({
   title: 'Integrations — Xero, QuickBooks, Stripe, Square, Twilio, Plaid',
@@ -24,24 +47,7 @@ export const metadata = pageMetadata({
 });
 
 const integrationsJsonLd = JSON.stringify(
-  faqJsonLd([
-    {
-      q: 'Which accounting platforms does Collectly integrate with?',
-      a: 'Xero is in production (live OAuth sync). QuickBooks Online is built and tested in sandbox; production credentials pending the Intuit App Assessment Questionnaire review.',
-    },
-    {
-      q: 'Do you integrate with Stripe?',
-      a: 'Stripe is wired and in test mode. Payment links and branded checkout work end-to-end; live keys are swapped in alongside the production rollout.',
-    },
-    {
-      q: 'Do you integrate with Twilio for SMS?',
-      a: 'Twilio is wired and in test mode. SMS is offered to founding customers as a pass-through-cost add-on until we unlock the production tier.',
-    },
-    {
-      q: 'Do you integrate with Plaid?',
-      a: 'Plaid integration is built for cash-flow forecasting but not yet enabled by default for founding customers. Will roll out in a later tier once we have signal on demand.',
-    },
-  ]),
+  faqJsonLd(FAQS),
 );
 
 const categories = [
@@ -321,6 +327,8 @@ export default function IntegrationsPage() {
           </div>
         </div>
       </section>
+
+      <FaqSection items={FAQS} title="Integration questions" />
 
       <MarketingFooter />
     </div>

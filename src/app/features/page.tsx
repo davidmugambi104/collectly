@@ -3,31 +3,12 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { Bot, FileText, BarChart3, Clock, ShieldCheck, Globe2 } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 
-export const metadata = pageMetadata({
-  title: 'Features — tone-aware AR automation for small agencies',
-  description:
-    'All of Collectly\'s features: tone-aware AI reminders, reply-or-pay ' +
-    'pause, promise-to-pay tracking, dispute classification, approval ' +
-    'workflow, audit trail, Xero + QuickBooks sync, SMS in beta, and the ' +
-    'AR worklist. Built for 5-30 person agencies and consultancies.',
-  path: '/features',
-  image: '/og-features.png',
-  keywords: [
-    'AR automation features',
-    'Xero dunning',
-    'tone-aware email',
-    'promise to pay tracking',
-    'invoice dispute workflow',
-    'approval-based automation',
-  ],
-});
-
-// FAQ JSON-LD: 5 questions people search before clicking a Features page.
-// Targets 'Xero AR features', 'AI dunning features', 'promise-to-pay
-// tracking' patterns.
-const featuresJsonLd = JSON.stringify(
-  faqJsonLd([
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup below and the
+// visible <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
     {
       q: 'Does Collectly stop sending reminders when a customer replies?',
       a: 'Yes. Collectly detects replies via inbound email parsing, pauses the ' +
@@ -72,7 +53,32 @@ const featuresJsonLd = JSON.stringify(
          'add-on. Each SMS is sent via Twilio (pass-through cost). We do not ' +
          'mark up SMS; you see the carrier cost line-item on your invoice.',
     },
-  ]),
+];
+
+export const metadata = pageMetadata({
+  title: 'Features — tone-aware AR automation for small agencies',
+  description:
+    'All of Collectly\'s features: tone-aware AI reminders, reply-or-pay ' +
+    'pause, promise-to-pay tracking, dispute classification, approval ' +
+    'workflow, audit trail, Xero + QuickBooks sync, SMS in beta, and the ' +
+    'AR worklist. Built for 5-30 person agencies and consultancies.',
+  path: '/features',
+  image: '/og-features.png',
+  keywords: [
+    'AR automation features',
+    'Xero dunning',
+    'tone-aware email',
+    'promise to pay tracking',
+    'invoice dispute workflow',
+    'approval-based automation',
+  ],
+});
+
+// FAQ JSON-LD: 5 questions people search before clicking a Features page.
+// Targets 'Xero AR features', 'AI dunning features', 'promise-to-pay
+// tracking' patterns.
+const featuresJsonLd = JSON.stringify(
+  faqJsonLd(FAQS),
 );
 
 const FEATURES = [
@@ -126,6 +132,7 @@ export default function FeaturesPage() {
           <div className="mt-6 max-w-md mx-auto"><WaitlistForm /></div>
         </div>
       </section>
+      <FaqSection items={FAQS} title="Frequently asked" />
       <MarketingFooter />
     </div>
   );

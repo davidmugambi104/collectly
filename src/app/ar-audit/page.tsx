@@ -4,27 +4,12 @@ import { AuditForm } from '@/components/marketing/audit-form';
 import { CheckCircle2, ShieldCheck, Clock, Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 
-export const metadata = pageMetadata({
-  title: 'Free A/R health audit — find what\'s slowing your cash flow',
-  description:
-    'Get a free A/R health audit in 24 hours. No sales call, no pitch. ' +
-    'We analyze your outstanding invoices, DSO, and collections workflow ' +
-    'and reply with 3 specific things slowing your cash flow. Built for ' +
-    '5-30 person agencies and consultancies on Xero.',
-  path: '/ar-audit',
-  image: '/og-ar-audit.png',
-  keywords: [
-    'AR audit', 'A/R health check', 'small business cash flow audit',
-    'Xero collections review', 'cash flow analysis',
-  ],
-});
-
-// FAQ JSON-LD captures the 5 questions people always ask before handing
-// over their accounting data. Aimed at the "people also ask" rich result
-// for "free AR audit" / "AR audit template" type queries.
-const arAuditJsonLd = JSON.stringify(
-  faqJsonLd([
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup below and the
+// visible <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
     {
       q: 'Is the A/R audit really free?',
       a: 'Yes, no obligation. We send a one-page report with 3 specific findings ' +
@@ -55,7 +40,28 @@ const arAuditJsonLd = JSON.stringify(
          'your data is reused under the Collectly privacy policy. Otherwise, ' +
          'it is purged.',
     },
-  ]),
+];
+
+export const metadata = pageMetadata({
+  title: 'Free A/R health audit — find what\'s slowing your cash flow',
+  description:
+    'Get a free A/R health audit in 24 hours. No sales call, no pitch. ' +
+    'We analyze your outstanding invoices, DSO, and collections workflow ' +
+    'and reply with 3 specific things slowing your cash flow. Built for ' +
+    '5-30 person agencies and consultancies on Xero.',
+  path: '/ar-audit',
+  image: '/og-ar-audit.png',
+  keywords: [
+    'AR audit', 'A/R health check', 'small business cash flow audit',
+    'Xero collections review', 'cash flow analysis',
+  ],
+});
+
+// FAQ JSON-LD captures the 5 questions people always ask before handing
+// over their accounting data. Aimed at the "people also ask" rich result
+// for "free AR audit" / "AR audit template" type queries.
+const arAuditJsonLd = JSON.stringify(
+  faqJsonLd(FAQS),
 );
 
 const PROMISES = [
@@ -145,6 +151,8 @@ export default function ArAuditPage() {
           </div>
         </div>
       </section>
+
+      <FaqSection items={FAQS} title="Before you book an audit" />
 
       <MarketingFooter />
     </div>

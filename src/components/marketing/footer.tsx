@@ -29,9 +29,9 @@ export function MarketingFooter() {
             </div>
             <p className="mt-6 text-xs text-ink-500">© 2026 Collectly, Inc. · Built in Nairobi.</p>
           </div>
-          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
             <div>
-              <h2 className="text-sm font-semibold text-ink-900">Product</h2>
+              <p className="text-sm font-semibold text-ink-900">Product</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/tour" className="inline-block py-1.5 hover:text-ink-900">Demo</Link></li>
                 <li><Link href="/features" className="inline-block py-1.5 hover:text-ink-900">Features</Link></li>
@@ -40,15 +40,17 @@ export function MarketingFooter() {
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-ink-900">Free tools</h2>
+              <p className="text-sm font-semibold text-ink-900">Free tools</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/tools/ar-cost-calculator" className="inline-block py-1.5 hover:text-ink-900">Late-payment cost calculator</Link></li>
+                <li><Link href="/tools/ar-roi" className="inline-block py-1.5 hover:text-ink-900">A/R ROI calculator</Link></li>
+                <li><Link href="/tools/dso-calculator" className="inline-block py-1.5 hover:text-ink-900">DSO calculator</Link></li>
+                <li><Link href="/tools/dispute-email-template" className="inline-block py-1.5 hover:text-ink-900">Dispute email templates</Link></li>
                 <li><Link href="/ar-audit" className="inline-block py-1.5 hover:text-ink-900">Free A/R audit</Link></li>
-                <li><Link href="/compare" className="inline-block py-1.5 hover:text-ink-900">Compare to competitors</Link></li>
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-ink-900">Compare</h2>
+              <p className="text-sm font-semibold text-ink-900">Compare</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/vs-chaser" className="inline-block py-1.5 hover:text-ink-900">vs Chaser</Link></li>
                 <li><Link href="/vs-bill" className="inline-block py-1.5 hover:text-ink-900">vs BILL</Link></li>
@@ -56,17 +58,40 @@ export function MarketingFooter() {
                 <li><Link href="/vs-quickbooks" className="inline-block py-1.5 hover:text-ink-900">vs QuickBooks</Link></li>
                 <li><Link href="/vs-zohobooks" className="inline-block py-1.5 hover:text-ink-900">vs Zoho Books</Link></li>
                 <li><Link href="/vs-freshbooks" className="inline-block py-1.5 hover:text-ink-900">vs FreshBooks</Link></li>
+                <li><Link href="/compare" className="inline-block py-1.5 hover:text-ink-900">All comparisons</Link></li>
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-ink-900">Company</h2>
+              {/* Every URL here had zero or near-zero inbound links before this
+                  column existed. /blog had none at all — nothing on the site
+                  linked to it, so six researched posts were reachable only by
+                  XML sitemap. Sitemap inclusion gets a URL discovered; internal
+                  links are what say it matters. */}
+              <p className="text-sm font-semibold text-ink-900">Resources</p>
+              <ul className="mt-3 space-y-1 text-sm text-ink-600">
+                <li><Link href="/blog" className="inline-block py-1.5 hover:text-ink-900">Blog</Link></li>
+                <li><Link href="/playbook" className="inline-block py-1.5 hover:text-ink-900">A/R playbook</Link></li>
+                <li><Link href="/customers" className="inline-block py-1.5 hover:text-ink-900">What it does</Link></li>
+                <li><Link href="/changelog" className="inline-block py-1.5 hover:text-ink-900">Changelog</Link></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-ink-900">Who it is for</p>
+              <ul className="mt-3 space-y-1 text-sm text-ink-600">
+                <li><Link href="/for/agencies" className="inline-block py-1.5 hover:text-ink-900">Agencies</Link></li>
+                <li><Link href="/for/consultancies" className="inline-block py-1.5 hover:text-ink-900">Consultancies</Link></li>
+                <li><Link href="/for/uk-agencies" className="inline-block py-1.5 hover:text-ink-900">UK agencies</Link></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-ink-900">Company</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/about" className="inline-block py-1.5 hover:text-ink-900">About</Link></li>
                 <li><a href="mailto:hello@getcollectly.app" className="inline-block py-1.5 hover:text-ink-900">Contact</a></li>
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-ink-900">Legal</h2>
+              <p className="text-sm font-semibold text-ink-900">Legal</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/terms" className="inline-block py-1.5 hover:text-ink-900">Terms</Link></li>
                 <li><Link href="/privacy" className="inline-block py-1.5 hover:text-ink-900">Privacy</Link></li>
