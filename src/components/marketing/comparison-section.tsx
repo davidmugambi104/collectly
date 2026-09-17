@@ -1,4 +1,4 @@
-import { ComparisonTable } from '@/components/marketing/comparison-table';
+import { ComparisonTable, hasComparisonColumn, type CompetitorKey } from '@/components/marketing/comparison-table';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -61,10 +61,13 @@ export function ComparisonDiffGrid({ diffs, competitorName }: { diffs: DiffCard[
   );
 }
 
-export function ComparisonFullTable() {
+export function ComparisonFullTable({ only }: { only?: CompetitorKey } = {}) {
+  // Render nothing when `only` names a competitor outside the matrix's scope,
+  // so the wrapper's section padding does not leave an empty band behind.
+  if (only && !hasComparisonColumn(only)) return null;
   return (
     <section className="container-page pb-20">
-      <ComparisonTable />
+      <ComparisonTable only={only} />
     </section>
   );
 }

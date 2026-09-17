@@ -3,7 +3,6 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import {
   ComparisonHero,
   ComparisonDiffGrid,
-  ComparisonFullTable,
   CompetitorGrowthStrategy,
   WhenToChoose,
   ComparisonCta,
@@ -68,7 +67,9 @@ export default function VsHighradiusPage() {
         competitorName="HighRadius"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="HighRadius" />
-      <ComparisonFullTable />
+        {/* No table: this competitor is outside the matrix's scope (see
+            comparison-table.tsx), so rendering it here would fill the page
+            with a comparison that never mentions them. */}
       <CompetitorGrowthStrategy
         competitorName="HighRadius"
         summary="HighRadius grew by selling a complete autonomous finance platform to CFOs who wanted one vendor for O2C, AP, Treasury, and Close."

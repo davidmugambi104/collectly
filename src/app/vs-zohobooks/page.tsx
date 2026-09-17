@@ -69,7 +69,9 @@ export default function VsZohobooksPage() {
         competitorName="Zoho Books"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Zoho Books" />
-      <ComparisonFullTable />
+        {/* No table: this competitor is outside the matrix's scope (see
+            comparison-table.tsx), so rendering it here would fill the page
+            with a comparison that never mentions them. */}
       <CompetitorGrowthStrategy
         competitorName="Zoho Books"
         summary="Zoho Books grew as the affordable accounting hub inside the broader Zoho ecosystem, popular with cost-sensitive international SMBs."

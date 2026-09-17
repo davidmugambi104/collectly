@@ -9,7 +9,7 @@ import { PLAN_PRICING } from '@/lib/utils';
 // 5–30 person agency we sell to. If you're an enterprise buyer, see the
 // per-page comparisons under /compare.
 
-type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
+export type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
 
 const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
@@ -39,6 +39,12 @@ const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolea
 ];
 
 
+/** Whether the matrix has a column for this competitor. Enterprise platforms
+ *  (Gaviti, Growfin, HighRadius) deliberately have none — see the scope note. */
+export function hasComparisonColumn(key: string): key is CompetitorKey {
+  return COMPETITORS.some((c) => c.key === key && !c.highlight);
+}
+
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   const isYes = value === '✓';
   const isNo = value === '—';
@@ -59,17 +65,45 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
   return <span className={`text-sm font-medium ${highlight ? 'text-ink-900' : 'text-ink-600'}`}>{value}</span>;
 }
 
-export function ComparisonTable() {
+/**
+ * Pass `only` to render Collectly against ONE competitor.
+ *
+ * Without it this is the six-way matrix, which is the point of /compare and
+ * fine there. It was also rendering on all nine /vs-* pages, where measurement
+ * put the nine at 0.40-0.44 pairwise 8-gram Jaccard and 0.95+ SequenceMatcher,
+ * with a single unbroken 472-word run — 57% of /vs-chaser — reproduced word for
+ * word on all eight siblings. Nine pages competing for one generic cluster
+ * while none of them owns its own branded query.
+ *
+ * The sharpest case: Gaviti, Growfin and HighRadius are deliberately excluded
+ * from this matrix (see the scope note above), so /vs-gaviti was spending the
+ * majority of its body text on a table that never mentions Gaviti. For those,
+ * `only` finds no column and the table renders nothing at all, which is the
+ * honest outcome until each gets a comparison built for it.
+ */
+export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
+  const columns = only
+    ? COMPETITORS.filter((c) => c.highlight || c.key === only)
+    : COMPETITORS;
+
+  // `only` naming a competitor this matrix does not cover.
+  if (only && columns.length < 2) return null;
+
+  const indexesOf = columns.map((c) => COMPETITORS.findIndex((x) => x.key === c.key));
+  const rows: Array<[string, ...string[]]> = ROWS.map(([feat, ...vals]) =>
+    [feat, ...indexesOf.map((i) => vals[i] ?? '—')] as [string, ...string[]],
+  );
+
   return (
     <>
       {/* Mobile: stacked feature cards */}
       <div className="mt-10 md:hidden space-y-3">
-        {ROWS.map(([feat, ...vals], i) => (
+        {rows.map(([feat, ...vals], i) => (
           <div key={i} className="card">
             <div className="text-sm font-semibold text-ink-900">{feat}</div>
             <div className="mt-3 space-y-2">
               {vals.map((v, j) => {
-                const c = COMPETITORS[j];
+                const c = columns[j];
                 return (
                   <div key={c.key} className="flex items-center justify-between text-sm">
                     <span className={c.highlight ? 'font-semibold text-ink-950' : 'text-ink-600'}>{c.label}</span>
@@ -88,7 +122,7 @@ export function ComparisonTable() {
           <thead>
             <tr className="text-left">
               <th className="py-3 pr-4 font-semibold text-ink-600">Feature</th>
-              {COMPETITORS.map((c) => (
+              {columns.map((c) => (
                 <th key={c.key} className={`py-3 px-4 text-center font-semibold ${c.highlight ? 'text-ink-950' : 'text-ink-600'}`}>
                   {c.label}
                 </th>
@@ -96,11 +130,11 @@ export function ComparisonTable() {
             </tr>
           </thead>
           <tbody className="text-ink-700">
-            {ROWS.map(([feat, ...vals], i) => (
+            {rows.map(([feat, ...vals], i) => (
               <tr key={i} className={i % 2 ? 'bg-ink-50' : ''}>
                 <td className="py-3 pr-4">{feat}</td>
                 {vals.map((v, j) => {
-                  const c = COMPETITORS[j];
+                  const c = columns[j];
                   return (
                     <td key={c.key} className="py-3 px-4 text-center">
                       <Cell value={v} highlight={c.highlight} />

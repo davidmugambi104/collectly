@@ -79,7 +79,7 @@ export default function VsChaserPage() {
       </section>
 
       <section className="container-page pb-20">
-        <ComparisonTable />
+        <ComparisonTable only="chaser" />
       </section>
 
       <section className="bg-ink-50 border-y border-ink-200">

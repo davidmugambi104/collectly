@@ -80,7 +80,7 @@ export default function VsBillPage() {
       </section>
 
       <section className="container-page pb-20">
-        <ComparisonTable />
+        <ComparisonTable only="bill" />
       </section>
 
       <section className="bg-ink-50 border-y border-ink-200">

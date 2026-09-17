@@ -67,7 +67,7 @@ export default function VsFreshbooksPage() {
         competitorName="FreshBooks"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="FreshBooks" />
-      <ComparisonFullTable />
+      <ComparisonFullTable only="freshbooks" />
       <CompetitorGrowthStrategy
         competitorName="FreshBooks"
         summary="FreshBooks grew by owning the freelancer-to-small-agency invoicing workflow and expanding into accounting, time tracking, and payments."

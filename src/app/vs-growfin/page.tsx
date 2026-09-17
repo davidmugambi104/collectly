@@ -3,7 +3,6 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import {
   ComparisonHero,
   ComparisonDiffGrid,
-  ComparisonFullTable,
   CompetitorGrowthStrategy,
   WhenToChoose,
   ComparisonCta,
@@ -68,7 +67,9 @@ export default function VsGrowfinPage() {
         competitorName="Growfin"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Growfin" />
-      <ComparisonFullTable />
+        {/* No table: this competitor is outside the matrix's scope (see
+            comparison-table.tsx), so rendering it here would fill the page
+            with a comparison that never mentions them. */}
       <CompetitorGrowthStrategy
         competitorName="Growfin"
         summary="Growfin grew by becoming the behavioral AI collections layer for NetSuite-driven enterprises."

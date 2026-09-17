@@ -3,7 +3,6 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import {
   ComparisonHero,
   ComparisonDiffGrid,
-  ComparisonFullTable,
   CompetitorGrowthStrategy,
   WhenToChoose,
   ComparisonCta,
@@ -68,7 +67,9 @@ export default function VsGavitiPage() {
         competitorName="Gaviti"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Gaviti" />
-      <ComparisonFullTable />
+        {/* No table: this competitor is outside the matrix's scope (see
+            comparison-table.tsx), so rendering it here would fill the page
+            with a comparison that never mentions them. */}
       <CompetitorGrowthStrategy
         competitorName="Gaviti"
         summary="Gaviti grew by selling a full invoice-to-cash platform to finance leaders who needed credit, deductions, and collections in one place."
