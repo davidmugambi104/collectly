@@ -111,7 +111,13 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
   name: string;
   popular?: boolean;
   audience: string;
+  /** Human-readable org allowance, for pricing copy. */
   orgs: string;
+  /** Machine-readable allowances, for the in-app usage meters. The billing
+   *  page used to keep its own PLAN_LIMITS table, which drifted: it still
+   *  capped Starter at 50 invoices and 1 user long after the plan changed. */
+  includedOrgs: number | 'unlimited';
+  users: number | 'unlimited';
   features: string[];
 }> = {
   starter: {
@@ -119,6 +125,8 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
     name: 'Single business',
     audience: 'One business chasing its own invoices',
     orgs: '1 organization',
+    includedOrgs: 1,
+    users: 3,
     features: ['AR aging dashboard', 'AI dunning (email + SMS)', 'Payment portal', 'Xero or QuickBooks', '3 users', 'Unlimited invoices'],
   },
   growth: {
@@ -127,6 +135,8 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
     popular: true,
     audience: 'Bookkeepers and accountants chasing AR across client books',
     orgs: `Up to ${PRACTICE_INCLUDED_ORGS} client organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY}/org`,
+    includedOrgs: PRACTICE_INCLUDED_ORGS,
+    users: 'unlimited',
     features: ['Everything in Single business', 'Per-client branding and tone', 'Consolidated AR across all client books', 'Cash-flow forecast', 'Multi-currency', 'Unlimited users'],
   },
   scale: {
@@ -134,6 +144,8 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
     name: 'Practice Scale',
     audience: 'Practices past 20 client organizations',
     orgs: 'Up to 40 client organizations',
+    includedOrgs: 40,
+    users: 'unlimited',
     features: ['Everything in Practice', 'AI collections concierge', 'Custom workflows', 'API access', 'SSO', 'Priority support'],
   },
   enterprise: {
@@ -141,6 +153,8 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
     name: 'Enterprise',
     audience: 'Networks and franchises',
     orgs: 'Unlimited client organizations',
+    includedOrgs: 'unlimited',
+    users: 'unlimited',
     features: ['Everything in Practice Scale', 'Dedicated success manager', 'Custom integrations', 'SLA', 'SOC 2 reporting', 'White-glove onboarding'],
   },
 };

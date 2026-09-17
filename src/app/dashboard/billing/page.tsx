@@ -11,13 +11,10 @@ import { PLAN_PRICING, formatCurrency, formatDate } from '@/lib/utils';
 import { createCustomerPortal } from '@/lib/billing';
 import Link from 'next/link';
 
-// Per-plan limits. Parsed from PLAN_PRICING.features for display.
-const PLAN_LIMITS: Record<string, { invoices: number | 'unlimited'; users: number | 'unlimited'; integrations: number | 'unlimited' }> = {
-  starter:    { invoices: 50,         users: 1,         integrations: 1 },
-  growth:     { invoices: 'unlimited', users: 3,        integrations: 3 },
-  scale:      { invoices: 'unlimited', users: 'unlimited', integrations: 10 },
-  enterprise: { invoices: 'unlimited', users: 'unlimited', integrations: 'unlimited' },
-};
+// Limits come from PLAN_PRICING. This file used to keep its own table, and it
+// drifted: it still capped Starter at 50 invoices and 1 user after the plan
+// moved to unlimited invoices and 3 users, so a paying customer was shown a
+// ceiling they had not actually bought.
 
 const stripeConfigured = !!process.env.STRIPE_SECRET_KEY;
 
@@ -34,8 +31,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const [org] = await db.select().from(organizations).where(eq(organizations.id, orgId)).limit(1);
   const [sub] = await db.select().from(subscriptions).where(eq(subscriptions.orgId, orgId)).limit(1);
   const plan = (sub?.plan ?? org?.plan ?? 'starter') as keyof typeof PLAN_PRICING;
-  const current = PLAN_PRICING[plan];
-  const limits = PLAN_LIMITS[plan] ?? PLAN_LIMITS.starter;
+  const current = PLAN_PRICING[plan] ?? PLAN_PRICING.starter;
 
   // Usage this month (server-side, no Stripe needed)
   const monthStart = new Date();
@@ -205,17 +201,17 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             <UsageMeter
               label="Invoices this month"
               used={invoiceCountThisMonth}
-              limit={limits.invoices}
+              limit="unlimited"
             />
             <UsageMeter
               label="Customers"
               used={customerCount}
-              limit={limits.users === 'unlimited' ? 'unlimited' : customerCount <= (limits.users as number) ? 'unlimited' : 'unlimited'}
+              limit="unlimited"
             />
             <UsageMeter
-              label="Integrations"
+              label="Client organizations"
               used={connectedIntegrations}
-              limit={limits.integrations}
+              limit={current.includedOrgs}
             />
           </div>
         </div>
