@@ -30,8 +30,14 @@ export default function CustomersPage() {
       <MarketingHeader />
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">Customers</p>
-        <h1 className="mt-3 h1">What Collectly is<br/>built to do.</h1>
-        <p className="mt-5 lead">We&apos;re pre-launch with no customers yet, so we have no verified results to publish. Below are the outcomes we&apos;re building toward — not testimonials. Real, named case studies with permission are coming once our first founding customers have a full quarter of data.</p>
+        {/* Same disclosure, opposite order. Leading with "no customers yet"
+            made the page's own headline a retraction. The point that these are
+            targets rather than testimonials still has to be made — and is, in
+            the second sentence and on every card — but it now qualifies a claim
+            instead of replacing one. The hard <br/> is gone so the headline
+            breaks on its own measure. */}
+        <h1 className="mt-3 h1 max-w-2xl text-balance">What Collectly is built to do.</h1>
+        <p className="mt-5 lead">These are the outcomes the product is built to produce, drawn from the A/R maths rather than from customer stories — we publish named case studies only once a founding customer has a full quarter of data behind them, with their permission.</p>
       </section>
       <section className="container-page pb-20">
         <div className="grid md:grid-cols-3 gap-5">

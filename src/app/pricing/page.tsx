@@ -58,13 +58,18 @@ export default function PricingPage() {
     <div className="min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: pricingJsonLd }} />
       <MarketingHeader />
-      <section className="container-page pt-16 pb-12 text-center">
+      {/* Left-aligned, not centred. A centred eyebrow over a centred two-line
+          headline over a centred three-line subhead is the most dated thing on
+          the site: it gives the eye no edge to return to, so each line has to
+          be re-found. The hard <br/> is gone with it — the headline now breaks
+          on its own measure at whatever width the viewport is. */}
+      <section className="container-page pt-16 pb-12">
         <p className="eyebrow">Pricing</p>
-        <h1 className="mt-3 h1">Honest pricing.<br/>Built for the long tail.</h1>
-        <p className="mt-5 lead max-w-2xl mx-auto">Priced per client book, not per invoice. 14-day trial, founder-assisted setup. Cancel anytime. No per-invoice fees, no setup costs, no hidden anything.</p>
+        <h1 className="mt-3 h1 max-w-3xl text-balance">Honest pricing. Built for the long tail.</h1>
+        <p className="mt-5 lead max-w-xl">Priced per client book, not per invoice. 14-day trial, founder-assisted setup. Cancel anytime — no per-invoice fees, no setup costs.</p>
         <p className="mt-3 text-sm text-brand-700 font-medium">Founding cohort: {FOUNDING.discountPct}% off for {FOUNDING.months} months, first {FOUNDING.seats} customers.</p>
 
-        <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+        <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-3xl">
           {[
             { label: 'Collectly Practice', price: `$${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo per client book`, note: `$${PLAN_PRICING.growth.monthly}/mo covering ${PRACTICE_INCLUDED_ORGS} organizations`, highlight: true },
             { label: 'Chaser', price: '~$259/mo', note: 'entry tier, one organization · source: chaser.com' },
@@ -79,7 +84,7 @@ export default function PricingPage() {
       </section>
 
       <section className="container-page pb-20">
-        <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
           {(['starter','growth'] as const).map((k) => {
             const p = PLAN_PRICING[k];
             if (!p) return null;

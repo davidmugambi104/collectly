@@ -17,16 +17,16 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees', 'ACH fees'],
   ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min', '< 10 min'],
   ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
-  ['Multi-currency', '✓', '✓', '✓', '✓', '—', '✓'],
+  ['Multi-currency', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '✓', '—', '✓'],
   ['Multi-entity', `${PLAN_PRICING.growth.name}+`, 'Core+', 'Corporate+', '—', '—', '—'],
-  ['Cash-flow forecast', '✓', 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
+  ['Cash-flow forecast', `${PLAN_PRICING.growth.name}+`, 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
   ['Customer risk scoring', '✓', '✓', '—', '—', '—', '—'],
   ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓', '✓'],
   ['Free trial / self-serve', '14-day free', 'Demo-first', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
   ['Time-to-value', '< 1 day', '1–2 weeks', '1–2 weeks', '< 1 day', '< 1 day', '< 1 day'],
   ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
   ['Payment plans / subscriptions', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '—', '✓', '—'],
-  ['Support model', 'Email + chat', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
+  ['Support model', 'Email + founder', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
 ];
 
 const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolean }> = [

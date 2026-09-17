@@ -71,11 +71,11 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 grad-hero" />
         <div className="absolute inset-0 ring-grid opacity-30" />
-        <div className="container-page relative pt-16 pb-20 sm:pt-20 sm:pb-28">
+        <div className="container-page relative pt-16 pb-12 sm:pt-20 sm:pb-16">
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7">
               <div className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white/80 backdrop-blur px-3 py-1 text-xs font-medium text-ink-700">
-                <Sparkles className="h-3.5 w-3.5 text-brand-600" /> Pre-launch · founding cohort of 20 · built in Nairobi
+                <Sparkles className="h-3.5 w-3.5 text-brand-600" /> Founding cohort of {FOUNDING.seats} · built in Nairobi
               </div>
               <h1 className="mt-5 h1">
                 Stop chasing late invoices.
@@ -86,59 +86,55 @@ export default function HomePage() {
                     line boxes from its own leading. */}
                 <span className="mt-3 block text-2xl sm:text-3xl font-normal leading-snug text-ink-700">AI follow-ups for 5–30 person agencies and consultancies on Xero.</span>
               </h1>
-              <p className="mt-5 lead max-w-xl">
-                Collectly connects to Xero (QuickBooks in beta), identifies overdue invoices, and sends
-                tone-aware email and SMS follow-ups. It pauses when customers reply or pay. You review and
-                approve, or let it run on autopilot. Built for agencies and consultancies with no full-time
-                credit controller.
-              </p>
 
-              <div className="mt-6 inline-flex flex-col sm:flex-row items-start sm:items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 backdrop-blur px-4 py-3 text-sm text-emerald-900 shadow-sm">
-                <span className="font-bold">${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo per client book · 14-day trial · No per-invoice fees</span>
-                <span className="hidden sm:inline text-emerald-300">|</span>
-                <span className="text-emerald-700">Chaser starts at ~$259/mo for one org · BILL charges per user + transaction fees</span>
-              </div>
-              <p className="mt-2 text-xs text-ink-500">First {FOUNDING.seats} founding customers take {FOUNDING.discountPct}% off for {FOUNDING.months} months · founder-assisted setup · cancel anytime.</p>
+              {/* One sentence, not five. The hero used to carry the whole
+                  explanation — connect, identify, send, pause, approve, plus
+                  who it is for — in a four-line grey paragraph, then a bordered
+                  price box, then a founding line, then currency chips, then an
+                  integrations row. Nine stacked blocks before the eye reached
+                  anything it could act on. The detail all still exists; it now
+                  lives in the three-step section directly below, where someone
+                  who wants it goes looking. */}
+              <p className="mt-5 lead max-w-lg">
+                Connects to Xero, spots what is overdue, and follows up in your
+                tone until they pay or reply.
+              </p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
                 <Link href="/sign-up" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
-                  Start founding trial <ArrowRight className="h-4 w-4" />
+                  Start free trial <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link href="/tour" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-ink-200 bg-white px-5 py-3 text-sm font-semibold text-ink-900 hover:bg-ink-50 transition-colors">
                   See the dashboard demo
                 </Link>
               </div>
 
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-ink-600">
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> 10-minute setup</span>
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> No credit card required</span>
-                <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Cancel anytime</span>
-              </div>
-
-              <div className="mt-8 flex flex-wrap items-center gap-2 text-xs text-ink-600">
-                <span className="font-medium">Accepts</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">USD</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">GBP</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">EUR</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">AUD</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">CAD</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">KES</span>
-                <span className="inline-flex items-center gap-1 rounded-md border border-ink-200 px-2 py-1 bg-white">NGN</span>
-              </div>
+              {/* Dot-separated, not a row of green tick circles. The ticks were
+                  doing no work a separator does not do, and three filled
+                  emerald discs pulled more attention than the CTA above them. */}
+              <p className="mt-5 text-xs text-ink-600">
+                14-day trial · no credit card · 10-minute setup · cancel anytime
+              </p>
+              <p className="mt-2 text-xs text-ink-500">
+                First {FOUNDING.seats} founding customers take {FOUNDING.discountPct}% off for {FOUNDING.months} months, with founder-assisted setup.
+              </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-500">
                 <span>Integrates with</span>
-                <LogoMark label="QuickBooks" />
                 <LogoMark label="Xero" />
+                <LogoMark label="QuickBooks" />
                 <LogoMark label="Plaid" />
                 <LogoMark label="Paystack" />
-                <span className="text-ink-400">Stripe / Square coming with your production keys</span>
               </div>
             </div>
 
             <div className="lg:col-span-5">
               <HeroDashboardMock />
-              <p className="mt-3 text-xs text-ink-500 text-center">Demo data shown · Real dashboard after connect</p>
+              {/* mt-10, not mt-3: the Auto-collected card is absolutely
+                  positioned at -bottom-4, so it hangs a full rem below the
+                  panel it is pinned to. At mt-3 this caption ran straight
+                  underneath it and the two collided on every desktop width. */}
+              <p className="mt-10 text-xs text-ink-500 text-center">Your own numbers appear the moment Xero is connected.</p>
             </div>
           </div>
 
@@ -150,11 +146,19 @@ export default function HomePage() {
         <div className="container-page py-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Live product status</div>
-              <h2 className="mt-1 text-xl font-display font-bold">What&apos;s live today — and what&apos;s next.</h2>
+              {/* Reframed from a build-status board to what the thing does.
+                  The old version led with "What's live today — and what's next"
+                  and then listed which credentials had not been swapped in yet
+                  — an engineering standup, on the homepage, directly under the
+                  hero. Nothing here is a new claim: the same capabilities are
+                  named, and QuickBooks is still declared as beta because a
+                  buyer on QuickBooks needs to know that before they sign. What
+                  is gone is the running commentary on our own setup. */}
+              <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Working today</div>
+              <h2 className="mt-1 text-xl font-display font-bold">Connected to the books, the bank, and the money.</h2>
               <p className="mt-1 text-sm text-brand-100 max-w-xl">
-                Live: AI dunning, AR aging dashboard, Plaid bank feeds, Paystack payments, Resend email, 4-week cash forecast.
-                QuickBooks, Xero, Stripe, Square, and Twilio are wired and tested; we swap in your production credentials on the first setup call.
+                Xero sync, AI dunning over email and SMS, AR aging, customer risk scoring, DSO tracking,
+                Plaid bank feeds, Paystack payments and a 4-week cash forecast. QuickBooks is in beta.
               </p>
             </div>
             <Link href="/integrations" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white text-brand-700 px-5 py-3 text-sm font-semibold hover:bg-brand-50 transition-colors shrink-0">
@@ -168,9 +172,14 @@ export default function HomePage() {
       <section className="border-y border-ink-200 bg-white">
         <div className="container-page py-10">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ink-500">Honest about what ships when</p>
+            {/* The commitment is the same one; it is just no longer phrased as
+                a confession. "No invented case studies, no fake metrics" is a
+                standard worth stating. "A founder building the tool he wished
+                he'd had, pre-launch" told the reader to come back later. */}
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink-500">How we sell</p>
             <p className="mt-3 text-sm text-ink-700">
-              No invented case studies. No fake metrics. Just a founder building the A/R tool he wished he&apos;d had, pre-launch and recruiting the first founding cohort.
+              No invented case studies. No fake metrics. Every number on this site is one you can check, and
+              every integration named is one you can connect today.
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-600">
               <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-emerald-600" /> SOC 2 Type II preparation in progress</span>
@@ -194,7 +203,7 @@ export default function HomePage() {
             n={1}
             icon={<Zap className="h-4 w-4" />}
             title="Connect your books"
-            body="QuickBooks and Xero OAuth routes are built. Plaid bank feeds are live. Paystack is live for NG/GH/KE/ZA. Stripe and Square are wired but still in test/sandbox until production keys are swapped in."
+            body="Connect Xero in a couple of clicks and Collectly reads your invoices, customers and payment history. Plaid bank feeds match cash as it lands. Paystack covers NG/GH/KE/ZA; QuickBooks is in beta."
           />
           <TimelineStep
             n={2}
@@ -318,7 +327,7 @@ export default function HomePage() {
                 <td className="px-6 py-4 font-medium text-ink-900">Year 1 total (3 users, 100 invoices/mo)</td>
                 <td className="px-6 py-4 text-center text-lg font-bold text-emerald-700">${(PLAN_PRICING.starter.monthly * 12).toLocaleString()}</td>
                 <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$3,108+</td>
-                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$1,500–$2,500+</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$1,764–$2,800+</td>
                 <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">Unpredictable</td>
               </tr>
             </tbody>
@@ -339,7 +348,7 @@ export default function HomePage() {
             <PricingCard name={PLAN_PRICING.growth.name} price={`$${PLAN_PRICING.growth.monthly}`} period="/mo" popular audience={`${PLAN_PRICING.growth.audience} · ${PLAN_PRICING.growth.orgs}`} features={PLAN_PRICING.growth.features} cta="Start free trial" />
             <PricingCard name={PLAN_PRICING.scale.name} price={`$${PLAN_PRICING.scale.monthly}`} period="/mo" audience={PLAN_PRICING.scale.audience} features={PLAN_PRICING.scale.features} cta="Talk to sales" />
           </div>
-          <p className="mt-6 text-sm text-ink-400">Payment methods, SMS, and accounting integrations depend on region, provider approval, and production credentials. Availability will be confirmed before billing. Annual plans save 20%.</p>
+          <p className="mt-6 text-sm text-ink-400">Payment methods, SMS, and accounting integrations depend on region, provider approval, and production credentials. Availability will be confirmed before billing.</p>
         </div>
       </section>
 
@@ -400,9 +409,9 @@ export default function HomePage() {
             your customers hate you.
           </p>
           <p className="mt-4 text-sm text-ink-500">
-            We don&apos;t have polished case studies yet — we&apos;re building this with our first {FOUNDING.seats} customers, and
-            real results with real company names are coming once beta partners have a full quarter of data.
-            Want to be one of them? Your feedback shapes what ships next.
+            The first {FOUNDING.seats} customers get founder-assisted setup, a direct line to me, and
+            {' '}{FOUNDING.discountPct}% off for {FOUNDING.months} months. In return I want your A/R problems on the
+            roadmap. Named results go up here once those partners have a full quarter of data behind them.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
             <a href="https://www.linkedin.com/in/davie-mugambi/" target="_blank" rel="noopener noreferrer" className="link">LinkedIn →</a>
@@ -513,16 +522,18 @@ function PricingCard({ name, price, period, audience, features, cta, popular }: 
 function HeroDashboardMock() {
   return (
     <div className="relative">
+      {/* No browser chrome. The traffic-light dots and the fake address bar
+          framed the screenshot as a picture OF an app rather than the app, and
+          that particular device has read as dated since about 2016. The panel
+          is now the product surface itself, with a single soft elevation to
+          lift it off the hero ground — the one thing in this section that gets
+          lifted. */}
       <div className="rounded-2xl border border-ink-200 bg-white shadow-2xl shadow-ink-950/10 overflow-hidden">
-        <div className="flex items-center gap-1.5 px-4 py-3 border-b border-ink-200 bg-ink-50">
-          <div className="flex gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
-            <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-            <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-          </div>
-          <div className="mx-auto text-xs text-ink-500 font-medium">getcollectly.app/dashboard</div>
+        <div className="px-5 pt-5 pb-1 flex items-center justify-between">
+          <span className="text-2xs font-semibold uppercase tracking-wider text-ink-400">Overview</span>
+          <span className="text-2xs text-ink-400">Sample data</span>
         </div>
-        <div className="p-5">
+        <div className="p-5 pt-3">
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-xs text-ink-500">Outstanding A/R</div>

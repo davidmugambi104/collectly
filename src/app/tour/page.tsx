@@ -75,8 +75,12 @@ export default function TourPage() {
               Or just start the trial
             </Link>
           </div>
+          {/* The walkthrough is the offer on this page, so it leads. The old
+              line promised five videos that do not exist yet, which turned the
+              page's own CTA into a waiting room. */}
           <p className="mt-6 text-xs text-ink-500">
-            Videos coming soon: 2-min overview, QBO/Xero connection, AI dunning demo, payment portal walkthrough, cash-flow forecast.
+            A founder walkthrough covers the same ground live: connecting Xero, the dunning
+            sequence, the payment portal and the cash-flow forecast — on your own books.
           </p>
         </div>
       </section>
@@ -84,7 +88,7 @@ export default function TourPage() {
       {/* Quick feature strip — an inline list, not a fifth icon-card grid on the site */}
       <section className="border-y border-ink-200 bg-ink-50">
         <div className="container-page py-10 max-w-4xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-ink-500 text-center mb-5">What you&apos;ll see in the videos</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-ink-500 text-center mb-5">What the walkthrough covers</p>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm">
             {[
               { icon: Mail, label: 'Tone-aware dunning — friendly → firm → final, automatically' },
