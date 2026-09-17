@@ -3,7 +3,6 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import {
   ComparisonHero,
   ComparisonDiffGrid,
-  ComparisonFullTable,
   CompetitorGrowthStrategy,
   WhenToChoose,
   ComparisonCta,

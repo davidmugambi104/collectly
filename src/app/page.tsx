@@ -4,6 +4,7 @@ import { MarketingFooter } from '@/components/marketing/footer';
 
 import { DunningDemo } from '@/components/marketing/dunning-demo';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
+import { ProductShowcase } from '@/components/marketing/product-showcase';
 import {
   ArrowRight, Sparkles, ShieldCheck, Clock, MessageSquare, Mail,
   Bot, BarChart3, CheckCircle2, Globe2, Zap, FileText, Wallet,
@@ -173,6 +174,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* PROOF — real captures, straight after the band that makes the claim */}
+      <ProductShowcase />
 
       {/* HONEST TRUST STRIP */}
       <section className="border-y border-ink-200 bg-white">
