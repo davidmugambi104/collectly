@@ -51,6 +51,9 @@ GATE_STATUS = DATA / "gate-status.json"
 REPORT = OUTREACH / "deliverability-report-{date}.md"
 ENV_PATH = WORKSPACE / ".env.local"
 
+sys.path.insert(0, str(HERE.parent))
+from scripts.lib import suppression as supp
+
 # 4 known seed-inbox recipients — same as every prior run. See
 # outreach/outputs/seed-inbox-deliverability-test-plan.md and the prior
 # deliverability reports for the audit trail of why these 4.
@@ -499,6 +502,23 @@ def main() -> int:
                     "last_event": e.get("last_event"),
                 }
             )
+
+    # ---- step 3b: auto-suppress every bounce/complaint we just saw
+    # Deliberately walks all_emails rather than bounced_recipients: the latter
+    # is windowed to 7 days for the rate calculation, and a bounce ageing out
+    # of that window does not make the mailbox deliverable again. Without this
+    # step suppression was a manual chore and bounced addresses stayed live in
+    # the send pool for days (briefings/2026-09-06.md).
+    supp_entries = supp.bounces_from_resend(
+        all_emails, _resend_event_is_bounce, _resend_event_is_complaint
+    )
+    newly_suppressed = supp.append_suppressions(supp_entries)
+    print(
+        f"  suppression: {len(supp_entries)} bounced/complained seen, "
+        f"{len(newly_suppressed)} newly added"
+    )
+    for row in newly_suppressed:
+        print(f"    + {row['email']} ({row['reason']})")
 
     # ---- step 4: DNS
     print("checking SPF/DKIM/DMARC...")
