@@ -72,7 +72,7 @@ export default function VsFreshbooksPage() {
         competitorName="FreshBooks"
         summary="FreshBooks grew by owning the freelancer-to-small-agency invoicing workflow and expanding into accounting, time tracking, and payments."
         cards={STRATEGY}
-        takeaway="FreshBooks owns the same service-business ICP but stops at basic invoicing. Collectly should intercept users as they outgrow simple reminders."
+        takeaway="FreshBooks does invoicing well for service businesses and stops there. If the job is send the invoice, it is enough. If the job is get the invoice paid, it is not."
       />
       <WhenToChoose competitorName="FreshBooks" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

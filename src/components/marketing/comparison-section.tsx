@@ -98,7 +98,7 @@ export function CompetitorGrowthStrategy({
           ))}
         </div>
         <div className="mt-6 text-center text-sm text-ink-600">
-          <strong>For Collectly:</strong> {takeaway}
+          <strong>Bottom line:</strong> {takeaway}
         </div>
       </div>
     </section>

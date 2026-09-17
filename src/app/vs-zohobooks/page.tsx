@@ -76,7 +76,7 @@ export default function VsZohobooksPage() {
         competitorName="Zoho Books"
         summary="Zoho Books grew as the affordable accounting hub inside the broader Zoho ecosystem, popular with cost-sensitive international SMBs."
         cards={STRATEGY}
-        takeaway="Zoho Books wins on breadth and price. Collectly wins on AR depth and customer experience — and should target Zoho users whose cash-flow pain has outgrown the suite's shallow reminders."
+        takeaway="Zoho Books is exceptional value if you want the whole suite. Its reminders are a feature inside it, not a product. The moment cash flow becomes the thing keeping you up at night, you have outgrown them."
       />
       <WhenToChoose competitorName="Zoho Books" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

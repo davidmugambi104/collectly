@@ -105,7 +105,7 @@ export default function VsChaserPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>For Collectly:</strong> Chaser proved the SMB AR market is willing to pay — but also that $259/mo is too high for the long tail. Collectly can win the same buyers at ${PLAN_PRICING.starter.monthly}/mo for a single book, and undercut them per-book for practices, without the heavy services overhead.
+            <strong>Bottom line:</strong> Chaser is the closest thing here to a like-for-like comparison, and it is a good product. It is priced for a team that already has someone owning AR. If that is you, $259/mo is fair. If AR is a Friday-afternoon job for a founder, you are paying for capacity you will not use.
           </div>
         </div>
       </section>

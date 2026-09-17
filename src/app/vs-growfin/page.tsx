@@ -74,7 +74,7 @@ export default function VsGrowfinPage() {
         competitorName="Growfin"
         summary="Growfin grew by becoming the behavioral AI collections layer for NetSuite-driven enterprises."
         cards={STRATEGY}
-        takeaway="Growfin's enterprise playbook is heavy and slow. Collectly can deliver 80% of the AR value in a self-serve product built for the QBO/Xero long tail."
+        takeaway="Growfin is built for a finance team with a dedicated AR function and a NetSuite-shaped stack. If you have neither, the implementation costs more than the problem does."
       />
       <WhenToChoose competitorName="Growfin" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

@@ -1,0 +1,223 @@
+[
+  {
+    "companyName": "Wubbels & Duffy",
+    "domain": "askmycpa.com",
+    "website": "https://askmycpa.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "West Taylor Street, 999, San Jose, 95126",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "lynn@askmycpa.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "tom@askmycpa.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "4089714100"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/wubbels-&-duffy-rllp",
+      "twitter": "http://www.travelex.com/",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/profile.php?id=61564028004769",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:32:22.750Z"
+  },
+  {
+    "companyName": "LB&A",
+    "domain": "lba2.us",
+    "website": "https://lba2.us/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "North 1st Street, 2150, San Jose, 95131",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@lba2.us",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "contact@lba2.us",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14088962336",
+      "+14085473191",
+      "+13235212760",
+      "+14082125042"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/lbainc/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/lbaassociates/",
+      "facebook": "https://www.facebook.com/LBAassociates/",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:32:22.757Z"
+  },
+  {
+    "companyName": "United Administrative Services",
+    "domain": "uastpa.com",
+    "website": "https://uastpa.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "Santa Teresa Boulevard, 6800, San Jose, 95119",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@uastpa.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+14082884400"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:32:22.780Z"
+  },
+  {
+    "companyName": "Eckley Lombardi Glascott LLP",
+    "domain": "elgcpas.com",
+    "website": "https://elgcpas.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "South Bascom Avenue, 950, San Jose, 95128",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "admin@elgcpas.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "4089982180"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:32:22.792Z"
+  },
+  {
+    "companyName": "Silicon Valley Accountancy",
+    "domain": "cpas-svac.com",
+    "website": "https://cpas-svac.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "Almaden Expressway, 3150, San Jose, 95118",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "george@cpas-svac.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:32:22.819Z"
+  },
+  {
+    "companyName": "Wong Ewers LLP",
+    "domain": "wongewers.com",
+    "website": "https://wongewers.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "North 4th Street, 1060, San Jose, 95112",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@wongewers.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "4082758600"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:32:22.904Z"
+  },
+  {
+    "companyName": "Frank, Rimerman + Company LLP",
+    "domain": "frankrimerman.com",
+    "website": "https://frankrimerman.com/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "South Market Street, 60, San Jose, 95113",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "media@frankrimerman.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "16508458100"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/frankrimerman",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 12,
+    "scrapedAt": "2026-09-11T01:32:22.918Z"
+  }
+]

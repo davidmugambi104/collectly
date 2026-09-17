@@ -63,7 +63,7 @@ export default function VsHighradiusPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs HighRadius"
-        subtitle="HighRadius is the ceiling of autonomous enterprise finance. Collectly is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast — live in 10 minutes from $149/mo."
+        subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Collectly is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast — live in 10 minutes from $${PLAN_PRICING.starter.monthly}/mo.`}
         competitorName="HighRadius"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="HighRadius" />
@@ -74,7 +74,7 @@ export default function VsHighradiusPage() {
         competitorName="HighRadius"
         summary="HighRadius grew by selling a complete autonomous finance platform to CFOs who wanted one vendor for O2C, AP, Treasury, and Close."
         cards={STRATEGY}
-        takeaway="HighRadius proves the value of AI in AR, but at enterprise scale and speed. Collectly can deliver the same promise to SMBs without the implementation overhead."
+        takeaway="HighRadius proves AI belongs in AR — at enterprise scale, on an enterprise timeline, at an enterprise price. The capability is real. The fit below mid-market is not."
       />
       <WhenToChoose competitorName="HighRadius" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

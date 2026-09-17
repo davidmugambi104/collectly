@@ -1,0 +1,33 @@
+[
+  {
+    "companyName": "SLC Services, Inc.",
+    "domain": "slcservices.biz",
+    "website": "https://slcservices.biz/",
+    "country": "United States",
+    "sector": "accountants",
+    "address": "S Sharon Amity Rd, 415, Charlotte, 28211",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@slcservices.biz",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17045317715",
+      "7045317715"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": "https://www.instagram.com/slcservices.inc/",
+      "facebook": "https://www.facebook.com/slcservicesinc",
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-09-11T01:34:46.359Z"
+  }
+]

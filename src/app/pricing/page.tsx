@@ -24,9 +24,9 @@ const FAQS: FaqItem[] = [
 ];
 
 export const metadata = pageMetadata({
-  title: 'Pricing — A/R automation priced per client book, from $149/mo',
+  title: `Pricing — A/R automation priced per client book, from $${PLAN_PRICING.starter.monthly}/mo`,
   description:
-    'Honest pricing for Collectly. $149/mo for a single business, $399/mo for ' +
+    `Honest pricing for Collectly. $${PLAN_PRICING.starter.monthly}/mo for a single business, $${PLAN_PRICING.growth.monthly}/mo for ` +
     'a practice covering up to 10 client organizations ($40 a book). Founding ' +
     'cohort takes 40% off for 12 months. No per-invoice fees, no setup fees, ' +
     'no hidden costs. Cancel anytime.',

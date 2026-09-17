@@ -106,7 +106,7 @@ export default function VsBillPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>For Collectly:</strong> BILL wins by bundling everything. Collectly wins by staying narrow: easier setup, no per-user fees, and AR messaging that doesn&apos;t feel like a bank portal.
+            <strong>Bottom line:</strong> BILL bundles AP, AR and spend into one platform and charges per user. If you genuinely need all three, that bundle earns its price. If what actually hurts is getting paid, you are buying and administering two products you did not come for.
           </div>
         </div>
       </section>

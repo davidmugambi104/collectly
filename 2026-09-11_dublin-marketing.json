@@ -1,0 +1,257 @@
+[
+  {
+    "companyName": "Travel Media",
+    "domain": "travelmedia.ie",
+    "website": "https://travelmedia.ie/",
+    "country": "Ireland",
+    "sector": "marketing agencies",
+    "address": "Dame Court, 17, Dublin",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "michael@travelmedia.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+3530868583585"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/2222550/",
+      "twitter": "https://twitter.com/TravelMedia_ie",
+      "instagram": "https://www.instagram.com/travelmedia.ie/",
+      "facebook": "https://www.facebook.com/TravelMedia.ie",
+      "youtube": "https://www.youtube.com/channel/UCTC6_bGKxd6y_IV2kyhRr7A?sub_confirmation=1"
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:36:04.875Z"
+  },
+  {
+    "companyName": "Wolfgang Digital",
+    "domain": "wolfgangdigital.com",
+    "website": "https://wolfgangdigital.com/",
+    "country": "Ireland",
+    "sector": "marketing agencies",
+    "address": "Fenian Street, 27, Dublin, D02 WD37",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "hi@wolfgangdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+35316638020"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/wolfgang-digital",
+      "twitter": "https://x.com/WolfgangDigital",
+      "instagram": "https://www.instagram.com/wolfgang.digital/",
+      "facebook": "https://www.facebook.com/WolfgangDigitalDublin/",
+      "youtube": "https://www.youtube.com/user/WolfgangDigital1"
+    },
+    "pagesScraped": 12,
+    "scrapedAt": "2026-09-11T01:36:04.911Z"
+  },
+  {
+    "companyName": "Focus Advertising",
+    "domain": "focusadvertising.ie",
+    "website": "https://focusadvertising.ie/",
+    "country": "Ireland",
+    "sector": "marketing agencies",
+    "address": "Mount Eden Road, 26A",
+    "searchQuery": "osm",
+    "emailPattern": "first",
+    "companyEmails": [
+      {
+        "email": "john@focusadvertising.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "joan@focusadvertising.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "daragh@focusadvertising.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [
+      {
+        "name": "Shane Lynch",
+        "title": "Director",
+        "email": "shane@focusadvertising.ie",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:36:05.089Z"
+  },
+  {
+    "companyName": "Digital Sales Dublin",
+    "domain": "digitalsales.ie",
+    "website": "https://digitalsales.ie/",
+    "country": "Ireland",
+    "sector": "marketing agencies",
+    "address": "Herbert Street, 18, Dublin, D02 FK19",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@digitalsales.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "sales@digitalsales.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "dublin@digitalsales.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "cork@digitalsales.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "galway@digitalsales.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+35315397207",
+      "+353212021077",
+      "+35391734107"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/digitalsales",
+      "twitter": "https://twitter.com/DigitalSales007",
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:36:05.250Z"
+  },
+  {
+    "companyName": "Increasily",
+    "domain": "increasily.com",
+    "website": "https://increasily.com/",
+    "country": "Ireland",
+    "sector": "marketing agencies",
+    "address": "South Central, Carmanhall Road, Rockbrook Sandyford, 163, Dublin, D18 EY05",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@increasily.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+35319609526"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-11T01:36:05.286Z"
+  },
+  {
+    "companyName": "The Digital Projects",
+    "domain": "thedigitalprojects.com",
+    "website": "https://thedigitalprojects.com/",
+    "country": "Ireland",
+    "sector": "marketing agencies",
+    "address": "Bracken Road, Sandyford Business Park, 51, Dublin, D18 CV48",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@thedigitalprojects.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+353894797848"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/the-digital-projects/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/thedigitalprojectsdublin",
+      "facebook": "https://www.facebook.com/thedigitalprojectsdublin/",
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-11T01:36:05.314Z"
+  },
+  {
+    "companyName": "MKO",
+    "domain": "mkoireland.ie",
+    "website": "https://mkoireland.ie/",
+    "country": "Ireland",
+    "sector": "marketing agencies",
+    "address": "Beckett Way, 9C, Dublin 12, D12 XN9W",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@mkoireland.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "careers@mkoireland.ie",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+35315846162",
+      "+35391735611",
+      "+353015846162"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/mkoireland/",
+      "twitter": "https://twitter.com/mkoireland",
+      "instagram": "https://www.instagram.com/mkoireland/",
+      "facebook": "https://www.facebook.com/MKOIreland/",
+      "youtube": "https://www.youtube.com/watch?v=50vRU_YIbo0"
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:36:05.492Z"
+  }
+]

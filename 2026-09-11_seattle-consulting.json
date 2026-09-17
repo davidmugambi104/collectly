@@ -1,0 +1,32 @@
+[
+  {
+    "companyName": "Archbright",
+    "domain": "archbright.com",
+    "website": "https://archbright.com/",
+    "country": "United States",
+    "sector": "consulting firms",
+    "address": "6th Avenue South, 5601, Seattle, 98108",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@archbright.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+12063291120"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:37:48.930Z"
+  }
+]

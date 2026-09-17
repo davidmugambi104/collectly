@@ -104,7 +104,7 @@ export default function VsMelioPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>For Collectly:</strong> Melio owns AP. Collectly should own the emotional pain of AR — and make the ROI of faster collections obvious with the public ROI calculator.
+            <strong>Bottom line:</strong> Melio is an AP tool — it pays your bills, on time, for free. It does not chase your invoices. If the money going out is the problem, use Melio. If the money not coming in is the problem, it will not touch it.
           </div>
         </div>
       </section>

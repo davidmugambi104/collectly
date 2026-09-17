@@ -1,0 +1,173 @@
+[
+  {
+    "companyName": "Zem Media",
+    "domain": "zem-media.com",
+    "website": "https://zem-media.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Helm Drive, 1677, Las Vegas, 89119",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "contact@zem-media.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+18448041395",
+      "+17028378770"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": "https://twitter.com/magniumthemes",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/magniumthemescompany/",
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-11T01:33:39.947Z"
+  },
+  {
+    "companyName": "Raptor Digital Marketing",
+    "domain": "raptordigitalmarketing.com",
+    "website": "https://raptordigitalmarketing.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "South Valley View Boulevard, 1000, Las Vegas, 89107",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@raptordigitalmarketing.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17029070095"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-11T01:33:39.968Z"
+  },
+  {
+    "companyName": "Lightning Digital",
+    "domain": "lightningdigital.com",
+    "website": "https://lightningdigital.com/",
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "West Bonanza Road, 1111, Las Vegas, 89106",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "janette@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "tk@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "deidre@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "mark@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "makenzie@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "jennifer@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "gabriella@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "rhonda@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "brooke@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "kelly@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "kim@lightningdigital.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17023830383"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/lightning-digital/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:33:39.982Z"
+  },
+  {
+    "companyName": "Blaine Warren Advertising",
+    "domain": null,
+    "website": null,
+    "country": "United States",
+    "sector": "marketing agencies",
+    "address": "Smoke Ranch Road, 7120, Las Vegas, 89128",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@blainewarren.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+17024356947"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-11T01:33:40.088Z"
+  }
+]

@@ -1,0 +1,907 @@
+[
+  {
+    "companyName": "Worrells Solvency & Forensic Accountants",
+    "domain": "worrells.net.au",
+    "website": "https://worrells.net.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Brisbane Street, 160, 4305",
+    "searchQuery": "osm",
+    "emailPattern": "first.last",
+    "companyEmails": [
+      {
+        "email": "careers@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "caleb.odea@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "chris.darin@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "francis.oseintim@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "philipp.stark@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "brisbane@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "sydney@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "perth@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "careersmelbourne@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "cairns@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "careersperth@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "careersnsw@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "bundaberg@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "ipswich@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "northlakes@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "cleveland@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "springfield@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "chermside@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "toowoomba@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "frankston@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "bendigo@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "geelong@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "centralwest@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "lismore@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "wollongong@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "logan@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "newcastle@worrells.net.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [
+      {
+        "name": "Aaron Lucan",
+        "title": "Principal",
+        "email": "aaron.lucan@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Stephen Hundy",
+        "title": "Principal",
+        "email": "stephen.hundy@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Mervyn Kitay",
+        "title": "Principal",
+        "email": "mervyn.kitay@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Jason Bettles",
+        "title": "Principal",
+        "email": "jason.bettles@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Matthew Kucianski",
+        "title": "Principal",
+        "email": "matthew.kucianski@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Aaron Smith",
+        "title": "Manager",
+        "email": "aaron.smith@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Adam Ward",
+        "title": "Principal",
+        "email": "adam.ward@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Andrew Worrell",
+        "title": "Principal",
+        "email": "andrew.worrell@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Ary Su",
+        "title": "Manager",
+        "email": "ary.su@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Ashley Sofra",
+        "title": "Manager",
+        "email": "ashley.sofra@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Brendan Giles",
+        "title": "Principal",
+        "email": "brendan.giles@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Broderick Dipple",
+        "title": "Manager",
+        "email": "broderick.dipple@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Broghan Phillips",
+        "title": "Manager",
+        "email": "broghan.phillips@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Bronte Shiels",
+        "title": "Manager",
+        "email": "bronte.shiels@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Brooke Quibell",
+        "title": "Manager",
+        "email": "brooke.quibell@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Chris Cook",
+        "title": "Principal",
+        "email": "chris.cook@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Chris Kaarsberg",
+        "title": "Manager",
+        "email": "chris.kaarsberg@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Con Kokkinos",
+        "title": "Principal",
+        "email": "con.kokkinos@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Crystal Wright",
+        "title": "Principal",
+        "email": "crystal.wright@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Dane Hammond",
+        "title": "Principal",
+        "email": "dane.hammond@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Drew Austin",
+        "title": "Manager",
+        "email": "drew.austin@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Georgie Harrison",
+        "title": "Principal",
+        "email": "georgie.harrison@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Graeme Beattie",
+        "title": "Principal",
+        "email": "graeme.beattie@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Greg Thiveos",
+        "title": "Manager",
+        "email": "greg.thiveos@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Hayden Asper",
+        "title": "Principal",
+        "email": "hayden.asper@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Hayden Montgomerie",
+        "title": "Manager",
+        "email": "hayden.montgomerie@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Ivan Glavas",
+        "title": "Principal",
+        "email": "ivan.glavas@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Jack Sampson",
+        "title": "Manager",
+        "email": "jack.sampson@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "James Robba",
+        "title": "Principal",
+        "email": "james.robba@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Jay Shah",
+        "title": "Manager",
+        "email": "jay.shah@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Jeremy Mudford",
+        "title": "Manager",
+        "email": "jeremy.mudford@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Joanne Keating",
+        "title": "Principal",
+        "email": "joanne.keating@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Joe Scafidi",
+        "title": "Manager",
+        "email": "joe.scafidi@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "John Goggin",
+        "title": "Principal",
+        "email": "john.goggin@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Justin Dragicevic",
+        "title": "Manager",
+        "email": "justin.dragicevic@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Kent Vuong",
+        "title": "Manager",
+        "email": "kent.vuong@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Kylie Kissell",
+        "title": "Principal",
+        "email": "kylie.kissell@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Lee Crosthwaite",
+        "title": "Principal",
+        "email": "lee.crosthwaite@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Lee Moore",
+        "title": "Manager",
+        "email": "lee.moore@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Matthew Jess",
+        "title": "Principal",
+        "email": "matthew.jess@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Michael Carmody",
+        "title": "Manager",
+        "email": "michael.carmody@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Miriam Schmidt",
+        "title": "Manager",
+        "email": "miriam.schmidt@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Morgan Lane",
+        "title": "Principal",
+        "email": "morgan.lane@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Nathan Deppeler",
+        "title": "Principal",
+        "email": "nathan.deppeler@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Nikhil Khatri",
+        "title": "Principal",
+        "email": "nikhil.khatri@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Paul Burness",
+        "title": "Principal",
+        "email": "paul.burness@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Paul Nogueira",
+        "title": "Principal",
+        "email": "paul.nogueira@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Raj Khatri",
+        "title": "Principal",
+        "email": "raj.khatri@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Rita Chan",
+        "title": "Principal",
+        "email": "rita.chan@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Robert Smith",
+        "title": "Manager",
+        "email": "robert.smith@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Roberto Crispino",
+        "title": "Principal",
+        "email": "roberto.crispino@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Sarah Peters",
+        "title": "Manager",
+        "email": "sarah.peters@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Scott Andersen",
+        "title": "Principal",
+        "email": "scott.andersen@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Vincent Wang",
+        "title": "Principal",
+        "email": "vincent.wang@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Youssef Sarakbi",
+        "title": "Principal",
+        "email": "youssef.sarakbi@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Melbourne Vic",
+        "title": null,
+        "email": "melbourne@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Hobart Place Canberra",
+        "title": null,
+        "email": "canberra@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Gold Coast",
+        "title": null,
+        "email": "goldcoast@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Lanyana Way Noosa",
+        "title": null,
+        "email": "noosa@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Sunshine Coast",
+        "title": null,
+        "email": "sunshinecoast@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Ballarat Vic",
+        "title": null,
+        "email": "ballarat@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Maroondah Highway Ringwood",
+        "title": null,
+        "email": "ringwood@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Western Sydney",
+        "title": null,
+        "email": "westernsydney@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Central Coast",
+        "title": null,
+        "email": "centralcoast@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Peregian Beach",
+        "title": null,
+        "email": "peregianbeach@worrells.net.au",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [
+      "+61732806200",
+      "0288441200",
+      "0262876000",
+      "0893184901",
+      "0755533405",
+      "0396135518",
+      "0288441206",
+      "0732806201",
+      "0732806207",
+      "0288441213",
+      "0396135524",
+      "0730501934",
+      "0732254316",
+      "0732254372",
+      "0396135535",
+      "0746376503",
+      "0732254386",
+      "0754591006",
+      "0292491200",
+      "0396135502",
+      "0242576076",
+      "0754591004",
+      "0396135514",
+      "0396135554",
+      "0396135511",
+      "0396135505",
+      "0402923186",
+      "0396135521",
+      "0396135517",
+      "0288441224",
+      "0755533406",
+      "0396135523",
+      "0288441218",
+      "0292491225",
+      "0740585400",
+      "0288441225",
+      "0288441204",
+      "0396135506",
+      "0893184902",
+      "0732254381",
+      "0755533409",
+      "0396135513",
+      "0396135536",
+      "0732254330",
+      "0353369701",
+      "0732254313",
+      "0396135510",
+      "0754591002",
+      "0732254321",
+      "0732254320",
+      "0396135527",
+      "0755533416",
+      "0396135549",
+      "0396135512",
+      "0352227624",
+      "0732254300",
+      "0396135500",
+      "0893184900",
+      "0755533444",
+      "0754591000",
+      "0732806200",
+      "0732045688",
+      "0738016200",
+      "0746376500",
+      "0353369700",
+      "0387859080",
+      "0398769554",
+      "0353369702",
+      "0263613633",
+      "0266217500",
+      "0243636300",
+      "0288441207",
+      "0396135501"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/aaron-lucan-76151944/",
+      "twitter": "https://twitter.com/worrellsau",
+      "instagram": "https://www.instagram.com/worrellsau/",
+      "facebook": "https://www.facebook.com/Worrellsau",
+      "youtube": "https://www.youtube.com/@worrells_au"
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:39:19.247Z"
+  },
+  {
+    "companyName": "Fidel Accounting Services",
+    "domain": "fidel.com.au",
+    "website": "https://fidel.com.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Perrin Drive, 54-66, 4119",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@fidel.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61732994801",
+      "+61421895230"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-11T01:39:19.675Z"
+  },
+  {
+    "companyName": "Qubik Accounting",
+    "domain": "qubik.com.au",
+    "website": "https://qubik.com.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Leitchs Road, 209",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@qubik.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61732058938",
+      "+61732059682"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/qld-accounting-group/",
+      "twitter": "https://twitter.com/QubikAccounting",
+      "instagram": "https://www.instagram.com/qubikaccounting/",
+      "facebook": "https://www.facebook.com/Qubikaccounting/",
+      "youtube": "https://www.youtube.com/channel/UCpIQuetrlqO-D_A-fryDu8A"
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-11T01:39:19.766Z"
+  },
+  {
+    "companyName": "Robert Goodman Accountants",
+    "domain": "rgoodman.com.au",
+    "website": "https://rgoodman.com.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Main Street, 32, 4520",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "reception@rgoodman.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61732891700",
+      "0732891700"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/rgaaccounting/",
+      "twitter": null,
+      "instagram": null,
+      "facebook": "https://www.facebook.com/pages/Robert-Goodman-Accountants/180011855396787",
+      "youtube": null
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:39:19.783Z"
+  },
+  {
+    "companyName": "H&R Block",
+    "domain": "hrblock.com.au",
+    "website": "https://hrblock.com.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Patricks Road, 1, 4054",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "aranahills@hrblock.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61732545200",
+      "0390585900",
+      "0390585950",
+      "1300730016",
+      "1300611320",
+      "0282362500"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/h&r-block-australia",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/hrblockau",
+      "facebook": "https://www.facebook.com/hrblockau",
+      "youtube": "https://www.youtube.com/channel/UC0uvYIvnWhyPJp7I1I7gmcg"
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:39:19.807Z"
+  },
+  {
+    "companyName": "ACP Quantity Surveyors",
+    "domain": "quantitysurveyors.com.au",
+    "website": "https://quantitysurveyors.com.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Creek Street, 27, 4000",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@quantitysurveyors.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "1300550311"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": "https://twitter.com/AusCostPlanners",
+      "instagram": null,
+      "facebook": "https://www.facebook.com/australiancostplanners",
+      "youtube": null
+    },
+    "pagesScraped": 3,
+    "scrapedAt": "2026-09-11T01:39:20.012Z"
+  },
+  {
+    "companyName": "CURIO Financial",
+    "domain": "curiofinancial.au",
+    "website": "https://curiofinancial.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Denman Street, 43, 4051",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "admin@curiofinancial.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/curio-financial/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/curiofinancial.au",
+      "facebook": "https://www.facebook.com/p/CURIO-Financial-61559002678659/",
+      "youtube": null
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:39:20.513Z"
+  },
+  {
+    "companyName": "Malanos Co",
+    "domain": "malanos.com.au",
+    "website": "https://malanos.com.au/",
+    "country": "Australia",
+    "sector": "accountants",
+    "address": "Kingsford Smith Drive, 482, 4007",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "clientservices@malanos.com.au",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+61732560822",
+      "0732560822"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 1,
+    "scrapedAt": "2026-09-11T01:39:20.756Z"
+  }
+]

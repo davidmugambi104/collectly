@@ -1,0 +1,33 @@
+[
+  {
+    "companyName": "Countryscape",
+    "domain": "countryscape.org",
+    "website": "https://countryscape.org/",
+    "country": "United Kingdom",
+    "sector": "marketing agencies",
+    "address": "Ducie Street, 37, Manchester, M1 2JW",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@countryscape.org",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+441612363432",
+      "+4401612363432"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": "https://twitter.com/countryscape",
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-11T01:42:26.138Z"
+  }
+]

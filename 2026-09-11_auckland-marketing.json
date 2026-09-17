@@ -1,0 +1,209 @@
+[
+  {
+    "companyName": "Unique Displays",
+    "domain": "uniquedisplays.co.nz",
+    "website": "https://uniquedisplays.co.nz/",
+    "country": "New Zealand",
+    "sector": "marketing agencies",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@uniquedisplays.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "nfo@uniquedisplays.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+6499158670",
+      "+64099158670"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 2,
+    "scrapedAt": "2026-09-11T01:40:31.672Z"
+  },
+  {
+    "companyName": "MRCagney",
+    "domain": "mrcagney.com",
+    "website": "https://mrcagney.com/",
+    "country": "New Zealand",
+    "sector": "marketing agencies",
+    "address": "O'Connell Street, 12, 1010",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "auckland@mrcagney.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "+6493775590"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/in/anthony-cross-nz/?originalSubdomain=nz",
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 12,
+    "scrapedAt": "2026-09-11T01:40:31.685Z"
+  },
+  {
+    "companyName": "Cartel Media",
+    "domain": "cartelmedia.co.nz",
+    "website": "https://cartelmedia.co.nz/",
+    "country": "New Zealand",
+    "sector": "marketing agencies",
+    "address": null,
+    "searchQuery": "osm",
+    "emailPattern": "first",
+    "companyEmails": [
+      {
+        "email": "team@cartelmedia.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "joel@cartelmedia.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "josh@cartelmedia.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "fran@cartelmedia.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "jess@cartelmedia.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "monique@cartelmedia.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "email": "joanne@cartelmedia.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [
+      {
+        "name": "Andy Barron",
+        "title": "CEO",
+        "email": "andy@cartelmedia.co.nz",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Daryl Harris",
+        "title": "Managing Director",
+        "email": "daryl@cartelmedia.co.nz",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      },
+      {
+        "name": "Jono Ridler",
+        "title": "Manager",
+        "email": "jono@cartelmedia.co.nz",
+        "emailSource": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "phones": [
+      "+6495270122",
+      "+64952701229"
+    ],
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/cartelmedia/",
+      "twitter": null,
+      "instagram": "https://www.instagram.com/cartelmedianz/",
+      "facebook": "https://www.facebook.com/CARTELMediaNZ/",
+      "youtube": null
+    },
+    "pagesScraped": 4,
+    "scrapedAt": "2026-09-11T01:40:31.978Z"
+  },
+  {
+    "companyName": "HOOP Brand Activation",
+    "domain": null,
+    "website": null,
+    "country": "New Zealand",
+    "sector": "marketing agencies",
+    "address": "Rawiri Place, 3, Auckland, 0618",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@hoopnz.com",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [
+      "08004567890"
+    ],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-11T01:40:32.457Z"
+  },
+  {
+    "companyName": "Cloud X Change",
+    "domain": null,
+    "website": null,
+    "country": "New Zealand",
+    "sector": "marketing agencies",
+    "address": "Hobsonville Road, 20/102c, Auckland, 0618",
+    "searchQuery": "osm",
+    "emailPattern": null,
+    "companyEmails": [
+      {
+        "email": "info@cloudxchange.co.nz",
+        "source": "page",
+        "status": "found_mx_valid"
+      }
+    ],
+    "persons": [],
+    "phones": [],
+    "socials": {
+      "linkedin": null,
+      "twitter": null,
+      "instagram": null,
+      "facebook": null,
+      "youtube": null
+    },
+    "pagesScraped": 0,
+    "scrapedAt": "2026-09-11T01:40:32.715Z"
+  }
+]
