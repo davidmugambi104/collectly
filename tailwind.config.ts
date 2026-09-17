@@ -92,7 +92,7 @@ const config: Config = {
         // to have Inter installed locally — otherwise it fell straight through
         // to the fallbacks.
         sans: ['var(--font-inter)', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       // Motion. The 0.5-0.6s ease-out entrances below are marketing timings —

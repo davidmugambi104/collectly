@@ -11,6 +11,10 @@ const isPublicRoute = createRouteMatcher([
   // sign-in redirect before ever seeing the form. Two whole lead-capture
   // landing pages were unreachable by the public they were built for.
   '/interview', '/playbook',
+  // '/qualify' is the same bug as the two above, found again: a public
+  // lead-capture survey that emitted `index, follow` and a self-canonical
+  // while Clerk 302'd every anonymous visitor and Googlebot to /sign-in.
+  '/qualify',
   '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
   '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
   // Industry landing pages — keyword-targeted long-tail entry points.

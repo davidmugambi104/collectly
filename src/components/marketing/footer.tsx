@@ -2,8 +2,13 @@ import Link from 'next/link';
 import { Logo } from '@/components/brand/logo';
 
 export function MarketingFooter() {
+  // No top margin. The old mt-32 stacked 128px on top of whatever bottom
+  // padding the last section already had, measuring out as 226-317px of empty
+  // white before the footer on every single page — the last thing every
+  // visitor scrolls through. The footer owns its breathing room internally,
+  // via the py-14 below.
   return (
-    <footer className="mt-32 border-t border-ink-200 bg-ink-50">
+    <footer className="border-t border-ink-200 bg-ink-50">
       <div className="container-page py-14">
         {/* Brand block + a nested grid for the five link groups. The previous
             single md:grid-cols-6 grid held seven columns of content (the brand

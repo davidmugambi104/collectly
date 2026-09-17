@@ -172,7 +172,11 @@ export function softwareAppJsonLd(): JsonLdThing {
     description: SITE.description,
     offers: {
       '@type': 'Offer',
-      price: '49',
+      // Read from PLAN_PRICING, not restated. This was hardcoded '49' while
+      // every visible page said $149 and pricingProductJsonLd() emitted 149 —
+      // a markup/visible-price mismatch on all 41 pages, which is a Google
+      // structured-data policy violation, not just an inconsistency.
+      price: String(PLAN_PRICING.starter.monthly),
       priceCurrency: 'USD',
       priceValidUntil: '2027-12-31',
       availability: 'https://schema.org/InStock',

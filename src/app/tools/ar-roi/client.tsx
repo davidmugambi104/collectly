@@ -17,7 +17,6 @@ export function RoiCalculator() {
   const [ar, setAr] = useState(50_000);
   const [dso, setDso] = useState(45);
   const [targetDso, setTargetDso] = useState(14);
-  const [revenue, setRevenue] = useState(1_500_000);
   const [margin, setMargin] = useState(15);
   const [costOfCapital, setCostOfCapital] = useState(8);
   const [currency, setCurrency] = useState('USD');
@@ -26,15 +25,33 @@ export function RoiCalculator() {
 
   const result = useMemo(() => {
     const dsoDelta = Math.max(0, dso - targetDso);
-    const arAsDays = revenue / 365;
-    const freedUpAr = (dsoDelta / 365) * revenue;
+
+    // Freed cash comes from the A/R the user typed, not from revenue. The old
+    // version read (dsoDelta / 365) * revenue, which meant the most prominent
+    // input on the form did nothing: entering an A/R of 0 still produced a
+    // six-figure "freed cash" headline. Collecting dsoDelta days sooner
+    // releases the same proportion of the balance that is currently owed.
+    const freedUpAr = dso > 0 ? ar * (dsoDelta / dso) : 0;
+
+    // What that cash is worth over a year at the user's own cost of capital.
     const annualCostOfSlowPay = freedUpAr * (costOfCapital / 100);
-    // Lost revenue from cash-flow constraints: services biz can't take new work because cash is tied up
-    const lostRevenue = arAsDays * dsoDelta * (margin / 100) * 0.4;
+
+    // Margin earned on work the freed cash lets them take on. The old form of
+    // this carried a bare * 0.4 with no derivation and was presented to the
+    // cent; the assumption is now named and stated on the page instead.
+    const REDEPLOYMENT_RATE = 0.4;
+    const lostRevenue = freedUpAr * (margin / 100) * REDEPLOYMENT_RATE;
+
     // Write-off / bad-debt reduction
     const badDebtReduction = ar * 0.02;
     const total = annualCostOfSlowPay + lostRevenue + badDebtReduction;
     const annualPlanCost = PLAN_PRICING.starter.monthly * 12;
+
+    // Weeks of benefit needed to cover a year of the plan. Was the literal
+    // string "< 1 week", which was printed for every possible input.
+    const weeklyBenefit = total / 52;
+    const paybackWeeks = weeklyBenefit > 0 ? Math.ceil(annualPlanCost / weeklyBenefit) : null;
+
     return {
       dsoDelta,
       freedUpAr: Math.round(freedUpAr),
@@ -45,9 +62,11 @@ export function RoiCalculator() {
       // Priced against the Practice plan, read from PLAN_PRICING so the ROI
       // number cannot drift away from what /pricing actually charges.
       annualPlanCost,
-      roi: Math.round(((total - annualPlanCost) / annualPlanCost) * 100),
+      roi: total > 0 ? Math.round(((total - annualPlanCost) / annualPlanCost) * 100) : 0,
+      paybackWeeks,
+      redeploymentRate: REDEPLOYMENT_RATE,
     };
-  }, [ar, dso, targetDso, revenue, margin, costOfCapital]);
+  }, [ar, dso, targetDso, margin, costOfCapital]);
 
   return (
     <div className="mt-12 grid lg:grid-cols-2 gap-6">
@@ -73,9 +92,6 @@ export function RoiCalculator() {
             <input type="number" min="7" max="60" value={targetDso} onChange={(e) => setTargetDso(Number(e.target.value))} className="input font-mono" />
             <input type="range" min="7" max="60" value={targetDso} onChange={(e) => setTargetDso(Number(e.target.value))} className="w-full mt-2" />
           </Field>
-          <Field label={`Annual revenue (${sym})`}>
-            <input type="number" min="0" step="50000" value={revenue} onChange={(e) => setRevenue(Number(e.target.value))} className="input font-mono" />
-          </Field>
           <Field label="Operating margin %" hint="Net of cost of delivery.">
             <input type="number" min="0" max="80" value={margin} onChange={(e) => setMargin(Number(e.target.value))} className="input font-mono" />
           </Field>
@@ -90,27 +106,48 @@ export function RoiCalculator() {
           <div className="text-xs uppercase tracking-wider font-semibold text-brand-200">You could free up</div>
           <div className="mt-2 text-5xl font-display font-bold">{formatCurrency(result.total, currency)}</div>
           <div className="mt-1 text-sm text-brand-100">per year in cash + lost productivity</div>
-          <div className="mt-5 grid grid-cols-3 gap-3 text-xs">
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
               <div className="text-brand-200">Freed cash</div>
-              <div className="mt-1 font-mono font-semibold text-lg">{formatCurrency(result.freedUpAr, currency)}</div>
+              <div className="mt-1 font-mono font-semibold text-base sm:text-lg tabular-nums">{formatCurrency(result.freedUpAr, currency)}</div>
             </div>
             <div>
               <div className="text-brand-200">Carry cost saved</div>
-              <div className="mt-1 font-mono font-semibold text-lg">{formatCurrency(result.annualCost, currency)}</div>
+              <div className="mt-1 font-mono font-semibold text-base sm:text-lg tabular-nums">{formatCurrency(result.annualCost, currency)}</div>
             </div>
             <div>
               <div className="text-brand-200">Lost revenue recovered</div>
-              <div className="mt-1 font-mono font-semibold text-lg">{formatCurrency(result.lostRevenue, currency)}</div>
+              <div className="mt-1 font-mono font-semibold text-base sm:text-lg tabular-nums">{formatCurrency(result.lostRevenue, currency)}</div>
             </div>
           </div>
+          {/* The workings, on the page. A number this size with no derivation
+              is a claim; with its assumptions beside it, it is evidence the
+              reader can argue with — which is the only kind that persuades a
+              finance-literate buyer. */}
+          <p className="mt-5 text-xs text-brand-100 leading-relaxed">
+            Assumes you reach the target DSO you set above, that freed cash is worth your stated
+            cost of capital, that {Math.round(result.redeploymentRate * 100)}% of it gets redeployed
+            into billable work at your margin, and that 2% of the balance is written off today.
+            Change any input and every figure moves.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <Mini icon={<Clock className="h-4 w-4" />} label="Days faster" value={`${result.dsoDelta} days`} />
           <Mini icon={<DollarSign className="h-4 w-4" />} label="Bad-debt reduction" value={formatCurrency(result.badDebtReduction, currency)} />
           <Mini icon={<TrendingUp className="h-4 w-4" />} label="ROI on Collectly" value={`${result.roi.toLocaleString()}%`} accent="brand" />
-          <Mini icon={<Sparkles className="h-4 w-4" />} label="Payback period" value="< 1 week" accent="brand" />
+          <Mini
+            icon={<Sparkles className="h-4 w-4" />}
+            label="Payback period"
+            value={
+              result.paybackWeeks === null
+                ? '—'
+                : result.paybackWeeks <= 1
+                  ? 'under a week'
+                  : `${result.paybackWeeks} weeks`
+            }
+            accent="brand"
+          />
         </div>
 
         <div className="card">

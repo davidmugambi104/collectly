@@ -191,7 +191,7 @@ export default function HomePage() {
       </section>
 
       {/* HOW IT WORKS — connected steps, not another card grid */}
-      <section className="container-page py-20 sm:py-28">
+      <section className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
         <div className="max-w-2xl">
           <p className="eyebrow">How it works</p>
           <h2 className="mt-2 h2">Understands the conversation, not just the invoice.</h2>
@@ -222,7 +222,7 @@ export default function HomePage() {
 
       {/* FEATURE GRID */}
       <section className="bg-ink-50 border-y border-ink-200">
-        <div className="container-page py-20 sm:py-28">
+        <div className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
           <div className="max-w-2xl">
             <p className="eyebrow">Features</p>
             <h2 className="mt-2 h2">The parts that actually save you time.</h2>
@@ -240,7 +240,7 @@ export default function HomePage() {
       </section>
 
       {/* AI DUNNING DEMO */}
-      <section className="container-page py-20 sm:py-28">
+      <section className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
         <div className="max-w-2xl mx-auto text-center">
           <p className="eyebrow">Try it now</p>
           <h2 className="mt-2 h2">See exactly what we&apos;d send your customer.</h2>
@@ -258,7 +258,7 @@ export default function HomePage() {
       </section>
 
       {/* COMPARISON — feature table + cost breakdown, one section */}
-      <section className="container-page py-20 sm:py-28">
+      <section className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
         <div className="max-w-2xl">
           <p className="eyebrow">How we compare</p>
           <h2 className="mt-2 h2">Built for the SMB long tail. Not the enterprise.</h2>
@@ -337,7 +337,7 @@ export default function HomePage() {
 
       {/* PRICING */}
       <section className="bg-ink-950 text-white">
-        <div className="container-page py-20 sm:py-28">
+        <div className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-emerald-400">Pricing</p>
             <h2 className="mt-2 text-3xl sm:text-4xl font-display font-bold tracking-tight">Honest pricing. No per-invoice fees. No setup costs.</h2>
@@ -354,7 +354,7 @@ export default function HomePage() {
 
       {/* WHY DIFFERENT */}
       <section className="bg-gradient-to-b from-ink-50 to-white border-y border-ink-200">
-        <div className="container-page py-20 sm:py-28">
+        <div className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
           <div className="max-w-2xl">
             <p className="eyebrow">Why Collectly is different</p>
             <h2 className="mt-2 h2">Six things Collectly understands that other tools miss.</h2>
@@ -396,7 +396,7 @@ export default function HomePage() {
       </section>
 
       {/* FOUNDER NOTE — a letter, not another eyebrow/h2/grid section */}
-      <section className="container-page py-20 sm:py-28">
+      <section className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
         <div className="max-w-2xl mx-auto">
           <span className="font-display text-6xl text-brand-200 leading-none select-none">&quot;</span>
           <p className="-mt-6 text-xl sm:text-2xl font-display text-ink-900 leading-snug">
@@ -530,15 +530,19 @@ function HeroDashboardMock() {
           lifted. */}
       <div className="rounded-2xl border border-ink-200 bg-white shadow-2xl shadow-ink-950/10 overflow-hidden">
         <div className="px-5 pt-5 pb-1 flex items-center justify-between">
-          <span className="text-2xs font-semibold uppercase tracking-wider text-ink-400">Overview</span>
-          <span className="text-2xs text-ink-400">Sample data</span>
+          <span className="text-2xs font-semibold uppercase tracking-wider text-ink-500">Overview</span>
+          <span className="text-2xs text-ink-500">Sample data</span>
         </div>
         <div className="p-5 pt-3">
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-xs text-ink-500">Outstanding A/R</div>
-              <div className="text-2xl font-display font-bold">$184,250</div>
-              <div className="text-xs text-emerald-600 font-medium mt-0.5">↑ 23% vs last month</div>
+              <div className="text-2xl font-mono font-bold tabular-nums text-ink-950">$184,250</div>
+              {/* Outstanding A/R rising is the BAD outcome — it is the pain the
+                  product sells against. Rendering it success-green with an up
+                  arrow told a finance-literate buyer that nobody here reads
+                  their own hero. The dashboard renders the same concept red. */}
+              <div className="text-xs text-red-600 font-medium mt-0.5">↑ 23% vs last month</div>
             </div>
             <div className="rounded-lg border border-ink-200 px-3 py-1.5 text-xs font-medium">Last 30 days ▾</div>
           </div>
@@ -551,9 +555,15 @@ function HeroDashboardMock() {
               { c: 'Tech Partners Inc', a: '$15,750', d: 67, b: '61-90' },
               { c: 'Global Services Ltd', a: '$93,800', d: 95, b: '90+' },
             ].map((row, i) => (
-              <div key={i} className="flex items-center justify-between text-sm py-1.5 px-2 rounded hover:bg-ink-50">
+              <div key={i} className="flex items-center justify-between text-sm py-1.5 px-2 rounded">
                 <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 rounded bg-gradient-to-br from-brand-400 to-emerald-500" />
+                  {/* Initials, the way the real dashboard renders them. Five
+                      identical blue-to-green gradient squares read as "avatar
+                      not implemented yet", which is the single clearest MVP
+                      tell in the hero. */}
+                  <div className="h-6 w-6 rounded bg-ink-100 text-ink-600 text-[10px] font-semibold flex items-center justify-center">
+                    {row.c.split(' ').slice(0, 2).map((w) => w[0]).join('')}
+                  </div>
                   <div>
                     <div className="font-medium text-ink-900">{row.c}</div>
                     <div className="text-[11px] text-ink-500">{row.d} days overdue</div>
@@ -566,16 +576,28 @@ function HeroDashboardMock() {
               </div>
             ))}
           </div>
+
+          <div className="mt-4 pt-3 border-t border-ink-200 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center">
+                <Mail className="h-3.5 w-3.5 text-emerald-700" />
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-ink-900">Auto-collected</div>
+                <div className="text-[11px] text-ink-500">Consulting Group — 12 min ago</div>
+              </div>
+            </div>
+            <div className="font-mono font-semibold text-emerald-700 tabular-nums">$2,840</div>
+          </div>
         </div>
       </div>
-      <div className="absolute -bottom-4 -right-4 rounded-xl border border-ink-200 bg-white shadow-xl p-3 w-56 hidden sm:block">
-        <div className="flex items-center gap-2 mb-1.5">
-          <div className="h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center"><Mail className="h-3.5 w-3.5 text-emerald-700" /></div>
-          <div className="text-xs font-semibold">Auto-collected</div>
-        </div>
-        <div className="text-lg font-display font-bold">$2,840</div>
-        <div className="text-[11px] text-ink-500">From Consulting Group — 12 min ago</div>
-      </div>
+      {/* Was an absolutely-positioned floating card. Pinned bottom-right it
+          covered the amount column (the $93,800 / 90+ row — the largest number
+          and the only red badge); moved to bottom-left it covered the customer
+          names on the same two rows instead. A 224px card cannot hang off a
+          430px panel without landing on something. It is a real row now: no
+          overlap is possible, and it reads as the product doing its job at the
+          bottom of the ledger rather than as a sticker on top of it. */}
     </div>
   );
 }

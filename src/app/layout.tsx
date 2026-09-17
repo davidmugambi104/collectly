@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Fraunces } from 'next/font/google';
 import './globals.css';
 
 import { PostHogProvider } from '@/components/posthog-provider';
@@ -29,6 +29,25 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-jetbrains-mono',
+});
+
+// A real display face. font-display and font-sans were BOTH var(--font-inter),
+// so every headline on the site was Inter Bold sitting over Inter Regular —
+// which is, precisely, what a Tailwind starter looks like. One editorial face
+// used only for h1/h2 is the cheapest change on the site that reads as
+// "designed"; Inter keeps everything else. Fraunces is variable, so this costs
+// one file, and swapping it is one identifier here plus one in tailwind.config.
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  // No `axes` here: next/font rejects axes alongside an explicit weight list
+  // ("Axes can only be defined for variable fonts when the weight property is
+  // nonexistent or set to `variable`"). Two static weights is all the display
+  // face needs, and it keeps the payload smaller than shipping the full
+  // variable range for two headline levels.
+  weight: ['600', '700'],
+  style: ['normal'],
+  variable: '--font-display',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -152,7 +171,7 @@ const siteJsonLd = JSON.stringify([
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en-GB" className={`${inter.variable} ${jetbrainsMono.variable} ${fraunces.variable}`}>
       <head>
         <script
           type="application/ld+json"

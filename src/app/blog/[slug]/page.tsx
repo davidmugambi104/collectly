@@ -31,6 +31,10 @@ export async function generateMetadata(
 }
 
 export const dynamic = 'force-static';
+// Without this, any arbitrary slug renders and the root layout's <Suspense>
+// commits a 200 before notFound() can fire — an unbounded soft-404 space
+// under /blog/*. false makes unknown slugs 404 at the routing layer.
+export const dynamicParams = false;
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

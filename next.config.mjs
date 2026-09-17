@@ -17,6 +17,19 @@ const nextConfig = {
   // "s-maxage=3600, stale-while-revalidate=86400" lets a CDN edge cache
   // our HTML for 1h + stale-serve for 24h, which matters because our
   // sitemap/OG values are sensitive to deploy-time changes.
+  // /ar-roi is a permanent alias of /tools/ar-roi. It used to live in a page
+  // component calling permanentRedirect(), which never produced a 308: the
+  // root layout wraps children in <Suspense>, so the response streams and
+  // commits 200 OK before the redirect throws, and Next falls back to a
+  // client-side <meta http-equiv="refresh">. The old URL therefore stayed a
+  // second indexable page, self-canonicalising, passing no link equity.
+  // A redirect declared here is emitted before rendering starts.
+  async redirects() {
+    return [
+      { source: '/ar-roi', destination: '/tools/ar-roi', permanent: true },
+    ];
+  },
+
   async headers() {
     return [
       {
