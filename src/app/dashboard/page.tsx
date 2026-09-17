@@ -187,8 +187,16 @@ function KpiCard({ icon, label, value, sub, trend, trendPositive, trendDir, dang
             glyphs floating at the corner of a white box is the shape every
             template dashboard ships; giving each one a seat makes the five
             corners of the band agree with each other. */}
+        {/* One icon gets a square 24px seat. A second one had no room in it:
+            `grid place-items-center` put both glyphs in the same implicit cell,
+            so the Sparkles badge on the forecast tile rendered on top of the
+            TrendingUp arrow rather than beside it, and `gap-1` had nothing to
+            act on. With a second glyph the chip flows along a column track and
+            widens to fit instead. */}
         <div
-          className="grid h-6 w-6 shrink-0 place-items-center gap-1 rounded-[7px] bg-ink-50 ring-1 ring-inset ring-ink-200/80"
+          className={`grid h-6 shrink-0 place-items-center rounded-[7px] bg-ink-50 ring-1 ring-inset ring-ink-200/80 ${
+            icon2 ? 'w-auto grid-flow-col auto-cols-max gap-1 px-1.5' : 'w-6'
+          }`}
           aria-hidden="true"
         >
           {icon}

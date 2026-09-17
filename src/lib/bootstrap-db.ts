@@ -102,12 +102,12 @@ async function seedIfEmpty(client: PGlite) {
   await client.exec(`INSERT INTO memberships (id, user_id, org_id, role, created_at) VALUES ('${nanoid()}', '${userId}', '${orgId}', 'owner', '${now}')`);
   await client.exec(`INSERT INTO integrations (id, org_id, provider, status, realm_id, last_sync_at, created_at, updated_at) VALUES ('${nanoid()}', '${orgId}', 'quickbooks', 'connected', 'demo-realm-1', '${now}', '${now}', '${now}')`);
   const customers = [
-    { name: 'Brightline Legal', email: 'ap@brightlinelegal.com', phone: '+14155551234', company: 'Brightline Legal LLP', channel: 'email', avgDays: 28, paidRate: 0.95, risk: 15 },
-    { name: 'Harbor Painting Co', email: 'bills@harborpainting.com', phone: '+14155555678', company: 'Harbor Painting', channel: 'sms', avgDays: 14, paidRate: 0.99, risk: 8 },
-    { name: 'Westgate Advisory', email: 'finance@westgate.com', phone: '+12125559001', company: 'Westgate Advisory', channel: 'email', avgDays: 47, paidRate: 0.78, risk: 62 },
-    { name: 'Northstar Marketing', email: 'ap@northstar.io', phone: '+12125559002', company: 'Northstar Marketing', channel: 'email', avgDays: 65, paidRate: 0.55, risk: 78 },
-    { name: 'Acme Studios', email: 'bills@acmestudios.com', phone: '+13105559003', company: 'Acme Studios', channel: 'email', avgDays: 95, paidRate: 0.32, risk: 88 },
-    { name: 'Riverstone Co.', email: 'hello@riverstone.co', phone: '+447700900123', company: 'Riverstone Co', channel: 'email', avgDays: 21, paidRate: 0.92, risk: 22 },
+    { name: 'Brightline Legal', email: 'ap@brightline.example', phone: '+14155551234', company: 'Brightline Legal LLP', channel: 'email', avgDays: 28, paidRate: 0.95, risk: 15 },
+    { name: 'Harbor Painting Co', email: 'bills@harborpainting.example', phone: '+14155555678', company: 'Harbor Painting', channel: 'sms', avgDays: 14, paidRate: 0.99, risk: 8 },
+    { name: 'Westgate Advisory', email: 'finance@westgate.example', phone: '+12125559001', company: 'Westgate Advisory', channel: 'email', avgDays: 47, paidRate: 0.78, risk: 62 },
+    { name: 'Northstar Marketing', email: 'ap@northstar.example', phone: '+12125559002', company: 'Northstar Marketing', channel: 'email', avgDays: 65, paidRate: 0.55, risk: 78 },
+    { name: 'Acme Studios', email: 'bills@acmestudio.example', phone: '+13105559003', company: 'Acme Studios', channel: 'email', avgDays: 95, paidRate: 0.32, risk: 88 },
+    { name: 'Riverstone Co.', email: 'hello@riverstone.example', phone: '+447700900123', company: 'Riverstone Co', channel: 'email', avgDays: 21, paidRate: 0.92, risk: 22 },
   ];
   const custMap = new Map<string, string>();
   for (const c of customers) {
@@ -147,12 +147,49 @@ async function seedIfEmpty(client: PGlite) {
     invMap.set(i.number, invId);
     await client.exec(`INSERT INTO invoices (id, org_id, customer_id, number, status, amount, amount_paid, currency, issue_date, due_date, description, created_at, updated_at) VALUES ('${invId}', '${orgId}', '${cid}', '${i.number}', '${status}', ${i.amount}, 0, 'USD', '${issue}', '${due}', 'Design services', '${now}', '${now}')`);
   }
-  const cust = custMap.get('Brightline Legal')!;
-  const paidIssue = new Date(Date.now() - 25 * 86400000).toISOString();
-  const paidDue = new Date(Date.now() + 5 * 86400000).toISOString();
-  const paidId = nanoid();
-  await client.exec(`INSERT INTO invoices (id, org_id, customer_id, number, status, amount, amount_paid, currency, issue_date, due_date, paid_at, description, created_at, updated_at) VALUES ('${paidId}', '${orgId}', '${cust}', 'INV-2395', 'paid', 18000.00, 18000.00, 'USD', '${paidIssue}', '${paidDue}', '${new Date(Date.now() - 18 * 86400000).toISOString()}', 'Brand sprint — paid', '${now}', '${now}')`);
-  await client.exec(`INSERT INTO payments (id, org_id, invoice_id, customer_id, amount, currency, method, paid_at, created_at) VALUES ('${nanoid()}', '${orgId}', '${paidId}', '${cust}', 18000.00, 'USD', 'ach', '${new Date(Date.now() - 18 * 86400000).toISOString()}', '${now}')`);
+  // Paid history. This used to be a single invoice paid `Date.now() - 18 days`,
+  // which is a calendar bug rather than a data choice: for most of any month
+  // that timestamp lands in the PREVIOUS month, so the demo org rendered
+  // "Collected MTD $0.00", a red "-100% vs last month" delta, and a forecast
+  // that apologised for needing 5+ paid invoices to calibrate. The headline
+  // number on the overview page was therefore broken or healthy depending on
+  // which day of the month you happened to look.
+  //
+  // Anchoring to the calendar instead of to an offset fixes that: three
+  // payments are pinned inside the current month and three inside the
+  // previous one, so month-to-date, the month-over-month delta and the DSO
+  // sample are all meaningful on every day of every month. Six paid invoices
+  // also clears the 5-invoice threshold the forecaster needs before it will
+  // report anything better than low confidence.
+  const nowD = new Date();
+  const dayIn = (monthOffset: number, day: number) =>
+    new Date(nowD.getFullYear(), nowD.getMonth() + monthOffset, day, 10, 0, 0);
+  // Clamp to today so a payment is never dated into the future early in the month.
+  const thisMonth = (day: number) => dayIn(0, Math.min(day, nowD.getDate()));
+  const paidInvoices = [
+    { cust: 'Brightline Legal',   number: 'INV-2395', amount: '18000.00', paidAt: dayIn(-1, 12), method: 'ach' },
+    { cust: 'Westgate Advisory',  number: 'INV-2388', amount: '11200.00', paidAt: dayIn(-1, 19), method: 'card' },
+    { cust: 'Riverstone Co.',     number: 'INV-2391', amount: '7400.00',  paidAt: dayIn(-1, 26), method: 'ach' },
+    { cust: 'Harbor Painting Co', number: 'INV-2396', amount: '14600.00', paidAt: thisMonth(3),  method: 'ach' },
+    { cust: 'Northstar Marketing',number: 'INV-2398', amount: '9250.00',  paidAt: thisMonth(9),  method: 'card' },
+    { cust: 'Brightline Legal',   number: 'INV-2400', amount: '16800.00', paidAt: thisMonth(15), method: 'ach' },
+  ];
+  for (const pi of paidInvoices) {
+    const pcid = custMap.get(pi.cust);
+    // Throw rather than `continue`. A typo'd customer name here used to skip
+    // the row silently, which does not fail anything — it just quietly removes
+    // money from the demo org's month-to-date total, and the only symptom is a
+    // headline figure that looks a bit low.
+    if (!pcid) throw new Error(`seed: unknown customer ${pi.cust} for ${pi.number}`);
+    const paidIso = pi.paidAt.toISOString();
+    // Issued ~3 weeks before it was settled, on net-30 terms: paid early, which
+    // is what a book with a 7-day DSO is supposed to look like.
+    const pIssue = new Date(pi.paidAt.getTime() - 21 * 86400000).toISOString();
+    const pDue = new Date(pi.paidAt.getTime() + 9 * 86400000).toISOString();
+    const pid = nanoid();
+    await client.exec(`INSERT INTO invoices (id, org_id, customer_id, number, status, amount, amount_paid, currency, issue_date, due_date, paid_at, description, created_at, updated_at) VALUES ('${pid}', '${orgId}', '${pcid}', '${pi.number}', 'paid', ${pi.amount}, ${pi.amount}, 'USD', '${pIssue}', '${pDue}', '${paidIso}', 'Design services', '${now}', '${now}')`);
+    await client.exec(`INSERT INTO payments (id, org_id, invoice_id, customer_id, amount, currency, method, paid_at, created_at) VALUES ('${nanoid()}', '${orgId}', '${pid}', '${pcid}', ${pi.amount}, 'USD', '${pi.method}', '${paidIso}', '${now}')`);
+  }
   const seqId = nanoid();
   const steps = JSON.stringify([
     { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
@@ -176,27 +213,27 @@ async function seedIfEmpty(client: PGlite) {
 
   // One row per classification so every badge variant is exercised.
   const inbox = [
-    { cust: 'Westgate Advisory', inv: 'INV-2390', cls: 'will_pay_date', from: 'finance@westgate.com',
+    { cust: 'Westgate Advisory', inv: 'INV-2390', cls: 'will_pay_date', from: 'finance@westgate.example',
       subj: 'Re: Invoice INV-2390 is now 38 days past due',
       body: "Apologies for the delay — this slipped when our controller left. It's approved now and goes out in Friday's payment run.",
       sum: 'Confirms payment scheduled for Friday; delay caused by staff turnover.',
       act: 'Log a promise to pay for Friday and pause the sequence until then.', st: 'new', promise: 3 },
-    { cust: 'Harbor Painting Co', inv: 'INV-2402', cls: 'already_paid', from: 'bills@harborpainting.com',
+    { cust: 'Harbor Painting Co', inv: 'INV-2402', cls: 'already_paid', from: 'bills@harborpainting.example',
       subj: 'Re: Quick reminder — Invoice INV-2402',
       body: 'We paid this by bank transfer last week, reference HP-4482. Can you check your account?',
       sum: 'Customer says already paid by bank transfer, ref HP-4482.',
       act: 'Reconcile against the bank feed before sending anything further.', st: 'new', promise: 0 },
-    { cust: 'Acme Studios', inv: 'INV-2370', cls: 'disputed', from: 'bills@acmestudios.com',
+    { cust: 'Acme Studios', inv: 'INV-2370', cls: 'disputed', from: 'bills@acmestudio.example',
       subj: 'Re: Action required: Invoice INV-2370',
       body: "We're not paying until the scope discrepancy is resolved. The SOW covered three deliverables, we were billed for five.",
       sum: 'Disputes the amount — billed for five deliverables against a three-deliverable SOW.',
       act: 'Open a dispute, stop dunning, get the SOW to the account lead.', st: 'handled', promise: 0 },
-    { cust: 'Northstar Marketing', inv: 'INV-2380', cls: 'missing_po', from: 'ap@northstar.io',
+    { cust: 'Northstar Marketing', inv: 'INV-2380', cls: 'missing_po', from: 'ap@northstar.example',
       subj: 'Re: Invoice INV-2380 is 67 days past due',
       body: 'Our AP system rejects anything without a PO number. Please reissue with PO 88-2231 and we can process it.',
       sum: 'Blocked in AP — needs the invoice reissued carrying PO 88-2231.',
       act: 'Reissue with the PO number, then resume the sequence.', st: 'new', promise: 0 },
-    { cust: 'Riverstone Co.', inv: 'INV-2405', cls: 'general_question', from: 'hello@riverstone.co',
+    { cust: 'Riverstone Co.', inv: 'INV-2405', cls: 'general_question', from: 'hello@riverstone.example',
       subj: 'Re: Invoice INV-2405',
       body: 'Do you take ACH? The card fee is steep on an amount this size.',
       sum: 'Asks whether ACH is available instead of card.',

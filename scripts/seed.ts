@@ -46,12 +46,12 @@ async function main() {
 
   // Customers
   const customers = [
-    { name: 'Brightline Legal', email: 'ap@brightlinelegal.com', phone: '+14155551234', company: 'Brightline Legal LLP', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 28, paidRate: 0.95, lastPaidAt: new Date(Date.now() - 12 * 86400000).toISOString(), riskScore: 15 } },
-    { name: 'Harbor Painting Co', email: 'bills@harborpainting.com', phone: '+14155555678', company: 'Harbor Painting', preferredChannel: 'sms' as const, behavior: { avgDaysToPay: 14, paidRate: 0.99, lastPaidAt: new Date(Date.now() - 3 * 86400000).toISOString(), riskScore: 8 } },
-    { name: 'Westgate Advisory', email: 'finance@westgate.com', phone: '+12125559001', company: 'Westgate Advisory', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 47, paidRate: 0.78, lastPaidAt: new Date(Date.now() - 40 * 86400000).toISOString(), riskScore: 62 } },
-    { name: 'Northstar Marketing', email: 'ap@northstar.io', phone: '+12125559002', company: 'Northstar Marketing', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 65, paidRate: 0.55, lastPaidAt: new Date(Date.now() - 70 * 86400000).toISOString(), riskScore: 78 } },
-    { name: 'Acme Studios', email: 'bills@acmestudios.com', phone: '+13105559003', company: 'Acme Studios', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 95, paidRate: 0.32, lastPaidAt: new Date(Date.now() - 95 * 86400000).toISOString(), riskScore: 88 } },
-    { name: 'Riverstone Co.', email: 'hello@riverstone.co', phone: '+447700900123', company: 'Riverstone Co', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 21, paidRate: 0.92, lastPaidAt: new Date(Date.now() - 18 * 86400000).toISOString(), riskScore: 22 } },
+    { name: 'Brightline Legal', email: 'ap@brightline.example', phone: '+14155551234', company: 'Brightline Legal LLP', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 28, paidRate: 0.95, lastPaidAt: new Date(Date.now() - 12 * 86400000).toISOString(), riskScore: 15 } },
+    { name: 'Harbor Painting Co', email: 'bills@harborpainting.example', phone: '+14155555678', company: 'Harbor Painting', preferredChannel: 'sms' as const, behavior: { avgDaysToPay: 14, paidRate: 0.99, lastPaidAt: new Date(Date.now() - 3 * 86400000).toISOString(), riskScore: 8 } },
+    { name: 'Westgate Advisory', email: 'finance@westgate.example', phone: '+12125559001', company: 'Westgate Advisory', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 47, paidRate: 0.78, lastPaidAt: new Date(Date.now() - 40 * 86400000).toISOString(), riskScore: 62 } },
+    { name: 'Northstar Marketing', email: 'ap@northstar.example', phone: '+12125559002', company: 'Northstar Marketing', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 65, paidRate: 0.55, lastPaidAt: new Date(Date.now() - 70 * 86400000).toISOString(), riskScore: 78 } },
+    { name: 'Acme Studios', email: 'bills@acmestudio.example', phone: '+13105559003', company: 'Acme Studios', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 95, paidRate: 0.32, lastPaidAt: new Date(Date.now() - 95 * 86400000).toISOString(), riskScore: 88 } },
+    { name: 'Riverstone Co.', email: 'hello@riverstone.example', phone: '+447700900123', company: 'Riverstone Co', preferredChannel: 'email' as const, behavior: { avgDaysToPay: 21, paidRate: 0.92, lastPaidAt: new Date(Date.now() - 18 * 86400000).toISOString(), riskScore: 22 } },
   ];
 
   const customerRows: schema.Customer[] = [];
