@@ -4,6 +4,24 @@ import Link from 'next/link';
 import { CheckCircle2, ArrowRight, Sparkles, X } from 'lucide-react';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_INCLUDED_ORGS, PRACTICE_SCALE_CROSSOVER_ORGS } from '@/lib/utils';
 import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
+import { type FaqItem } from '@/components/marketing/faq-section';
+
+// The questions this page actually shows, now also the ones it declares.
+// The JSON-LD used to list five generic questions ("Can I cancel anytime?",
+// "What does Collectly charge per invoice?") while the visible section asked
+// eight entirely different and considerably more honest ones — wire transfer
+// only for now, manual invoicing for founding customers, card checkout not
+// live. The visible set is the better content, so it is the source.
+const FAQS: FaqItem[] = [
+            { q: 'Do you support multi-entity or multiple companies?', a: `That is what the ${PLAN_PRICING.growth.name} plan is: up to ${PRACTICE_INCLUDED_ORGS} client organizations under one account with consolidated AR reporting, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. ${PLAN_PRICING.scale.name} adds per-entity workflows and role isolation.` },
+            { q: 'What payment methods does the portal accept?', a: 'Wire transfer today, for every customer. Card, ACH, and mobile-money rails are built but temporarily disabled while we finish routing payments to your own account instead of ours — no timeline promises until that\'s done.' },
+            { q: 'Is there really a free trial?', a: `Yes. 14 days, full access to ${PLAN_PRICING.growth.name}-tier features, no credit card required.` },
+            { q: 'How does billing work?', a: `Founding customers get a manual invoice after the 14-day trial (bank transfer, Wise, or PayPal) at $${FOUNDING.monthly('growth')}/mo for ${PLAN_PRICING.growth.name}. Self-serve card checkout isn't live yet — no committed date.` },
+            { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
+            { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing — David reviews and sends an invoice within 12 hours. Not yet automatic or self-serve.' },
+            { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD, EUR in ${PLAN_PRICING.growth.name}. KES, NGN, ZAR in ${PLAN_PRICING.scale.name} or custom.` },
+            { q: 'Can I switch from another tool?', a: 'Yes. Free migration from QuickBooks, Xero, FreshBooks, Wave, and most others.' },
+];
 
 export const metadata = pageMetadata({
   title: 'Pricing — A/R automation priced per client book, from $149/mo',
@@ -29,28 +47,7 @@ export const metadata = pageMetadata({
 // Both are emitted in one array so neither blocks the other.
 const pricingJsonLd = JSON.stringify([
   pricingProductJsonLd(),
-  faqJsonLd([
-    {
-      q: 'How much does Collectly cost?',
-      a: `A single business is $${PLAN_PRICING.starter.monthly}/mo for one organization. A practice is $${PLAN_PRICING.growth.monthly}/mo covering up to ${PRACTICE_INCLUDED_ORGS} client organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. Founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months. No per-invoice fees.`,
-    },
-    {
-      q: 'Is there a free trial?',
-      a: `Yes. 14 days, no credit card required, founder-assisted setup. Founding pricing auto-applies at trial conversion while the first ${FOUNDING.seats} places are open.`,
-    },
-    {
-      q: 'What does Collectly charge per invoice?',
-      a: 'Nothing. No per-invoice fees, no per-reminder fees. SMS is pass-through; payment processors charge their standard processing fees.',
-    },
-    {
-      q: 'What is included in the Practice plan?',
-      a: `Up to ${PRACTICE_INCLUDED_ORGS} Xero or QuickBooks client organizations, unlimited users, unlimited invoices, per-client branding and tone, consolidated AR across every client book, email and SMS sequences, approval mode, reply detection, promise-to-pay tracking, dispute classification, and founder-assisted setup.`,
-    },
-    {
-      q: 'Can I cancel anytime?',
-      a: 'Yes, no annual contract. During the private beta, billing is manual (founder-invoiced) rather than self-serve — email the address on the contact page to cancel or downgrade and it\'s handled within 12 hours.',
-    },
-  ]),
+  faqJsonLd(FAQS),
 ]);
 
 export default function PricingPage() {
@@ -128,16 +125,7 @@ export default function PricingPage() {
       <section className="container-page py-20">
         <h2 className="h2 text-center">Frequently asked</h2>
         <div className="mt-10 max-w-2xl mx-auto space-y-4">
-          {[
-            { q: 'Do you support multi-entity or multiple companies?', a: `That is what the ${PLAN_PRICING.growth.name} plan is: up to ${PRACTICE_INCLUDED_ORGS} client organizations under one account with consolidated AR reporting, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. ${PLAN_PRICING.scale.name} adds per-entity workflows and role isolation.` },
-            { q: 'What payment methods does the portal accept?', a: 'Wire transfer today, for every customer. Card, ACH, and mobile-money rails are built but temporarily disabled while we finish routing payments to your own account instead of ours — no timeline promises until that\'s done.' },
-            { q: 'Is there really a free trial?', a: `Yes. 14 days, full access to ${PLAN_PRICING.growth.name}-tier features, no credit card required.` },
-            { q: 'How does billing work?', a: `Founding customers get a manual invoice after the 14-day trial (bank transfer, Wise, or PayPal) at $${FOUNDING.monthly('growth')}/mo for ${PLAN_PRICING.growth.name}. Self-serve card checkout isn't live yet — no committed date.` },
-            { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
-            { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing — David reviews and sends an invoice within 12 hours. Not yet automatic or self-serve.' },
-            { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD, EUR in ${PLAN_PRICING.growth.name}. KES, NGN, ZAR in ${PLAN_PRICING.scale.name} or custom.` },
-            { q: 'Can I switch from another tool?', a: 'Yes. Free migration from QuickBooks, Xero, FreshBooks, Wave, and most others.' },
-          ].map((f) => (
+          {FAQS.map((f) => (
             <details key={f.q} className="card group">
               <summary className="cursor-pointer font-semibold text-ink-900 list-none flex items-center justify-between">{f.q}<span className="text-ink-400 group-open:rotate-45 transition-transform">+</span></summary>
               <p className="mt-2 text-sm text-ink-600">{f.a}</p>

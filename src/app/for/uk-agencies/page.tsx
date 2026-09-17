@@ -2,45 +2,15 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS } from '@/lib/utils';
 import { CheckCircle2, ArrowRight, MessageSquare, ShieldCheck, FileText } from 'lucide-react';
 import Link from 'next/link';
 
-export const metadata = pageMetadata({
-  title: 'A/R automation for UK agencies on Xero — founded-pilot offer',
-  description:
-    'AI-native accounts-receivable automation for UK agencies and consultancies ' +
-    'on Xero. Built for the long tail: 5-30 person teams, monthly B2B invoices, ' +
-    'no full-time credit controller. From £40/mo flat. Founder-assisted pilot.',
-  path: '/for/uk-agencies',
-  image: '/og-for-uk-agencies.png',
-  keywords: [
-    'AR automation UK agencies',
-    'Xero invoice reminder UK',
-    'late invoice payment UK agency',
-    'UK SME debt recovery',
-    'UK agency bookkeeping',
-    'Small Business Commissioner',
-    'UK Prompt Payment Code',
-    'invoice chasing UK Xero',
-  ],
-});
-
-// UK-specific landing page. Targeted at the 90-day plan beachhead.
-// Uses GBP pricing (roughly 0.80 GBP to the USD at time of writing) and UK-specific
-// payment rail cues (BACS) without violating any FCA / ICO guidance —
-// Collectly does not chase consumers, only B2B invoices for SMBs.
-const ukJsonLd = JSON.stringify([
-  webPageJsonLd({
-    title: 'A/R automation for UK agencies on Xero',
-    description:
-      'How Collectly handles accounts receivable for UK agencies and ' +
-      'consultancies on Xero. BACS, Faster Payments, and GoCardless for ' +
-      'branded payment portals. £40/mo founding-customer rate.',
-    path: '/for/uk-agencies',
-  }),
-  softwareAppJsonLd(),
-  faqJsonLd([
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup and the visible
+// <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
     {
       q: 'Why are UK agencies owed so much in unpaid invoices?',
       a: 'According to Xero\'s analysis of 440,000 UK small businesses in early ' +
@@ -87,7 +57,43 @@ const ukJsonLd = JSON.stringify([
          `fees, no setup fees, no SMS markup. Cancel any time. The first ${FOUNDING.seats} ` +
          `founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months.`,
     },
-  ]),
+  ];
+
+export const metadata = pageMetadata({
+  title: 'A/R automation for UK agencies on Xero — founded-pilot offer',
+  description:
+    'AI-native accounts-receivable automation for UK agencies and consultancies ' +
+    'on Xero. Built for the long tail: 5-30 person teams, monthly B2B invoices, ' +
+    'no full-time credit controller. From £40/mo flat. Founder-assisted pilot.',
+  path: '/for/uk-agencies',
+  image: '/og-for-uk-agencies.png',
+  keywords: [
+    'AR automation UK agencies',
+    'Xero invoice reminder UK',
+    'late invoice payment UK agency',
+    'UK SME debt recovery',
+    'UK agency bookkeeping',
+    'Small Business Commissioner',
+    'UK Prompt Payment Code',
+    'invoice chasing UK Xero',
+  ],
+});
+
+// UK-specific landing page. Targeted at the 90-day plan beachhead.
+// Uses GBP pricing (roughly 0.80 GBP to the USD at time of writing) and UK-specific
+// payment rail cues (BACS) without violating any FCA / ICO guidance —
+// Collectly does not chase consumers, only B2B invoices for SMBs.
+const ukJsonLd = JSON.stringify([
+  webPageJsonLd({
+    title: 'A/R automation for UK agencies on Xero',
+    description:
+      'How Collectly handles accounts receivable for UK agencies and ' +
+      'consultancies on Xero. BACS, Faster Payments, and GoCardless for ' +
+      'branded payment portals. £40/mo founding-customer rate.',
+    path: '/for/uk-agencies',
+  }),
+  softwareAppJsonLd(),
+  faqJsonLd(FAQS),
 ]);
 
 export default function ForUkAgenciesPage() {
@@ -178,6 +184,7 @@ export default function ForUkAgenciesPage() {
           </div>
         </div>
       </section>
+      <FaqSection items={FAQS} title="UK agency A/R questions" />
       <MarketingFooter />
     </div>
   );

@@ -5,6 +5,29 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { PlaybookForm } from './playbook-form';
 import { Sparkles, CheckCircle2, Mail, TrendingDown } from 'lucide-react';
 import { pageMetadata, faqJsonLd, howToJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
+
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup and the visible
+// <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
+    {
+      q: 'Is this playbook free?',
+      a: 'Yes, fully free — no email gate, no upsell. We ask for an email address in exchange so we can send the 7-page PDF.',
+    },
+    {
+      q: 'Do I need a full-time credit controller to follow it?',
+      a: 'No. The 5 steps are designed for founders, operations leads, and finance managers who handle A/R alongside other work. Most steps take less than 30 minutes per week after the initial setup.',
+    },
+    {
+      q: 'Does this work for non-Xero businesses?',
+      a: 'Yes — the methods apply to any small B2B services business. Step 2 references Xero and QuickBooks because that is where most 5-30 person agencies and consultancies keep their books, but the principles are platform-neutral.',
+    },
+    {
+      q: 'What is DSO and why does it matter?',
+      a: 'Days Sales Outstanding (DSO) is the average number of days between sending an invoice and receiving payment. Lower DSO means less working capital locked up in unpaid invoices. For a 5-30 person agency on a 30-day payment cycle, cutting DSO from 45 to 18 frees up roughly $90K of working capital on $1M annual revenue.',
+    },
+  ];
 
 export const metadata: Metadata = pageMetadata({
   title: 'Free guide — 5-step method to cut DSO from 45 days to 18',
@@ -37,24 +60,7 @@ const playbookJsonLd = JSON.stringify([
       { name: 'Measure DSO weekly, not monthly', text: 'Track DSO every Monday. Catch trends early. A typical 5-person services business takes DSO from 45 to 18 days in 90 days. That\'s $90K+ freed up for the same revenue.' },
     ],
   }),
-  faqJsonLd([
-    {
-      q: 'Is this playbook free?',
-      a: 'Yes, fully free — no email gate, no upsell. We ask for an email address in exchange so we can send the 7-page PDF.',
-    },
-    {
-      q: 'Do I need a full-time credit controller to follow it?',
-      a: 'No. The 5 steps are designed for founders, operations leads, and finance managers who handle A/R alongside other work. Most steps take less than 30 minutes per week after the initial setup.',
-    },
-    {
-      q: 'Does this work for non-Xero businesses?',
-      a: 'Yes — the methods apply to any small B2B services business. Step 2 references Xero and QuickBooks because that is where most 5-30 person agencies and consultancies keep their books, but the principles are platform-neutral.',
-    },
-    {
-      q: 'What is DSO and why does it matter?',
-      a: 'Days Sales Outstanding (DSO) is the average number of days between sending an invoice and receiving payment. Lower DSO means less working capital locked up in unpaid invoices. For a 5-30 person agency on a 30-day payment cycle, cutting DSO from 45 to 18 frees up roughly $90K of working capital on $1M annual revenue.',
-    },
-  ]),
+  faqJsonLd(FAQS),
 ]);
 
 const STEPS = [
@@ -171,6 +177,7 @@ export default function PlaybookPage() {
           </div>
         </section>
       </main>
+      <FaqSection items={FAQS} title="About the playbook" />
       <MarketingFooter />
     </>
   );

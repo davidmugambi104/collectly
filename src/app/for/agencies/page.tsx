@@ -2,42 +2,15 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, PRACTICE_INCLUDED_ORGS } from '@/lib/utils';
 import { CheckCircle2, Sparkles, ArrowRight, ShieldCheck, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
-export const metadata = pageMetadata({
-  title: 'A/R automation for agencies on Xero — stop chasing late invoices',
-  description:
-    'AR automation built for 5-30 person agencies and consultancies on Xero. ' +
-    'Tone-aware AI reminders, reply-or-pay pause, promise-to-pay tracking, and ' +
-    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo.`,
-  path: '/for/agencies',
-  keywords: [
-    'AR automation for agencies',
-    'Xero invoice reminder agency',
-    'agency accounts receivable',
-    'design agency invoice chasing',
-    'marketing agency AR tool',
-    'agency bookkeeping',
-    'small agency finance',
-  ],
-});
-
-// Industry landing page. Same SoftwareApplication as the root, scoped
-// to the agency vertical. FAQ targets the long-tail queries people search
-// before adopting an A/R tool inside an agency.
-const agenciesJsonLd = JSON.stringify([
-  webPageJsonLd({
-    title: 'A/R automation for agencies on Xero',
-    description:
-      'How Collectly handles accounts receivable for 5-30 person agencies: ' +
-      'tone-aware AI reminders, Xero integration, reply-or-pay pause, and ' +
-      'promise-to-pay tracking.',
-    path: '/for/agencies',
-  }),
-  softwareAppJsonLd(),
-  faqJsonLd([
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup and the visible
+// <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
     {
       q: 'How much time does an agency typically spend chasing invoices?',
       a: 'For a 5-30 person agency on a 30-day payment cycle, the founder or ' +
@@ -75,7 +48,40 @@ const agenciesJsonLd = JSON.stringify([
          'worklist so the team can resolve the dispute (often: confirm the ' +
          'cancellation date, update Xero, and write off or refund as needed).',
     },
-  ]),
+  ];
+
+export const metadata = pageMetadata({
+  title: 'A/R automation for agencies on Xero — stop chasing late invoices',
+  description:
+    'AR automation built for 5-30 person agencies and consultancies on Xero. ' +
+    'Tone-aware AI reminders, reply-or-pay pause, promise-to-pay tracking, and ' +
+    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo.`,
+  path: '/for/agencies',
+  keywords: [
+    'AR automation for agencies',
+    'Xero invoice reminder agency',
+    'agency accounts receivable',
+    'design agency invoice chasing',
+    'marketing agency AR tool',
+    'agency bookkeeping',
+    'small agency finance',
+  ],
+});
+
+// Industry landing page. Same SoftwareApplication as the root, scoped
+// to the agency vertical. FAQ targets the long-tail queries people search
+// before adopting an A/R tool inside an agency.
+const agenciesJsonLd = JSON.stringify([
+  webPageJsonLd({
+    title: 'A/R automation for agencies on Xero',
+    description:
+      'How Collectly handles accounts receivable for 5-30 person agencies: ' +
+      'tone-aware AI reminders, Xero integration, reply-or-pay pause, and ' +
+      'promise-to-pay tracking.',
+    path: '/for/agencies',
+  }),
+  softwareAppJsonLd(),
+  faqJsonLd(FAQS),
 ]);
 
 export default function ForAgenciesPage() {
@@ -168,6 +174,7 @@ export default function ForAgenciesPage() {
           </div>
         </div>
       </section>
+      <FaqSection items={FAQS} title="Agency A/R questions" />
       <MarketingFooter />
     </div>
   );

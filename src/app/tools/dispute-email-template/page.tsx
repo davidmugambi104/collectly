@@ -2,8 +2,43 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { DisputeTemplateList } from '@/components/tools/dispute-template-list';
+
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup and the visible
+// <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
+    {
+      q: 'When should I send a dispute reply email?',
+      a: 'As soon as the customer raises the dispute. Prompt, specific ' +
+         'replies close disputes up to 2x faster than waiting until the next ' +
+         'reminder cycle. The point of a dispute reply is to acknowledge ' +
+         'and commit to a fix-date, not to argue.',
+    },
+    {
+      q: 'What is the most common invoice dispute?',
+      a: 'Missing purchase order (PO) — accounts payable teams cannot ' +
+         'release payment without a matching PO. The dispute reply should ' +
+         'confirm whether the PO exists, request a copy, or note that ' +
+         'future invoices will require a PO on file before being issued.',
+    },
+    {
+      q: 'Should I ever pay a pricing dispute immediately?',
+      a: 'No. A pricing dispute without a written acknowledgement (a ' +
+         'quote, statement of work, or signed estimate) will recur on ' +
+         'every invoice. Resolve the dispute by attaching the original ' +
+         'pricing reference, not by adjusting the bill ad-hoc.',
+    },
+    {
+      q: 'How long does an invoice dispute typically take to resolve?',
+      a: 'For small businesses on Xero: 5-10 business days. The Collectly ' +
+         'dispute classifier pauses reminders automatically during the ' +
+         'dispute window so customers never receive a redundant reminder ' +
+         'while the dispute is open.',
+    },
+  ];
 
 // Free tool page — keyword target: "dispute email template", "invoice
 // dispute template", "client dispute response", "purchase order dispute
@@ -42,36 +77,7 @@ const disputeJsonLd = JSON.stringify([
     path: '/tools/dispute-email-template',
   }),
   softwareAppJsonLd(),
-  faqJsonLd([
-    {
-      q: 'When should I send a dispute reply email?',
-      a: 'As soon as the customer raises the dispute. Prompt, specific ' +
-         'replies close disputes up to 2x faster than waiting until the next ' +
-         'reminder cycle. The point of a dispute reply is to acknowledge ' +
-         'and commit to a fix-date, not to argue.',
-    },
-    {
-      q: 'What is the most common invoice dispute?',
-      a: 'Missing purchase order (PO) — accounts payable teams cannot ' +
-         'release payment without a matching PO. The dispute reply should ' +
-         'confirm whether the PO exists, request a copy, or note that ' +
-         'future invoices will require a PO on file before being issued.',
-    },
-    {
-      q: 'Should I ever pay a pricing dispute immediately?',
-      a: 'No. A pricing dispute without a written acknowledgement (a ' +
-         'quote, statement of work, or signed estimate) will recur on ' +
-         'every invoice. Resolve the dispute by attaching the original ' +
-         'pricing reference, not by adjusting the bill ad-hoc.',
-    },
-    {
-      q: 'How long does an invoice dispute typically take to resolve?',
-      a: 'For small businesses on Xero: 5-10 business days. The Collectly ' +
-         'dispute classifier pauses reminders automatically during the ' +
-         'dispute window so customers never receive a redundant reminder ' +
-         'while the dispute is open.',
-    },
-  ]),
+  faqJsonLd(FAQS),
 ]);
 
 const TEMPLATES = [
@@ -194,6 +200,7 @@ export default function DisputeTemplatePage() {
           </div>
         </div>
       </section>
+      <FaqSection items={FAQS} title="Using these templates" />
       <MarketingFooter />
     </div>
   );

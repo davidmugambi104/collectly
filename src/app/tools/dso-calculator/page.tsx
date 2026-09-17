@@ -2,45 +2,14 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { CheckCircle2, ArrowRight, Clock, Calculator, TrendingDown, FileText } from 'lucide-react';
 import { DsoCalculator } from './client';
 
-// Free tool — DSO calculator + benchmark explainer. SEO target:
-// "DSO calculator", "calculate days sales outstanding", "DSO formula",
-// "average DSO for agencies", "DSO benchmark". The page also includes
-// worked examples for agencies, consultancies, and SaaS — three of the
-// industries Collectly targets.
-
-export const metadata = pageMetadata({
-  title: 'DSO calculator + benchmark for small agencies and consultancies',
-  description:
-    'Calculate your Days Sales Outstanding (DSO) instantly and compare ' +
-    'to UK, US, AU, and CA benchmarks for small agencies and consultancies. ' +
-    'Formula explained, worked examples included, and a free A/R audit ' +
-    'to find what is slowing your cash flow.',
-  path: '/tools/dso-calculator',
-  image: '/og-ar-audit.png',
-  keywords: [
-    'DSO calculator',
-    'days sales outstanding formula',
-    'calculate DSO',
-    'small business DSO benchmark',
-    'agency DSO average',
-    'consultancy DSO',
-    'UK SMB late payment',
-  ],
-});
-
-const dsoJsonLd = JSON.stringify([
-  webPageJsonLd({
-    title: 'DSO calculator + benchmark for small agencies and consultancies',
-    description:
-      'Calculate DSO and compare to industry benchmarks for small agencies ' +
-      'and consultancies.',
-    path: '/tools/dso-calculator',
-  }),
-  softwareAppJsonLd(),
-  faqJsonLd([
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup and the visible
+// <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
     {
       q: 'How is DSO calculated?',
       a: 'DSO = (Accounts Receivable ÷ Total Credit Sales) × Number of Days. ' +
@@ -83,7 +52,44 @@ const dsoJsonLd = JSON.stringify([
          'benchmark for your specific industry is the comparison that ' +
          'actually matters — not the all-industry average.',
     },
-  ]),
+  ];
+
+// Free tool — DSO calculator + benchmark explainer. SEO target:
+// "DSO calculator", "calculate days sales outstanding", "DSO formula",
+// "average DSO for agencies", "DSO benchmark". The page also includes
+// worked examples for agencies, consultancies, and SaaS — three of the
+// industries Collectly targets.
+
+export const metadata = pageMetadata({
+  title: 'DSO calculator + benchmark for small agencies and consultancies',
+  description:
+    'Calculate your Days Sales Outstanding (DSO) instantly and compare ' +
+    'to UK, US, AU, and CA benchmarks for small agencies and consultancies. ' +
+    'Formula explained, worked examples included, and a free A/R audit ' +
+    'to find what is slowing your cash flow.',
+  path: '/tools/dso-calculator',
+  image: '/og-ar-audit.png',
+  keywords: [
+    'DSO calculator',
+    'days sales outstanding formula',
+    'calculate DSO',
+    'small business DSO benchmark',
+    'agency DSO average',
+    'consultancy DSO',
+    'UK SMB late payment',
+  ],
+});
+
+const dsoJsonLd = JSON.stringify([
+  webPageJsonLd({
+    title: 'DSO calculator + benchmark for small agencies and consultancies',
+    description:
+      'Calculate DSO and compare to industry benchmarks for small agencies ' +
+      'and consultancies.',
+    path: '/tools/dso-calculator',
+  }),
+  softwareAppJsonLd(),
+  faqJsonLd(FAQS),
 ]);
 
 const BENCHMARKS = [
@@ -267,6 +273,7 @@ export default function DsoCalculatorPage() {
           </div>
         </div>
       </section>
+      <FaqSection items={FAQS} title="About DSO" />
       <MarketingFooter />
     </div>
   );

@@ -2,38 +2,15 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, PRACTICE_INCLUDED_ORGS } from '@/lib/utils';
 import { CheckCircle2, ArrowRight, MessageSquare, ShieldCheck, FileText } from 'lucide-react';
 import Link from 'next/link';
 
-export const metadata = pageMetadata({
-  title: 'A/R automation for consultancies on Xero — founder-assisted pilot',
-  description:
-    'Built for 5-30 person consultancies and boutique advisory firms on Xero. ' +
-    'AI tone-aware dunning, reply-or-pay pause, promise-to-pay tracking, and ' +
-    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo. Founder-assisted onboarding for ` +
-    'agencies, consultancies and bookkeeping practices.',
-  path: '/for/consultancies',
-  keywords: [
-    'AR automation for consultancies',
-    'consulting invoice reminder',
-    'consultancy bookkeeping Xero',
-    'boutique advisory A/R',
-    'consulting firm late invoice',
-    'professional services finance',
-  ],
-});
-
-const consultanciesJsonLd = JSON.stringify([
-  webPageJsonLd({
-    title: 'A/R automation for consultancies on Xero',
-    description:
-      'How Collectly handles accounts receivable for 5-30 person consultancies ' +
-      'and boutique advisory firms on Xero and QuickBooks.',
-    path: '/for/consultancies',
-  }),
-  softwareAppJsonLd(),
-  faqJsonLd([
+// Module-local, not exported: a Next.js page may only carry the
+// framework's own named exports. Both the FAQPage markup and the visible
+// <FaqSection> read this one array.
+const FAQS: FaqItem[] = [
     {
       q: 'How is consultancy invoicing different from agency invoicing?',
       a: 'Consultancies and boutique advisory firms typically invoice on longer ' +
@@ -70,7 +47,36 @@ const consultanciesJsonLd = JSON.stringify([
          'AI models on customer data. See the public AI-data disclosure in our ' +
          'security page for the full scope of what is and is not used.',
     },
-  ]),
+  ];
+
+export const metadata = pageMetadata({
+  title: 'A/R automation for consultancies on Xero — founder-assisted pilot',
+  description:
+    'Built for 5-30 person consultancies and boutique advisory firms on Xero. ' +
+    'AI tone-aware dunning, reply-or-pay pause, promise-to-pay tracking, and ' +
+    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo. Founder-assisted onboarding for ` +
+    'agencies, consultancies and bookkeeping practices.',
+  path: '/for/consultancies',
+  keywords: [
+    'AR automation for consultancies',
+    'consulting invoice reminder',
+    'consultancy bookkeeping Xero',
+    'boutique advisory A/R',
+    'consulting firm late invoice',
+    'professional services finance',
+  ],
+});
+
+const consultanciesJsonLd = JSON.stringify([
+  webPageJsonLd({
+    title: 'A/R automation for consultancies on Xero',
+    description:
+      'How Collectly handles accounts receivable for 5-30 person consultancies ' +
+      'and boutique advisory firms on Xero and QuickBooks.',
+    path: '/for/consultancies',
+  }),
+  softwareAppJsonLd(),
+  faqJsonLd(FAQS),
 ]);
 
 export default function ForConsultanciesPage() {
@@ -164,6 +170,7 @@ export default function ForConsultanciesPage() {
           </div>
         </div>
       </section>
+      <FaqSection items={FAQS} title="Consultancy A/R questions" />
       <MarketingFooter />
     </div>
   );
