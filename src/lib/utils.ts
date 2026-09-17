@@ -94,6 +94,23 @@ export const COUNTRY_CURRENCY: Record<string, string> = {
 export const PRACTICE_INCLUDED_ORGS = 10;
 export const PRACTICE_EXTRA_ORG_MONTHLY = 25;
 
+// Practice Scale's allowance, and the monthly prices the two practice tiers
+// charge. Named rather than inlined so the allowance is written once: the copy
+// below builds its prose from it, so a cap can no longer say one thing on the
+// pricing page and another on the customer's own usage meter.
+export const PRACTICE_SCALE_INCLUDED_ORGS = 100;
+const PRACTICE_MONTHLY = 399;
+const PRACTICE_SCALE_MONTHLY = 999;
+
+// The book count where Practice-plus-overage stops being the cheaper plan.
+// Derived, not written down: it falls out of the two prices and the per-org
+// rate, so repricing any of the three moves it automatically instead of
+// leaving a stale number in the marketing copy. At exactly this count the two
+// plans cost the same; past it Scale wins.
+export const PRACTICE_SCALE_CROSSOVER_ORGS =
+  PRACTICE_INCLUDED_ORGS +
+  Math.ceil((PRACTICE_SCALE_MONTHLY - PRACTICE_MONTHLY) / PRACTICE_EXTRA_ORG_MONTHLY);
+
 // Keys are pinned to the db schema's plan_tier enum (starter | growth |
 // scale | enterprise) as a literal duplicate rather than importing
 // PlanTier from @/db/schema, which would create a circular import
@@ -127,10 +144,10 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
     orgs: '1 organization',
     includedOrgs: 1,
     users: 3,
-    features: ['AR aging dashboard', 'AI dunning (email + SMS)', 'Payment portal', 'Xero or QuickBooks', '3 users', 'Unlimited invoices'],
+    features: ['AR aging dashboard', 'AI dunning (email + SMS)', 'Payment portal', 'Xero or QuickBooks', 'Customer risk scoring', 'DSO tracking', '3 users', 'Unlimited invoices'],
   },
   growth: {
-    monthly: 399,
+    monthly: PRACTICE_MONTHLY,
     name: 'Practice',
     popular: true,
     audience: 'Bookkeepers and accountants chasing AR across client books',
@@ -140,11 +157,11 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
     features: ['Everything in Single business', 'Per-client branding and tone', 'Consolidated AR across all client books', 'Cash-flow forecast', 'Multi-currency', 'Unlimited users'],
   },
   scale: {
-    monthly: 999,
+    monthly: PRACTICE_SCALE_MONTHLY,
     name: 'Practice Scale',
-    audience: 'Practices past 20 client organizations',
-    orgs: 'Up to 40 client organizations',
-    includedOrgs: 40,
+    audience: `Practices past ${PRACTICE_SCALE_CROSSOVER_ORGS} client books, or any practice that needs API access and SSO`,
+    orgs: `Up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations`,
+    includedOrgs: PRACTICE_SCALE_INCLUDED_ORGS,
     users: 'unlimited',
     features: ['Everything in Practice', 'AI collections concierge', 'Custom workflows', 'API access', 'SSO', 'Priority support'],
   },

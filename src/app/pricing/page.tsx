@@ -2,7 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, Sparkles, X } from 'lucide-react';
-import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
+import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_INCLUDED_ORGS, PRACTICE_SCALE_CROSSOVER_ORGS } from '@/lib/utils';
 import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
 
 export const metadata = pageMetadata({
@@ -105,7 +105,7 @@ export default function PricingPage() {
         </div>
 
         <div className="mt-10 max-w-2xl mx-auto text-center">
-          <p className="text-sm text-ink-600">Past {PRACTICE_INCLUDED_ORGS} client organizations? {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo for up to 40 books, and adds API access and SSO. <Link href="/contact" className="link">Talk to sales</Link>.</p>
+          <p className="text-sm text-ink-600">{PLAN_PRICING.growth.name} keeps going past {PRACTICE_INCLUDED_ORGS} books at ${PRACTICE_EXTRA_ORG_MONTHLY} each, and stays the cheaper option until {PRACTICE_SCALE_CROSSOVER_ORGS}. Past that, {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo flat for up to {PRACTICE_SCALE_INCLUDED_ORGS} books, and adds API access and SSO. <Link href="/contact" className="link">Talk to sales</Link>.</p>
         </div>
       </section>
 

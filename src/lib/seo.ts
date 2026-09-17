@@ -13,7 +13,7 @@
 // pulls metadata through `pageMetadata()` or one of the typed builders below.
 
 import type { Metadata } from 'next';
-import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
+import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_INCLUDED_ORGS } from '@/lib/utils';
 
 export const BRAND = 'Collectly';
 // All absolute URLs returned to crawlers must use the live production
@@ -315,7 +315,7 @@ export function pricingProductJsonLd(): JsonLdThing {
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
         description:
-          `${PLAN_PRICING.scale.audience}. Up to 40 client organizations, plus API ` +
+          `${PLAN_PRICING.scale.audience}. Up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations, plus API ` +
           'access, SSO, custom workflows, and priority support.',
         url: `${SITE.url}/pricing`,
       },
