@@ -2,16 +2,16 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, Sparkles, X } from 'lucide-react';
-import { PLAN_PRICING } from '@/lib/utils';
+import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Pricing — flat-rate A/R automation, from $49/mo',
+  title: 'Pricing — A/R automation priced per client book, from $149/mo',
   description:
-    'Honest pricing for Collectly. Founding-customer rate is $49/mo flat ' +
-    '(locked for life for the first 20 customers). After that, plans start ' +
-    'at $99/mo per organization with practice plans available. No per-invoice ' +
-    'fees, no setup fees, no hidden costs. Cancel anytime.',
+    'Honest pricing for Collectly. $149/mo for a single business, $399/mo for ' +
+    'a practice covering up to 10 client organizations ($40 a book). Founding ' +
+    'cohort takes 40% off for 12 months. No per-invoice fees, no setup fees, ' +
+    'no hidden costs. Cancel anytime.',
   path: '/pricing',
   image: '/og-pricing.png',
   keywords: [
@@ -32,23 +32,23 @@ const pricingJsonLd = JSON.stringify([
   faqJsonLd([
     {
       q: 'How much does Collectly cost?',
-      a: 'Founding customers pay $49/mo flat. After the founding tier closes, plans start at $99/mo per organization, $199/mo for up to three organizations, and $499/mo for accounting practices managing ten client orgs. No per-invoice fees.',
+      a: `A single business is $${PLAN_PRICING.starter.monthly}/mo for one organization. A practice is $${PLAN_PRICING.growth.monthly}/mo covering up to ${PRACTICE_INCLUDED_ORGS} client organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. Founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months. No per-invoice fees.`,
     },
     {
       q: 'Is there a free trial?',
-      a: 'Yes. 14 days, no credit card required, founder-assisted setup. Founding-customer pricing ($49/mo) auto-applies at trial conversion.',
+      a: `Yes. 14 days, no credit card required, founder-assisted setup. Founding pricing auto-applies at trial conversion while the first ${FOUNDING.seats} places are open.`,
     },
     {
       q: 'What does Collectly charge per invoice?',
       a: 'Nothing. No per-invoice fees, no per-reminder fees. SMS is pass-through; payment processors charge their standard processing fees.',
     },
     {
-      q: 'What is included in the founding $49/mo price?',
-      a: 'One Xero (or QuickBooks) organization, up to three users, up to 150 monitored invoices, email sequences, approval mode, reply detection, promise-to-pay tracking, dispute classification, founder-assisted setup, and direct support for the founding period.',
+      q: 'What is included in the Practice plan?',
+      a: `Up to ${PRACTICE_INCLUDED_ORGS} Xero or QuickBooks client organizations, unlimited users, unlimited invoices, per-client branding and tone, consolidated AR across every client book, email and SMS sequences, approval mode, reply detection, promise-to-pay tracking, dispute classification, and founder-assisted setup.`,
     },
     {
       q: 'Can I cancel anytime?',
-      a: 'Yes, no annual contract. During the private beta, billing is manual (founder-invoiced) rather than self-serve — email david@getcollectly.app to cancel or downgrade and it\'s handled within 12 hours.',
+      a: 'Yes, no annual contract. During the private beta, billing is manual (founder-invoiced) rather than self-serve — email the address on the contact page to cancel or downgrade and it\'s handled within 12 hours.',
     },
   ]),
 ]);
@@ -61,13 +61,13 @@ export default function PricingPage() {
       <section className="container-page pt-16 pb-12 text-center">
         <p className="eyebrow">Pricing</p>
         <h1 className="mt-3 h1">Honest pricing.<br/>Built for the long tail.</h1>
-        <p className="mt-5 lead max-w-2xl mx-auto">14-day trial, founder-assisted setup. Cancel anytime. No per-invoice fees, no setup costs, no hidden anything.</p>
-        <p className="mt-3 text-sm text-brand-700 font-medium">Founding customer pricing: $49/mo for the first 20 signups, then $99/mo.</p>
+        <p className="mt-5 lead max-w-2xl mx-auto">Priced per client book, not per invoice. 14-day trial, founder-assisted setup. Cancel anytime. No per-invoice fees, no setup costs, no hidden anything.</p>
+        <p className="mt-3 text-sm text-brand-700 font-medium">Founding cohort: {FOUNDING.discountPct}% off for {FOUNDING.months} months, first {FOUNDING.seats} customers.</p>
 
         <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
           {[
-            { label: 'Collectly', price: '$49/mo flat', note: 'founding customer price · first 20 only', highlight: true },
-            { label: 'Chaser', price: '~$259/mo', note: 'starts 5× higher · source: chaser.com' },
+            { label: 'Collectly Practice', price: `$${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo per client book`, note: `$${PLAN_PRICING.growth.monthly}/mo covering ${PRACTICE_INCLUDED_ORGS} organizations`, highlight: true },
+            { label: 'Chaser', price: '~$259/mo', note: 'entry tier, one organization · source: chaser.com' },
           ].map((c) => (
             <div key={c.label} className={`rounded-xl border px-4 py-3 text-left ${c.highlight ? 'border-emerald-300 bg-emerald-50/40' : 'border-ink-200 bg-white'}`}>
               <div className="text-xs font-semibold uppercase tracking-wider text-ink-500">{c.label}</div>
@@ -88,17 +88,16 @@ export default function PricingPage() {
                 {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><span className="badge-success"><Sparkles className="h-3 w-3 mr-1" />Most popular</span></div>}
                 <div className="text-sm text-ink-500">{p.name}</div>
                 <div className="mt-1 text-5xl font-display font-bold text-ink-950">${p.monthly}<span className="text-base font-normal text-ink-500">/mo</span></div>
-                <div className="mt-1 text-sm text-ink-600">
-                  {k === 'starter' && 'First 20 agencies and consultancies · all features unlocked · founder onboarding'}
-                  {k === 'growth' && 'For agencies and consultancies scaling past the founding cohort'}
-                </div>
+                <div className="mt-1 text-sm font-medium text-brand-700">${FOUNDING.monthly(k)}/mo for your first {FOUNDING.months} months as a founding customer</div>
+                <div className="mt-2 text-sm text-ink-600">{p.audience}</div>
+                <div className="mt-1 text-sm text-ink-500">{p.orgs}</div>
                 <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
                   {p.features.map((f) => (
                     <li key={f} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />{f}</li>
                   ))}
                 </ul>
                 <Link href="/sign-up" className={`mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${p.popular ? 'bg-brand-600 text-white hover:bg-brand-700' : 'bg-ink-900 text-white hover:bg-ink-800'}`}>
-                  {k === 'starter' ? 'Start founding trial' : 'Start free trial'} <ArrowRight className="h-4 w-4" />
+                  Start free trial <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             );
@@ -106,7 +105,7 @@ export default function PricingPage() {
         </div>
 
         <div className="mt-10 max-w-2xl mx-auto text-center">
-          <p className="text-sm text-ink-600">Need 20+ seats, custom integrations, or a private cloud deployment? <Link href="/contact" className="link">Talk to sales</Link> for our Scale plan.</p>
+          <p className="text-sm text-ink-600">Past {PRACTICE_INCLUDED_ORGS} client organizations? {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo for up to 40 books, and adds API access and SSO. <Link href="/contact" className="link">Talk to sales</Link>.</p>
         </div>
       </section>
 
@@ -125,13 +124,13 @@ export default function PricingPage() {
         <h2 className="h2 text-center">Frequently asked</h2>
         <div className="mt-10 max-w-2xl mx-auto space-y-4">
           {[
-            { q: 'Do you support multi-entity or multiple companies?', a: 'Growth supports multiple entities under one account with consolidated reporting. Scale adds per-entity workflows and role isolation.' },
+            { q: 'Do you support multi-entity or multiple companies?', a: `That is what the ${PLAN_PRICING.growth.name} plan is: up to ${PRACTICE_INCLUDED_ORGS} client organizations under one account with consolidated AR reporting, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. ${PLAN_PRICING.scale.name} adds per-entity workflows and role isolation.` },
             { q: 'What payment methods does the portal accept?', a: 'Wire transfer today, for every customer. Card, ACH, and mobile-money rails are built but temporarily disabled while we finish routing payments to your own account instead of ours — no timeline promises until that\'s done.' },
-            { q: 'Is there really a free trial?', a: 'Yes. 14 days, full access to Growth-tier features, no credit card required.' },
-            { q: 'How does billing work?', a: 'Founding customers get a manual invoice for $49/mo after the 14-day trial (bank transfer, Wise, or PayPal). Self-serve card checkout isn\'t live yet — no committed date.' },
+            { q: 'Is there really a free trial?', a: `Yes. 14 days, full access to ${PLAN_PRICING.growth.name}-tier features, no credit card required.` },
+            { q: 'How does billing work?', a: `Founding customers get a manual invoice after the 14-day trial (bank transfer, Wise, or PayPal) at $${FOUNDING.monthly('growth')}/mo for ${PLAN_PRICING.growth.name}. Self-serve card checkout isn't live yet — no committed date.` },
             { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
             { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing — David reviews and sends an invoice within 12 hours. Not yet automatic or self-serve.' },
-            { q: 'Do you support multi-currency?', a: 'Yes. USD, GBP, AUD, CAD, EUR in Growth. KES, NGN, ZAR in Scale or custom.' },
+            { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD, EUR in ${PLAN_PRICING.growth.name}. KES, NGN, ZAR in ${PLAN_PRICING.scale.name} or custom.` },
             { q: 'Can I switch from another tool?', a: 'Yes. Free migration from QuickBooks, Xero, FreshBooks, Wave, and most others.' },
           ].map((f) => (
             <details key={f.q} className="card group">
@@ -146,9 +145,10 @@ export default function PricingPage() {
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Ready to stop chasing invoices?</h2>
           <p className="mt-4 lead">14-day trial. No credit card. Founder-assisted setup.</p>
+          <p className="mt-2 text-sm text-ink-600">{FOUNDING.discountPct}% off for {FOUNDING.months} months while the first {FOUNDING.seats} founding places are open.</p>
           <div className="mt-6 max-w-md mx-auto">
             <Link href="/sign-up" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
-              Start founding trial <ArrowRight className="h-4 w-4" />
+              Start free trial <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

@@ -1,5 +1,6 @@
 'use client';
 import { Check, X } from 'lucide-react';
+import { PLAN_PRICING } from '@/lib/utils';
 
 // Scope note: this table compares Collectly to the AR/invoicing tools SMBs
 // actually evaluate (Chaser, BILL, Melio, QuickBooks AR, FreshBooks). We
@@ -12,19 +13,19 @@ type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
 
 const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
-  ['Public starting price', '$49/mo flat', '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
+  ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees', 'ACH fees'],
   ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min', '< 10 min'],
   ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
   ['Multi-currency', '✓', '✓', '✓', '✓', '—', '✓'],
-  ['Multi-entity', 'Growth+', 'Core+', 'Corporate+', '—', '—', '—'],
+  ['Multi-entity', `${PLAN_PRICING.growth.name}+`, 'Core+', 'Corporate+', '—', '—', '—'],
   ['Cash-flow forecast', '✓', 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
   ['Customer risk scoring', '✓', '✓', '—', '—', '—', '—'],
   ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓', '✓'],
   ['Free trial / self-serve', '14-day free', 'Demo-first', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
   ['Time-to-value', '< 1 day', '1–2 weeks', '1–2 weeks', '< 1 day', '< 1 day', '< 1 day'],
   ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
-  ['Payment plans / subscriptions', 'Growth+', '✓', '✓', '—', '✓', '—'],
+  ['Payment plans / subscriptions', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '—', '✓', '—'],
   ['Support model', 'Email + chat', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
 ];
 

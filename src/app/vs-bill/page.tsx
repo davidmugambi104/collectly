@@ -6,6 +6,7 @@ import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { Check, ArrowRight, DollarSign, Layers, Target, Receipt } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
+import { PLAN_PRICING } from '@/lib/utils';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
 export const metadata = pageMetadata({
@@ -13,8 +14,9 @@ export const metadata = pageMetadata({
   description:
     'Side-by-side of Collectly and BILL for accounts-receivable automation. ' +
     'BILL bundles AP, AR, and spend at $49 per user/month plus transaction ' +
-    'fees. Collectly is AR-native, flat $49/mo for the founding tier, no ' +
-    'per-invoice fees, built for 5-30 person agencies and consultancies.',
+    `fees. Collectly is AR-native at $${PLAN_PRICING.starter.monthly}/mo for one ` +
+    `organization, no per-user or per-invoice fees, built for agencies, ` +
+    'consultancies and bookkeeping practices.',
   path: '/vs-bill',
   image: '/og-vs-bill.png',
   keywords: ['Collectly vs BILL', 'BILL alternative', 'AR automation', 'BILL vs Collectly'],
@@ -22,7 +24,7 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR-only — deep dunning, forecasting, risk scoring', bill: 'AP + AR + spend/expense platform' },
-  { icon: DollarSign, label: 'Pricing', collectly: '$49/mo flat, no per-invoice fees', bill: '$49/user/mo + ACH/card/wire fees' },
+  { icon: DollarSign, label: 'Pricing', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-user or per-invoice fees`, bill: '$49/user/mo + ACH/card/wire fees' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', bill: 'SMBs and accounting firms needing broad FinOps' },
   { icon: Receipt, label: 'AR depth', collectly: 'Tone-aware AI dunning + AR aging + cashflow forecast', bill: 'Invoicing, reminders, payment acceptance' },
 ];
@@ -45,11 +47,11 @@ export default function VsBillPage() {
         <p className="mt-5 lead">
           BILL is a powerful all-in-one financial operations platform: AP, AR, cards, spend, and credit lines.
           But if your main pain point is overdue invoices, Collectly is the simpler, AR-native choice:
-          flat $49/mo, no per-user charges, no per-invoice fees, and follow-up engineered for agencies and consultancies.
+          ${PLAN_PRICING.starter.monthly}/mo for one organization, no per-user charges, no per-invoice fees, and follow-up engineered for agencies and consultancies.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/sign-up">
-            <Button className="gap-1.5">Start founding trial <ArrowRight className="h-4 w-4" /></Button>
+            <Button className="gap-1.5">Start free trial <ArrowRight className="h-4 w-4" /></Button>
           </Link>
           <Link href="/pricing">
             <Button variant="secondary">See pricing</Button>

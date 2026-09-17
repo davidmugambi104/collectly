@@ -7,12 +7,13 @@ import Link from 'next/link';
 import { Check, ArrowRight, DollarSign, Clock, Zap, Users } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Collectly vs Chaser — better AR automation for small B2B services',
   description:
     'Side-by-side of Collectly and Chaser. Chaser starts around $259/mo ' +
-    'with templated reminders. Collectly starts at $49/mo with tone-aware ' +
+    `with templated reminders. Collectly starts at $${PLAN_PRICING.starter.monthly}/mo with tone-aware ` +
     'AI dunning, no per-invoice fees, 10-minute setup, and reply-or-pay ' +
     'pause — built for 5-30 person agencies and consultancies on Xero.',
   path: '/vs-chaser',
@@ -21,7 +22,7 @@ export const metadata = pageMetadata({
 });
 
 const DIFFS = [
-  { icon: DollarSign, label: 'Price', collectly: '$49/mo flat, no per-invoice fees', chaser: '~$259/mo entry plan' },
+  { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-invoice fees`, chaser: '~$259/mo entry plan' },
   { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', chaser: 'Hours to days' },
   { icon: Zap, label: 'AI dunning', collectly: 'Tone-aware email + SMS out of the box', chaser: 'Email/SMS/call, AI email generator' },
   { icon: Users, label: 'Best for', collectly: '5-30 person agencies and consultancies', chaser: 'SMB to mid-market ($5M–$120M revenue)' },
@@ -44,7 +45,7 @@ export default function VsChaserPage() {
         <h1 className="mt-3 h1">Collectly vs Chaser</h1>
         <p className="mt-5 lead">
           Chaser is a solid receivables tool — but it&apos;s priced for bigger businesses and starts at ~$259/mo.
-          Collectly gives small B2B service businesses the same AR automation at a flat $49/mo, with no per-invoice fees
+          Collectly gives small B2B service businesses the same AR automation from ${PLAN_PRICING.starter.monthly}/mo, with no per-invoice fees
           and a 10-minute setup.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -104,7 +105,7 @@ export default function VsChaserPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>For Collectly:</strong> Chaser proved the SMB AR market is willing to pay — but also that $259/mo is too high for the long tail. Collectly can win the same buyers at $49/mo without the heavy services overhead.
+            <strong>For Collectly:</strong> Chaser proved the SMB AR market is willing to pay — but also that $259/mo is too high for the long tail. Collectly can win the same buyers at ${PLAN_PRICING.starter.monthly}/mo for a single book, and undercut them per-book for practices, without the heavy services overhead.
           </div>
         </div>
       </section>

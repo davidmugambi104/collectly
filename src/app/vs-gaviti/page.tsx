@@ -11,19 +11,20 @@ import {
 import { DollarSign, Clock, ShieldCheck, Target } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Collectly vs Gaviti — SMB AR automation without enterprise complexity',
   description:
     'Gaviti is AI-powered invoice-to-cash for mid-market and enterprise. ' +
     'Collectly is the simple, transparent, self-serve alternative for ' +
-    'small B2B service businesses starting at $49/mo flat.',
+    `small B2B service businesses starting at $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/vs-gaviti',
   keywords: ['Collectly vs Gaviti', 'Gaviti alternative', 'AR automation', 'Gaviti vs Collectly'],
 });
 
 const DIFFS = [
-  { icon: DollarSign, label: 'Price', collectly: '$49/mo flat, public pricing', competitor: 'Custom pricing, request a quote' },
+  { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo, public pricing`, competitor: 'Custom pricing, request a quote' },
   { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', competitor: 'Implementation-led, weeks' },
   { icon: ShieldCheck, label: 'Focus', collectly: 'AR dunning + cashflow for SMBs', competitor: 'Full invoice-to-cash + credit + deductions' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Mid-market / enterprise finance teams' },
@@ -63,7 +64,7 @@ export default function VsGavitiPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs Gaviti"
-        subtitle="Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Collectly takes the parts that matter most to small B2B services — smart dunning, cash-flow forecasting, and risk scoring — and packages them in a $49/mo tool you can set up in 10 minutes."
+        subtitle="Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Collectly takes the parts that matter most to small B2B services — smart dunning, cash-flow forecasting, and risk scoring — and packages them in a $149/mo tool you can set up in 10 minutes."
         competitorName="Gaviti"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Gaviti" />

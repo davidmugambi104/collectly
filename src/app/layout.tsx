@@ -6,6 +6,7 @@ import { PostHogProvider } from '@/components/posthog-provider';
 import { ClerkProvider } from '@/components/clerk-provider';
 import { Suspense } from 'react';
 import { orgJsonLd, softwareAppJsonLd, SITE, BRAND, TAGLINE } from '@/lib/seo';
+import { PLAN_PRICING } from '@/lib/utils';
 
 // tailwind.config.ts has always named Inter and JetBrains Mono as the brand
 // faces, and globals.css sets Inter-specific OpenType features ("ss01",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'),
   title: { default: 'Collectly — AR automation for small agencies on Xero & QuickBooks', template: '%s · Collectly' },
   description:
-    'Collectly is the accounts-receivable automation tool for 5-30 person agencies and consultancies. It drafts client-safe invoice reminders, pauses when a customer replies or pays, tracks promised-payment dates, and separates disputes from ordinary late payment. Built for Xero and QuickBooks. From $49/mo flat.',
+    'Collectly is the accounts-receivable automation tool for 5-30 person agencies and consultancies. It drafts client-safe invoice reminders, pauses when a customer replies or pays, tracks promised-payment dates, and separates disputes from ordinary late payment. Built for Xero and QuickBooks. From $' + PLAN_PRICING.starter.monthly + '/mo.',
   keywords: [
     'Xero invoice reminder', 'accounts receivable automation',
     'AR automation for agencies', 'Chaser alternative',
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
     type: 'website',
     title: 'Collectly — AR automation for small agencies on Xero & QuickBooks',
     description:
-      'AI-native AR for 5-30 person agencies and consultancies. Tone-aware email + SMS dunning on Xero and QuickBooks. From $49/mo flat, no per-invoice fees.',
+      `AI-native AR for agencies, consultancies and bookkeeping practices. Tone-aware email + SMS dunning on Xero and QuickBooks. From $${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees.`,
     url: 'https://getcollectly.app',
     siteName: 'Collectly — AR automation for agencies',
     images: [
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Collectly — AR automation for agencies',
     description:
-      'AI-native AR for 5-30 person agencies and consultancies on Xero & QuickBooks. From $49/mo flat.',
+      `AI-native AR for agencies, consultancies and bookkeeping practices on Xero & QuickBooks. From $${PLAN_PRICING.starter.monthly}/mo.`,
     images: ['/og.png'],
     creator: '@getcollectly',
     site: '@getcollectly',

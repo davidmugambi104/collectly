@@ -11,6 +11,7 @@ import {
 import { Bot, DollarSign, Layers, Target } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Collectly vs Zoho Books — AR automation beyond bookkeeping',
@@ -26,7 +27,7 @@ export const metadata = pageMetadata({
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', competitor: 'Basic invoice reminders' },
   { icon: Layers, label: 'AR depth', collectly: 'Aging, forecast, risk score, branded portal', competitor: 'Invoicing + payment tracking inside Zoho suite' },
-  { icon: DollarSign, label: 'Pricing', collectly: '$49/mo flat, no hidden fees', competitor: 'Tiered accounting plans, per-org pricing' },
+  { icon: DollarSign, label: 'Pricing', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no hidden fees`, competitor: 'Tiered accounting plans, per-org pricing' },
   { icon: Target, label: 'Best for', collectly: 'Agencies and consultancies focused on reducing DSO', competitor: 'Small businesses that want one Zoho suite' },
 ];
 

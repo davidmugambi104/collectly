@@ -8,6 +8,8 @@
  * The PDF is layout-stable, no images, no fonts (uses Helvetica which
  * every PDF reader has built-in), valid PDF 1.4.
  */
+
+import { FOUNDING } from '@/lib/utils';
 export function generatePlaybookPdf(): Buffer {
   const pages: string[] = [];
   const sections = [
@@ -214,9 +216,9 @@ function makeCtaPage(): string {
 (What early users are saying:) Tj
 0 -22 Td
 /F2 11 Tf
-(Founding-customer program open. The first 20 agencies and consultancies lock) Tj
+(Founding-customer program open. The first ${FOUNDING.seats} agencies, consultancies) Tj
 0 -16 Td
-(in $49/mo for life. Email hello@getcollectly.app to apply.) Tj
+(and bookkeeping practices take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months.) Tj
 ET`;
   return `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792]
    /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F3 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique >> >> >>

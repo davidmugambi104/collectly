@@ -11,13 +11,14 @@ import {
 import { Layers, Clock, Globe2, Target } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Collectly vs HighRadius — SMB AR vs autonomous enterprise finance',
   description:
     'HighRadius builds autonomous finance for the Office of the CFO. ' +
     'Collectly is the simple, AR-native alternative for small agencies ' +
-    'and consultancies on Xero starting at $49/mo flat.',
+    `and consultancies on Xero starting at $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/vs-highradius',
   keywords: ['Collectly vs HighRadius', 'HighRadius alternative', 'enterprise AR alternative', 'HighRadius vs Collectly'],
 });
@@ -63,7 +64,7 @@ export default function VsHighradiusPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Collectly vs HighRadius"
-        subtitle="HighRadius is the ceiling of autonomous enterprise finance. Collectly is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast — live in 10 minutes at $49/mo."
+        subtitle="HighRadius is the ceiling of autonomous enterprise finance. Collectly is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast — live in 10 minutes from $149/mo."
         competitorName="HighRadius"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="HighRadius" />

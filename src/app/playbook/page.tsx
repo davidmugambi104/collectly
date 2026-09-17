@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { FOUNDING } from '@/lib/utils';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { PlaybookForm } from './playbook-form';
@@ -146,7 +147,7 @@ export default function PlaybookPage() {
                 nothing. Replaced with a factual statement of where the
                 product is today. */}
             <blockquote className="mt-4 text-2xl sm:text-3xl font-display leading-snug">
-              &quot;We&apos;re early. Founding-customer program is open for the first 20 agencies and bookkeepers, with lifetime $49/mo pricing and direct founder onboarding.&quot;
+              &quot;We&apos;re early. The founding-customer program is open for the first {FOUNDING.seats} agencies and bookkeeping practices: {FOUNDING.discountPct}% off for {FOUNDING.months} months and direct founder onboarding.&quot;
             </blockquote>
             <div className="mt-6 flex items-center justify-center gap-3">
               <div className="h-10 w-10 rounded-full bg-white/20" />

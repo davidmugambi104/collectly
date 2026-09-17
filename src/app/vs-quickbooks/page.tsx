@@ -8,6 +8,7 @@ import { Check, ArrowRight, Bot, DollarSign, Target, LineChart } from 'lucide-re
 
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Collectly vs QuickBooks — smarter AR automation for QBO users',
@@ -22,7 +23,7 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'Basic payment reminders' },
-  { icon: DollarSign, label: 'Cost', collectly: '$49/mo flat, no per-invoice fees', quickbooks: '$0/mo + payment processing fees' },
+  { icon: DollarSign, label: 'Cost', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees`, quickbooks: '$0/mo + payment processing fees' },
   { icon: LineChart, label: 'Forecasting', collectly: '4-week AR cash-flow forecast', quickbooks: 'Basic reporting only' },
   { icon: Target, label: 'Best for', collectly: 'Businesses serious about reducing DSO', quickbooks: 'Businesses already living in QBO' },
 ];

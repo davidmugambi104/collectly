@@ -1,5 +1,6 @@
 'use client';
 import { useState, useMemo } from 'react';
+import { PLAN_PRICING } from '@/lib/utils';
 import { Calculator, ArrowRight, TrendingUp, Clock, DollarSign, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
@@ -33,6 +34,7 @@ export function RoiCalculator() {
     // Write-off / bad-debt reduction
     const badDebtReduction = ar * 0.02;
     const total = annualCostOfSlowPay + lostRevenue + badDebtReduction;
+    const annualPlanCost = PLAN_PRICING.starter.monthly * 12;
     return {
       dsoDelta,
       freedUpAr: Math.round(freedUpAr),
@@ -40,8 +42,10 @@ export function RoiCalculator() {
       lostRevenue: Math.round(lostRevenue),
       badDebtReduction: Math.round(badDebtReduction),
       total: Math.round(total),
-      // Collectly at $99/mo = $1188/yr
-      roi: Math.round((total - 1188) / 1188 * 100),
+      // Priced against the Practice plan, read from PLAN_PRICING so the ROI
+      // number cannot drift away from what /pricing actually charges.
+      annualPlanCost,
+      roi: Math.round(((total - annualPlanCost) / annualPlanCost) * 100),
     };
   }, [ar, dso, targetDso, revenue, margin, costOfCapital]);
 
@@ -114,8 +118,8 @@ export function RoiCalculator() {
           <p className="mt-1 text-sm text-ink-600">Annual software cost for similar AR coverage.</p>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li className="flex items-center justify-between">
-              <span className="text-ink-700">Collectly (Growth)</span>
-              <span className="font-mono font-semibold text-emerald-700">{sym}1,188/yr</span>
+              <span className="text-ink-700">Collectly ({PLAN_PRICING.starter.name})</span>
+              <span className="font-mono font-semibold text-emerald-700">{sym}{(PLAN_PRICING.starter.monthly * 12).toLocaleString()}/yr</span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-ink-700">Chaser Compact</span>

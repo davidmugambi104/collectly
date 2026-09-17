@@ -13,6 +13,7 @@
 // pulls metadata through `pageMetadata()` or one of the typed builders below.
 
 import type { Metadata } from 'next';
+import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 
 export const BRAND = 'Collectly';
 // All absolute URLs returned to crawlers must use the live production
@@ -48,7 +49,7 @@ export const SITE = {
     `agencies and consultancies on Xero and QuickBooks. It drafts client-safe ` +
     `invoice reminders, pauses when a customer replies or pays, tracks ` +
     `promised-payment dates, and separates disputes from ordinary late ` +
-    `payment. From $49/mo flat.`,
+    `payment. From $${PLAN_PRICING.starter.monthly}/mo flat.`,
   url: DOMAIN,
   locale: 'en_US',
   twitter: '@getcollectly',
@@ -175,7 +176,7 @@ export function softwareAppJsonLd(): JsonLdThing {
       priceCurrency: 'USD',
       priceValidUntil: '2027-12-31',
       availability: 'https://schema.org/InStock',
-      description: 'Founding-customer price. First 20 customers; locked for life.',
+      description: `Founding-customer price. First ${FOUNDING.seats} customers; ${FOUNDING.discountPct}% off for ${FOUNDING.months} months.`,
     },
     // aggregateRating intentionally omitted — we don't have enough verified
     // reviews yet to publish a number we can defend. Add when we do.
@@ -251,10 +252,12 @@ export function articleJsonLd(input: {
   };
 }
 
-// Pricing-page Product + Offer. Surfaces a "from $49/mo" rich result
+// Pricing-page Product + Offer. Surfaces a "from $149/mo" rich result
 // for queries like "Collectly pricing" and "small-business AR pricing".
-// We expose three tiers (founding, core, growth) so Google can pick the
-// most relevant card for a given price bucket.
+// Every number here is read from PLAN_PRICING rather than restated: the
+// offers, the page body and the FAQ answers used to disagree with each
+// other and with the app, which is how a $49 headline ended up advertising
+// limits (150 invoices, 3 users) the code never granted.
 export function pricingProductJsonLd(): JsonLdThing {
   return {
     '@context': 'https://schema.org',
@@ -269,48 +272,51 @@ export function pricingProductJsonLd(): JsonLdThing {
     offers: [
       {
         '@type': 'Offer',
-        name: 'Founding customer',
-        price: '49',
+        name: `Founding ${PLAN_PRICING.growth.name}`,
+        price: String(FOUNDING.monthly('growth')),
         priceCurrency: 'USD',
         priceValidUntil: '2027-12-31',
         availability: 'https://schema.org/LimitedAvailability',
         description:
-          'First 20 customers only. Flat $49/month, includes founder-assisted setup, ' +
-          'one Xero org, up to 150 monitored invoices, email reminders, approval mode, ' +
-          'reply detection, promise-to-pay, and dispute classification.',
+          `First ${FOUNDING.seats} customers only. ${FOUNDING.discountPct}% off the ` +
+          `${PLAN_PRICING.growth.name} plan for ${FOUNDING.months} months, then ` +
+          `$${PLAN_PRICING.growth.monthly}/mo. Covers up to ${PRACTICE_INCLUDED_ORGS} client ` +
+          'organizations on Xero or QuickBooks, with founder-assisted setup.',
         url: `${SITE.url}/pricing`,
       },
       {
         '@type': 'Offer',
-        name: 'Core',
-        price: '99',
+        name: PLAN_PRICING.starter.name,
+        price: String(PLAN_PRICING.starter.monthly),
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
         description:
-          'For one organization. Up to 300 monitored invoices, full email automation, ' +
-          'approval mode, promise-to-pay tracking, and multi-currency support.',
+          `${PLAN_PRICING.starter.audience}. One organization, unlimited invoices, ` +
+          'email and SMS reminders, approval mode, promise-to-pay tracking, and ' +
+          'dispute classification.',
         url: `${SITE.url}/pricing`,
       },
       {
         '@type': 'Offer',
-        name: 'Growth',
-        price: '199',
+        name: PLAN_PRICING.growth.name,
+        price: String(PLAN_PRICING.growth.monthly),
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
         description:
-          'Up to three organizations. Adds SMS dunning, custom workflows, larger invoice ' +
-          'volume, and reporting.',
+          `${PLAN_PRICING.growth.audience}. Up to ${PRACTICE_INCLUDED_ORGS} client ` +
+          `organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. ` +
+          'Per-client branding, consolidated AR across every client, multi-currency.',
         url: `${SITE.url}/pricing`,
       },
       {
         '@type': 'Offer',
-        name: 'Practice',
-        price: '499',
+        name: PLAN_PRICING.scale.name,
+        price: String(PLAN_PRICING.scale.monthly),
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
         description:
-          'For accounting practices managing up to ten client organizations on Xero or ' +
-          'QuickBooks. Includes per-client visibility and exception reporting.',
+          `${PLAN_PRICING.scale.audience}. Up to 40 client organizations, plus API ` +
+          'access, SSO, custom workflows, and priority support.',
         url: `${SITE.url}/pricing`,
       },
     ],

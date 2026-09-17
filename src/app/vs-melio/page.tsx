@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Check, ArrowRight, DollarSign, RefreshCw, Target, CreditCard } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Collectly vs Melio — AR automation beyond payment links',
@@ -14,14 +15,14 @@ export const metadata = pageMetadata({
     'Side-by-side of Collectly and Melio. Melio is free for AP-first B2B ' +
     'payments with light invoicing. Collectly is AR-native: AI tone-aware ' +
     'dunning, cash-flow forecast, risk scoring, and a branded payment ' +
-    'portal for $49/mo flat with no per-invoice fees.',
+    `portal for $${PLAN_PRICING.starter.monthly}/mo with no per-invoice fees.`,
   path: '/vs-melio',
   keywords: ['Collectly vs Melio', 'Melio alternative', 'AR automation for agencies', 'Melio vs Collectly'],
 });
 
 const DIFFS = [
   { icon: RefreshCw, label: 'Primary focus', collectly: 'AR automation and collections', melio: 'AP-first bill pay + light invoicing' },
-  { icon: DollarSign, label: 'Starting price', collectly: '$49/mo flat', melio: '$0/mo (free ACH limits, then fees)' },
+  { icon: DollarSign, label: 'Starting price', collectly: `$${PLAN_PRICING.starter.monthly}/mo`, melio: '$0/mo (free ACH limits, then fees)' },
   { icon: Target, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', melio: 'Payment links + basic reminders' },
   { icon: CreditCard, label: 'Payment portal', collectly: 'Branded AR portal with dunning context', melio: 'Invoice payment links' },
 ];
@@ -44,7 +45,7 @@ export default function VsMelioPage() {
         <p className="mt-5 lead">
           Melio is a great way to pay bills and send free invoices. But if your real problem is
           overdue invoices, awkward follow-ups, and unpredictable cash flow, Collectly is built for that.
-          AI tone-aware dunning, cash-flow forecasting, customer risk scoring — for a flat $49/mo.
+          AI tone-aware dunning, cash-flow forecasting, customer risk scoring — from ${PLAN_PRICING.starter.monthly}/mo.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/sign-up">

@@ -2,6 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS } from '@/lib/utils';
 import { CheckCircle2, ArrowRight, MessageSquare, ShieldCheck, FileText } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,7 +27,7 @@ export const metadata = pageMetadata({
 });
 
 // UK-specific landing page. Targeted at the 90-day plan beachhead.
-// Uses GBP pricing (foundational conversion at $49 ≈ £40) and UK-specific
+// Uses GBP pricing (roughly 0.80 GBP to the USD at time of writing) and UK-specific
 // payment rail cues (BACS) without violating any FCA / ICO guidance —
 // Collectly does not chase consumers, only B2B invoices for SMBs.
 const ukJsonLd = JSON.stringify([
@@ -79,10 +80,12 @@ const ukJsonLd = JSON.stringify([
     },
     {
       q: 'How much does Collectly cost UK customers?',
-      a: 'Founding-customer pricing is $49/mo flat (around £40/mo at current FX ' +
-         'rates), billed in GBP via Stripe. No per-invoice fees, no setup fees, ' +
-         'no SMS markup. Cancel any time. Founding pricing is locked for the ' +
-         'first 20 customers for the life of their subscription.',
+      a: `A single organisation is $${PLAN_PRICING.starter.monthly}/mo (around ` +
+         `£${Math.round(PLAN_PRICING.starter.monthly * 0.8)}/mo at current FX rates) and a ` +
+         `practice covering up to ${PRACTICE_INCLUDED_ORGS} client books is ` +
+         `$${PLAN_PRICING.growth.monthly}/mo, billed in GBP via Stripe. No per-invoice ` +
+         `fees, no setup fees, no SMS markup. Cancel any time. The first ${FOUNDING.seats} ` +
+         `founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months.`,
     },
   ]),
 ]);
@@ -104,8 +107,9 @@ export default function ForUkAgenciesPage() {
         <p className="mt-5 lead">
           Built for 5–30 person UK agencies and consultancies. Tone-aware AI
           dunning, reply-or-pay pause, BACS and Faster Payments in the branded
-          payment portal, full GDPR / UK GDPR compliance. Founding-customer
-          rate of £40/mo, locked for life for the first 20.
+          payment portal, full GDPR / UK GDPR compliance. From
+          £{Math.round(PLAN_PRICING.starter.monthly * 0.8)}/mo, with {FOUNDING.discountPct}% off
+          for {FOUNDING.months} months for the first {FOUNDING.seats} founding customers.
         </p>
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <Link href="/ar-audit" className="btn-primary inline-flex items-center gap-1.5">
@@ -151,15 +155,16 @@ export default function ForUkAgenciesPage() {
       <section className="bg-ink-50 border-y border-ink-200">
         <div className="container-page py-16 max-w-3xl">
           <p className="eyebrow">What you get for £40/mo flat</p>
-          <h2 className="mt-3 h2">Founding-customer offer, locked for life.</h2>
+          <h2 className="mt-3 h2">Founding-customer offer.</h2>
           <p className="mt-4 lead">
-            The first 20 founding customers lock in the £40/mo rate for the life
-            of their subscription. After the founding cohort closes, plans start
-            at $99/mo per Xero organisation. Founding-customer billing is via
-            Stripe in GBP; cancel any time.
+            The first {FOUNDING.seats} founding customers take {FOUNDING.discountPct}% off
+            for {FOUNDING.months} months — ${FOUNDING.monthly('growth')}/mo for a practice
+            covering up to {PRACTICE_INCLUDED_ORGS} client organisations, then
+            ${PLAN_PRICING.growth.monthly}/mo. A single organisation is
+            ${PLAN_PRICING.starter.monthly}/mo. Billing is via Stripe in GBP; cancel any time.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-ink-700">
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organisation, up to 150 monitored invoices.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organisation, unlimited invoices.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Tone-aware AI reminders with approval mode by default.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Reply-or-pay pause, promise-to-pay tracking, dispute classification.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Branded payment portal with BACS, Faster Payments, GoCardless.</li>

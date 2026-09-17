@@ -88,6 +88,12 @@ export const COUNTRY_CURRENCY: Record<string, string> = {
   KE: 'KES', NG: 'NGN', ZA: 'ZAR', IN: 'INR',
 };
 
+// Client organizations bundled into the Practice plan, and the per-org price
+// beyond that. Exported because the pricing page, the JSON-LD offers and the
+// ROI calculator all have to agree on them.
+export const PRACTICE_INCLUDED_ORGS = 10;
+export const PRACTICE_EXTRA_ORG_MONTHLY = 25;
+
 // Keys are pinned to the db schema's plan_tier enum (starter | growth |
 // scale | enterprise) as a literal duplicate rather than importing
 // PlanTier from @/db/schema, which would create a circular import
@@ -95,9 +101,61 @@ export const COUNTRY_CURRENCY: Record<string, string> = {
 // union (instead of the old `Record<string, ...>`) means PlanKey
 // (= keyof typeof PLAN_PRICING) downstream in billing.ts type-checks
 // against the enum without any `as any` casts.
-export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise', { monthly: number; name: string; popular?: boolean; features: string[] }> = {
-  starter: { monthly: 49, name: 'Starter', features: ['AR aging dashboard', 'AI dunning (email)', '1 integration', '1 user', 'Up to 50 invoices'] },
-  growth: { monthly: 99, name: 'Growth', popular: true, features: ['Everything in Starter', 'SMS dunning', 'Payment portal', 'Cash-flow forecast', '3 users', 'Unlimited invoices', 'Multi-currency'] },
-  scale: { monthly: 199, name: 'Scale', features: ['Everything in Growth', 'AI collections concierge', 'Custom workflows', 'API access', 'Unlimited users', 'Priority support'] },
-  enterprise: { monthly: 499, name: 'Enterprise', features: ['Everything in Scale', 'Dedicated success manager', 'Custom integrations', 'SLA', 'SOC 2 reporting', 'White-glove onboarding'] },
+//
+// Priced per connected client organization rather than per monitored invoice.
+// Invoice counts meter the wrong thing: they are invisible to the buyer at the
+// moment of purchase and they charge the best customers the most. A practice
+// connects N client books, knows N on day one, and N is what drives our cost.
+export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise', {
+  monthly: number;
+  name: string;
+  popular?: boolean;
+  audience: string;
+  orgs: string;
+  features: string[];
+}> = {
+  starter: {
+    monthly: 149,
+    name: 'Single business',
+    audience: 'One business chasing its own invoices',
+    orgs: '1 organization',
+    features: ['AR aging dashboard', 'AI dunning (email + SMS)', 'Payment portal', 'Xero or QuickBooks', '3 users', 'Unlimited invoices'],
+  },
+  growth: {
+    monthly: 399,
+    name: 'Practice',
+    popular: true,
+    audience: 'Bookkeepers and accountants chasing AR across client books',
+    orgs: `Up to ${PRACTICE_INCLUDED_ORGS} client organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY}/org`,
+    features: ['Everything in Single business', 'Per-client branding and tone', 'Consolidated AR across all client books', 'Cash-flow forecast', 'Multi-currency', 'Unlimited users'],
+  },
+  scale: {
+    monthly: 999,
+    name: 'Practice Scale',
+    audience: 'Practices past 20 client organizations',
+    orgs: 'Up to 40 client organizations',
+    features: ['Everything in Practice', 'AI collections concierge', 'Custom workflows', 'API access', 'SSO', 'Priority support'],
+  },
+  enterprise: {
+    monthly: 2499,
+    name: 'Enterprise',
+    audience: 'Networks and franchises',
+    orgs: 'Unlimited client organizations',
+    features: ['Everything in Practice Scale', 'Dedicated success manager', 'Custom integrations', 'SLA', 'SOC 2 reporting', 'White-glove onboarding'],
+  },
 };
+
+// Founding offer. Deliberately a time-boxed discount off list rather than a low
+// list price: a permanently low headline number cannot be walked back, and
+// "locked for life" on the first cohort commits us before we know our own
+// serving costs. The discount is visible, the anchor survives, and we still
+// learn what people will actually pay.
+export const FOUNDING = {
+  discountPct: 40,
+  months: 12,
+  seats: 10,
+  /** Discounted monthly price for a plan, rounded to the nearest dollar. */
+  monthly(plan: keyof typeof PLAN_PRICING): number {
+    return Math.round((PLAN_PRICING[plan].monthly * (100 - FOUNDING.discountPct)) / 100);
+  },
+} as const;

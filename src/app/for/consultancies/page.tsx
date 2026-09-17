@@ -2,6 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { PLAN_PRICING, PRACTICE_INCLUDED_ORGS } from '@/lib/utils';
 import { CheckCircle2, ArrowRight, MessageSquare, ShieldCheck, FileText } from 'lucide-react';
 import Link from 'next/link';
 
@@ -10,8 +11,8 @@ export const metadata = pageMetadata({
   description:
     'Built for 5-30 person consultancies and boutique advisory firms on Xero. ' +
     'AI tone-aware dunning, reply-or-pay pause, promise-to-pay tracking, and ' +
-    'dispute classification — from $49/mo flat. Founder-assisted onboarding for ' +
-    'the first 20 founding customers.',
+    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo. Founder-assisted onboarding for ` +
+    'agencies, consultancies and bookkeeping practices.',
   path: '/for/consultancies',
   keywords: [
     'AR automation for consultancies',
@@ -89,8 +90,9 @@ export default function ForConsultanciesPage() {
         <p className="mt-5 lead">
           Built for 5–30 person consultancies and boutique advisory firms on Xero.
           Tone-aware AI reminders, reply-or-pay pause, promise-to-pay tracking, and
-          dispute classification. Founder-assisted onboarding for the first 20
-          founding customers, then $99/mo flat per organization.
+          dispute classification. Founder-assisted onboarding. ${PLAN_PRICING.starter.monthly}/mo
+          for one organization; ${PLAN_PRICING.growth.monthly}/mo for a practice covering
+          up to {PRACTICE_INCLUDED_ORGS} client books.
         </p>
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <Link href="/ar-audit" className="btn-primary inline-flex items-center gap-1.5">

@@ -11,13 +11,14 @@ import {
 import { Bot, Clock, Building2, Target } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Collectly vs Growfin — behavioral AI AR for the rest of us',
   description:
     'Growfin uses behavioral AI for enterprise order-to-cash on NetSuite. ' +
     'Collectly brings AI tone-aware dunning, cash-flow forecasting, and ' +
-    'risk scoring to small agencies and consultancies on Xero at $49/mo.',
+    `risk scoring to small agencies and consultancies on Xero at $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/vs-growfin',
   keywords: ['Collectly vs Growfin', 'Growfin alternative', 'NetSuite AR alternative', 'Growfin vs Collectly'],
 });

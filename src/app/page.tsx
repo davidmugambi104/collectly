@@ -10,6 +10,7 @@ import {
   Inbox, CalendarCheck, AlertTriangle, SlidersHorizontal,
 } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
+import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 
 export const metadata = pageMetadata({
   title: 'Stop chasing late invoices — AR automation for small agencies',
@@ -17,7 +18,7 @@ export const metadata = pageMetadata({
     'Connect Collectly to Xero or QuickBooks. It drafts client-safe invoice ' +
     'reminders, pauses when customers reply or pay, tracks promised-payment ' +
     'dates, and separates disputes from ordinary late payment. Built for ' +
-    '5-30 person agencies and consultancies. From $49/mo flat.',
+    `5-30 person agencies, consultancies and bookkeeping practices. From $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/',
   keywords: [
     'Xero invoice reminder',
@@ -43,11 +44,11 @@ const homeJsonLd = JSON.stringify(
     },
     {
       q: 'How is Collectly different from Chaser?',
-      a: 'Chaser is built around templated reminder sequences and starts around $259/mo. Collectly is built for 5-30 person agencies and uses tone-aware AI to write each reminder in context, pauses on reply-or-pay automatically, classifies disputes, and tracks promised payment dates — starting at $49/mo flat with no per-invoice fees.',
+      a: `Chaser is built around templated reminder sequences and its entry tier starts around $259/mo for one organization. Collectly uses tone-aware AI to write each reminder in context, pauses on reply-or-pay automatically, classifies disputes, and tracks promised payment dates. A practice pays $${PLAN_PRICING.growth.monthly}/mo for up to ${PRACTICE_INCLUDED_ORGS} client books, about $${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)} a book, with no per-invoice fees.`,
     },
     {
       q: 'How much does Collectly cost?',
-      a: 'Founding-customer pricing is $49/mo flat for the first 20 signups (locked for life). After that, plans start at $99/mo for one Xero organization. SMS charged at pass-through cost; no per-invoice fees, no setup fees.',
+      a: `A single business is $${PLAN_PRICING.starter.monthly}/mo for one Xero or QuickBooks organization. A practice is $${PLAN_PRICING.growth.monthly}/mo covering up to ${PRACTICE_INCLUDED_ORGS} client books, then $${PRACTICE_EXTRA_ORG_MONTHLY} each. The first ${FOUNDING.seats} founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months. SMS charged at pass-through cost; no per-invoice fees, no setup fees.`,
     },
     {
       q: 'Will Collectly send messages without my approval?',
@@ -93,11 +94,11 @@ export default function HomePage() {
               </p>
 
               <div className="mt-6 inline-flex flex-col sm:flex-row items-start sm:items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 backdrop-blur px-4 py-3 text-sm text-emerald-900 shadow-sm">
-                <span className="font-bold">$49/mo · 14-day trial · No per-invoice fees</span>
+                <span className="font-bold">${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo per client book · 14-day trial · No per-invoice fees</span>
                 <span className="hidden sm:inline text-emerald-300">|</span>
-                <span className="text-emerald-700">Chaser starts at ~$259/mo · BILL charges per user + transaction fees</span>
+                <span className="text-emerald-700">Chaser starts at ~$259/mo for one org · BILL charges per user + transaction fees</span>
               </div>
-              <p className="mt-2 text-xs text-ink-500">First 20 customers lock in $49/mo forever · founder-assisted setup · cancel anytime.</p>
+              <p className="mt-2 text-xs text-ink-500">First {FOUNDING.seats} founding customers take {FOUNDING.discountPct}% off for {FOUNDING.months} months · founder-assisted setup · cancel anytime.</p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
                 <Link href="/sign-up" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
@@ -294,7 +295,7 @@ export default function HomePage() {
             <tbody className="divide-y divide-ink-100">
               <tr className="bg-white">
                 <td className="px-6 py-4 font-medium text-ink-900">Annual platform cost</td>
-                <td className="px-6 py-4 text-center font-bold text-emerald-700">$588</td>
+                <td className="px-6 py-4 text-center font-bold text-emerald-700">${(PLAN_PRICING.starter.monthly * 12).toLocaleString()}</td>
                 <td className="px-6 py-4 text-center">~$3,108+</td>
                 <td className="px-6 py-4 text-center">$588 + per-user fees</td>
                 <td className="px-6 py-4 text-center">$0 (AP-only)</td>
@@ -315,7 +316,7 @@ export default function HomePage() {
               </tr>
               <tr className="bg-ink-50">
                 <td className="px-6 py-4 font-medium text-ink-900">Year 1 total (3 users, 100 invoices/mo)</td>
-                <td className="px-6 py-4 text-center text-lg font-bold text-emerald-700">$588</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-emerald-700">${(PLAN_PRICING.starter.monthly * 12).toLocaleString()}</td>
                 <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$3,108+</td>
                 <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$1,500–$2,500+</td>
                 <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">Unpredictable</td>
@@ -334,8 +335,9 @@ export default function HomePage() {
             <p className="mt-4 text-lg text-ink-300">14-day trial, founder-assisted setup. Upgrade when you&apos;re hooked. Cancel anytime.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-3 gap-5">
-            <PricingCard name="Founding Customer" price="$49" period="/mo" popular audience="First 20 customers · lifetime price lock" features={['All features unlocked', 'Founder onboarding call', 'Email + SMS dunning', 'Payment portal', 'Cash-flow forecast', 'Unlimited invoices', 'Priority support']} cta="Start founding trial" />
-            <PricingCard name="Growth" price="$99" period="/mo" audience="After founding cohort" features={['Everything in Founding', 'Multi-currency (USD, GBP, AUD, CAD, EUR, KES, NGN)', 'Up to 10 users', 'Advanced reporting', 'Custom workflows']} cta="Start free trial" />
+            <PricingCard name={PLAN_PRICING.starter.name} price={`$${PLAN_PRICING.starter.monthly}`} period="/mo" audience={PLAN_PRICING.starter.audience} features={PLAN_PRICING.starter.features} cta="Start free trial" />
+            <PricingCard name={PLAN_PRICING.growth.name} price={`$${PLAN_PRICING.growth.monthly}`} period="/mo" popular audience={`${PLAN_PRICING.growth.audience} · ${PLAN_PRICING.growth.orgs}`} features={PLAN_PRICING.growth.features} cta="Start free trial" />
+            <PricingCard name={PLAN_PRICING.scale.name} price={`$${PLAN_PRICING.scale.monthly}`} period="/mo" audience={PLAN_PRICING.scale.audience} features={PLAN_PRICING.scale.features} cta="Talk to sales" />
           </div>
           <p className="mt-6 text-sm text-ink-400">Payment methods, SMS, and accounting integrations depend on region, provider approval, and production credentials. Availability will be confirmed before billing. Annual plans save 20%.</p>
         </div>
@@ -398,7 +400,7 @@ export default function HomePage() {
             your customers hate you.
           </p>
           <p className="mt-4 text-sm text-ink-500">
-            We don&apos;t have polished case studies yet — we&apos;re building this with our first 20 customers, and
+            We don&apos;t have polished case studies yet — we&apos;re building this with our first {FOUNDING.seats} customers, and
             real results with real company names are coming once beta partners have a full quarter of data.
             Want to be one of them? Your feedback shapes what ships next.
           </p>
@@ -421,10 +423,10 @@ export default function HomePage() {
             </p>
             <div className="mt-6 max-w-md mx-auto">
               <Link href="/sign-up" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
-                Start founding trial <ArrowRight className="h-4 w-4" />
+                Start free trial <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <p className="mt-3 text-xs text-ink-500">Founding customer price locks at $49/mo forever. After 20 customers, the Growth plan is $99/mo.</p>
+            <p className="mt-3 text-xs text-ink-500">Founding customers take {FOUNDING.discountPct}% off for {FOUNDING.months} months — ${FOUNDING.monthly('growth')}/mo for {PLAN_PRICING.growth.name}, then ${PLAN_PRICING.growth.monthly}/mo. First {FOUNDING.seats} only.</p>
           </div>
           <div className="mt-8 border-t border-ink-200/60 px-6 py-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink-700">
             <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> No credit card required</span>

@@ -2,6 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { pageMetadata, faqJsonLd, webPageJsonLd, softwareAppJsonLd } from '@/lib/seo';
+import { PLAN_PRICING, PRACTICE_INCLUDED_ORGS } from '@/lib/utils';
 import { CheckCircle2, Sparkles, ArrowRight, ShieldCheck, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
@@ -10,7 +11,7 @@ export const metadata = pageMetadata({
   description:
     'AR automation built for 5-30 person agencies and consultancies on Xero. ' +
     'Tone-aware AI reminders, reply-or-pay pause, promise-to-pay tracking, and ' +
-    'dispute classification — from $49/mo flat.',
+    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/for/agencies',
   keywords: [
     'AR automation for agencies',
@@ -94,8 +95,9 @@ export default function ForAgenciesPage() {
         <p className="mt-5 lead">
           Built for 5–30 person agencies and consultancies on Xero. Tone-aware AI
           reminders that draft, route, pause on reply, and track promised-pay dates.
-          Founder-assisted setup, no per-invoice fees, $49/mo flat for the first 20
-          founding customers.
+          Founder-assisted setup, no per-invoice fees, ${PLAN_PRICING.starter.monthly}/mo
+          for a single business and ${PLAN_PRICING.growth.monthly}/mo for a practice
+          covering up to {PRACTICE_INCLUDED_ORGS} client books.
         </p>
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <Link href="/ar-audit" className="btn-primary inline-flex items-center gap-1.5">
@@ -144,14 +146,15 @@ export default function ForAgenciesPage() {
           <p className="eyebrow">Why agencies pick Collectly over Chaser and BILL</p>
           <h2 className="mt-3 h2">Built for the SMB agency long tail.</h2>
           <p className="mt-4 lead">
-            Chaser is templated reminders starting around $259/mo. BILL bundles
-            AP, AR, and spend at $49 per user/month plus transaction fees. Neither
-            is wrong — they&apos;re just priced and positioned for different teams.
-            Collectly is the AR-native flat-rate option for 5-30 person agencies
-            that want to stop writing those emails themselves.
+            Chaser is templated reminders starting around $259/mo for one
+            organization. BILL bundles AP, AR, and spend at $49 per user/month plus
+            transaction fees. Neither is wrong — they&apos;re just priced and
+            positioned for different teams. Collectly prices per client book, which
+            works out near ${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo
+            a book for a practice.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-ink-700">
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organization, up to 150 monitored invoices, $49/mo flat.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organization, unlimited invoices, ${PLAN_PRICING.starter.monthly}/mo.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Approval mode is the default. Autopilot unlocks only after 25 reviewed messages.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Tone-aware AI writes each reminder; you edit before sending.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Reply-or-pay pause: the sequence stops the moment a customer responds.</li>
