@@ -28,6 +28,41 @@ export type ConsentState = {
   version: number;
 };
 
+/**
+ * Cookie holding the visitor's two-letter country, set by middleware from the
+ * edge geo header and read by the consent provider in the browser.
+ *
+ * Not httpOnly, on purpose: the whole point is that client JS reads it to
+ * decide whether to show the banner. It carries a country code and nothing
+ * else — no id, no fingerprint, nothing that identifies anyone — and it is
+ * what makes the legally required banner appear for the people entitled to
+ * it, which is why it belongs in the strictly-necessary group.
+ */
+export const COUNTRY_COOKIE = 'cc';
+
+/** A day. Long enough that almost nobody pays the uncached first request
+ *  twice; short enough that someone who flies to Berlin is asked there. */
+export const COUNTRY_COOKIE_MAX_AGE = 60 * 60 * 24;
+
+/**
+ * The country for this request, from whichever edge set it.
+ *
+ * Vercel is first because that is where this deploys. Cloudflare and the
+ * generic Fastly-style header are there so a proxy change does not silently
+ * turn geo-detection off — and failing to read a country is not a quiet
+ * degradation, it means every visitor on earth gets the banner.
+ */
+export function countryFromHeaders(get: (name: string) => string | null): string | null {
+  for (const header of ['x-vercel-ip-country', 'cf-ipcountry', 'x-country-code']) {
+    const value = get(header);
+    // Some edges send "XX" for unknown rather than omitting the header.
+    if (value && /^[A-Za-z]{2}$/.test(value) && value.toUpperCase() !== 'XX') {
+      return value.toUpperCase();
+    }
+  }
+  return null;
+}
+
 export const CONSENT_VERSION = 1;
 export const CONSENT_STORAGE_KEY = 'collectly_consent';
 

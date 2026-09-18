@@ -11,8 +11,10 @@ import { useConsent } from './consent-provider';
  * never a banner to reopen.
  */
 export function ConsentLink({ className }: { className?: string }) {
-  const { required, reopen } = useConsent();
-  if (!required) return null;
+  const { reopen } = useConsent();
+  // Shown everywhere, not only where a banner was legally required. Someone
+  // outside the EEA still gets to turn analytics and advertising off; the
+  // difference is that we do not interrupt them to ask.
   return (
     <button type="button" onClick={reopen} className={className}>
       Cookie preferences

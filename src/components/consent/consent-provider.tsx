@@ -68,22 +68,50 @@ export function ConsentProvider({ children }: { children: React.ReactNode }) {
     setReady(true);
   }, []);
 
-  const commit = useCallback((choice: { analytics: boolean; advertising: boolean }) => {
-    setConsent(writeConsent(choice));
-    setReopened(false);
-  }, []);
+  const commit = useCallback(
+    (choice: { analytics: boolean; advertising: boolean }) => {
+      const previous = consent;
+      setConsent(writeConsent(choice));
+      setReopened(false);
+
+      // Withdrawing has to actually stop things, and a <script> that has
+      // already executed cannot be taken back by unmounting its tag — AdSense
+      // and Clarity are running in the page by then. Unmounting stops them
+      // mounting again on the next navigation, which is not the same as
+      // stopping them now.
+      //
+      // So: if any category went from allowed to denied, reload. PostHog's
+      // opt_out_capturing() does take effect immediately, but the other two
+      // need the page gone. Only on a downgrade — granting consent never
+      // needs it, because mounting the script is enough.
+      const downgraded =
+        (previous?.analytics && !choice.analytics) ||
+        (previous?.advertising && !choice.advertising) ||
+        // No stored record outside the consent zone means the scripts were
+        // already running under the default-allow.
+        (!previous && !required && (!choice.analytics || !choice.advertising));
+      if (downgraded && typeof window !== 'undefined') window.location.reload();
+    },
+    [consent, required],
+  );
 
   const value = useMemo<ConsentContextValue>(() => {
     const has = (category: ConsentCategory) => {
-      // Outside the consent zone the scripts behave as they always did.
-      if (!required) return true;
-      return consent ? consent[category] : false;
+      // An explicit choice always wins, wherever the visitor is. Someone in
+      // the US who opens preferences and switches advertising off has said
+      // no, and "we were not obliged to ask you" is not a reason to ignore
+      // that. With no choice on record: allowed outside the consent zone,
+      // denied inside it.
+      if (consent) return consent[category];
+      return !required;
     };
     return {
       consent,
       ready,
       required,
-      showBanner: ready && required && (reopened || consent === null),
+      // Reopening works everywhere; the automatic first showing only
+      // where the law requires asking.
+      showBanner: ready && (reopened || (required && consent === null)),
       has,
       acceptAll: () => commit(ALL_GRANTED),
       rejectAll: () => commit(ALL_DENIED),

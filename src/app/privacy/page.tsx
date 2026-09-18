@@ -38,8 +38,10 @@ export default function PrivacyPage() {
         </p>
         <ul>
           <li>
-            <b>Strictly necessary</b> — keeping you signed in, and remembering your answer to
-            the cookie banner. These cannot be switched off, and we do not ask about them.
+            <b>Strictly necessary</b> — keeping you signed in, remembering your answer to the
+            cookie banner, and a two-letter country code used to decide whether you are shown
+            the banner at all. That country cookie holds nothing but the country. These cannot
+            be switched off, and we do not ask about them.
           </li>
           <li>
             <b>Analytics</b> — PostHog, for which pages get read and where people get stuck,
@@ -54,8 +56,10 @@ export default function PrivacyPage() {
         <p>
           In the UK, EU, EEA and Switzerland nothing in the second and third groups loads until
           you say yes — not as a blocked cookie, but as a script that is never added to the page.
-          You can change your answer at any time from <b>Cookie preferences</b> in the footer,
-          and turning analytics back off stops collection rather than just stopping the asking.
+          Elsewhere they load by default and we do not interrupt you to ask, but{' '}
+          <b>Cookie preferences</b> in the footer works everywhere: switch something off from
+          there, anywhere in the world, and we honour it. Turning analytics off stops collection
+          rather than just stopping the asking.
         </p>
         <h2 className="font-display font-semibold text-xl mt-8">Data deletion</h2>
         <p>You can delete your account at any time from Settings. We delete all associated data within 30 days.</p>

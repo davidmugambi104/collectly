@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { COUNTRY_COOKIE, COUNTRY_COOKIE_MAX_AGE, countryFromHeaders } from '@/lib/consent';
 
 const isPublicRoute = createRouteMatcher([
   // Marketing pages
@@ -83,6 +84,43 @@ function isDevAuthShimAllowed(): boolean {
   return true;
 }
 
+
+/**
+ * Stamp the visitor's country on a cookie the consent banner can read.
+ *
+ * Returns undefined when there is nothing to do, and the callers pass that
+ * straight through — so on the overwhelming majority of requests this
+ * middleware behaves exactly as it did before.
+ *
+ * ONLY when the cookie is absent. A Set-Cookie header makes a response
+ * uncacheable, and most of this site is statically generated: setting it on
+ * every request would quietly turn the whole marketing site into dynamic
+ * responses. Setting it once per visitor costs one uncached request and then
+ * nothing.
+ *
+ * Without a country the cookie is not written at all, because
+ * consentRequiredForCountry() fails closed on a missing value — writing an
+ * empty or guessed cookie would turn "we do not know" into "we decided", in
+ * the direction that skips the banner.
+ */
+function countryCookieResponse(req: NextRequest): NextResponse | undefined {
+  if (req.cookies.has(COUNTRY_COOKIE)) return undefined;
+  const country = countryFromHeaders((name) => req.headers.get(name));
+  if (!country) return undefined;
+
+  const res = NextResponse.next();
+  res.cookies.set(COUNTRY_COOKIE, country, {
+    path: '/',
+    maxAge: COUNTRY_COOKIE_MAX_AGE,
+    sameSite: 'lax',
+    // Readable by client JS on purpose: the consent provider reads it to
+    // decide whether to show the banner.
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+  });
+  return res;
+}
+
 const hasClerk = isDevAuthShimAllowed()
   && !!(process.env.CLERK_SECRET_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
   && process.env.USE_DEV_AUTH !== '1';
@@ -103,10 +141,17 @@ export default hasClerk
         // `src/lib/mfa.ts` is still available for when the workspace
         // upgrades to Pro and Clerk Multi-factor is flipped on.
       }
+      // Reached only when the request is allowed to continue — every deny
+      // path above has already returned. Returning a NextResponse from a
+      // clerkMiddleware handler is supported and is the documented way to
+      // attach headers; returning undefined (the common case, once the
+      // cookie exists) leaves Clerk's own handling exactly as it was.
+      return countryCookieResponse(req);
     })
-  : () => {
-      // No-op middleware in dev without Clerk
-      return undefined;
+  : (req: NextRequest) => {
+      // No auth in dev without Clerk, but the country cookie still needs
+      // setting or the banner cannot be tested locally.
+      return countryCookieResponse(req);
     };
 
 export const config = {
