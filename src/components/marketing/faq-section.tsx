@@ -32,7 +32,13 @@ export function FaqSection({
   if (items.length === 0) return null;
 
   return (
-    <section className={`container-page pt-14 pb-16 sm:pt-16 sm:pb-20 ${className}`}>
+    // A raised band, not another stretch of body ground. The page body is
+    // ink-50, so a section with no background of its own paints nothing — and
+    // the FAQ sat at the end of four consecutive such sections, which is where
+    // a long page stops reading as composed and starts reading as one scroll.
+    // White is what this system already uses for a lifted band.
+    <section className={`border-y border-ink-200 bg-white ${className}`}>
+      <div className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
       <h2 className="h2 max-w-2xl text-balance">{title}</h2>
       <dl className="mt-8 max-w-3xl divide-y divide-ink-200 border-t border-ink-200">
         {items.map((item) => (
@@ -48,6 +54,7 @@ export function FaqSection({
           </div>
         ))}
       </dl>
+      </div>
     </section>
   );
 }

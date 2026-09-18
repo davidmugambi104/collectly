@@ -232,7 +232,7 @@ export default function HomePage() {
       </section>
 
       {/* FEATURE GRID */}
-      <section className="bg-ink-50 border-y border-ink-200">
+      <section className="bg-white border-y border-ink-200">
         <div className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
           <div className="max-w-2xl">
             <p className="eyebrow">Features</p>

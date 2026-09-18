@@ -113,7 +113,10 @@ function Frame({
 
 export function ProductShowcase() {
   return (
-    <section className="border-b border-ink-200 bg-ink-50">
+    // bg-white, not bg-ink-50: the body is already ink-50, so an ink-50
+    // section paints nothing and arrives as two hairlines with no tonal step.
+    // White is what this system uses for a raised band.
+    <section className="border-y border-ink-200 bg-white">
       <div className="container-page py-16 sm:py-20">
         <div className="max-w-2xl">
           <p className="eyebrow">The actual product</p>
