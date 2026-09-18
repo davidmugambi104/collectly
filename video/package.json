@@ -1,0 +1,21 @@
+{
+  "name": "collectly-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion project for the Collectly product demo video. Separate from the Next app on purpose: Remotion pulls ~200MB including its own headless Chrome, and none of it belongs in the site's build or its node_modules.",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render DemoWalkthrough out/collectly-demo.mp4",
+    "still": "remotion still DemoWalkthrough out/frame.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.443",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.443"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "typescript": "5.7.3"
+  }
+}

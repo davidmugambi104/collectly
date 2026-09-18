@@ -101,3 +101,7 @@ __pycache__/
 /memory/
 /outreach/deliverability-report-*.md
 *.snapshot
+
+# Remotion project has its own deps and build output
+video/node_modules/
+video/out/
