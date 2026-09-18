@@ -57,7 +57,7 @@ const SECONDARY: Shot[] = [
       '"We paid this already", "we need a PO", "it goes out Friday" — each one read, tagged and ' +
       'answered with a next step, instead of landing in your inbox as one more thing to triage.',
     width: 1400,
-    height: 469,
+    height: 589,
   },
   {
     src: '/product/cashflow.webp',
@@ -69,7 +69,7 @@ const SECONDARY: Shot[] = [
       'Built from real due dates and how each customer has actually paid you — not from a ' +
       'straight line drawn through last quarter.',
     width: 1400,
-    height: 469,
+    height: 589,
   },
 ];
 

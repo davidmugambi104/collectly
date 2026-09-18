@@ -13,10 +13,11 @@
  * sample-data label on anything published from it; product-showcase.tsx puts
  * that label in the frame chrome.
  *
- * Note: the cash-flow page renders "AI forecast unavailable" when GEMINI_API_KEY
- * is unset, which is a local-environment state and not how the page behaves in
- * production. The crop below stops above that notice. If you re-shoot with a
- * key configured, widen it.
+ * The cash-flow crop needs GEMINI_API_KEY set. Without it the page falls back to
+ * a deterministic baseline and prints "AI forecast unavailable", which is a
+ * local-environment state rather than product behaviour — capturing it would
+ * misrepresent the page. With a key the crop runs to the foot of the chart card
+ * so the AI analysis line is included, because then it is real.
  */
 import { chromium } from 'playwright';
 import sharp from 'sharp';
@@ -31,8 +32,10 @@ const BASE = process.env.SHOT_BASE_URL ?? 'http://localhost:3213';
 /** width/height here must match the `width`/`height` props in product-showcase.tsx. */
 const SHOTS = [
   { name: 'dashboard', path: '/dashboard', crop: null, width: 2160 },
-  { name: 'inbox', path: '/dashboard/inbox', crop: { left: 500, top: 470, width: 2330, height: 780 }, width: 1400 },
-  { name: 'cashflow', path: '/dashboard/cash-flow', crop: { left: 500, top: 545, width: 2330, height: 780 }, width: 1400 },
+  { name: 'inbox', path: '/dashboard/inbox', crop: { left: 500, top: 470, width: 2330, height: 980 }, width: 1400 },
+  // 540..1520 is the chart card exactly: bars plus the AI analysis line,
+  // stopping before the separate methodology card below it.
+  { name: 'cashflow', path: '/dashboard/cash-flow', crop: { left: 500, top: 540, width: 2330, height: 980 }, width: 1400 },
 ];
 
 mkdirSync(OUT, { recursive: true });
