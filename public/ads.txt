@@ -1,0 +1,7 @@
+# Authorized Digital Sellers for getcollectly.app — https://iabtechlab.com/ads-txt/
+# Without this file at the domain root, AdSense treats inventory as unauthorized
+# and the dashboard reports "Earnings at risk". f08c47fec0942fa0 is Google's
+# canonical TAG certification id and is the same for every AdSense publisher;
+# the pub- id is the one that must match the client in the loader script in
+# src/app/layout.tsx.
+google.com, pub-7988406449660366, DIRECT, f08c47fec0942fa0
