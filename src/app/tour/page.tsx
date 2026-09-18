@@ -4,6 +4,7 @@ import { DunningDemo } from '@/components/marketing/dunning-demo';
 import { ArrowRight, Mail, Wallet, BarChart3, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { pageMetadata } from '@/lib/seo';
+import { TrackView } from '@/components/marketing/track-view';
 
 export const metadata = pageMetadata({
   title: 'Product tour — how Collectly follows up on overdue invoices',
@@ -19,6 +20,10 @@ export const metadata = pageMetadata({
 export default function TourPage() {
   return (
     <div className="min-h-screen">
+      {/* Page-view event for the funnel. The generic $pageview already fires
+          for every route; this is the named one the tour->signup funnel is
+          built on, so renaming or moving the route cannot silently break it. */}
+      <TrackView event="tour_page_view" />
       <MarketingHeader />
 
       <section className="container-page pt-16 pb-12 max-w-3xl text-center">

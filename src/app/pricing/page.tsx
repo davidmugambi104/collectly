@@ -6,6 +6,7 @@ import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONT
 import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
 import { type FaqItem } from '@/components/marketing/faq-section';
 import { Reveal } from '@/components/marketing/reveal';
+import { TrackedLink } from '@/components/marketing/tracked-link';
 
 // The questions this page actually shows, now also the ones it declares.
 // The JSON-LD used to list five generic questions ("Can I cancel anytime?",
@@ -103,9 +104,14 @@ export default function PricingPage() {
                     <li key={f} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />{f}</li>
                   ))}
                 </ul>
-                <Link href="/sign-up" className={`mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${p.popular ? 'bg-brand-600 text-white hover:bg-brand-700' : 'bg-ink-900 text-white hover:bg-ink-800'}`}>
+                <TrackedLink
+                  href="/sign-up"
+                  event="pricing_tier_click"
+                  eventProps={{ tier: k, plan_name: p.name, monthly: p.monthly }}
+                  className={`mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${p.popular ? 'bg-brand-600 text-white hover:bg-brand-700' : 'bg-ink-900 text-white hover:bg-ink-800'}`}
+                >
                   Start free trial <ArrowRight className="h-4 w-4" />
-                </Link>
+                </TrackedLink>
               </div>
               </Reveal>
             );

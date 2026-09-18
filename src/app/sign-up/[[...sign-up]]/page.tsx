@@ -2,12 +2,20 @@ import { SignUp } from '@clerk/nextjs';
 import { Logo } from '@/components/brand/logo';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { DevAuthForm } from '@/components/dev-auth-form';
+import { TrackView } from '@/components/marketing/track-view';
 
 const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.USE_DEV_AUTH !== '1';
 
 export default function SignUpPage() {
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Fires on arrival at the sign-up page, which is the last event this
+          codebase can see. Everything after it happens inside Clerk's hosted
+          component, so "started" here means reached the form — not completed
+          it. The completion side belongs on Clerk's webhook, not here, and
+          naming it signup_started keeps that distinction honest in the
+          funnel. */}
+      <TrackView event="signup_started" />
       <div className="flex-1 grid lg:grid-cols-2">
         <div className="hidden lg:flex flex-col justify-between p-12 bg-ink-950 text-white">
           <div className="flex items-center gap-2.5"><Logo className="h-7 w-7 text-white" /> <span className="text-lg font-display font-bold">Collectly</span></div>

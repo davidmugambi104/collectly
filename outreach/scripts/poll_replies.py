@@ -44,9 +44,26 @@ import email
 from email.header import decode_header
 
 # ---- CONFIG (use environment variables in production, not hardcoded) ----
-IMAP_HOST = os.environ.get("IMAP_HOST", "imap.gmail.com")  # change if not Gmail/Workspace
+#
+# Inbound mail for getcollectly.app is on ZOHO, not Gmail. The MX records are
+# mx.zoho.com / mx2 / mx3, and SPF reads
+# "v=spf1 include:zohomail.com include:resend.com ~all" -- Resend sends
+# outbound as davie@getcollectly.app, Zoho receives everything coming back.
+#
+# This defaulted to imap.gmail.com, so even once someone supplied a password
+# it would have authenticated against the wrong provider and reported no
+# replies. "No replies found" and "polled the wrong mailbox" look identical
+# from the outside, which is the dangerous part.
+#
+# Note the account's other Gmail credentials (GMAIL_USER /
+# GMAIL_APP_PASSWORD in .env.local) are NOT usable here: they belong to a
+# personal @gmail.com address, and davie@getcollectly.app does not forward
+# into it -- an IMAP search of that mailbox returns 0 messages with
+# Delivered-To: davie@getcollectly.app. A Zoho application-specific password
+# is required.
+IMAP_HOST = os.environ.get("IMAP_HOST", "imap.zoho.com")
 IMAP_USER = os.environ.get("IMAP_USER", "davie@getcollectly.app")
-IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "")  # app password, never commit this
+IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "")  # Zoho app password, never commit this
 LOG_PATH = os.environ.get("OUTREACH_LOG_PATH", "outreach-log.csv")
 UNSEEN_ONLY = True  # only scan unread mail each run (faster, avoids re-processing)
 MESSAGE_ID_COL = "message_id"

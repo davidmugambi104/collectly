@@ -8,6 +8,7 @@ import { Suspense } from 'react';
 import { orgJsonLd, softwareAppJsonLd, SITE, BRAND, TAGLINE } from '@/lib/seo';
 import { PLAN_PRICING } from '@/lib/utils';
 import Script from 'next/script';
+import { Clarity } from '@/components/clarity';
 
 // tailwind.config.ts has always named Inter and JetBrains Mono as the brand
 // faces, and globals.css sets Inter-specific OpenType features ("ss01",
@@ -205,6 +206,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7988406449660366"
           crossOrigin="anonymous"
         />
+        <Clarity />
         <ClerkProvider>
           <Suspense>
             <PostHogProvider>{children}</PostHogProvider>

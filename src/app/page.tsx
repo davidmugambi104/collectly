@@ -16,6 +16,7 @@ import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 import { ArAgingPanel } from '@/components/marketing/ar-aging-panel';
 import { CashForecastChart } from '@/components/marketing/cash-forecast-chart';
+import { TrackedLink } from '@/components/marketing/tracked-link';
 
 // Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports. Both the FAQPage markup below and the
@@ -111,9 +112,14 @@ export default function HomePage() {
               </p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
-                <Link href="/sign-up" className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
+                <TrackedLink
+                  href="/sign-up"
+                  event="homepage_cta_click"
+                  eventProps={{ location: 'hero', label: 'Start free trial' }}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors"
+                >
                   Start free trial <ArrowRight className="h-4 w-4" />
-                </Link>
+                </TrackedLink>
                 <Link href="/tour" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-ink-200 bg-white px-5 py-3 text-sm font-semibold text-ink-900 hover:bg-ink-50 transition-colors">
                   See the dashboard demo
                 </Link>
