@@ -7,13 +7,14 @@ import { ComparisonTable } from '@/components/marketing/comparison-table';
 import { ProductShowcase } from '@/components/marketing/product-showcase';
 import { StickyCta } from '@/components/marketing/sticky-cta';
 import {
-  ArrowRight, Sparkles, ShieldCheck, Clock, MessageSquare, Mail,
+  ArrowRight, Sparkles, ShieldCheck, Clock, MessageSquare, 
   Bot, BarChart3, CheckCircle2, Globe2, Zap, FileText, Wallet,
   Inbox, CalendarCheck, AlertTriangle, SlidersHorizontal,
 } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
 import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
+import { ArAgingPanel } from '@/components/marketing/ar-aging-panel';
 
 // Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports. Both the FAQPage markup below and the
@@ -137,7 +138,7 @@ export default function HomePage() {
             </div>
 
             <div className="lg:col-span-5">
-              <HeroDashboardMock />
+              <ArAgingPanel />
               {/* mt-10, not mt-3: the Auto-collected card is absolutely
                   positioned at -bottom-4, so it hangs a full rem below the
                   panel it is pinned to. At mt-3 this caption ran straight
@@ -544,85 +545,4 @@ function PricingCard({ name, price, period, audience, features, cta, popular }: 
   );
 }
 
-function HeroDashboardMock() {
-  return (
-    <div className="relative">
-      {/* No browser chrome. The traffic-light dots and the fake address bar
-          framed the screenshot as a picture OF an app rather than the app, and
-          that particular device has read as dated since about 2016. The panel
-          is now the product surface itself, with a single soft elevation to
-          lift it off the hero ground — the one thing in this section that gets
-          lifted. */}
-      <div className="rounded-2xl border border-ink-200 bg-white shadow-2xl shadow-ink-950/10 overflow-hidden">
-        <div className="px-5 pt-5 pb-1 flex items-center justify-between">
-          <span className="text-2xs font-semibold uppercase tracking-wider text-ink-500">Overview</span>
-          <span className="text-2xs text-ink-500">Sample data</span>
-        </div>
-        <div className="p-5 pt-3">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-xs text-ink-500">Outstanding A/R</div>
-              <div className="text-2xl font-mono font-bold tabular-nums text-ink-950">$184,250</div>
-              {/* Outstanding A/R rising is the BAD outcome — it is the pain the
-                  product sells against. Rendering it success-green with an up
-                  arrow told a finance-literate buyer that nobody here reads
-                  their own hero. The dashboard renders the same concept red. */}
-              <div className="text-xs text-red-600 font-medium mt-0.5">↑ 23% vs last month</div>
-            </div>
-            <div className="rounded-lg border border-ink-200 px-3 py-1.5 text-xs font-medium">Last 30 days ▾</div>
-          </div>
 
-          <div className="space-y-2">
-            {[
-              { c: 'Acme Corp', a: '$24,500', d: 4, b: '1-30' },
-              { c: 'Design Studio LLC', a: '$8,200', d: 12, b: '1-30' },
-              { c: 'Consulting Group', a: '$42,000', d: 38, b: '31-60' },
-              { c: 'Tech Partners Inc', a: '$15,750', d: 67, b: '61-90' },
-              { c: 'Global Services Ltd', a: '$93,800', d: 95, b: '90+' },
-            ].map((row, i) => (
-              <div key={i} className="flex items-center justify-between text-sm py-1.5 px-2 rounded">
-                <div className="flex items-center gap-2">
-                  {/* Initials, the way the real dashboard renders them. Five
-                      identical blue-to-green gradient squares read as "avatar
-                      not implemented yet", which is the single clearest MVP
-                      tell in the hero. */}
-                  <div className="h-6 w-6 rounded bg-ink-100 text-ink-600 text-[10px] font-semibold flex items-center justify-center">
-                    {row.c.split(' ').slice(0, 2).map((w) => w[0]).join('')}
-                  </div>
-                  <div>
-                    <div className="font-medium text-ink-900">{row.c}</div>
-                    <div className="text-[11px] text-ink-500">{row.d} days overdue</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className={`badge ${row.b === '90+' ? 'badge-danger' : row.b === '61-90' ? 'badge-warn' : row.b === '31-60' ? 'badge-warn' : 'badge-neutral'}`}>{row.b}</div>
-                  <div className="font-mono font-semibold text-ink-900">{row.a}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-ink-200 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center">
-                <Mail className="h-3.5 w-3.5 text-emerald-700" />
-              </div>
-              <div>
-                <div className="text-xs font-semibold text-ink-900">Auto-collected</div>
-                <div className="text-[11px] text-ink-500">Consulting Group — 12 min ago</div>
-              </div>
-            </div>
-            <div className="font-mono font-semibold text-emerald-700 tabular-nums">$2,840</div>
-          </div>
-        </div>
-      </div>
-      {/* Was an absolutely-positioned floating card. Pinned bottom-right it
-          covered the amount column (the $93,800 / 90+ row — the largest number
-          and the only red badge); moved to bottom-left it covered the customer
-          names on the same two rows instead. A 224px card cannot hang off a
-          430px panel without landing on something. It is a real row now: no
-          overlap is possible, and it reads as the product doing its job at the
-          bottom of the ledger rather than as a sticker on top of it. */}
-    </div>
-  );
-}
