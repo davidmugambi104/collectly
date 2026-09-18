@@ -24,9 +24,17 @@ export type EventProps = Record<string, string | number | boolean | null | undef
 
 export function track(event: MarketingEvent, props?: EventProps): void {
   // Guard rather than assume: posthog.init() only runs when
-  // NEXT_PUBLIC_POSTHOG_KEY is set, so in local dev and in previews without
-  // the key this would otherwise throw on every click.
+  // NEXT_PUBLIC_POSTHOG_KEY is set AND analytics consent has been granted, so
+  // in local dev, in previews without the key, and for anyone who declined,
+  // this would otherwise call capture() on an uninitialised client and log a
+  // warning on every click.
+  //
+  // __loaded is posthog-js's own "init has run" flag. Checking it rather than
+  // reading consent here keeps one source of truth: the provider decides
+  // whether PostHog exists at all, and this just declines to talk to
+  // something that does not.
   if (typeof window === 'undefined') return;
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
+  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
   posthog.capture(event, props);
 }

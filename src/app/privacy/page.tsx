@@ -27,6 +27,36 @@ export default function PrivacyPage() {
           <li>Share customer data with third parties except those needed to provide the service (payment processors, Twilio, Resend, Gemini)</li>
           <li>Train AI models on your data</li>
         </ul>
+        {/* The consent banner links here, so this has to actually describe
+            what the banner asks about. A policy that says nothing about
+            cookies while a banner offers to set them is the gap regulators
+            look for first. Keep this list and src/lib/consent.ts in step. */}
+        <h2 className="font-display font-semibold text-xl mt-8">Cookies</h2>
+        <p>
+          Three groups, and you decide on two of them. The site works with none of the
+          optional ones switched on.
+        </p>
+        <ul>
+          <li>
+            <b>Strictly necessary</b> — keeping you signed in, and remembering your answer to
+            the cookie banner. These cannot be switched off, and we do not ask about them.
+          </li>
+          <li>
+            <b>Analytics</b> — PostHog, for which pages get read and where people get stuck,
+            and Microsoft Clarity, which records the session and builds heatmaps. Clarity masks
+            what you type into form fields.
+          </li>
+          <li>
+            <b>Advertising</b> — Google AdSense, which sets cookies used to select and measure
+            ads.
+          </li>
+        </ul>
+        <p>
+          In the UK, EU, EEA and Switzerland nothing in the second and third groups loads until
+          you say yes — not as a blocked cookie, but as a script that is never added to the page.
+          You can change your answer at any time from <b>Cookie preferences</b> in the footer,
+          and turning analytics back off stops collection rather than just stopping the asking.
+        </p>
         <h2 className="font-display font-semibold text-xl mt-8">Data deletion</h2>
         <p>You can delete your account at any time from Settings. We delete all associated data within 30 days.</p>
       </div>

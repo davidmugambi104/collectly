@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from '@/components/brand/logo';
+import { ConsentLink } from '@/components/consent/consent-link';
 
 export function MarketingFooter() {
   // No top margin. The old mt-32 stacked 128px on top of whatever bottom
@@ -97,6 +98,10 @@ export function MarketingFooter() {
                 <li><Link href="/privacy" className="inline-block py-1.5 hover:text-ink-900">Privacy</Link></li>
                 <li><Link href="/dpa" className="inline-block py-1.5 hover:text-ink-900">DPA</Link></li>
                 <li><Link href="/security" className="inline-block py-1.5 hover:text-ink-900">Security</Link></li>
+                {/* Withdrawing consent has to be as easy as giving it
+                    (GDPR Art. 7(3)); renders nothing where no banner was
+                    shown. */}
+                <li><ConsentLink className="inline-block py-1.5 text-left hover:text-ink-900" /></li>
               </ul>
             </div>
           </div>

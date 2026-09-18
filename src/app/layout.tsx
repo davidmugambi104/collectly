@@ -7,8 +7,9 @@ import { ClerkProvider } from '@/components/clerk-provider';
 import { Suspense } from 'react';
 import { orgJsonLd, softwareAppJsonLd, SITE, BRAND, TAGLINE } from '@/lib/seo';
 import { PLAN_PRICING } from '@/lib/utils';
-import Script from 'next/script';
-import { Clarity } from '@/components/clarity';
+import { ConsentProvider } from '@/components/consent/consent-provider';
+import { GatedScripts } from '@/components/consent/gated-scripts';
+import { ConsentBanner } from '@/components/consent/consent-banner';
 
 // tailwind.config.ts has always named Inter and JetBrains Mono as the brand
 // faces, and globals.css sets Inter-specific OpenType features ("ss01",
@@ -183,35 +184,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        {/* Google AdSense loader.
-            next/script with afterInteractive rather than a raw <script async>
-            in <head>: Next then owns the injection and guarantees it runs once
-            per navigation in the App Router, where a hand-placed tag in <head>
-            can be evaluated again on client transitions and throws
-            "adsbygoogle.push() error: All ins elements ... already have ads".
-
-            The ca-pub id is a public identifier — it appears in page source by
-            design and must match /ads.txt — so it is not an env secret. It is
-            here rather than in a config file so the two places that must agree
-            are one grep apart.
-
-            Note for later: this sets advertising cookies before any consent
-            interaction. The site is en-GB and its Organization schema declares
-            areaServed GB, so PECR/GDPR consent applies to UK and EU visitors.
-            Wire this behind a consent gate before running ads in earnest. */}
-        <Script
-          id="google-adsense"
-          async
-          strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7988406449660366"
-          crossOrigin="anonymous"
-        />
-        <Clarity />
-        <ClerkProvider>
-          <Suspense>
-            <PostHogProvider>{children}</PostHogProvider>
-          </Suspense>
-        </ClerkProvider>
+        {/* Third-party scripts live in GatedScripts and mount only once the
+            visitor has allowed them. Nothing non-essential is in the document
+            before that: AdSense and Clarity both set cookies on load, and the
+            site is en-GB with areaServed GB, so PECR reg. 6 applies. */}
+        <ConsentProvider>
+          <GatedScripts />
+          <ClerkProvider>
+            <Suspense>
+              <PostHogProvider>{children}</PostHogProvider>
+            </Suspense>
+          </ClerkProvider>
+          <ConsentBanner />
+        </ConsentProvider>
       </body>
     </html>
   );
