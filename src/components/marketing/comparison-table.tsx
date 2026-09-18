@@ -1,6 +1,6 @@
 'use client';
 import { Check, X } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { LazyMotion, domAnimation, m, useReducedMotion } from 'framer-motion';
 import { PLAN_PRICING } from '@/lib/utils';
 import { COMPETITORS, type CompetitorKey } from './comparison-data';
 
@@ -86,6 +86,8 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
   );
 
   return (
+    // See reveal.tsx: `m` + domAnimation instead of the full motion bundle.
+    <LazyMotion features={domAnimation} strict>
     <>
       {/* Mobile: stacked feature cards.
           One card per feature row, each listing every column, is the only
@@ -140,7 +142,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
               // would put the last row 600ms behind the first, and a table
               // that fills in for over half a second reads as slow loading
               // rather than as motion.
-              <motion.tr
+              <m.tr
                 key={i}
                 className={i % 2 ? 'bg-ink-50' : ''}
                 // Same initial state server and client — see reveal.tsx.
@@ -167,7 +169,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
                     </td>
                   );
                 })}
-              </motion.tr>
+              </m.tr>
             ))}
           </tbody>
         </table>
@@ -196,6 +198,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
         </p>
       </div>
     </>
+    </LazyMotion>
   );
 }
 

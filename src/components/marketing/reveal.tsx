@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { LazyMotion, domAnimation, m, useReducedMotion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 /**
@@ -47,7 +47,13 @@ export function Reveal({
   const reduce = useReducedMotion();
 
   return (
-    <motion.div
+    // LazyMotion + `m` instead of the full `motion` export. The whole
+    // framer-motion bundle is ~100kB and importing `motion` anywhere pulls all
+    // of it: with it on the homepage, First Load JS was 246kB. domAnimation
+    // carries what this actually uses — opacity and transform — and loads the
+    // rest never.
+    <LazyMotion features={domAnimation} strict>
+    <m.div
       className={className}
       initial={{ opacity: 0, y: reduce ? 0 : 10 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -55,6 +61,7 @@ export function Reveal({
       transition={reduce ? { duration: 0 } : { duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
-    </motion.div>
+    </m.div>
+    </LazyMotion>
   );
 }

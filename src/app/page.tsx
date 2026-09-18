@@ -15,7 +15,7 @@ import { pageMetadata, faqJsonLd } from '@/lib/seo';
 import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 import { ArAgingPanel } from '@/components/marketing/ar-aging-panel';
-import { CashForecastChart } from '@/components/marketing/cash-forecast-chart';
+import { CashForecastChartLazy } from '@/components/marketing/cash-forecast-chart-lazy';
 import { TrackedLink } from '@/components/marketing/tracked-link';
 
 // Module-local, not exported: a Next.js page may only carry the
@@ -441,7 +441,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="lg:col-span-7">
-            <CashForecastChart />
+            <CashForecastChartLazy />
           </div>
         </div>
       </section>
