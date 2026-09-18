@@ -17,7 +17,7 @@ export function MarketingFooter() {
             link groups balanced at every breakpoint. */}
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-ink-950">
+            <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-ink-950 transition-opacity hover:opacity-70">
               <Logo className="h-7 w-7" />
               <span>Collectly</span>
             </Link>

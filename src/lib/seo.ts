@@ -145,7 +145,7 @@ export function orgJsonLd(): JsonLdThing {
     // The founder's X profile is already linked publicly from the homepage
     // footer; leaving sameAs empty while that link exists just withholds from
     // search engines a connection the site already makes in its own markup.
-    sameAs: ['https://x.com/daviemugambi'],
+    sameAs: ['https://x.com/daviemugambi', 'https://www.linkedin.com/in/davie-mugambi/'],
     foundingDate: '2024',
     founder: { '@type': 'Person', name: 'Davie' },
     knowsAbout: [

@@ -36,7 +36,7 @@ export function MarketingHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink-200/80 bg-white/80 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-ink-950" onClick={() => setOpen(false)}>
+        <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-ink-950 transition-opacity hover:opacity-70" onClick={() => setOpen(false)}>
           <Logo className="h-7 w-7" />
           <span className="text-lg">Collectly</span>
         </Link>

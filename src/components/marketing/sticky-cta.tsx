@@ -71,7 +71,7 @@ export function StickyCta() {
         <Link
           href="/sign-up"
           tabIndex={show ? undefined : -1}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-ink-950 px-4 py-2.5 text-sm font-semibold text-white"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-ink-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ink-800 active:bg-ink-800"
         >
           Start <ArrowRight className="h-4 w-4" />
         </Link>

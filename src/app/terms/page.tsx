@@ -24,7 +24,7 @@ export default function TermsPage() {
             what a terms page is for. The substance below is a thousand words of
             actual, accurate terms — this now says what it is instead of
             apologising for what it is not. It still wants a lawyer's read. */}
-        <p className="lead">Collectly is in private beta. These terms describe how the service works today, including the manual invoicing arrangement below, and will be updated as it changes. Questions about any of it: <a href="/contact" className="underline">get in touch</a>.</p>
+        <p className="lead">Collectly is in private beta. These terms describe how the service works today, including the manual invoicing arrangement below, and will be updated as it changes. Questions about any of it: <a href="/contact" className="underline underline-offset-2 transition-colors hover:text-ink-900">get in touch</a>.</p>
         <h2 className="font-display font-semibold text-xl mt-8">Use of the service</h2>
         <p>You may use Collectly in accordance with these terms. You may not abuse the service, attempt to disrupt it, or use it to send spam. The Service is currently offered only in connection with genuine business-to-business commercial receivables — not personal, family, household, or other consumer debt.</p>
         <h2 className="font-display font-semibold text-xl mt-8">Billing</h2>

@@ -154,18 +154,18 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
         <p>
           <b>Scope:</b> Compared against AR/invoicing tools evaluated by 5–30 person agencies and
           consultancies. Enterprise AR platforms (Gaviti, Growfin, HighRadius) are excluded —
-          they target $50M+ ARR ERP-first orgs. See <a href="/vs-freshbooks" className="underline">vs FreshBooks</a> or
-          the <a href="/compare" className="underline">full comparison list</a> for the others.
+          they target $50M+ ARR ERP-first orgs. See <a href="/vs-freshbooks" className="underline underline-offset-2 transition-colors hover:text-ink-900">vs FreshBooks</a> or
+          the <a href="/compare" className="underline underline-offset-2 transition-colors hover:text-ink-900">full comparison list</a> for the others.
         </p>
         <p className="mt-2">
           <b>Last verified:</b> 2026-07-31 against public pricing pages
-          (<a href="https://www.chaserhq.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">Chaser</a>,
-          {' '}<a href="https://www.bill.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">BILL</a>,
-          {' '}<a href="https://www.melio.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">Melio</a>,
-          {' '}<a href="https://quickbooks.intuit.com/pricing/" target="_blank" rel="noopener noreferrer" className="underline">QuickBooks</a>,
-          {' '}<a href="https://www.freshbooks.com/pricing" target="_blank" rel="noopener noreferrer" className="underline">FreshBooks</a>).
+          (<a href="https://www.chaserhq.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">Chaser</a>,
+          {' '}<a href="https://www.bill.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">BILL</a>,
+          {' '}<a href="https://www.melio.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">Melio</a>,
+          {' '}<a href="https://quickbooks.intuit.com/pricing/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">QuickBooks</a>,
+          {' '}<a href="https://www.freshbooks.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">FreshBooks</a>).
           Pricing/features change; if you spot something stale,{' '}
-          <a href="mailto:hello@getcollectly.app" className="underline">tell us</a>.
+          <a href="mailto:hello@getcollectly.app" className="underline underline-offset-2 transition-colors hover:text-ink-900">tell us</a>.
         </p>
       </div>
     </>
