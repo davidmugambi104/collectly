@@ -15,6 +15,7 @@ import { pageMetadata, faqJsonLd } from '@/lib/seo';
 import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 import { ArAgingPanel } from '@/components/marketing/ar-aging-panel';
+import { CashForecastChart } from '@/components/marketing/cash-forecast-chart';
 
 // Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports. Both the FAQPage markup below and the
@@ -413,6 +414,28 @@ export default function HomePage() {
               title="Approval-before-send"
               body="Nervous about automated emails? Turn on approval mode. Collectly drafts every reminder, you review and approve. Build confidence, then graduate to autopilot when ready."
             />
+          </div>
+        </div>
+      </section>
+
+      {/* EXPLAINABLE FORECAST — the claim above, drawn */}
+      <section className="border-y border-ink-200 bg-white">
+        <div className="container-page grid gap-10 py-16 sm:py-20 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-5">
+            <p className="eyebrow">Explainable forecast</p>
+            <h2 className="mt-3 h2 text-balance">Which part of next month is solid, and which part is hope</h2>
+            <p className="mt-4 max-w-[34rem] text-ink-600">
+              Most forecasts give you one number and no way to argue with it. This one
+              separates the money a customer has promised in writing from the money a
+              reliable payer will probably send, and from the money that is genuinely in
+              doubt — so you can see the week where payroll gets tight before it arrives.
+            </p>
+            <p className="mt-4 max-w-[34rem] text-sm text-ink-500">
+              Hover any week to see the split.
+            </p>
+          </div>
+          <div className="lg:col-span-7">
+            <CashForecastChart />
           </div>
         </div>
       </section>
