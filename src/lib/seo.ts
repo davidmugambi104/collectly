@@ -142,9 +142,10 @@ export function orgJsonLd(): JsonLdThing {
         areaServed: ['GB', 'US', 'AU', 'CA', 'KE', 'NG'],
       },
     ],
-    sameAs: [
-      // Add real profiles once we have them. Empty array is fine for now.
-    ],
+    // The founder's X profile is already linked publicly from the homepage
+    // footer; leaving sameAs empty while that link exists just withholds from
+    // search engines a connection the site already makes in its own markup.
+    sameAs: ['https://x.com/daviemugambi'],
     foundingDate: '2024',
     founder: { '@type': 'Person', name: 'Davie' },
     knowsAbout: [

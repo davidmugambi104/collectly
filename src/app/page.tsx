@@ -5,6 +5,7 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { DunningDemo } from '@/components/marketing/dunning-demo';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import { ProductShowcase } from '@/components/marketing/product-showcase';
+import { StickyCta } from '@/components/marketing/sticky-cta';
 import {
   ArrowRight, Sparkles, ShieldCheck, Clock, MessageSquare, Mail,
   Bot, BarChart3, CheckCircle2, Globe2, Zap, FileText, Wallet,
@@ -298,7 +299,11 @@ export default function HomePage() {
 
         <div className="mt-16 max-w-2xl">
           <h3 className="h3">What that looks like over a year</h3>
-          <p className="mt-2 text-sm text-ink-600">Same feature gap, in dollars. Estimates based on publicly listed tiers — your actual costs may vary.</p>
+          <p className="mt-2 text-sm text-ink-600">
+            Same feature gap, in dollars, for a three-person team on each vendor&apos;s
+            publicly listed entry tier. Platform cost only — transaction fees are
+            charged on top where noted, and your own volume decides those.
+          </p>
         </div>
         <div className="mt-6 overflow-x-auto rounded-2xl border border-ink-200 shadow-sm">
           <table className="w-full text-sm text-left">
@@ -313,32 +318,38 @@ export default function HomePage() {
             </thead>
             <tbody className="divide-y divide-ink-100">
               <tr className="bg-white">
-                <td className="px-6 py-4 font-medium text-ink-900">Annual platform cost</td>
-                <td className="px-6 py-4 text-center font-bold text-emerald-700">${(PLAN_PRICING.starter.monthly * 12).toLocaleString()}</td>
-                <td className="px-6 py-4 text-center">~$3,108+</td>
-                <td className="px-6 py-4 text-center">$588 + per-user fees</td>
+                <td className="px-6 py-4 font-medium text-ink-900">Listed price</td>
+                <td className="px-6 py-4 text-center font-bold text-emerald-700">${PLAN_PRICING.starter.monthly}/mo flat</td>
+                <td className="px-6 py-4 text-center">~$259/mo</td>
+                <td className="px-6 py-4 text-center">$49 per user/mo</td>
                 <td className="px-6 py-4 text-center">$0 (AP-only)</td>
               </tr>
               <tr className="bg-ink-50">
-                <td className="px-6 py-4 font-medium text-ink-900">Hidden transaction fees</td>
+                <td className="px-6 py-4 font-medium text-ink-900">Transaction fees on top</td>
                 <td className="px-6 py-4 text-center text-emerald-700">None</td>
                 <td className="px-6 py-4 text-center">None</td>
                 <td className="px-6 py-4 text-center">2.9% + 49¢ per payment</td>
                 <td className="px-6 py-4 text-center">ACH/card fees apply</td>
               </tr>
+              {/* This row used to read "Time to collect cash: < 1 day", which is
+                  not a claim this product can make — how fast a customer pays is
+                  the customer's decision. It was a relabelling of the
+                  time-to-value row in the sourced comparison table, which means
+                  setup to first reminder going out. Restated as what it
+                  measures. */}
               <tr className="bg-white">
-                <td className="px-6 py-4 font-medium text-ink-900">Time to collect cash</td>
+                <td className="px-6 py-4 font-medium text-ink-900">Setup to first reminder</td>
                 <td className="px-6 py-4 text-center text-emerald-700">&lt; 1 day</td>
                 <td className="px-6 py-4 text-center">1–2 weeks</td>
                 <td className="px-6 py-4 text-center">1–2 weeks</td>
                 <td className="px-6 py-4 text-center">Manual reminders</td>
               </tr>
               <tr className="bg-ink-50">
-                <td className="px-6 py-4 font-medium text-ink-900">Year 1 total (3 users, 100 invoices/mo)</td>
+                <td className="px-6 py-4 font-medium text-ink-900">Year 1 platform cost, 3 users</td>
                 <td className="px-6 py-4 text-center text-lg font-bold text-emerald-700">${(PLAN_PRICING.starter.monthly * 12).toLocaleString()}</td>
-                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$3,108+</td>
-                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$1,764–$2,800+</td>
-                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">Unpredictable</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">${(259 * 12).toLocaleString()}</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">${(49 * 3 * 12).toLocaleString()}</td>
+                <td className="px-6 py-4 text-center text-lg font-bold text-ink-900">$0 + your time</td>
               </tr>
             </tbody>
           </table>
@@ -456,6 +467,8 @@ export default function HomePage() {
       </section>
 
       <FaqSection items={FAQS} title="Frequently asked" />
+
+      <StickyCta />
 
       <MarketingFooter />
     </div>

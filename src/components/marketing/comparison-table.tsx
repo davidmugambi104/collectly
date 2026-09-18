@@ -11,6 +11,9 @@ import { COMPETITORS, type CompetitorKey } from './comparison-data';
 // per-page comparisons under /compare.
 
 
+/** Rows shown before the "show more" disclosure on mobile. */
+const MOBILE_LEAD_ROWS = 4;
+
 const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
   ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
@@ -82,24 +85,34 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
 
   return (
     <>
-      {/* Mobile: stacked feature cards */}
-      <div className="mt-10 md:hidden space-y-3">
-        {rows.map(([feat, ...vals], i) => (
-          <div key={i} className="card">
-            <div className="text-sm font-semibold text-ink-900">{feat}</div>
-            <div className="mt-3 space-y-2">
-              {vals.map((v, j) => {
-                const c = columns[j];
-                return (
-                  <div key={c.key} className="flex items-center justify-between text-sm">
-                    <span className={c.highlight ? 'font-semibold text-ink-950' : 'text-ink-600'}>{c.label}</span>
-                    <Cell value={v} highlight={c.highlight} />
-                  </div>
-                );
-              })}
+      {/* Mobile: stacked feature cards.
+          One card per feature row, each listing every column, is the only
+          honest way to show a seven-column matrix at 390px — but all eleven
+          rows ran 3,000px, inside a homepage already 25 screens deep on a
+          phone. The first four rows carry the argument (dunning, price, hidden
+          fees, setup time); the rest is corroboration, so it goes behind a
+          disclosure. <details> rather than state: it costs no JavaScript, it
+          is open to find-in-page and to crawlers, and it matches how the
+          pricing FAQ already works. */}
+      <div className="mt-10 md:hidden">
+        <div className="space-y-3">
+          {rows.slice(0, MOBILE_LEAD_ROWS).map(([feat, ...vals], i) => (
+            <MobileRow key={i} feat={feat} vals={vals} columns={columns} />
+          ))}
+        </div>
+        {rows.length > MOBILE_LEAD_ROWS && (
+          <details className="group mt-3">
+            <summary className="flex cursor-pointer list-none items-center justify-center gap-1.5 rounded-lg border border-ink-200 bg-white py-3 text-sm font-semibold text-ink-900">
+              <span className="group-open:hidden">Show {rows.length - MOBILE_LEAD_ROWS} more comparisons</span>
+              <span className="hidden group-open:inline">Show fewer</span>
+            </summary>
+            <div className="mt-3 space-y-3">
+              {rows.slice(MOBILE_LEAD_ROWS).map(([feat, ...vals], i) => (
+                <MobileRow key={i} feat={feat} vals={vals} columns={columns} />
+              ))}
             </div>
-          </div>
-        ))}
+          </details>
+        )}
       </div>
 
       {/* Desktop: table */}
@@ -156,5 +169,32 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
         </p>
       </div>
     </>
+  );
+}
+
+function MobileRow({
+  feat,
+  vals,
+  columns,
+}: {
+  feat: string;
+  vals: string[];
+  columns: { key: string; label: string; highlight?: boolean }[];
+}) {
+  return (
+    <div className="card">
+      <div className="text-sm font-semibold text-ink-900">{feat}</div>
+      <div className="mt-3 space-y-2">
+        {vals.map((v, j) => {
+          const c = columns[j];
+          return (
+            <div key={c.key} className="flex items-center justify-between text-sm">
+              <span className={c.highlight ? 'font-semibold text-ink-950' : 'text-ink-600'}>{c.label}</span>
+              <Cell value={v} highlight={c.highlight} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

@@ -16,7 +16,15 @@ export default function TermsPage() {
       <div className="container-tight py-16 prose prose-ink max-w-none">
         <h1 className="text-4xl font-display font-bold">Terms of Service</h1>
         <p className="text-ink-500 text-sm">Last updated: July 13, 2026</p>
-        <p className="lead">Placeholder terms — under legal review, not yet a complete agreement. The section below on billing has been corrected to match how the service actually works today; the rest still awaits full counsel review before this page is final.</p>
+        {/* This page used to open by calling itself a placeholder and "not yet
+            a complete agreement". Two problems with that. It is the page a
+            buyer opens immediately before paying, and telling them the terms
+            are not real is not a small thing to read there. And a terms page
+            that disclaims being an agreement is arguably doing the opposite of
+            what a terms page is for. The substance below is a thousand words of
+            actual, accurate terms — this now says what it is instead of
+            apologising for what it is not. It still wants a lawyer's read. */}
+        <p className="lead">Collectly is in private beta. These terms describe how the service works today, including the manual invoicing arrangement below, and will be updated as it changes. Questions about any of it: <a href="/contact" className="underline">get in touch</a>.</p>
         <h2 className="font-display font-semibold text-xl mt-8">Use of the service</h2>
         <p>You may use Collectly in accordance with these terms. You may not abuse the service, attempt to disrupt it, or use it to send spam. The Service is currently offered only in connection with genuine business-to-business commercial receivables — not personal, family, household, or other consumer debt.</p>
         <h2 className="font-display font-semibold text-xl mt-8">Billing</h2>
