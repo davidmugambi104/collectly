@@ -5,6 +5,7 @@ import { CheckCircle2, ArrowRight, Sparkles, X } from 'lucide-react';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_INCLUDED_ORGS, PRACTICE_SCALE_CROSSOVER_ORGS } from '@/lib/utils';
 import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
 import { type FaqItem } from '@/components/marketing/faq-section';
+import { Reveal } from '@/components/marketing/reveal';
 
 // The questions this page actually shows, now also the ones it declares.
 // The JSON-LD used to list five generic questions ("Can I cancel anytime?",
@@ -82,11 +83,15 @@ export default function PricingPage() {
 
       <section className="container-page pb-20">
         <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
-          {(['starter','growth'] as const).map((k) => {
+          {(['starter','growth'] as const).map((k, i) => {
             const p = PLAN_PRICING[k];
             if (!p) return null;
             return (
-              <div key={k} className={`card-lg relative ${p.popular ? 'ring-2 ring-brand-500' : ''}`}>
+              // Staggered by 60ms so the two tiers arrive in reading order
+              // rather than together. Reveal renders the final state outright
+              // under prefers-reduced-motion.
+              <Reveal key={k} delay={i * 0.06}>
+              <div className={`card-lg relative h-full ${p.popular ? 'ring-2 ring-brand-500' : ''}`}>
                 {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><span className="badge-success"><Sparkles className="h-3 w-3 mr-1" />Most popular</span></div>}
                 <div className="text-sm text-ink-500">{p.name}</div>
                 <div className="mt-1 text-5xl font-display font-bold text-ink-950">${p.monthly}<span className="text-base font-normal text-ink-500">/mo</span></div>
@@ -102,6 +107,7 @@ export default function PricingPage() {
                   Start free trial <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
+              </Reveal>
             );
           })}
         </div>

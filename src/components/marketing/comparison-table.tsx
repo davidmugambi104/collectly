@@ -1,5 +1,6 @@
 'use client';
 import { Check, X } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { PLAN_PRICING } from '@/lib/utils';
 import { COMPETITORS, type CompetitorKey } from './comparison-data';
 
@@ -71,6 +72,7 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
  * honest outcome until each gets a comparison built for it.
  */
 export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
+  const reduceMotion = useReducedMotion();
   const columns = only
     ? COMPETITORS.filter((c) => c.highlight || c.key === only)
     : COMPETITORS;
@@ -130,7 +132,32 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
           </thead>
           <tbody className="text-ink-700">
             {rows.map(([feat, ...vals], i) => (
-              <tr key={i} className={i % 2 ? 'bg-ink-50' : ''}>
+              // motion.tr, not <Reveal> wrapping a <tr>: a div between tbody
+              // and tr is invalid table markup and browsers hoist it out,
+              // which drops the zebra striping and the column alignment.
+              //
+              // The stagger is capped at 8 steps. Fifteen rows at 40ms each
+              // would put the last row 600ms behind the first, and a table
+              // that fills in for over half a second reads as slow loading
+              // rather than as motion.
+              <motion.tr
+                key={i}
+                className={i % 2 ? 'bg-ink-50' : ''}
+                // Same initial state server and client — see reveal.tsx.
+                // `initial={reduce ? false : ...}` looks right and is not:
+                // useReducedMotion() is null during SSR, so the server writes
+                // opacity:0 and hydration never clears it, leaving the rows
+                // invisible for reduced-motion users. Only the travel and the
+                // duration vary.
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 6 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+                transition={
+                  reduceMotion
+                    ? { duration: 0 }
+                    : { duration: 0.3, delay: Math.min(i, 8) * 0.04, ease: [0.22, 1, 0.36, 1] }
+                }
+              >
                 <td className="py-3 pr-4">{feat}</td>
                 {vals.map((v, j) => {
                   const c = columns[j];
@@ -140,7 +167,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
                     </td>
                   );
                 })}
-              </tr>
+              </motion.tr>
             ))}
           </tbody>
         </table>
