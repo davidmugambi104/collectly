@@ -18,5 +18,11 @@
     "paths": { "@/*": ["./src/*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "video"]
+  // "video" is a separate Remotion project with its own package.json,
+  // tsconfig and node_modules, and the root "include" of **/*.ts was
+  // sweeping it into the Next build's type check. Vercel never installs
+  // video/node_modules, so @remotion/cli/config could not resolve there
+  // and production failed on a file the site does not ship. It passed
+  // locally only because those deps happened to be installed.
 }
