@@ -58,6 +58,31 @@ PRIMARY_REQUIRED = 4   # 4/4 in Primary/Inbox = pass
 CONDITIONAL_REQUIRED = 3  # 3/4 with 1 in Promotions = conditional pass
 FAIL_SPAM_THRESHOLD = 2  # 2+ in Spam/Junk/Promotions = fail
 
+# Minimum REAL prospect sends that must sit in the rolling window before the
+# gate is allowed to grant the full cap.
+#
+# Without this the gate could unlock itself. run_daily_deliverability_monitor.py
+# sends four seed-inbox tests to our own addresses and then reads the same
+# window back: on 2026-09-18 those four were the ONLY sends in it, they
+# delivered because they always deliver, and the gate published
+# "bounce=0.00%, cap=100" off a sample consisting entirely of mail we sent
+# ourselves. Lifetime bounce at that moment was 18.2% (72/395).
+#
+# A rate computed from four self-addressed messages is not evidence about a
+# prospect list. Below this floor the gate holds at the pullback cap rather
+# than reading a small clean sample as proof of health.
+MIN_WINDOW_SENDS_FOR_FULL_CAP = 20
+
+# Seed-inbox recipients. These are ours, they are sent by the monitor itself,
+# and they must never count as prospect volume or as evidence of list quality.
+SEED_RECIPIENTS = {
+    "sharonkarendi8@gmail.com",
+    "faithmugendi22@gmail.com",
+    "faithntinyari36@gmail.com",
+    "daviem@outlook.com",
+    "bit202544716@mylife.mku.ac.ke",
+}
+
 # Rolling-window thresholds from collectly_bot_policy.md.
 BOUNCE_SPAM_PULLBACK = 0.05  # 5% rolling 7-day bounce or spam -> pull back
 
@@ -186,6 +211,7 @@ def _read_live_snapshot() -> dict | None:
     return {
         "window_days": rollup.get("window_days", 7),
         "total": rollup["total"],
+        "prospect_total": _prospect_sends_in_window(),
         "bounced": rollup["bounced"],
         "spam": rollup.get("complained", 0),
         "bounce_rate": rollup["bounce_rate"],
@@ -194,6 +220,34 @@ def _read_live_snapshot() -> dict | None:
         "fetched_at": payload["fetched_at"],
         "age_hours": round(age_hours, 2),
     }
+
+
+def _prospect_sends_in_window() -> int:
+    """How many messages in the window went to someone who is not us.
+
+    The rollup's `total` counts every message Resend sent, including the four
+    seed-inbox tests the monitor fires at our own addresses immediately before
+    reading this window back. Those always deliver, so counting them as
+    evidence lets a quiet week look like a clean list. Returns -1 when the
+    per-recipient window file is unavailable, which `_decide_gate` treats as
+    an unknown sample and therefore holds at the pullback cap.
+    """
+    candidates = sorted(glob.glob(str(SNAPSHOTS / "resend-7d-window-*.json")))
+    if not candidates:
+        return -1
+    try:
+        payload = json.loads(Path(candidates[-1]).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return -1
+    rows = payload if isinstance(payload, list) else (payload.get("emails") or payload.get("data") or [])
+    count = 0
+    for row in rows:
+        to = row.get("to") or row.get("recipient") or []
+        if isinstance(to, list):
+            to = to[0] if to else ""
+        if (to or "").strip().lower() not in SEED_RECIPIENTS:
+            count += 1
+    return count
 
 
 def _classify(seed: dict) -> tuple[str, str]:
@@ -226,6 +280,27 @@ def _decide_gate(deliv_status: str, send_metrics: dict) -> tuple[str, str, int]:
     # pass / conditional_pass
     if bounce > BOUNCE_SPAM_PULLBACK or spam_rate > BOUNCE_SPAM_PULLBACK:
         return "pullback", f"bounce_rate={bounce:.1%} or spam_rate={spam_rate:.1%} > 5% rolling 7d", PULLBACK_CAP
+
+    # A clean rate over a handful of messages is not evidence of a healthy
+    # list; it is usually evidence that we have barely sent. Seed tests are
+    # excluded upstream, so `prospect_total` counts real recipients only.
+    prospect_total = send_metrics.get("prospect_total", send_metrics["total"])
+    if prospect_total < 0:
+        return (
+            "pullback",
+            "could not read per-recipient window file, so real prospect volume is "
+            "unknown and the bounce rate cannot be attributed; holding at pullback cap",
+            PULLBACK_CAP,
+        )
+    if prospect_total < MIN_WINDOW_SENDS_FOR_FULL_CAP:
+        return (
+            "pullback",
+            f"insufficient sample: only {prospect_total} real prospect send(s) in the "
+            f"{send_metrics.get('window_days', 7)}d window (need "
+            f"{MIN_WINDOW_SENDS_FOR_FULL_CAP} before trusting a "
+            f"{bounce:.1%} bounce rate); holding at pullback cap",
+            PULLBACK_CAP,
+        )
     return "allow", f"deliverability={deliv_status}, bounce={bounce:.1%}, spam={spam_rate:.1%}", RESEND_DAILY_CAP
 
 

@@ -20,6 +20,7 @@ Required secrets:
 """
 import argparse
 import csv
+import re
 import json
 import os
 import sys
@@ -75,6 +76,19 @@ def already_sent_today(log: List[Dict[str, str]], prospect_id: str) -> bool:
     return False
 
 
+# accounts@ / billing@ / info@ and friends. Matched on the local part only, so
+# a real person whose address merely contains one of these words is unaffected.
+ROLE_ADDRESS_RE = re.compile(
+    r"^(accounts?|billing|ap|info|admin|hello|contact|enquiries|office|finance"
+    r"|team|support|sales|mail|noreply|no-reply)@",
+    re.IGNORECASE,
+)
+
+
+def is_role_address(email: str) -> bool:
+    return bool(ROLE_ADDRESS_RE.match((email or "").strip()))
+
+
 def pick_prospects(tier: int, limit: int, log: List[Dict[str, str]]) -> List[Dict[str, str]]:
     """Pick next N prospects in this tier that haven't been sent today.
 
@@ -102,6 +116,18 @@ def pick_prospects(tier: int, limit: int, log: List[Dict[str, str]]) -> List[Dic
         if not r.get("email"):
             continue
         if r["email"].strip().lower() in suppressed:
+            continue
+        if is_role_address(r["email"]):
+            # Defence in depth. Role mailboxes are currently kept out by being
+            # tiered `quarantined_role_address`, which never equals "1"/"2"/"3"
+            # -- but that is an accident of string comparison, not a rule. One
+            # re-tier puts them back in the send path.
+            #
+            # They are why the bounce rate went from 1.2% on 2026-08-30 to
+            # 18.2% on 2026-09-18: over that period role addresses went from
+            # 4.5% to 44.1% of the sending mix, and measured across the current
+            # window they bounce at 39.1% (68/174) against 1.8% (4/221) for
+            # personal addresses. 68 of the 72 bounces are role mailboxes.
             continue
         rid = r.get("id")
         # Cooldown: don't re-t1 within 14 days
