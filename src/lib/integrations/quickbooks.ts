@@ -114,14 +114,44 @@ async function getFreshQboToken(orgId: string) {
   return { ...integ, accessToken: json.access_token, refreshToken: json.refresh_token ?? integ.refreshToken, expiresAt: newExpiresAt };
 }
 
+/** How many times a 429 is retried before giving up. */
+const QBO_MAX_RETRIES = 3;
+
+/**
+ * QuickBooks throttles at 500 requests/minute per realm (and 40/second), and
+ * answers a breach with 429.
+ *
+ * Same reasoning as the Xero helper: without this, a sync over a large company
+ * file throws partway through, leaving some invoices written and the rest not.
+ * A half-synced ledger shows an A/R total that is wrong with nothing on screen
+ * saying so, which is worse than a sync that fails cleanly.
+ *
+ * Intuit does not reliably send Retry-After on throttle responses, so this
+ * backs off exponentially from 2s rather than trusting a header that may not
+ * be there.
+ */
 async function qboFetch(orgId: string, path: string) {
   const integ = await getFreshQboToken(orgId);
   const url = path.startsWith('http') ? path : `${QBO_BASE}/v3/company/${integ.realmId}${path}`;
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${integ.accessToken}`, Accept: 'application/json' },
-  });
-  if (!res.ok) throw new Error(`QBO ${path} failed: ${res.status} ${await res.text()}`);
-  return res.json();
+
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${integ.accessToken}`, Accept: 'application/json' },
+    });
+
+    if (res.status === 429 && attempt < QBO_MAX_RETRIES) {
+      const retryAfter = Number(res.headers.get('Retry-After'));
+      const waitMs =
+        Number.isFinite(retryAfter) && retryAfter > 0
+          ? Math.min(retryAfter * 1000, 60_000)
+          : Math.min(2000 * 2 ** attempt, 30_000);
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+      continue;
+    }
+
+    if (!res.ok) throw new Error(`QBO ${path} failed: ${res.status} ${await res.text()}`);
+    return res.json();
+  }
 }
 
 async function qboPost(orgId: string, path: string, body: unknown) {

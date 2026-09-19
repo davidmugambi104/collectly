@@ -135,20 +135,60 @@ type XeroInvoice = {
 };
 type XeroList = { Contacts?: XeroContact[]; Invoices?: XeroInvoice[] };
 
+/** How many times a 429 is retried before giving up. */
+const XERO_MAX_RETRIES = 3;
+
+/**
+ * Xero enforces 60 calls/minute and 5,000/day per tenant, and answers a breach
+ * with 429 plus a `Retry-After` header in seconds.
+ *
+ * Without handling it, a sync over a book of any size throws partway through:
+ * some invoices land, the rest do not, and the failure surfaces as a generic
+ * "Xero failed: 429". A half-synced ledger is worse than a failed sync,
+ * because the dashboard then shows an A/R total that is simply wrong and
+ * nothing says so.
+ *
+ * Xero also distinguishes which limit was hit via `X-Rate-Limit-Problem`
+ * (minute / daily / concurrent). A daily exhaustion cannot be waited out
+ * inside a request, so that one is surfaced immediately rather than slept on.
+ */
 async function xeroFetch(orgId: string, path: string, init?: RequestInit) {
   const integ = await getFreshXero(orgId);
   if (!integ.tenantId) throw new Error('Xero: tenant not resolved');
-  const res = await fetch(`${XERO_API}${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${integ.accessToken}`,
-      Accept: 'application/json',
-      'Xero-Tenant-Id': integ.tenantId,
-      ...(init?.headers ?? {}),
-    },
-  });
-  if (!res.ok) throw new Error(`Xero ${path} failed: ${res.status} ${await res.text()}`);
-  return res.json();
+
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(`${XERO_API}${path}`, {
+      ...init,
+      headers: {
+        Authorization: `Bearer ${integ.accessToken}`,
+        Accept: 'application/json',
+        'Xero-Tenant-Id': integ.tenantId,
+        ...(init?.headers ?? {}),
+      },
+    });
+
+    if (res.status === 429 && attempt < XERO_MAX_RETRIES) {
+      const problem = (res.headers.get('X-Rate-Limit-Problem') || '').toLowerCase();
+      if (problem === 'daily') {
+        throw new Error(
+          `Xero ${path}: daily API limit (5,000 calls) exhausted for this organisation. ` +
+            'Sync will resume tomorrow; no data was partially written.',
+        );
+      }
+      // Retry-After is in seconds. Default to 60 — the minute window — when the
+      // header is absent, and cap it so a request cannot hang indefinitely.
+      const retryAfter = Number(res.headers.get('Retry-After'));
+      const waitMs = Math.min(
+        Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 60_000,
+        90_000,
+      );
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+      continue;
+    }
+
+    if (!res.ok) throw new Error(`Xero ${path} failed: ${res.status} ${await res.text()}`);
+    return res.json();
+  }
 }
 
 export function xeroAuthUrl(state: string) {
