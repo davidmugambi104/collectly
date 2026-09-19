@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
@@ -19,7 +19,24 @@ import { useConsent } from '@/components/consent/consent-provider';
  */
 let initialised = false;
 
-function usePostHogInit(enabled: boolean) {
+/**
+ * Returns whether PostHog is initialised AND allowed to capture.
+ *
+ * The boolean matters because of React's effect ordering: child effects run
+ * BEFORE parent effects. PageviewTracker is a child of this provider, so on
+ * the render where consent flips to granted its effect fired first and called
+ * capture('$pageview') against a PostHog that had not been init'ed yet. The
+ * event was dropped, and because neither `pathname` nor `enabled` changed
+ * again, nothing ever retried it — a landing visitor produced no pageview at
+ * all. Twelve seconds on the live homepage, zero capture requests.
+ *
+ * Handing the tracker a "ready" flag that flips in THIS effect makes the
+ * ordering explicit instead of accidental: the flag can only become true
+ * after init has run, and flipping it re-runs the child effect.
+ */
+function usePostHogInit(enabled: boolean): boolean {
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
     if (!enabled) return;
     if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
@@ -34,6 +51,7 @@ function usePostHogInit(enabled: boolean) {
       initialised = true;
     }
     posthog.opt_in_capturing();
+    setReady(true);
   }, [enabled]);
 
   // Withdrawing consent has to actually stop collection, not just stop asking.
@@ -41,7 +59,10 @@ function usePostHogInit(enabled: boolean) {
     if (enabled) return;
     if (!initialised) return;
     posthog.opt_out_capturing();
+    setReady(false);
   }, [enabled]);
+
+  return ready;
 }
 
 function PageviewTracker({ enabled }: { enabled: boolean }) {
@@ -58,12 +79,12 @@ function PageviewTracker({ enabled }: { enabled: boolean }) {
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   const { has } = useConsent();
   const enabled = has('analytics');
-  usePostHogInit(enabled);
+  const ready = usePostHogInit(enabled);
 
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return <>{children}</>;
   return (
     <PHProvider client={posthog}>
-      <PageviewTracker enabled={enabled} />
+      <PageviewTracker enabled={enabled && ready} />
       {children}
     </PHProvider>
   );
