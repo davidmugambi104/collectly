@@ -211,7 +211,8 @@ def _read_live_snapshot() -> dict | None:
     return {
         "window_days": rollup.get("window_days", 7),
         "total": rollup["total"],
-        "prospect_total": _prospect_sends_in_window(),
+        "prospect_total": _prospect_window_stats()[0],
+        "prospect_bounced": _prospect_window_stats()[1],
         "bounced": rollup["bounced"],
         "spam": rollup.get("complained", 0),
         "bounce_rate": rollup["bounce_rate"],
@@ -220,6 +221,39 @@ def _read_live_snapshot() -> dict | None:
         "fetched_at": payload["fetched_at"],
         "age_hours": round(age_hours, 2),
     }
+
+
+def _prospect_window_stats() -> tuple[int, int]:
+    """(real prospect sends, bounced/complained among them) in the window.
+
+    Seed tests are excluded from BOTH numbers. Counting them in the denominator
+    dilutes the bounce rate with mail that cannot bounce: on 2026-09-19 the
+    window held 42 messages, 12 of them seed tests, and the blended rate read
+    4.76% -- under the 5% pull-back threshold -- while the real prospect rate
+    was 2/30 = 6.67%, over it. The gate would have granted the full 100/day cap
+    on a number the seed tests had flattered.
+
+    Returns (-1, -1) when the per-recipient file is unavailable.
+    """
+    candidates = sorted(glob.glob(str(SNAPSHOTS / "resend-7d-window-????-??-??*.json")))
+    if not candidates:
+        return -1, -1
+    try:
+        payload = json.loads(Path(candidates[-1]).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return -1, -1
+    rows = payload if isinstance(payload, list) else (payload.get("emails") or payload.get("data") or [])
+    sends = bounces = 0
+    for row in rows:
+        to = row.get("to") or row.get("recipient") or []
+        if isinstance(to, list):
+            to = to[0] if to else ""
+        if (to or "").strip().lower() in SEED_RECIPIENTS:
+            continue
+        sends += 1
+        if (row.get("last_event") or row.get("status")) in ("bounced", "complained"):
+            bounces += 1
+    return sends, bounces
 
 
 def _prospect_sends_in_window() -> int:
@@ -232,7 +266,17 @@ def _prospect_sends_in_window() -> int:
     per-recipient window file is unavailable, which `_decide_gate` treats as
     an unknown sample and therefore holds at the pullback cap.
     """
-    candidates = sorted(glob.glob(str(SNAPSHOTS / "resend-7d-window-*.json")))
+    # Sort on the DATE in the filename, not lexically, and only consider files
+    # that carry one. "resend-7d-window-live-recheck.json" sorts after every
+    # "resend-7d-window-2026-..." name and holds zero rows, so a lexical sort
+    # picked it and this function reported 0 real prospect sends immediately
+    # after 30 had gone out — which held the gate at pullback on evidence that
+    # did not exist.
+    #
+    # This is the second time this exact shape of bug has appeared: the same
+    # lexical-glob mistake made check_reply_stats.py read a stale August
+    # snapshot and print 1.0% while the live window was 18.2%.
+    candidates = sorted(glob.glob(str(SNAPSHOTS / "resend-7d-window-????-??-??*.json")))
     if not candidates:
         return -1
     try:
@@ -284,7 +328,21 @@ def _decide_gate(deliv_status: str, send_metrics: dict) -> tuple[str, str, int]:
     # A clean rate over a handful of messages is not evidence of a healthy
     # list; it is usually evidence that we have barely sent. Seed tests are
     # excluded upstream, so `prospect_total` counts real recipients only.
-    prospect_total = send_metrics.get("prospect_total", send_metrics["total"])
+    # Judge the threshold on prospect mail only. The rollup's bounce_rate is
+    # blended with seed tests that always deliver, which flatters it.
+    p_sends = send_metrics.get("prospect_total", send_metrics["total"])
+    p_bounces = send_metrics.get("prospect_bounced", -1)
+    if p_sends and p_sends > 0 and p_bounces >= 0:
+        prospect_rate = p_bounces / p_sends
+        if prospect_rate > BOUNCE_SPAM_PULLBACK:
+            return (
+                "pullback",
+                f"prospect bounce_rate={prospect_rate:.1%} ({p_bounces}/{p_sends}) > 5% "
+                f"— blended rate reads {bounce:.1%} because seed tests dilute it",
+                PULLBACK_CAP,
+            )
+
+    prospect_total = p_sends
     if prospect_total < 0:
         return (
             "pullback",
