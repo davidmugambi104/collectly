@@ -1,191 +1,252 @@
 """
-Reply poller for Collectly outreach tracking.
+Reply poller for Collectly outreach.
 
-Why this exists separately from resend_webhook.py:
-Resend's webhooks tell you delivered/bounced/opened/clicked — they do NOT
-tell you when a prospect hits "reply" and writes back, because that reply
-lands as a normal email in your inbox, not as a Resend event. This script
-checks the inbox directly and matches replies to sent messages.
+Reads the mailbox replies land in, matches each one to a prospect, classifies
+what the reply actually SAYS, writes the outcome back to outreach-log.csv, and
+suppresses anyone who asked to be left alone.
 
-HOW MATCHING WORKS:
-Email replies keep the original Message-ID in their In-Reply-To / References
-headers. So: when you send, you must capture and store the Message-ID
-Resend assigns (or your SMTP server assigns) in outreach-log.csv. This
-script then looks for incoming mail whose In-Reply-To header matches a
-stored message_id, and marks that row as replied.
+WHY THIS WAS REWRITTEN (2026-09-20)
+-----------------------------------
+The previous version never ran, and would not have worked if it had:
 
-SETUP:
-1. pip install imapclient
-2. Enable IMAP access on davie@getcollectly.app (or whichever inbox
-   receives replies) and generate an app password if using Gmail/Google
-   Workspace (regular password won't work with 2FA on)
-3. Fill in IMAP_HOST / IMAP_USER / IMAP_PASSWORD below (use env vars,
-   don't hardcode)
-4. Run manually first (`python poll_replies.py`) to confirm it finds and
-   matches replies, then schedule it (cron every 15-30 min is plenty —
-   replies aren't urgent-fast, but Section 5 of the policy doc says
-   positive replies should notify you fast, so don't go longer than ~30 min)
-5. This script does NOT send anything or touch the inbox destructively —
-   it only reads and marks messages \\Seen if UNSEEN_ONLY is True
+1. It required `imapclient`, which is not installed and cannot be installed
+   here (no pip). Now uses stdlib `imaplib`, which is already proven against
+   this mailbox.
 
-LIMITATION: this only works if you actually own/control the receiving
-inbox via IMAP. If replies go to a Gmail address behind OAuth (not app
-password), you'll need the Gmail API instead of IMAP — say so and I'll
-swap this for a Gmail API version.
+2. It defaulted to imap.gmail.com while inbound mail for getcollectly.app is
+   on Zoho. A password alone would not have fixed it.
+
+3. It matched replies by In-Reply-To against stored message_ids — but
+   outreach-log.csv stores Resend's internal UUIDs, not RFC Message-IDs.
+   Header threading was never possible with this data. Matching is by sender
+   address, with the header kept as a secondary signal.
+
+4. It recorded `replied=yes` and stopped. `replied=yes` is not a sentiment.
+   P050 wrote "Thanks, but I am not interested" on 2026-08-03; the log read
+   `replied=yes, next_step=human_review`, and he was emailed three more times
+   because a refusal and a buying signal look identical to every downstream
+   step. Classification, and automatic suppression on a refusal, is the point
+   of this script.
+
+USAGE
+-----
+    IMAP_PASSWORD=... python3 scripts/poll_replies.py [--dry-run]
+
+Reads only. The mailbox is opened readonly, so nothing is marked \\Seen and a
+re-run is safe.
 """
+from __future__ import annotations
 
+import argparse
 import csv
+import email
+import imaplib
+import io
 import os
 import re
-import shutil
-from datetime import datetime, timedelta, timezone
-from imapclient import IMAPClient
-import email
+import ssl
+import sys
+from datetime import datetime, timezone
 from email.header import decode_header
 
-# ---- CONFIG (use environment variables in production, not hardcoded) ----
-#
-# Inbound mail for getcollectly.app is on ZOHO, not Gmail. The MX records are
-# mx.zoho.com / mx2 / mx3, and SPF reads
-# "v=spf1 include:zohomail.com include:resend.com ~all" -- Resend sends
-# outbound as davie@getcollectly.app, Zoho receives everything coming back.
-#
-# This defaulted to imap.gmail.com, so even once someone supplied a password
-# it would have authenticated against the wrong provider and reported no
-# replies. "No replies found" and "polled the wrong mailbox" look identical
-# from the outside, which is the dangerous part.
-#
-# Note the account's other Gmail credentials (GMAIL_USER /
-# GMAIL_APP_PASSWORD in .env.local) are NOT usable here: they belong to a
-# personal @gmail.com address, and davie@getcollectly.app does not forward
-# into it -- an IMAP search of that mailbox returns 0 messages with
-# Delivered-To: davie@getcollectly.app. A Zoho application-specific password
-# is required.
+HERE = os.path.dirname(os.path.abspath(__file__))
+DATA = os.path.join(os.path.dirname(HERE), "data")
+LOG_PATH = os.environ.get("OUTREACH_LOG_PATH", os.path.join(DATA, "outreach-log.csv"))
+SUPPRESSION_PATH = os.path.join(DATA, "suppression.csv")
+
 IMAP_HOST = os.environ.get("IMAP_HOST", "imap.zoho.com")
 IMAP_USER = os.environ.get("IMAP_USER", "davie@getcollectly.app")
-IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "")  # Zoho app password, never commit this
-LOG_PATH = os.environ.get("OUTREACH_LOG_PATH", "outreach-log.csv")
-UNSEEN_ONLY = True  # only scan unread mail each run (faster, avoids re-processing)
-MESSAGE_ID_COL = "message_id"
+IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "")
+MAILBOXES = [m.strip() for m in os.environ.get("IMAP_MAILBOXES", "INBOX,Spam").split(",") if m.strip()]
+
+# Ordered: the first pattern that matches wins, so a refusal beats a pleasantry
+# in the same message ("Thanks, but I am not interested" is not a thank-you).
+CLASSIFIERS: list[tuple[str, str, re.Pattern[str]]] = [
+    ("do_not_contact", "suppress", re.compile(
+        r"\b(unsubscribe|remove me|take me off|do not (contact|email)|stop (emailing|contacting))\b", re.I)),
+    ("not_interested", "suppress", re.compile(
+        r"\b(not interested|no thanks|no thank you|we'?re (all )?(good|set|sorted)|not (for us|a fit)|pass on this)\b", re.I)),
+    ("wrong_person", "human_review", re.compile(
+        r"\b(wrong person|not the right person|no longer (with|at)|has left|forward(ed)? (this )?to)\b", re.I)),
+    ("auto_reply", "ignore_auto_reply", re.compile(
+        r"\b(out of (the )?office|on annual leave|auto(matic)?[- ]repl|vacation|maternity|paternity)\b", re.I)),
+    ("positive", "human_review_priority", re.compile(
+        r"\b(interested|tell me more|sounds good|happy to|let'?s (talk|chat)|book (a )?(call|time)|send (me )?(more|details)|how much|pricing)\b", re.I)),
+]
 
 
-def decode_mime_header(value):
+def decode_mime(value: str | None) -> str:
     if not value:
         return ""
-    parts = decode_header(value)
-    decoded = ""
-    for text, enc in parts:
-        if isinstance(text, bytes):
-            decoded += text.decode(enc or "utf-8", errors="ignore")
-        else:
-            decoded += text
-    return decoded
+    out = []
+    for text, enc in decode_header(value):
+        out.append(text.decode(enc or "utf-8", "replace") if isinstance(text, bytes) else text)
+    return "".join(out)
 
 
-def load_known_message_ids():
-    """Return dict of {message_id: row_index} from the outreach log so we
-    can match incoming In-Reply-To headers against sends we made."""
-    if not os.path.exists(LOG_PATH):
-        return {}, [], None
-    with open(LOG_PATH, "r", newline="", encoding="utf-8") as f:
+def body_text(msg) -> str:
+    if msg.is_multipart():
+        for part in msg.walk():
+            if part.get_content_type() == "text/plain":
+                payload = part.get_payload(decode=True)
+                if payload:
+                    return payload.decode("utf-8", "replace")
+        return ""
+    payload = msg.get_payload(decode=True)
+    return payload.decode("utf-8", "replace") if payload else ""
+
+
+def strip_quoted(text: str) -> str:
+    """Only the reply, not the thread it quotes.
+
+    Without this, our own sent copy is scanned too — and our own subject line
+    contains "overdue invoice", which the positive classifier would match on
+    every single reply.
+    """
+    return re.split(r"\nOn .{0,120}wrote:|\n-{2,}\s*\n|\n>+", text)[0].strip()
+
+
+def classify(subject: str, body: str) -> tuple[str, str]:
+    blob = f"{subject}\n{body}"
+    for state, next_step, pattern in CLASSIFIERS:
+        if pattern.search(blob):
+            return state, next_step
+    return "replied", "human_review"
+
+
+def load_log() -> tuple[list[dict], list[str]]:
+    with open(LOG_PATH, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        fieldnames = reader.fieldnames
-        rows = list(reader)
-    known = {row[MESSAGE_ID_COL]: i for i, row in enumerate(rows) if row.get(MESSAGE_ID_COL)}
-    return known, rows, fieldnames
+        return list(reader), list(reader.fieldnames or [])
 
 
-def save_log(rows, fieldnames):
-    tmp_path = LOG_PATH + ".tmp"
-    with open(tmp_path, "w", newline="", encoding="utf-8") as f:
+def suppressed_emails() -> set[str]:
+    out: set[str] = set()
+    if not os.path.exists(SUPPRESSION_PATH):
+        return out
+    with open(SUPPRESSION_PATH, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            value = (row.get("email") or "").strip().lower()
+            if value:
+                out.add(value)
+    return out
+
+
+def add_suppression(entries: list[tuple[str, str, str]]) -> None:
+    exists = os.path.exists(SUPPRESSION_PATH)
+    with io.open(SUPPRESSION_PATH, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if not exists:
+            writer.writerow(["email", "reason", "source_row_id", "added_at", "note"])
+        stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        for addr, prospect_id, note in entries:
+            writer.writerow([addr, "opted_out", prospect_id, stamp, note])
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="Poll the mailbox for outreach replies")
+    ap.add_argument("--dry-run", action="store_true", help="report only; write nothing")
+    args = ap.parse_args()
+
+    if not IMAP_PASSWORD:
+        print("ERROR: set IMAP_PASSWORD (a Zoho application-specific password).", file=sys.stderr)
+        return 2
+
+    rows, fieldnames = load_log()
+    # address -> prospect id, from what we actually sent
+    sent_to: dict[str, str] = {}
+    for row in rows:
+        addr = (row.get("email") or "").strip().lower()
+        if addr and (row.get("signal") or "") == "sent":
+            sent_to.setdefault(addr, row.get("id") or "")
+
+    already = suppressed_emails()
+    found: dict[str, dict] = {}
+
+    server = imaplib.IMAP4_SSL(IMAP_HOST, ssl_context=ssl.create_default_context())
+    server.login(IMAP_USER, IMAP_PASSWORD)
+    try:
+        for mailbox in MAILBOXES:
+            # readonly: never mark anything \Seen, so re-running is harmless and
+            # a human reading the inbox later still sees it as unread.
+            typ, _ = server.select(f'"{mailbox}"', readonly=True)
+            if typ != "OK":
+                print(f"  {mailbox}: cannot open, skipping")
+                continue
+            typ, data = server.search(None, "ALL")
+            ids = data[0].split() if data and data[0] else []
+            print(f"  {mailbox}: {len(ids)} messages")
+            for i in range(0, len(ids), 100):
+                typ, chunk = server.fetch(b",".join(ids[i:i + 100]), "(RFC822)")
+                for part in chunk:
+                    if not isinstance(part, tuple):
+                        continue
+                    msg = email.message_from_bytes(part[1])
+                    from_hdr = decode_mime(msg.get("From"))
+                    match = re.search(r"[\w\.\-\+]+@[\w\.\-]+", from_hdr)
+                    if not match:
+                        continue
+                    addr = match.group(0).lower()
+                    if addr not in sent_to:
+                        continue
+                    subject = decode_mime(msg.get("Subject"))
+                    reply = strip_quoted(body_text(msg))
+                    state, next_step = classify(subject, reply)
+                    found[addr] = {
+                        "id": sent_to[addr],
+                        "state": state,
+                        "next_step": next_step,
+                        "subject": subject,
+                        "date": msg.get("Date") or "",
+                        "excerpt": " ".join(reply.split())[:120],
+                    }
+    finally:
+        try:
+            server.logout()
+        except Exception:
+            pass
+
+    if not found:
+        print("\n  no prospect replies found.")
+        return 0
+
+    print(f"\n  {len(found)} prospect repl{'y' if len(found) == 1 else 'ies'}:")
+    to_suppress: list[tuple[str, str, str]] = []
+    for addr, hit in sorted(found.items()):
+        flag = "" if addr in already else "  [NEW]"
+        print(f"    {hit['id']:8} {addr.split('@')[1]:26} {hit['state']:15} {hit['excerpt'][:60]}{flag}")
+        if hit["next_step"] == "suppress" and addr not in already:
+            to_suppress.append((addr, hit["id"], f'Replied "{hit["excerpt"][:70]}" on {hit["date"][:31]}'))
+
+    if args.dry_run:
+        print(f"\n  DRY RUN — would suppress {len(to_suppress)}, would update {len(found)} log row(s).")
+        return 0
+
+    changed = 0
+    for row in rows:
+        addr = (row.get("email") or "").strip().lower()
+        hit = found.get(addr)
+        if not hit or (row.get("signal") or "") != "sent":
+            continue
+        row["replied"] = "yes"
+        row["next_step"] = hit["next_step"]
+        details = row.get("signal_details") or ""
+        tag = f"reply:{hit['state']}"
+        if tag not in details:
+            row["signal_details"] = f"{details}; {tag}".strip("; ")
+        changed += 1
+
+    with io.open(LOG_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
-    shutil.move(tmp_path, LOG_PATH)
 
+    if to_suppress:
+        add_suppression(to_suppress)
 
-def extract_message_id_refs(msg) -> list:
-    """Pull all Message-IDs referenced by a reply (In-Reply-To + References,
-    since some clients only populate one)."""
-    ids = []
-    for header_name in ("In-Reply-To", "References"):
-        header_val = msg.get(header_name, "")
-        found = re.findall(r"<[^>]+>", header_val)
-        ids.extend(f.strip("<>") for f in found)
-    return ids
-
-
-def main():
-    if not IMAP_PASSWORD:
-        print("ERROR: set IMAP_PASSWORD env var (use an app password, not your login password)")
-        return
-
-    known_ids, rows, fieldnames = load_known_message_ids()
-    if not known_ids:
-        print(f"WARNING: no message_ids found in {LOG_PATH} — nothing to match against. "
-              f"Make sure your send script logs the message_id for every send.")
-        return
-
-    if "replied_at" not in fieldnames:
-        fieldnames = fieldnames + ["replied_at"]
-    if "reply_snippet" not in fieldnames:
-        fieldnames = fieldnames + ["reply_snippet"]
-
-    matched_count = 0
-
-    with IMAPClient(IMAP_HOST) as server:
-        server.login(IMAP_USER, IMAP_PASSWORD)
-        server.select_folder("INBOX")
-
-        criteria = ["UNSEEN"] if UNSEEN_ONLY else ["ALL"]
-        # Optional: only scan recent mail to avoid huge mailboxes
-        days = int(os.environ.get("IMAP_DAYS", "0") or "0")
-        if days > 0:
-            since = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%d-%b-%Y")
-            criteria = criteria + ["SENTSINCE", since]
-        message_uids = server.search(criteria)
-
-        print(f"Found {len(message_uids)} messages to scan")
-
-        for uid in message_uids:
-            # Fetch headers first; only pull full body if we have a match.
-            header_data = server.fetch([uid], ["RFC822.HEADER"])[uid][b"RFC822.HEADER"]
-            msg = email.message_from_bytes(header_data)
-
-            referenced_ids = extract_message_id_refs(msg)
-            match_id = next((rid for rid in referenced_ids if rid in known_ids), None)
-
-            if match_id:
-                row_idx = known_ids[match_id]
-                rows[row_idx]["status"] = "REPLIED"
-                rows[row_idx]["replied_at"] = datetime.now(timezone.utc).isoformat()
-
-                # grab a short snippet of the reply body for the daily digest
-                full = server.fetch([uid], ["RFC822"])[uid][b"RFC822"]
-                msg = email.message_from_bytes(full)
-                body = ""
-                if msg.is_multipart():
-                    for part in msg.walk():
-                        if part.get_content_type() == "text/plain":
-                            body = part.get_payload(decode=True).decode(errors="ignore")
-                            break
-                else:
-                    body = msg.get_payload(decode=True).decode(errors="ignore")
-
-                snippet = " ".join(body.split())[:200]
-                rows[row_idx]["reply_snippet"] = snippet
-
-                matched_count += 1
-                from_addr = decode_mime_header(msg.get("From", ""))
-                print(f"MATCHED reply from {from_addr} -> message_id {match_id}")
-            # else: could be a reply to something not in our log, or unrelated mail — skip silently
-
-    if matched_count > 0:
-        save_log(rows, fieldnames)
-        print(f"Updated {matched_count} row(s) in {LOG_PATH}")
-    else:
-        print("No new replies matched this run")
+    print(f"\n  updated {changed} log row(s); suppressed {len(to_suppress)} address(es).")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
