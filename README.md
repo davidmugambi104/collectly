@@ -157,3 +157,36 @@ MIT. See `LICENSE`.
 ## Built by
 
 Davie. [davie@collectly.app](mailto:davie@collectly.app) · [@davidmugambi104](https://github.com/davidmugambi104)
+
+## Local `next build` and Google Fonts
+
+If `npm run build` fails with:
+
+```
+Failed to fetch `Fraunces` from Google Fonts.
+Failed to fetch `Inter` from Google Fonts.
+Failed to fetch `JetBrains Mono` from Google Fonts.
+```
+
+it is almost certainly the environment, not the code. `next/font` fetches the
+families at build time through Node's `fetch`, and some sandboxes block Node's
+egress to `fonts.googleapis.com` while leaving curl alone. The signature is
+distinctive:
+
+```
+curl   -> 200 in ~1s
+python -> 200 in ~1s
+node   -> ETIMEDOUT in 0.35s     # too fast to be a real timeout
+```
+
+Checked and ruled out: DNS (A and AAAA both resolve), IPv6 preference
+(`--dns-result-order=ipv4first` makes no difference), proxy variables (none
+set), and user-agent filtering (fails with a browser UA too).
+
+`.next` caches the fetched fonts, so a working tree usually survives this —
+deleting `.next` is what exposes it. Vercel builds on its own network and is
+unaffected.
+
+To verify a change without a full build: `npx tsc --noEmit`, `npx next lint
+--dir src`, and `npm test` all run offline and cover everything except the
+font fetch.
