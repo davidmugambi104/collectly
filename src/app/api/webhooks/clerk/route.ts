@@ -27,14 +27,28 @@ export const dynamic = 'force-dynamic';
  *
  * Setup (human step, not done here): in the Clerk dashboard, add a webhook
  * endpoint pointing at this route, subscribed to at least
- * `organization.deleted`, and set CLERK_WEBHOOK_SECRET to its signing
- * secret. This route fails closed (500) until that secret is configured.
+ * `organization.deleted`, and set CLERK_WEBHOOK_SECRET (or
+ * CLERK_WEBHOOK_SIGNING_SECRET) to its signing secret. This route fails closed
+ * (500) until one of them is configured.
  */
 export async function POST(req: NextRequest) {
-  const secret = process.env.CLERK_WEBHOOK_SECRET;
+  // Accept either name. Clerk's dashboard labels the value "Signing secret",
+  // so CLERK_WEBHOOK_SIGNING_SECRET is what anyone copying from that screen
+  // naturally sets — and that is exactly what happened here: the secret WAS
+  // configured in production under that name while this route read the other
+  // one, so every Clerk webhook returned 500 while Clerk auth itself worked
+  // perfectly. Nothing looked broken from the outside, which is the worst
+  // shape for a bug like this.
+  const secret =
+    process.env.CLERK_WEBHOOK_SECRET ?? process.env.CLERK_WEBHOOK_SIGNING_SECRET;
   if (!secret) {
-    console.error('[webhooks/clerk] CLERK_WEBHOOK_SECRET not configured — rejecting');
-    return NextResponse.json({ error: 'missing CLERK_WEBHOOK_SECRET' }, { status: 500 });
+    console.error(
+      '[webhooks/clerk] neither CLERK_WEBHOOK_SECRET nor CLERK_WEBHOOK_SIGNING_SECRET is set — rejecting',
+    );
+    return NextResponse.json(
+      { error: 'missing CLERK_WEBHOOK_SECRET or CLERK_WEBHOOK_SIGNING_SECRET' },
+      { status: 500 },
+    );
   }
 
   const payload = await req.text();
