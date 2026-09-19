@@ -327,6 +327,30 @@ export const waitlist = pgTable('waitlist', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
+/**
+ * Every address that has asked not to be emailed, whatever list it was on.
+ *
+ * This exists because /api/unsubscribe used to do only
+ * `UPDATE waitlist SET unsubscribed_at ... WHERE email = $1`. A cold outreach
+ * recipient is not on the waitlist, so that statement matched zero rows -- and
+ * the endpoint returned "Unsubscribed" regardless. Every person who clicked
+ * unsubscribe in an outreach email was told they had been removed and was
+ * recorded nowhere.
+ *
+ * Unlike waitlist, a row here is created on demand for any address at all, so
+ * an opt-out from someone we have no other record of still lands somewhere
+ * durable. `outreach/scripts/sync_suppressions.py` pulls this into
+ * outreach/data/suppression.csv, which is what the send scripts actually read.
+ */
+export const emailSuppressions = pgTable('email_suppressions', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  email: text('email').notNull().unique(),
+  reason: text('reason').notNull().default('unsubscribe'),
+  // Where the opt-out came from: 'unsubscribe_link', 'reply', 'bounce', 'manual'.
+  source: text('source'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
 /* ----------------------------- RELATIONS ----------------------------- */
 
 export const orgRelations = relations(organizations, ({ many, one }) => ({

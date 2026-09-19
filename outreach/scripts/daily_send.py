@@ -344,13 +344,14 @@ def send_one(env: Dict[str, str], to: str, subject: str, body: str) -> Dict[str,
     from_email = env.get("RESEND_FROM_EMAIL", "")
     if not api_key or not from_email:
         return {"ok": False, "error": "RESEND_API_KEY or RESEND_FROM_EMAIL missing in .env.local"}
-    # Last line of defence. The t1 path shipped 292 sends with no opt-out at
+    # Two opt-out paths on purpose. The link writes to email_suppressions, but\n    # that only reaches the send scripts once sync_suppressions.py has run\n    # against the live DB -- and before 2026-09-20 it recorded nothing at all\n    # for anyone not already on the waitlist. A reply is its own functioning\n    # return address under CAN-SPAM and works with no infrastructure at all.\n    #\n    # Last line of defence. The t1 path shipped 292 sends with no opt-out at
     # all -- only the t2 template carried one -- which is a CAN-SPAM breach for
     # every US recipient. Enforcing it here rather than in render_* means a new
     # template cannot reintroduce the gap by forgetting a line.
     if "api/unsubscribe" not in body:
         body = body.rstrip() + (
-            "\n\n--\nDon't want these? One click and I'll stop:\n"
+            "\n\n--\nDon't want these? Reply with \"stop\" and I'll take you off myself.\n"
+            "Or use this link:\n"
             f"https://getcollectly.app/api/unsubscribe?token={unsubscribe_token(to)}"
         )
     payload = {

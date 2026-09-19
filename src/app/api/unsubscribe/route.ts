@@ -22,6 +22,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { pool } from '@/db';
+import { randomUUID } from 'crypto';
 
 const bodySchema = z.object({ token: z.string().min(1) });
 
@@ -117,6 +118,20 @@ export async function POST(req: NextRequest) {
   const client = await pool().connect();
   try {
     const now = new Date();
+    // 0. Record the opt-out somewhere that exists for ANY address.
+    //
+    // This used to start at step 1, which meant a cold outreach recipient --
+    // not on the waitlist, not a customer -- had their opt-out matched against
+    // zero rows while this endpoint still rendered "Unsubscribed". The request
+    // was honoured nowhere and they kept receiving mail. email_suppressions
+    // accepts any address; outreach/scripts/sync_suppressions.py pulls it into
+    // the CSV the send scripts read.
+    await client.query(
+      `INSERT INTO email_suppressions (id, email, reason, source, created_at)
+       VALUES ($1, $2, 'unsubscribe', 'unsubscribe_link', $3)
+       ON CONFLICT (email) DO NOTHING`,
+      [randomUUID(), email, now]
+    );
     // 1. Mark the waitlist entry unsubscribed (if any)
     await client.query(
       `UPDATE waitlist SET unsubscribed_at = $1 WHERE email = $2 AND unsubscribed_at IS NULL`,
@@ -137,7 +152,7 @@ export async function POST(req: NextRequest) {
       `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Unsubscribed</title>
 <style>body{font-family:-apple-system,system-ui,sans-serif;max-width:480px;margin:80px auto;padding:0 24px;color:#16171c}h1{font-size:24px;margin:0 0 12px}p{color:#6c6e76;line-height:1.5}.ok{color:#0a7c2f}</style></head>
 <body><h1 class="ok">Unsubscribed ✓</h1>
-<p><span class="email">${escapeHtml(email)}</span> has been removed from Collectly marketing emails.</p>
+<p><span class="email">${escapeHtml(email)}</span> has been removed from Collectly marketing emails, including cold outreach. We record this against the address itself, so it holds whether or not you were already in our system.</p>
 ${includeDnd ? `<p>Also marked as do-not-contact on ${dndCount} customer record${dndCount === 1 ? '' : 's'}. You won't receive dunning emails from any Collectly-using business at this address.</p>` : ''}
 <p>You can re-subscribe anytime by signing up again on getcollectly.app.</p>
 </body></html>`,

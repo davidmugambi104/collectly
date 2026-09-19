@@ -123,7 +123,18 @@ def strip_quoted(text: str) -> str:
     return re.split(r"\nOn .{0,120}wrote:|\n-{2,}\s*\n|\n>+", text)[0].strip()
 
 
+# A reply that is nothing but an opt-out word. The outreach footer asks people
+# to reply "stop", and the do_not_contact pattern below needs "stop emailing" or
+# "stop contacting" -- a bare "stop" fell through to human_review and would sit
+# unactioned. Matched against the whole stripped body so "stop chasing invoices"
+# in a real sentence does not trip it.
+BARE_OPT_OUT = re.compile(
+    r"^\W*(stop|unsubscribe|remove|remove me|opt[- ]?out|no|nope|no thanks)\W*$", re.I)
+
+
 def classify(subject: str, body: str) -> tuple[str, str]:
+    if BARE_OPT_OUT.match((body or "").strip()):
+        return "do_not_contact", "suppress"
     blob = f"{subject}\n{body}"
     for state, next_step, pattern in CLASSIFIERS:
         if pattern.search(blob):
