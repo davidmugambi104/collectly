@@ -19,14 +19,26 @@ const PAYSTACK_CURRENCIES = ['NGN', 'GHS', 'ZAR', 'KES'];
 // the analogous Stripe situation.
 const PAYSTACK_ENABLED = false;
 
-export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug, orgName, payerContactEmail, customerEmail, cardAchAvailable }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string; orgName?: string; payerContactEmail?: string | null; customerEmail?: string | null; cardAchAvailable: boolean }) {
+export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug, orgName, payerContactEmail, customerEmail, cardAchAvailable, squareAvailable = false }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string; orgName?: string; payerContactEmail?: string | null; customerEmail?: string | null; cardAchAvailable: boolean; squareAvailable?: boolean }) {
   const paystackEligible = PAYSTACK_ENABLED && PAYSTACK_CURRENCIES.includes((currency ?? '').toUpperCase());
-  const allMethods = paystackEligible ? (['card', 'ach', 'paystack', 'wire'] as const) : (['card', 'ach', 'wire'] as const);
+  // Square sits between the Stripe methods and wire: a hosted card page like
+  // Stripe Checkout, shown only once the business has actually connected a
+  // Square account. Offering a method that cannot complete is worse than
+  // offering fewer — the same rule card/ACH already follow.
+  const allMethods = paystackEligible
+    ? (['card', 'ach', 'square', 'paystack', 'wire'] as const)
+    : (['card', 'ach', 'square', 'wire'] as const);
   // Card/ACH charge through the business's own connected Stripe account —
   // if they haven't linked one yet, offering the buttons would just lead
   // to a checkout-creation error.
-  const methods = cardAchAvailable ? allMethods : allMethods.filter((m) => m !== 'card' && m !== 'ach');
-  const [method, setMethod] = useState<'card' | 'ach' | 'wire' | 'paystack'>(cardAchAvailable ? 'card' : paystackEligible ? 'paystack' : 'wire');
+  const methods = allMethods.filter((m) => {
+    if ((m === 'card' || m === 'ach') && !cardAchAvailable) return false;
+    if (m === 'square' && !squareAvailable) return false;
+    return true;
+  });
+  const [method, setMethod] = useState<'card' | 'ach' | 'wire' | 'paystack' | 'square'>(
+    cardAchAvailable ? 'card' : squareAvailable ? 'square' : paystackEligible ? 'paystack' : 'wire',
+  );
   const [email, setEmail] = useState(customerEmail ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +71,37 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
         `Hi,\n\nI'd like to pay invoice ${invoiceNumber} by bank transfer. Could you send your account details?\n\nThanks`,
       );
       window.location.href = `mailto:${payerContactEmail}?subject=${subject}&body=${body}`;
+      return;
+    }
+    if (method === 'square') {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch('/api/payment/square-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          // Same rule as Stripe and Paystack: no amount from the client. The
+          // server reads the invoice's own outstanding balance, because a
+          // client-supplied amount is how an underpayment settles an invoice
+          // in full.
+          body: JSON.stringify({ invoiceId }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data?.error ?? 'Could not start Square checkout');
+          setLoading(false);
+          return;
+        }
+        if (data.url) {
+          window.location.href = data.url;
+          return;
+        }
+        setError('Square session missing redirect URL');
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'Network error');
+      } finally {
+        setLoading(false);
+      }
       return;
     }
     if (method === 'paystack') {
@@ -156,6 +199,21 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
           >{m === 'ach' ? 'ACH' : m === 'wire' ? 'Wire' : m === 'paystack' ? 'Paystack' : 'Card'}</button>
         ))}
       </div>
+
+      {method === 'square' && (
+        <div className="rounded-lg border border-ink-200 bg-ink-50/50 p-4 text-sm text-ink-700">
+          <div className="flex items-start gap-2">
+            <Lock className="h-4 w-4 mt-0.5 flex-shrink-0 text-ink-500" />
+            <div>
+              <div className="font-semibold text-ink-900">Pay by card via Square</div>
+              <div className="text-ink-600 text-xs">
+                You&apos;ll be taken to a secure page hosted by Square. The payment goes
+                straight to {orgName ?? 'the business'} — Collectly never holds it.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {method === 'card' && (
         <div className="rounded-lg border border-ink-200 bg-ink-50/50 p-4 text-sm text-ink-700">

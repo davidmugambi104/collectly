@@ -7,6 +7,7 @@ import { Logo } from '@/components/brand/logo';
 import { ShieldCheck, Clock, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getConnectedStripeAccountId } from '@/lib/integrations/stripe-connect';
+import { isSquareConnected } from '@/lib/integrations/square';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,6 +40,12 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
   // platform account, so the option shouldn't be shown as if it works
   // when it can't yet.
   const cardAchAvailable = !!(await getConnectedStripeAccountId(org.id));
+  // Square is the rail that works today. Stripe Connect needs a platform
+  // account in a country Stripe supports, which is the open blocker; Square's
+  // OAuth token acts as the seller, in the seller's country, so a platform
+  // operator outside that list can still create the payment. Same gating rule
+  // as card/ACH — shown only once this business has actually connected.
+  const squareAvailable = await isSquareConnected(org.id);
   // Who a payer should contact to arrange a wire.
   //
   // This used to be `${orgSlug}@getcollectly.app`, a synthetic address on
@@ -116,7 +123,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                 <h1 className="h3">Payment cancelled</h1>
                 <p className="mt-2 text-sm text-ink-600">No charge was made. You can try again below or contact {org.name} with any questions.</p>
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} orgName={org.name} payerContactEmail={payerContactEmail} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} orgName={org.name} payerContactEmail={payerContactEmail} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} squareAvailable={squareAvailable} />
                 </div>
               </div>
             ) : (
@@ -130,7 +137,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                   </div>
                 )}
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} orgName={org.name} payerContactEmail={payerContactEmail} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} orgName={org.name} payerContactEmail={payerContactEmail} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} squareAvailable={squareAvailable} />
                 </div>
               </>
             )}

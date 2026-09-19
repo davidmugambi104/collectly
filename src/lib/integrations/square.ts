@@ -47,7 +47,15 @@ export async function squareAuthUrl(state: string): Promise<string> {
   }
   const params = new URLSearchParams({
     client_id: process.env.SQUARE_CLIENT_ID ?? '',
-    scope: 'MERCHANT_PROFILE_READ ORDERS_READ ITEMS_READ PAYMENTS_READ',
+    // PAYMENTS_WRITE is what lets Collectly create a payment on the seller's
+    // behalf. Deliberately NOT requesting PAYMENTS_WRITE_ADDITIONAL_RECIPIENTS:
+    // that scope exists to take an application fee, and application fees are
+    // only collectable from countries where the PLATFORM holds a Square
+    // account. Collectly earns from the subscription, not a cut of each
+    // invoice, so skipping it keeps the whole flow available to a platform
+    // operator outside Square's supported list — which is the entire reason
+    // this rail works while Stripe Connect does not.
+    scope: 'MERCHANT_PROFILE_READ ORDERS_READ ITEMS_READ PAYMENTS_READ PAYMENTS_WRITE',
     session: 'false',
     state,
     code_challenge: challenge,
@@ -238,6 +246,84 @@ async function squareFetch(orgId: string, path: string, init?: RequestInit) {
   });
   if (!res.ok) throw new Error(`Square ${path} failed: ${res.status} ${await res.text()}`);
   return res.json();
+}
+
+// -------------------------------------------------------------------
+// Payments
+// -------------------------------------------------------------------
+
+/** Whether this org has a usable Square connection to charge against. */
+export async function isSquareConnected(orgId: string): Promise<boolean> {
+  const [integ] = await db
+    .select()
+    .from(integrations)
+    .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'square')))
+    .limit(1);
+  return !!(integ && integ.status === 'connected' && integ.refreshToken);
+}
+
+/**
+ * Create a Square-hosted payment page for one invoice.
+ *
+ * Mirrors the Stripe Checkout flow in /api/payment/create-checkout: the payer
+ * is redirected to a page Square hosts, and the money settles into the
+ * SELLER's Square balance. Collectly never holds it, so there is no
+ * reconciliation step and no platform float — the failure that made Paystack
+ * unusable, where every charge landed in one shared account with no way to
+ * attribute it back to the business that was owed.
+ *
+ * quick_pay is used rather than an itemised order because an invoice is a
+ * single amount already agreed between the two parties; building a catalogue
+ * order would add a Square-side object nobody looks at.
+ */
+export async function squareCreatePaymentLink(
+  orgId: string,
+  opts: {
+    invoiceId: string;
+    invoiceNumber: string;
+    amount: number;
+    currency: string;
+    sellerName: string;
+    buyerEmail?: string | null;
+    redirectUrl: string;
+  },
+): Promise<{ url: string; paymentLinkId: string }> {
+  // squareListLocations already maps to ids and filters INACTIVE.
+  const locations = await squareListLocations(orgId);
+  const locationId = locations?.[0];
+  if (!locationId) {
+    throw new Error('Square connected but no location found on the seller account.');
+  }
+
+  const body = {
+    // Square rejects a repeated idempotency key, which is what stops a
+    // double-click creating two payment links for one invoice.
+    idempotency_key: `inv-${opts.invoiceId}-${Math.round(opts.amount * 100)}`,
+    quick_pay: {
+      name: `Invoice ${opts.invoiceNumber} — ${opts.sellerName}`,
+      price_money: {
+        // Square takes the smallest currency unit, same as Stripe.
+        amount: Math.round(opts.amount * 100),
+        currency: opts.currency.toUpperCase(),
+      },
+      location_id: locationId,
+    },
+    checkout_options: {
+      redirect_url: opts.redirectUrl,
+      ask_for_shipping_address: false,
+    },
+    ...(opts.buyerEmail ? { pre_populated_data: { buyer_email: opts.buyerEmail } } : {}),
+  };
+
+  const json = await squareFetch(orgId, '/online-checkout/payment-links', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  const link = json?.payment_link;
+  if (!link?.url) throw new Error('Square did not return a payment link URL.');
+  return { url: link.url as string, paymentLinkId: link.id as string };
 }
 
 // -------------------------------------------------------------------
