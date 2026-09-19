@@ -80,8 +80,15 @@ def already_sent_today(log: List[Dict[str, str]], prospect_id: str) -> bool:
 # accounts@ / billing@ / info@ and friends. Matched on the local part only, so
 # a real person whose address merely contains one of these words is unaffected.
 ROLE_ADDRESS_RE = re.compile(
-    r"^(accounts?|billing|ap|info|admin|hello|contact|enquiries|office|finance"
-    r"|team|support|sales|mail|noreply|no-reply)@",
+    r"^(accounts?|billing|ap|ar|info|admin|hello|contact|enquiries|enquiry|office"
+    r"|finance|team|support|sales|mail|noreply|no-reply|help|service|reception"
+    # Added after six of these went out in a follow-up batch: studio@, tax@,
+    # advice@ and interns@ are shared mailboxes at exactly the firms this list
+    # targets. An accounting practice's tax@ is a department queue, not a
+    # person, and it behaves like every other role box — 39.1% bounce against
+    # 1.8% for personal addresses.
+    r"|advice|tax|intern|interns|hr|jobs|careers|booking|bookings|studio|hi|hey"
+    r"|ask|talk|press|media|legal|audit|payroll|client|clients|general)@",
     re.IGNORECASE,
 )
 
@@ -297,6 +304,32 @@ def send_one(env: Dict[str, str], to: str, subject: str, body: str) -> Dict[str,
 GATE_MAX_AGE_HOURS = 6  # gate-status.json older than this is untrustworthy: block rather than act on stale data.
 
 
+def _gate_cap(gate_path: str = None) -> int:
+    """The cap the gate currently allows, or 0 if sending is blocked."""
+    try:
+        path = gate_path or os.path.join(os.path.dirname(LOG_CSV), "gate-status.json")
+        with open(path) as f:
+            gate = json.load(f)
+    except (OSError, ValueError):
+        return 0
+    state = (gate.get("gate") or "").lower()
+    cap = int(gate.get("resend_daily_cap") or 0)
+    return cap if state in ("allow", "pullback") else 0
+
+
+def _sent_today(log: List[Dict[str, str]]) -> int:
+    """Sends already logged for the current UTC day.
+
+    The cap is per DAY, not per invocation. Counting only the current batch
+    would let three runs of 30 put 90 out against a cap of 30.
+    """
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return sum(
+        1 for r in log
+        if (r.get("signal") or "") == "sent" and (r.get("timestamp") or "").startswith(today)
+    )
+
+
 def _check_gate(gate_path: str = None) -> int:
     """Read gate-status.json. If gate != 'allow'/'pullback' (with cap > 0), refuse to send.
 
@@ -501,6 +534,25 @@ def cmd_send(args):
     gate_exit = _check_gate()
     if gate_exit != 0:
         return gate_exit
+
+    # Clamp to the gate's cap. This was documented as already happening — the
+    # outreach-sequencer skill says daily_send.py "will refuse to send (or
+    # clamp the limit) if the gate is red ... enforced in code, not just
+    # something this skill is supposed to remember to check". It was not
+    # enforced: _check_gate() read the cap, printed it, and returned. A
+    # --limit of 73 against a cap of 30 sent 72.
+    #
+    # Also counts what has already gone out today, because the cap is per day.
+    # Three runs of 30 against a cap of 30 is still a breach.
+    cap = _gate_cap()
+    already = _sent_today(log)
+    remaining = max(0, cap - already)
+    if remaining <= 0:
+        print(f"BLOCKED: {already} already sent today against a cap of {cap}.", file=sys.stderr)
+        return 2
+    if args.limit > remaining:
+        print(f"limit {args.limit} clamped to {remaining} (cap {cap}/day, {already} already sent today)")
+        args.limit = remaining
 
     if args.touch == "t2":
         prospects = pick_followups(args.limit, log)
