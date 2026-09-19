@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useConsent } from './consent-provider';
 
 /**
@@ -25,20 +25,22 @@ export function ConsentBanner() {
   const [expanded, setExpanded] = useState(false);
   const [analytics, setAnalytics] = useState(consent?.analytics ?? false);
   const [advertising, setAdvertising] = useState(consent?.advertising ?? false);
-  const headingRef = useRef<HTMLParagraphElement>(null);
-
-  // Move focus to the banner when it appears so a keyboard or screen-reader
-  // user is not left tabbing through the whole page to reach it.
-  useEffect(() => {
-    if (showBanner) headingRef.current?.focus();
-  }, [showBanner]);
-
   if (!showBanner) return null;
 
   return (
     <div
-      role="dialog"
-      aria-modal="false"
+      // region + aria-live, not dialog.
+      //
+      // This is a bar that blocks nothing, so calling it a dialog oversells it
+      // — and the focus() call that went with it stole focus on every page
+      // load and triggered the base *:focus-visible rule, painting a violet
+      // ring around the heading on every screen it appeared on, including
+      // every page of the authenticated app.
+      //
+      // aria-live announces it without hijacking; it sits at the end of the
+      // document and the footer control offers a second way back to it.
+      role="region"
+      aria-live="polite"
       aria-labelledby="consent-heading"
       // Solid white, not white/97. At 97% the page behind still shows through
       // the text — legible enough in a mockup, not legible over the violet
@@ -57,9 +59,7 @@ export function ConsentBanner() {
           <div className="max-w-2xl">
             <p
               id="consent-heading"
-              ref={headingRef}
-              tabIndex={-1}
-              className="font-display text-base font-semibold text-ink-950 outline-none"
+              className="font-display text-base font-semibold text-ink-950"
             >
               Cookies we would like to set
             </p>

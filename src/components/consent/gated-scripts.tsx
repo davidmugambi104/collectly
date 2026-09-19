@@ -1,6 +1,7 @@
 'use client';
 
 import Script from 'next/script';
+import { usePathname } from 'next/navigation';
 import { useConsent } from './consent-provider';
 
 /**
@@ -21,13 +22,33 @@ import { useConsent } from './consent-provider';
 
 const ADSENSE_CLIENT = 'ca-pub-7988406449660366';
 
+/**
+ * Where advertising must never load.
+ *
+ * The consent provider lives in the ROOT layout, so it wraps the authenticated
+ * product as well as the marketing site — which meant a customer who accepted
+ * cookies got Google's ad script running on /dashboard, on pages listing their
+ * customers, invoice amounts and payment history. Ads in a paid product are
+ * absurd on their own; a third-party ad tracker on someone's receivables ledger
+ * is worse than absurd.
+ *
+ * Consent is not the control here. Even an enthusiastic yes on the marketing
+ * site does not mean "run AdSense over my books", so this is a route rule
+ * rather than a consent category.
+ */
+const NO_ADS_PREFIXES = ['/dashboard', '/admin', '/sign-in', '/sign-up', '/pay'];
+
 export function GatedScripts() {
   const { has } = useConsent();
+  const pathname = usePathname();
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
+  const adsAllowedHere = !NO_ADS_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname?.startsWith(`${prefix}/`),
+  );
 
   return (
     <>
-      {has('advertising') && (
+      {has('advertising') && adsAllowedHere && (
         // next/script with afterInteractive rather than a raw <script async>
         // in <head>: in the App Router a hand-placed tag can be evaluated
         // again on a client navigation, which throws "adsbygoogle.push()
