@@ -68,6 +68,16 @@ def main() -> int:
     tracked = sum(1 for v in replied_vals if v != "")
     replied = sum(1 for v in replied_vals if v in TRUTHY)
 
+    # By PERSON, not by row. A prospect who replies gets a second row logged
+    # (touch=recovery_reply), so counting rows double-counts exactly the people
+    # who did the thing being measured — which inflates the one number the
+    # kill/scale thresholds are read against.
+    people_sent = {r.get("id") for r in rows if (r.get("signal") or "") == "sent" and r.get("id")}
+    people_replied = {
+        r.get("id") for r in rows
+        if (r.get("replied") or "").strip().lower() in TRUTHY and r.get("id")
+    }
+
     print(f"Total log rows: {total}")
     print(f"Sent: {sent} | Send failed: {failed}")
     print(f"Touch breakdown: {dict(touches)}")
@@ -79,7 +89,14 @@ def main() -> int:
               "so no reply rate exists to report and the ICP refinement engine "
               "has no signal to work from.")
     else:
-        print(f"Replied: {replied}/{tracked} tracked = {replied / tracked:.1%}")
+        print(f"Replied: {replied}/{tracked} rows = {replied / tracked:.1%}")
+        if people_sent:
+            rate = len(people_replied) / len(people_sent)
+            print(f"Reply rate by PERSON: {len(people_replied)}/{len(people_sent)} = {rate:.2%}")
+            # Thresholds from policy/limits.json.
+            if len(people_sent) >= 50 and rate * 100 < 2.0:
+                print(f"  -> BELOW the 2.0% kill threshold on {len(people_sent)} sends "
+                      f"(policy min_sends_for_kill=50). Policy says kill or rework, not scale.")
         if tracked < total:
             print(f"  (note: {total - tracked} of {total} rows have no reply outcome recorded)")
 
