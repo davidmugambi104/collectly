@@ -88,6 +88,10 @@ export function MarketingFooter() {
               <p className="text-sm font-semibold text-ink-900">Company</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/about" className="inline-block py-1.5 hover:text-ink-900">About</Link></li>
+                {/* Reachable from the header but not from here, so anyone who
+                    scrolled to the bottom looking for a way to get in touch —
+                    which is where people look — found nothing. */}
+                <li><Link href="/contact" className="inline-block py-1.5 hover:text-ink-900">Contact</Link></li>
                 <li><a href="mailto:hello@getcollectly.app" className="inline-block py-1.5 hover:text-ink-900">Contact</a></li>
               </ul>
             </div>
