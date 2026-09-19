@@ -21,6 +21,7 @@ Required secrets:
 import argparse
 import base64
 import csv
+import hashlib
 import re
 import json
 import os
@@ -207,6 +208,52 @@ def _select_variant_block(template: str, industry: str) -> str:
     return ""
 
 
+def _select_ab_variant(template: str, prospect: Dict[str, str]) -> Dict[str, str]:
+    """Pick one arm of a v6-style A/B template.
+
+    v6 dropped industry variants for a two-arm test of the *approach*, so each
+    "### Variant X" carries its own "**Subject:**" line followed by its own
+    code block. The arm is a stable hash of the recipient rather than a coin
+    flip, so a prospect stays in the same arm across t1/t2/t3 -- otherwise the
+    follow-up contradicts the opener and the test measures nothing.
+
+    Returns {} for any template without these headers, which leaves the v2/v3
+    parsing below untouched.
+    """
+    lines = template.splitlines()
+    arms: List[Dict[str, str]] = []
+    for i, line in enumerate(lines):
+        if not re.match(r"^###\s+Variant\s+([A-Z])\b", line.strip()):
+            continue
+        subject = ""
+        body: List[str] = []
+        j = i + 1
+        while j < len(lines) and not lines[j].strip().startswith("###"):
+            stripped = lines[j].strip()
+            m = re.match(r"^\*{0,2}Subject:?\*{0,2}\s*(.+)$", stripped, re.I)
+            if m and not subject:
+                subject = m.group(1).strip().strip("`").strip()
+            elif stripped.startswith("```") and not body:
+                for k in range(j + 1, len(lines)):
+                    if lines[k].strip().startswith("```"):
+                        j = k
+                        break
+                    body.append(lines[k])
+            j += 1
+        text = "\n".join(body).strip()
+        if subject and text:
+            arms.append({"subject": subject, "body": text})
+
+    if len(arms) < 2:
+        return {}
+
+    key = (prospect.get("email") or prospect.get("company") or "").strip().lower()
+    idx = int(hashlib.sha256(key.encode()).hexdigest(), 16) % len(arms)
+    arm = dict(arms[idx])
+    arm["variant"] = chr(ord("A") + idx)
+    return arm
+
+
 def render_template(template: str, prospect: Dict[str, str], hook_override: str = None) -> Dict[str, str]:
     """Render subject + body from a t1 template.
 
@@ -231,8 +278,13 @@ def render_template(template: str, prospect: Dict[str, str], hook_override: str 
         "{{last_name}}": last,
         "{{company}}": company,
         "{{hook}}": hook or "[specific observation here]",
+        "{{unsubscribe_token}}": unsubscribe_token(prospect.get("email", "")),
     }.items():
         text = text.replace(k, v)
+
+    ab = _select_ab_variant(text, prospect)
+    if ab:
+        return ab
 
     # Parse subject
     subject = ""
@@ -286,6 +338,15 @@ def send_one(env: Dict[str, str], to: str, subject: str, body: str) -> Dict[str,
     from_email = env.get("RESEND_FROM_EMAIL", "")
     if not api_key or not from_email:
         return {"ok": False, "error": "RESEND_API_KEY or RESEND_FROM_EMAIL missing in .env.local"}
+    # Last line of defence. The t1 path shipped 292 sends with no opt-out at
+    # all -- only the t2 template carried one -- which is a CAN-SPAM breach for
+    # every US recipient. Enforcing it here rather than in render_* means a new
+    # template cannot reintroduce the gap by forgetting a line.
+    if "api/unsubscribe" not in body:
+        body = body.rstrip() + (
+            "\n\n--\nDon't want these? One click and I'll stop:\n"
+            f"https://getcollectly.app/api/unsubscribe?token={unsubscribe_token(to)}"
+        )
     payload = {
         "from": from_email,
         "to": [to],
