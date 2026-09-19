@@ -3,12 +3,40 @@
 The six prospects in `bookkeeper-channel-prospects.csv` with `status: ready` —
 written up 2026-08-04 and never contacted.
 
-**Why this channel and not more bulk cold email.** The only reply this campaign
-has ever produced — one, from ~300 sends — came from this channel on
-2026-07-30: hand-written, per-prospect, referencing a detail from the firm's own
-site, reply-not-click as the CTA, partner angle rather than customer angle. The
-bulk channel has returned zero interested replies from 292. So this is not a new
-idea; it is the one that worked, resumed.
+**Why this channel — corrected 2026-09-20.** An earlier version of this file
+claimed this channel produced "the only reply the campaign ever got". That was
+wrong, and the error is worth recording because it survived six review cycles.
+
+The reply attributed to this channel on 2026-07-30 is a **test fixture**. It is
+logged in `outreach-state.json` with `source: manual_test`, received **21 seconds**
+after the t1 was sent, reading "Thanks, this sounds interesting. Can we schedule a
+15-min call next week?" The status report written that same day independently
+records `replied: 0 (in this channel)`.
+
+That fixture did real damage. It inflated `experiment-status.json` variant A to
+51/1 (flagged as unresolved in six consecutive decision logs), and it caused a
+real follow-up email to be sent to a real person on 2026-08-23 premised on
+interest she had never expressed. Three further review cycles then queued a
+"breakup" email on the same false basis. She is now marked `do_not_contact`.
+
+**So the honest position:** across ~415 sends this campaign has produced one real
+reply, and it was a rejection. Not 0.34% — zero positive. This channel has 5 sends
+and 0 replies of its own. It is not chosen because it worked.
+
+It is chosen for three reasons that do not depend on results we do not have:
+
+1. **Relevance is the legal basis.** Inferred consent under the NZ and AU regimes
+   requires the message be directly relevant to the recipient's professional
+   function. You cannot be directly relevant to 255 people at once, so per-person
+   research is what makes the send lawful at all outside the US.
+2. **Advisor economics.** An advisor carries multiple client books, so one who
+   adopts brings several orgs rather than one.
+3. **Three is the target, not 255.** The Xero App Store requires 3 active
+   customers before it will list an app, and that listing is the only route here
+   that is not outbound forever.
+
+If this round also returns zero, that is real evidence, and the conclusion is that
+the product has no pull with this audience — not that the copy needs another pass.
 
 **Rules carried over from v1, which still hold:** max ~90 words, no links in the
 body, one verifiable detail from the prospect's own site, product appears no

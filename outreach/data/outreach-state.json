@@ -20,7 +20,7 @@
       "next_step": "wait_for_reply"
     },
     "lana@hill-bookkeeping.com": {
-      "state": "recovery_reply_sent",
+      "state": "do_not_contact",
       "first_name": "Lana",
       "last_name": "Hill",
       "prospect_id": "6a6b115b96b7e90001b5e084",
@@ -46,13 +46,14 @@
       "replies": [
         {
           "received_at": "2026-07-30T14:44:45.392584+00:00",
-          "source": "manual_test",
+          "source": "manual_test_FIXTURE_NOT_A_REAL_REPLY",
           "subject": "Re: Workflow automation",
-          "reply_text": "Thanks, this sounds interesting. Can we schedule a 15-min call next week?"
+          "reply_text": "Thanks, this sounds interesting. Can we schedule a 15-min call next week?",
+          "audit_note": "2026-09-20: This is a test fixture, not a reply. Received 21s after the t1 send with source=manual_test; the 2026-07-30 status report independently records 'replied: 0 (in this channel)'. It inflated experiment-status.json variant A to 51/1 (flagged unresolved across 6 reviews) and triggered a real 'recovery_reply' email to this person on 2026-08-23 premised on interest she never expressed. Three review cycles then proposed a 'breakup' email on the same false basis. Counted as a reply nowhere from this date."
         }
       ],
-      "next_step": "awaiting_her_reply_recovery_sent_2026-08-24",
-      "note": "Recovery reply sent 2026-08-24 after 24d silence -- apology + async ask (no call), per Davie direct instruction 2026-08-24."
+      "next_step": "none - suppressed 2026-09-20",
+      "note": "Suppressed. She never replied; the only two emails she received were a cold t1 and a follow-up generated from a fabricated reply record. No further contact."
     },
     "shetu@divergefinance.com": {
       "state": "t1_sent",
