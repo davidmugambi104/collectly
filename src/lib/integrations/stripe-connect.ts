@@ -2,19 +2,19 @@
  * Stripe Connect (Standard accounts) — OAuth 2.0 link flow.
  * Docs: https://stripe.com/docs/connect/oauth-standard-accounts
  *
- * Lets a Collectly merchant link their own Stripe account. Used for two
+ * Lets a Mugavi merchant link their own Stripe account. Used for two
  * things:
  *  1. Routing customer invoice payments (the "Card"/"ACH" buttons on the
  *     payment portal, /api/payment/create-checkout) as DIRECT charges on
  *     the merchant's own connected account, so the money settles into
- *     their bank, not Collectly's.
+ *     their bank, not Mugavi's.
  *  2. Pulling charges/payouts for cash-flow forecasting.
  *
  * Scope is `read_write`, not `read_only` — was `read_only` until this
- * fix, which meant Collectly could only ever look at a connected
+ * fix, which meant Mugavi could only ever look at a connected
  * account's existing history, never actually create a charge on their
  * behalf. Every payment collected through the portal was being charged
- * to Collectly's own STRIPE_SECRET_KEY account instead, with nothing
+ * to Mugavi's own STRIPE_SECRET_KEY account instead, with nothing
  * that forwarded it on to the actual business. `read_write` is required
  * for the platform API key to create Checkout Sessions/charges scoped to
  * the connected account via the `stripeAccount` request option (see
@@ -58,7 +58,7 @@ export async function stripeConnectExchangeCode(code: string) {
 /** The connected Stripe account id (acct_...) to charge on behalf of, or
  * null if this org hasn't linked their own Stripe account yet. Used by
  * /api/payment/create-checkout to decide whether Card/ACH can be offered
- * at all — there is deliberately no fallback to charging Collectly's own
+ * at all — there is deliberately no fallback to charging Mugavi's own
  * platform account, since that's the exact bug this exists to fix. */
 export async function getConnectedStripeAccountId(orgId: string): Promise<string | null> {
   const [row] = await db

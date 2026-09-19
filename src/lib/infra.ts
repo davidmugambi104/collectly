@@ -109,7 +109,7 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
     // dunning email with "Invalid `from` field".
     from: opts.from ?? (process.env.RESEND_FROM_EMAIL && /<.*>/.test(process.env.RESEND_FROM_EMAIL)
       ? process.env.RESEND_FROM_EMAIL
-      : `${process.env.RESEND_FROM_NAME ?? 'Collectly'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app'}>`),
+      : `${process.env.RESEND_FROM_NAME ?? 'Mugavi'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app'}>`),
     to: opts.to,
     subject: opts.subject,
     html: opts.html,
@@ -139,7 +139,7 @@ export async function sendSms(opts: { to: string; body: string }): Promise<SendS
   const client = getTwilio()!;
   // Twilio client.messages.create throws on transport errors but returns
   // { sid, error_code, error_message } on API errors. Surface both.
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
   const msg = await client.messages.create({
     from: process.env.TWILIO_FROM_NUMBER,
     to: opts.to,
@@ -171,18 +171,18 @@ export function unsubscribeToken(email: string): string {
  * Append a CAN-SPAM/PECR-compliant unsubscribe footer to the bottom of
  * an HTML email body. Uses the email recipient as the unsubscribe target.
  */
-export function withUnsubscribeFooter(html: string, email: string, appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'): string {
+export function withUnsubscribeFooter(html: string, email: string, appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'): string {
   const token = unsubscribeToken(email);
   const url = `${appUrl.replace(/\/$/, '')}/api/unsubscribe?token=${token}`;
   const footer = `
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0 12px">
 <p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0 0 8px">
-  You're receiving this because you signed up at getcollectly.app or are an existing customer.
+  You're receiving this because you signed up at mugavi.com or are an existing customer.
 </p>
 <p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0">
   <a href="${url}" style="color:#6b7280;text-decoration:underline">Unsubscribe</a>
   &middot; <a href="${appUrl.replace(/\/$/, '')}/privacy" style="color:#6b7280;text-decoration:underline">Privacy</a>
-  &middot; Collectly
+  &middot; Mugavi
 </p>`;
   return html + footer;
 }
@@ -192,7 +192,7 @@ export function withUnsubscribeFooter(html: string, email: string, appUrl = proc
  * emails. Different from the marketing footer — points to a per-customer
  * DND endpoint so clicking unsubscribes only THIS customer's dunning.
  */
-export function dunningListUnsubscribeHeaders(customerEmail: string, appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'): Record<string, string> {
+export function dunningListUnsubscribeHeaders(customerEmail: string, appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'): Record<string, string> {
   const token = unsubscribeToken(customerEmail);
   const url = `${appUrl.replace(/\/$/, '')}/api/unsubscribe?token=${token}&includeDnd=1`;
   return {

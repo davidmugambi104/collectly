@@ -63,7 +63,7 @@ const TONE_GUIDANCE: Record<DunningTone, string> = {
 // infra.ts, quickbooks.ts) -- keeps NEXT_PUBLIC_APP_URL as the single
 // source of truth instead of hardcoding the domain here too.
 function buildPaymentLink(invoiceId: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
   return `${base}/pay/${invoiceId}`;
 }
 

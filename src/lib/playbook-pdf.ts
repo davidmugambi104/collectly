@@ -122,7 +122,7 @@ function makePage1(): string {
      const content = `BT
 /F1 36 Tf
 72 700 Td
-(Collectly) Tj
+(Mugavi) Tj
 0 -50 Td
 /F1 28 Tf
 (The 5-Step DSO) Tj
@@ -135,7 +135,7 @@ function makePage1(): string {
 (who are tired of chasing invoices.) Tj
 0 -180 Td
 /F2 11 Tf
-(By the Collectly team \\226 pre-launch, building in public) Tj
+(By the Mugavi team \\226 pre-launch, building in public) Tj
 0 -16 Td
 (with early customers in the US, UK, AU, and CA.) Tj
 0 -180 Td
@@ -191,7 +191,7 @@ function makeCtaPage(): string {
 0 -40 Td
 /F2 12 Tf
 14 TL
-(Collectly is the AI-native A/R platform for 5-30 person) Tj
+(Mugavi is the AI-native A/R platform for 5-30 person) Tj
 0 -18 Td
 (agencies and consultancies. We connect to Xero \\226 QuickBooks) Tj
 0 -18 Td
@@ -205,7 +205,7 @@ function makeCtaPage(): string {
 (Try it free for 14 days:) Tj
 0 -28 Td
 /F2 12 Tf
-(https://getcollectly.app) Tj
+(https://mugavi.com) Tj
 // Real testimonials don't exist yet (no paying customers in production). The
 // previous fake "Sarah K., Lumen & Co" quote was removed because shipping
 // fabricated testimonials in a downloadable PDF is a real trust-breaker —

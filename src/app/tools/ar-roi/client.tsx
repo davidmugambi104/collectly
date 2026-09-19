@@ -89,7 +89,7 @@ export function RoiCalculator() {
             <input type="number" min="0" max="180" value={dso} onChange={(e) => setDso(Number(e.target.value))} className="input font-mono" />
             <input type="range" min="7" max="120" value={dso} onChange={(e) => setDso(Number(e.target.value))} className="w-full mt-2" />
           </Field>
-          <Field label="Target DSO with Collectly" hint="Industry best-in-class is 14 days for services.">
+          <Field label="Target DSO with Mugavi" hint="Industry best-in-class is 14 days for services.">
             <input type="number" min="7" max="60" value={targetDso} onChange={(e) => setTargetDso(Number(e.target.value))} className="input font-mono" />
             <input type="range" min="7" max="60" value={targetDso} onChange={(e) => setTargetDso(Number(e.target.value))} className="w-full mt-2" />
           </Field>
@@ -136,7 +136,7 @@ export function RoiCalculator() {
         <div className="grid grid-cols-2 gap-3">
           <Mini icon={<Clock className="h-4 w-4" />} label="Days faster" value={`${result.dsoDelta} days`} />
           <Mini icon={<DollarSign className="h-4 w-4" />} label="Bad-debt reduction" value={formatCurrency(result.badDebtReduction, currency)} />
-          <Mini icon={<TrendingUp className="h-4 w-4" />} label="ROI on Collectly" value={`${result.roi.toLocaleString()}%`} accent="brand" />
+          <Mini icon={<TrendingUp className="h-4 w-4" />} label="ROI on Mugavi" value={`${result.roi.toLocaleString()}%`} accent="brand" />
           <Mini
             icon={<Sparkles className="h-4 w-4" />}
             label="Payback period"
@@ -156,7 +156,7 @@ export function RoiCalculator() {
           <p className="mt-1 text-sm text-ink-600">Annual software cost for similar AR coverage.</p>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li className="flex items-center justify-between">
-              <span className="text-ink-700">Collectly ({PLAN_PRICING.starter.name})</span>
+              <span className="text-ink-700">Mugavi ({PLAN_PRICING.starter.name})</span>
               <span className="font-mono font-semibold text-emerald-700">{sym}{(PLAN_PRICING.starter.monthly * 12).toLocaleString()}/yr</span>
             </li>
             <li className="flex items-center justify-between">
@@ -192,7 +192,7 @@ export function RoiCalculator() {
             </li>
           </ul>
           <Link href="/sign-up" className="mt-5 btn-brand w-full justify-center">
-            Try Collectly free for 14 days <ArrowRight className="h-3.5 w-3.5" />
+            Try Mugavi free for 14 days <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <p className="mt-3 text-xs text-ink-500 text-center">No credit card. 10-minute setup. Cancel anytime.</p>
           {/* The highest-intent moment this site produces: someone has just been

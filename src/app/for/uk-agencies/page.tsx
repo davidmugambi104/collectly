@@ -20,8 +20,8 @@ const FAQS: FaqItem[] = [
          'businesses per year from payment delays alone.',
     },
     {
-      q: 'Does Collectly replace the Prompt Payment Code or a debt-collector?',
-      a: 'No. Collectly is an accounts-receivable automation tool for small ' +
+      q: 'Does Mugavi replace the Prompt Payment Code or a debt-collector?',
+      a: 'No. Mugavi is an accounts-receivable automation tool for small ' +
          'businesses, not a substitute for formal commercial-debt recovery. The ' +
          'Prompt Payment Code, the Small Business Commissioner, and registered ' +
          'commercial-debt collection agencies are separate channels that we ' +
@@ -30,26 +30,26 @@ const FAQS: FaqItem[] = [
     {
       q: 'Can the chasing emails be sent from a UK-domain?',
       a: 'Yes. Most UK agencies route through their own domain (e.g. ' +
-         'accounts@yourdomain.co.uk). Collectly uses Resend for transactional ' +
+         'accounts@yourdomain.co.uk). Mugavi uses Resend for transactional ' +
          'email. Domain authentication (SPF, DKIM, DMARC) is set during the ' +
          'founder-assisted onboarding as a required step before the first ' +
          'reminder goes out.',
     },
     {
-      q: 'Does Collectly support UK-specific payment rails?',
+      q: 'Does Mugavi support UK-specific payment rails?',
       a: 'Yes. The branded payment portal supports BACS, Faster Payments, and ' +
          'GoCardless direct debit. Card payments are supported via Stripe. ' +
          'Settlement timing and fees follow your chosen processor.',
     },
     {
-      q: 'Is Collectly GDPR-compliant for UK customers?',
+      q: 'Is Mugavi GDPR-compliant for UK customers?',
       a: 'Yes. We are GDPR + UK GDPR compliant. Our DPA is published and includes ' +
          'Standard Contractual Clauses for any third-party sub-processors. Customer ' +
          'data is stored in EU regions by default; US-region storage is available ' +
          'on request.',
     },
     {
-      q: 'How much does Collectly cost UK customers?',
+      q: 'How much does Mugavi cost UK customers?',
       a: `A single organisation is $${PLAN_PRICING.starter.monthly}/mo (around ` +
          `£${Math.round(PLAN_PRICING.starter.monthly * 0.8)}/mo at current FX rates) and a ` +
          `practice covering up to ${PRACTICE_INCLUDED_ORGS} client books is ` +
@@ -82,12 +82,12 @@ export const metadata = pageMetadata({
 // UK-specific landing page. Targeted at the 90-day plan beachhead.
 // Uses GBP pricing (roughly 0.80 GBP to the USD at time of writing) and UK-specific
 // payment rail cues (BACS) without violating any FCA / ICO guidance —
-// Collectly does not chase consumers, only B2B invoices for SMBs.
+// Mugavi does not chase consumers, only B2B invoices for SMBs.
 const ukJsonLd = JSON.stringify([
   webPageJsonLd({
     title: 'A/R automation for UK agencies on Xero',
     description:
-      'How Collectly handles accounts receivable for UK agencies and ' +
+      'How Mugavi handles accounts receivable for UK agencies and ' +
       'consultancies on Xero. BACS, Faster Payments, and GoCardless for ' +
       'branded payment portals. £40/mo founding-customer rate.',
     path: '/for/uk-agencies',
@@ -133,7 +133,7 @@ export default function ForUkAgenciesPage() {
             <h2 className="mt-3 text-lg font-semibold text-ink-900">Built for UK cadence.</h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Net-30 is the UK norm but receipt-to-payment routinely runs 8+ days
-              past the due date. Collectly reads the original Xero payment terms
+              past the due date. Mugavi reads the original Xero payment terms
               and adapts the cadence accordingly — friendlier on net-30 first
               touch, firmer on net-60 overdue buckets.
             </p>

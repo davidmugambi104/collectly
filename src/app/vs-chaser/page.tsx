@@ -10,15 +10,15 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs Chaser — better AR automation for small B2B services',
+  title: 'Mugavi vs Chaser — better AR automation for small B2B services',
   description:
-    'Side-by-side of Collectly and Chaser. Chaser starts around $259/mo ' +
-    `with templated reminders. Collectly starts at $${PLAN_PRICING.starter.monthly}/mo with tone-aware ` +
+    'Side-by-side of Mugavi and Chaser. Chaser starts around $259/mo ' +
+    `with templated reminders. Mugavi starts at $${PLAN_PRICING.starter.monthly}/mo with tone-aware ` +
     'AI dunning, no per-invoice fees, 10-minute setup, and reply-or-pay ' +
     'pause — built for 5-30 person agencies and consultancies on Xero.',
   path: '/vs-chaser',
   image: '/og-vs-chaser.png',
-  keywords: ['Collectly vs Chaser', 'Chaser alternative', 'Xero invoice reminder', 'Chaser vs Collectly'],
+  keywords: ['Mugavi vs Chaser', 'Chaser alternative', 'Xero invoice reminder', 'Chaser vs Mugavi'],
 });
 
 const DIFFS = [
@@ -42,10 +42,10 @@ export default function VsChaserPage() {
 
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">Comparison</p>
-        <h1 className="mt-3 h1">Collectly vs Chaser</h1>
+        <h1 className="mt-3 h1">Mugavi vs Chaser</h1>
         <p className="mt-5 lead">
           Chaser is a solid receivables tool — but it&apos;s priced for bigger businesses and starts at ~$259/mo.
-          Collectly gives small B2B service businesses the same AR automation from ${PLAN_PRICING.starter.monthly}/mo, with no per-invoice fees
+          Mugavi gives small B2B service businesses the same AR automation from ${PLAN_PRICING.starter.monthly}/mo, with no per-invoice fees
           and a 10-minute setup.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -66,7 +66,7 @@ export default function VsChaserPage() {
                 <d.icon className="h-4 w-4 text-brand-600" /> {d.label}
               </div>
               <div className="mt-3">
-                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Collectly</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Mugavi</div>
                 <div className="text-sm text-ink-900">{d.collectly}</div>
               </div>
               <div className="mt-3">
@@ -115,7 +115,7 @@ export default function VsChaserPage() {
           <h2 className="h2 text-center">When to choose which</h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
             <div className="card">
-              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Collectly if...</div>
+              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Mugavi if...</div>
               <ul className="space-y-2 text-sm text-ink-700">
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You&apos;re a 5-30 person agency or consultancy</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want transparent, flat pricing</li>
@@ -139,7 +139,7 @@ export default function VsChaserPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Stop overpaying for AR automation</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Collectly would send your customers in 10 minutes.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers in 10 minutes.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

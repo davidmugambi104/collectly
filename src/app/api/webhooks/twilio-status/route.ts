@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   // Must exactly match the URL Twilio was told to call (see statusCallback
   // in sendSms) — built from the same env var, not trusted request
   // headers, since a proxy could alter those.
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
   const url = `${appUrl}/api/webhooks/twilio-status`;
 
   const valid = twilio.validateRequest(authToken, signature, url, params);

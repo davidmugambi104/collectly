@@ -108,7 +108,7 @@ export function DunningDemo() {
         </div>
         {!output ? (
           // A skeleton, not an instruction. This panel used to be a 400px void
-          // reading "Click Generate message to see what Collectly sends" — the
+          // reading "Click Generate message to see what Mugavi sends" — the
           // most persuasive artifact the site owns, an actual AI-written
           // reminder, hidden behind a click most visitors never made. It now
           // populates itself on mount, so this state lasts a few hundred

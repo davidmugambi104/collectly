@@ -8,8 +8,8 @@ import { eq } from 'drizzle-orm';
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
 // Disabled platform-wide (2026-08-05): this route charges through
-// Collectly's own single PAYSTACK_SECRET_KEY with no per-agency subaccount
-// or split_code — money paid here settles into Collectly's account, not
+// Mugavi's own single PAYSTACK_SECRET_KEY with no per-agency subaccount
+// or split_code — money paid here settles into Mugavi's account, not
 // the business being paid, and nothing anywhere transfers it onward. Same
 // class of bug as the one fixed in /api/payment/create-checkout, except
 // no per-org connect flow exists yet to fix it properly. Gated at the API

@@ -8,7 +8,7 @@ export const metadata = pageMetadata({
     'What we shipped, and when. Updates weekly. Real entries from a ' +
     'small product team, not a marketing roundup.',
   path: '/changelog',
-  keywords: ['Collectly changelog', 'product updates', 'release notes'],
+  keywords: ['Mugavi changelog', 'product updates', 'release notes'],
 });
 
 export default function ChangelogPage() {

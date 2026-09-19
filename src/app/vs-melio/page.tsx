@@ -10,14 +10,14 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs Melio — AR automation beyond payment links',
+  title: 'Mugavi vs Melio — AR automation beyond payment links',
   description:
-    'Side-by-side of Collectly and Melio. Melio is free for AP-first B2B ' +
-    'payments with light invoicing. Collectly is AR-native: AI tone-aware ' +
+    'Side-by-side of Mugavi and Melio. Melio is free for AP-first B2B ' +
+    'payments with light invoicing. Mugavi is AR-native: AI tone-aware ' +
     'dunning, cash-flow forecast, risk scoring, and a branded payment ' +
     `portal for $${PLAN_PRICING.starter.monthly}/mo with no per-invoice fees.`,
   path: '/vs-melio',
-  keywords: ['Collectly vs Melio', 'Melio alternative', 'AR automation for agencies', 'Melio vs Collectly'],
+  keywords: ['Mugavi vs Melio', 'Melio alternative', 'AR automation for agencies', 'Melio vs Mugavi'],
 });
 
 const DIFFS = [
@@ -41,10 +41,10 @@ export default function VsMelioPage() {
 
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">Comparison</p>
-        <h1 className="mt-3 h1">Collectly vs Melio</h1>
+        <h1 className="mt-3 h1">Mugavi vs Melio</h1>
         <p className="mt-5 lead">
           Melio is a great way to pay bills and send free invoices. But if your real problem is
-          overdue invoices, awkward follow-ups, and unpredictable cash flow, Collectly is built for that.
+          overdue invoices, awkward follow-ups, and unpredictable cash flow, Mugavi is built for that.
           AI tone-aware dunning, cash-flow forecasting, customer risk scoring — from ${PLAN_PRICING.starter.monthly}/mo.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -65,7 +65,7 @@ export default function VsMelioPage() {
                 <d.icon className="h-4 w-4 text-brand-600" /> {d.label}
               </div>
               <div className="mt-3">
-                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Collectly</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Mugavi</div>
                 <div className="text-sm text-ink-900">{d.collectly}</div>
               </div>
               <div className="mt-3">
@@ -114,7 +114,7 @@ export default function VsMelioPage() {
           <h2 className="h2 text-center">When to choose which</h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
             <div className="card">
-              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Collectly if...</div>
+              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Mugavi if...</div>
               <ul className="space-y-2 text-sm text-ink-700">
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />Late invoices are hurting your cash flow</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want AI to write polite-but-firm follow-ups</li>
@@ -138,7 +138,7 @@ export default function VsMelioPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Don&apos;t let free invoicing become slow collections</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Collectly would send your customers in 10 minutes.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers in 10 minutes.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

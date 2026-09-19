@@ -115,7 +115,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               <ol className="mt-2 space-y-1 text-success-900/80 list-decimal list-inside">
                 <li>David emails your invoice <b>within 12 hours</b> (bank transfer, Wise, or PayPal — your choice).</li>
                 <li>Once paid, your account is upgraded manually and you&apos;ll get a confirmation email.</li>
-                <li>You can keep using Collectly during this window — no interruption.</li>
+                <li>You can keep using Mugavi during this window — no interruption.</li>
               </ol>
               <p className="mt-2 text-xs text-success-900/70">
                 Questions? Reply to the invoice email or reach David at <a href="mailto:david@getcollectly.app" className="underline">david@getcollectly.app</a>.

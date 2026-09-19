@@ -23,35 +23,35 @@ import { TrackedLink } from '@/components/marketing/tracked-link';
 // visible <FaqSection> read this one array.
 const FAQS: FaqItem[] = [
     {
-      q: 'Does Collectly work with Xero?',
-      a: 'Yes. Collectly connects to Xero via official OAuth, reads open invoices, contacts, due dates and payment status, and writes back the payment-pause marker. Xero integration is the most-tested connection in the product.',
+      q: 'Does Mugavi work with Xero?',
+      a: 'Yes. Mugavi connects to Xero via official OAuth, reads open invoices, contacts, due dates and payment status, and writes back the payment-pause marker. Xero integration is the most-tested connection in the product.',
     },
     {
-      q: 'Does Collectly work with QuickBooks?',
+      q: 'Does Mugavi work with QuickBooks?',
       a: 'QuickBooks Online integration is currently in beta while we complete the Intuit production credentials. Same workflow as Xero (OAuth, invoice sync, payment pause, reply detection); available on request for founding customers.',
     },
     {
-      q: 'How is Collectly different from Chaser?',
-      a: `Chaser is built around templated reminder sequences and its entry tier starts around $259/mo for one organization. Collectly uses tone-aware AI to write each reminder in context, pauses on reply-or-pay automatically, classifies disputes, and tracks promised payment dates. A practice pays $${PLAN_PRICING.growth.monthly}/mo for up to ${PRACTICE_INCLUDED_ORGS} client books, about $${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)} a book, with no per-invoice fees.`,
+      q: 'How is Mugavi different from Chaser?',
+      a: `Chaser is built around templated reminder sequences and its entry tier starts around $259/mo for one organization. Mugavi uses tone-aware AI to write each reminder in context, pauses on reply-or-pay automatically, classifies disputes, and tracks promised payment dates. A practice pays $${PLAN_PRICING.growth.monthly}/mo for up to ${PRACTICE_INCLUDED_ORGS} client books, about $${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)} a book, with no per-invoice fees.`,
     },
     {
-      q: 'How much does Collectly cost?',
+      q: 'How much does Mugavi cost?',
       a: `A single business is $${PLAN_PRICING.starter.monthly}/mo for one Xero or QuickBooks organization. A practice is $${PLAN_PRICING.growth.monthly}/mo covering up to ${PRACTICE_INCLUDED_ORGS} client books, then $${PRACTICE_EXTRA_ORG_MONTHLY} each. The first ${FOUNDING.seats} founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months. SMS charged at pass-through cost; no per-invoice fees, no setup fees.`,
     },
     {
-      q: 'Will Collectly send messages without my approval?',
+      q: 'Will Mugavi send messages without my approval?',
       a: 'By default, no. Every founding customer runs in approval mode — nothing goes out until you review and send. Autopilot unlocks after 25 reviewed messages with no unedited-send rate over a 14-day window, and can be turned off any time.',
     },
     {
       q: 'What happens when a customer replies "we\'ll pay next Friday"?',
-      a: 'Collectly detects the reply, pauses the reminder sequence, extracts the promised date, and asks a human to confirm before logging it. The promised date shows up in your work queue. After that Friday passes without payment, the next reminder is queued — not auto-sent.',
+      a: 'Mugavi detects the reply, pauses the reminder sequence, extracts the promised date, and asks a human to confirm before logging it. The promised date shows up in your work queue. After that Friday passes without payment, the next reminder is queued — not auto-sent.',
     },
 ];
 
 export const metadata = pageMetadata({
   title: 'Stop chasing late invoices — AR automation for small agencies',
   description:
-    'Connect Collectly to Xero or QuickBooks. It drafts client-safe invoice ' +
+    'Connect Mugavi to Xero or QuickBooks. It drafts client-safe invoice ' +
     'reminders, pauses when customers reply or pay, tracks promised-payment ' +
     'dates, and separates disputes from ordinary late payment. Built for ' +
     `5-30 person agencies, consultancies and bookkeeping practices. From $${PLAN_PRICING.starter.monthly}/mo.`,
@@ -214,7 +214,7 @@ export default function HomePage() {
         <div className="max-w-2xl">
           <p className="eyebrow">How it works</p>
           <h2 className="mt-2 h2">Understands the conversation, not just the invoice.</h2>
-          <p className="mt-4 lead">Collectly pauses when customers reply, tracks promises, separates disputes from cash flow problems, and tells you why each dollar is expected.</p>
+          <p className="mt-4 lead">Mugavi pauses when customers reply, tracks promises, separates disputes from cash flow problems, and tells you why each dollar is expected.</p>
         </div>
         <ol className="mt-14 grid md:grid-cols-3 gap-x-8 gap-y-10 relative">
           <div className="hidden md:block absolute top-5 left-[16.5%] right-[16.5%] h-px bg-ink-200" aria-hidden="true" />
@@ -222,13 +222,13 @@ export default function HomePage() {
             n={1}
             icon={<Zap className="h-4 w-4" />}
             title="Connect your books"
-            body="Connect Xero in a couple of clicks and Collectly reads your invoices, customers and payment history. Plaid bank feeds match cash as it lands. Paystack covers NG/GH/KE/ZA; QuickBooks is in beta."
+            body="Connect Xero in a couple of clicks and Mugavi reads your invoices, customers and payment history. Plaid bank feeds match cash as it lands. Paystack covers NG/GH/KE/ZA; QuickBooks is in beta."
           />
           <TimelineStep
             n={2}
             icon={<Bot className="h-4 w-4" />}
             title="Set the tone"
-            body="Pick how firm Collectly should be — friendly, firm, final — when to escalate, and which invoices to leave alone entirely. You set the boundary; Collectly stays inside it."
+            body="Pick how firm Mugavi should be — friendly, firm, final — when to escalate, and which invoices to leave alone entirely. You set the boundary; Mugavi stays inside it."
           />
           <TimelineStep
             n={3}
@@ -283,20 +283,20 @@ export default function HomePage() {
           <h2 className="mt-2 h2">Built for the SMB long tail. Not the enterprise.</h2>
           <p className="mt-4 lead">
             Chaser starts at ~$259/mo. BILL charges per user plus transaction fees. Melio is free but AP-first.
-            Collectly is the only AR-native tool built for small B2B services at a flat, transparent price.
+            Mugavi is the only AR-native tool built for small B2B services at a flat, transparent price.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/vs-chaser" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
-              Collectly vs Chaser <ArrowRight className="h-3 w-3" />
+              Mugavi vs Chaser <ArrowRight className="h-3 w-3" />
             </Link>
             <Link href="/vs-bill" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
-              Collectly vs BILL <ArrowRight className="h-3 w-3" />
+              Mugavi vs BILL <ArrowRight className="h-3 w-3" />
             </Link>
             <Link href="/vs-melio" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
-              Collectly vs Melio <ArrowRight className="h-3 w-3" />
+              Mugavi vs Melio <ArrowRight className="h-3 w-3" />
             </Link>
             <Link href="/vs-quickbooks" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
-              Collectly vs QuickBooks <ArrowRight className="h-3 w-3" />
+              Mugavi vs QuickBooks <ArrowRight className="h-3 w-3" />
             </Link>
             <Link href="/compare" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               See all comparisons <ArrowRight className="h-3 w-3" />
@@ -318,7 +318,7 @@ export default function HomePage() {
             <thead className="bg-ink-50 text-ink-600">
               <tr>
                 <th className="px-6 py-4 font-semibold">Cost at 1 year</th>
-                <th className="px-6 py-4 font-semibold text-center">Collectly</th>
+                <th className="px-6 py-4 font-semibold text-center">Mugavi</th>
                 <th className="px-6 py-4 font-semibold text-center">Chaser</th>
                 <th className="px-6 py-4 font-semibold text-center">BILL</th>
                 <th className="px-6 py-4 font-semibold text-center">Melio + manual work</th>
@@ -385,8 +385,8 @@ export default function HomePage() {
       <section className="bg-gradient-to-b from-ink-50 to-white border-y border-ink-200">
         <div className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
           <div className="max-w-2xl">
-            <p className="eyebrow">Why Collectly is different</p>
-            <h2 className="mt-2 h2">Six things Collectly understands that other tools miss.</h2>
+            <p className="eyebrow">Why Mugavi is different</p>
+            <h2 className="mt-2 h2">Six things Mugavi understands that other tools miss.</h2>
             <p className="mt-4 lead">Most AR tools treat every overdue invoice the same. Real service businesses know that customers, relationships, and reasons for late payment are different every time.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 gap-6">
@@ -398,7 +398,7 @@ export default function HomePage() {
             <DifferentiatorCard
               icon={<CalendarCheck className="h-5 w-5" />}
               title="Promise-to-pay tracking"
-              body={`When a customer says "we'll pay next Friday," Collectly extracts the date, pauses reminders, adds it to your forecast, and automatically restarts the sequence if payment doesn't arrive.`}
+              body={`When a customer says "we'll pay next Friday," Mugavi extracts the date, pauses reminders, adds it to your forecast, and automatically restarts the sequence if payment doesn't arrive.`}
             />
             <DifferentiatorCard
               icon={<AlertTriangle className="h-5 w-5" />}
@@ -413,12 +413,12 @@ export default function HomePage() {
             <DifferentiatorCard
               icon={<SlidersHorizontal className="h-5 w-5" />}
               title="Relationship-aware dunning"
-              body="Set tone, channel, account-manager sender, and sensitivity per customer. A strategic account gets gentle handling. A high-risk account gets firm follow-up. Collectly never treats every overdue invoice as ordinary debt."
+              body="Set tone, channel, account-manager sender, and sensitivity per customer. A strategic account gets gentle handling. A high-risk account gets firm follow-up. Mugavi never treats every overdue invoice as ordinary debt."
             />
             <DifferentiatorCard
               icon={<ShieldCheck className="h-5 w-5" />}
               title="Approval-before-send"
-              body="Nervous about automated emails? Turn on approval mode. Collectly drafts every reminder, you review and approve. Build confidence, then graduate to autopilot when ready."
+              body="Nervous about automated emails? Turn on approval mode. Mugavi drafts every reminder, you review and approve. Build confidence, then graduate to autopilot when ready."
             />
           </div>
         </div>
@@ -454,9 +454,9 @@ export default function HomePage() {
             I built this because I was tired of being the one who had to ask.
           </p>
           <p className="mt-5 text-ink-600 leading-relaxed">
-            I&apos;m Davie, the founder of Collectly. I spent years building software and watching small teams
+            I&apos;m Davie, the founder of Mugavi. I spent years building software and watching small teams
             lose hours every week to awkward invoice follow-ups, spreadsheets, and &quot;just checking in&quot; emails.
-            Collectly is the tool I wish I&apos;d had: honest pricing, fast setup, and follow-ups that don&apos;t make
+            Mugavi is the tool I wish I&apos;d had: honest pricing, fast setup, and follow-ups that don&apos;t make
             your customers hate you.
           </p>
           <p className="mt-4 text-sm text-ink-500">

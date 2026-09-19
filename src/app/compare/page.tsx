@@ -6,15 +6,15 @@ import { ArrowRight, Search } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Compare Collectly vs AR automation competitors',
+  title: 'Compare Mugavi vs AR automation competitors',
   description:
-    'Side-by-side comparisons of Collectly vs Chaser, BILL, Melio, ' +
+    'Side-by-side comparisons of Mugavi vs Chaser, BILL, Melio, ' +
     'QuickBooks, Zoho Books, Gaviti, Growfin, HighRadius, FreshBooks, and ' +
     'more. Built for 5-30 person agencies and consultancies on Xero.',
   path: '/compare',
   keywords: [
-    'Collectly vs Chaser', 'Collectly vs BILL', 'Collectly vs Melio',
-    'Collectly vs QuickBooks', 'AR automation comparison',
+    'Mugavi vs Chaser', 'Mugavi vs BILL', 'Mugavi vs Melio',
+    'Mugavi vs QuickBooks', 'AR automation comparison',
   ],
 });
 
@@ -37,10 +37,10 @@ export default function ComparePage() {
 
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">Compare</p>
-        <h1 className="mt-3 h1">Collectly vs the AR automation landscape</h1>
+        <h1 className="mt-3 h1">Mugavi vs the AR automation landscape</h1>
         <p className="mt-5 lead">
           Most AR tools are built for finance teams at big companies, hide their pricing, or bury collections inside a broader payments platform.
-          Collectly is the only AR-native tool built for small B2B service businesses at a flat, transparent price.
+          Mugavi is the only AR-native tool built for small B2B service businesses at a flat, transparent price.
         </p>
       </section>
 
@@ -53,7 +53,7 @@ export default function ComparePage() {
               className="card hover:border-ink-300 transition-colors group"
             >
               <div className="flex items-center justify-between">
-                <div className="text-sm font-semibold text-ink-900">Collectly vs {c.name}</div>
+                <div className="text-sm font-semibold text-ink-900">Mugavi vs {c.name}</div>
                 <ArrowRight className="h-4 w-4 text-ink-400 group-hover:text-brand-600 transition-colors" />
               </div>
               <p className="mt-2 text-sm text-ink-600">{c.pitch}</p>

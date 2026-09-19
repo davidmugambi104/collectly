@@ -217,7 +217,7 @@ export async function getAuthWithOrg() {
  * exports, upgrade-request review, etc). `getAuth()`/`getAuthWithOrg()` only
  * prove the caller is *a* signed-in member of *some* org — every paying
  * customer satisfies that. These routes return cross-tenant data (all
- * interview leads, all upgrade requests) that belongs to the Collectly team
+ * interview leads, all upgrade requests) that belongs to the Mugavi team
  * only, so they need a real allowlist check, not just "is logged in".
  * Mirrors the check already used by src/app/admin/upgrade-requests.
  */

@@ -11,14 +11,14 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs QuickBooks — smarter AR automation for QBO users',
+  title: 'Mugavi vs QuickBooks — smarter AR automation for QBO users',
   description:
     'QuickBooks handles invoicing and payments but not smart collections. ' +
-    'Collectly adds AI tone-aware AI dunning, AR aging, cash-flow forecasting, ' +
+    'Mugavi adds AI tone-aware AI dunning, AR aging, cash-flow forecasting, ' +
     'and a branded payment portal while keeping your QuickBooks data in sync.',
   path: '/vs-quickbooks',
   image: '/og-vs-quickbooks.png',
-  keywords: ['Collectly vs QuickBooks', 'QuickBooks AR', 'QuickBooks invoice reminder', 'QBO dunning'],
+  keywords: ['Mugavi vs QuickBooks', 'QuickBooks AR', 'QuickBooks invoice reminder', 'QBO dunning'],
 });
 
 const DIFFS = [
@@ -42,10 +42,10 @@ export default function VsQuickbooksPage() {
 
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">Comparison</p>
-        <h1 className="mt-3 h1">Collectly vs QuickBooks</h1>
+        <h1 className="mt-3 h1">Mugavi vs QuickBooks</h1>
         <p className="mt-5 lead">
           QuickBooks is the default for small-business invoicing and payments. But its collections features
-          are basic — reminders, not real dunning. Collectly sits on top of Xero (production-ready today) or
+          are basic — reminders, not real dunning. Mugavi sits on top of Xero (production-ready today) or
           QuickBooks (integration in beta) to add AI tone-aware follow-ups, AR aging, cash-flow forecasting,
           and risk scoring — without forcing you to migrate.
         </p>
@@ -67,7 +67,7 @@ export default function VsQuickbooksPage() {
                 <d.icon className="h-4 w-4 text-brand-600" /> {d.label}
               </div>
               <div className="mt-3">
-                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Collectly</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Mugavi</div>
                 <div className="text-sm text-ink-900">{d.collectly}</div>
               </div>
               <div className="mt-3">
@@ -116,7 +116,7 @@ export default function VsQuickbooksPage() {
           <h2 className="h2 text-center">When to choose which</h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
             <div className="card">
-              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Collectly if...</div>
+              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Mugavi if...</div>
               <ul className="space-y-2 text-sm text-ink-700">
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You have overdue invoices sitting 30+ days</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want AI to adapt tone per customer and overdue stage</li>

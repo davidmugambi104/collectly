@@ -167,7 +167,7 @@ export function ArCostCalculator() {
                   Save my report <ArrowRight className="h-3.5 w-3.5" />
                 </button>
                 <Link href="/sign-up" className="btn-secondary w-full justify-center">
-                  Try Collectly free
+                  Try Mugavi free
                 </Link>
               </div>
             </>

@@ -42,7 +42,7 @@ export default async function AdminUpgradeRequestsPage() {
       <div className="app min-h-screen flex items-center justify-center p-6">
         <div className="max-w-md text-center">
           <h1 className="app-title">Not authorized</h1>
-          <p className="mt-3 text-ink-600">This page is for the Collectly team only. If you should have access, ask Davie to add <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">{userEmail ?? 'your email'}</code> to <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">ADMIN_EMAILS</code>.</p>
+          <p className="mt-3 text-ink-600">This page is for the Mugavi team only. If you should have access, ask Davie to add <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">{userEmail ?? 'your email'}</code> to <code className="font-mono text-xs bg-ink-100 px-1.5 py-0.5 rounded">ADMIN_EMAILS</code>.</p>
         </div>
       </div>
     );

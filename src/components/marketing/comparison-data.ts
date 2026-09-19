@@ -18,7 +18,7 @@
 export type CompetitorKey = 'us' | 'chaser' | 'bill' | 'melio' | 'qb' | 'freshbooks';
 
 export const COMPETITORS: Array<{ key: CompetitorKey; label: string; highlight?: boolean }> = [
-  { key: 'us', label: 'Collectly', highlight: true },
+  { key: 'us', label: 'Mugavi', highlight: true },
   { key: 'chaser', label: 'Chaser' },
   { key: 'bill', label: 'BILL' },
   { key: 'melio', label: 'Melio' },

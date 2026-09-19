@@ -48,7 +48,7 @@ export function ComparisonDiffGrid({ diffs, competitorName }: { diffs: DiffCard[
               <d.icon className="h-4 w-4 text-brand-600" /> {d.label}
             </div>
             <div className="mt-3">
-              <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Collectly</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Mugavi</div>
               <div className="text-sm text-ink-900">{d.collectly}</div>
             </div>
             <div className="mt-3">
@@ -120,7 +120,7 @@ export function WhenToChoose({
         <h2 className="h2 text-center">When to choose which</h2>
         <div className="mt-8 grid md:grid-cols-2 gap-6">
           <div className="card">
-            <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Collectly if...</div>
+            <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Mugavi if...</div>
             <ul className="space-y-2 text-sm text-ink-700">
               {chooseCollectly.map((r) => (
                 <li key={r.label} className="flex items-start gap-2">

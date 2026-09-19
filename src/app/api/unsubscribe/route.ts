@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Unsubscribe — Collectly</title>
+<title>Unsubscribe — Mugavi</title>
 <style>
   body { font-family: -apple-system, system-ui, sans-serif; max-width: 480px; margin: 80px auto; padding: 0 24px; color: #16171c; }
   h1 { font-size: 24px; margin: 0 0 12px; }
@@ -66,8 +66,8 @@ export async function GET(req: NextRequest) {
 </head>
 <body>
 <h1>Unsubscribe</h1>
-<p>You're unsubscribing <span class="email">${escapeHtml(email)}</span> from Collectly marketing emails.</p>
-<p>If you also want to stop receiving payment reminders for invoices you owe a Collectly-using business, click the button below — we'll mark your address as do-not-contact across all our customers.</p>
+<p>You're unsubscribing <span class="email">${escapeHtml(email)}</span> from Mugavi marketing emails.</p>
+<p>If you also want to stop receiving payment reminders for invoices you owe a Mugavi-using business, click the button below — we'll mark your address as do-not-contact across all our customers.</p>
 <form method="POST" action="/api/unsubscribe">
   <input type="hidden" name="token" value="${escapeHtml(token)}" />
   <label><input type="checkbox" name="includeDnd" value="1" /> Also stop dunning emails (invoices you owe)</label>
@@ -152,9 +152,9 @@ export async function POST(req: NextRequest) {
       `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Unsubscribed</title>
 <style>body{font-family:-apple-system,system-ui,sans-serif;max-width:480px;margin:80px auto;padding:0 24px;color:#16171c}h1{font-size:24px;margin:0 0 12px}p{color:#6c6e76;line-height:1.5}.ok{color:#0a7c2f}</style></head>
 <body><h1 class="ok">Unsubscribed ✓</h1>
-<p><span class="email">${escapeHtml(email)}</span> has been removed from Collectly marketing emails, including cold outreach. We record this against the address itself, so it holds whether or not you were already in our system.</p>
-${includeDnd ? `<p>Also marked as do-not-contact on ${dndCount} customer record${dndCount === 1 ? '' : 's'}. You won't receive dunning emails from any Collectly-using business at this address.</p>` : ''}
-<p>You can re-subscribe anytime by signing up again on getcollectly.app.</p>
+<p><span class="email">${escapeHtml(email)}</span> has been removed from Mugavi marketing emails, including cold outreach. We record this against the address itself, so it holds whether or not you were already in our system.</p>
+${includeDnd ? `<p>Also marked as do-not-contact on ${dndCount} customer record${dndCount === 1 ? '' : 's'}. You won't receive dunning emails from any Mugavi-using business at this address.</p>` : ''}
+<p>You can re-subscribe anytime by signing up again on mugavi.com.</p>
 </body></html>`,
       { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     );

@@ -52,12 +52,12 @@ export async function POST(req: NextRequest) {
   if (balance <= 0) return NextResponse.json({ error: 'no balance due' }, { status: 400 });
 
   // SECURITY / CORRECTNESS: every card/ACH payment used to be charged to
-  // Collectly's own platform Stripe account (getStripe() reads only
+  // Mugavi's own platform Stripe account (getStripe() reads only
   // STRIPE_SECRET_KEY, the platform's key) with nothing that ever
   // forwarded the money to the actual business. This is now a DIRECT
   // charge on the org's own connected Stripe account (see
   // getConnectedStripeAccountId / stripe-connect.ts) so the money settles
-  // into their bank, not Collectly's. Deliberately no fallback to the old
+  // into their bank, not Mugavi's. Deliberately no fallback to the old
   // platform-account behavior if the org hasn't connected Stripe — that
   // would silently reintroduce the exact bug this fixes.
   const connectedAccountId = await getConnectedStripeAccountId(row.org.id);
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
             orgId: row.org.id,
             customerId: row.customer.id,
           },
-          // No application_fee_amount set — Collectly takes no cut of
+          // No application_fee_amount set — Mugavi takes no cut of
           // this charge today. Add one here (in cents) once a platform
           // fee rate is actually decided; Standard connected accounts
           // require the fee to be set on the charge itself, it can't be

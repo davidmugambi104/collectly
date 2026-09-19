@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     if (alertGate.allowed && ADMIN_EMAILS.length > 0) {
       sendEmail({
         to: ADMIN_EMAILS[0],
-        subject: `Collectly crash: ${data.message.slice(0, 100)}`,
+        subject: `Mugavi crash: ${data.message.slice(0, 100)}`,
         html: `
           <!doctype html>
           <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 600px; margin: 0 auto; padding: 24px;">

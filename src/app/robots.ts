@@ -31,7 +31,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/dashboard', '/dashboard/*', '/api', '/api/*'],
       },
     ],
-    sitemap: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'}/sitemap.xml`,
-    host: process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app',
+    sitemap: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'}/sitemap.xml`,
+    host: process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com',
   };
 }

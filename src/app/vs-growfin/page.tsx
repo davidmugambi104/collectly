@@ -13,13 +13,13 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs Growfin — behavioral AI AR for the rest of us',
+  title: 'Mugavi vs Growfin — behavioral AI AR for the rest of us',
   description:
     'Growfin uses behavioral AI for enterprise order-to-cash on NetSuite. ' +
-    'Collectly brings AI tone-aware dunning, cash-flow forecasting, and ' +
+    'Mugavi brings AI tone-aware dunning, cash-flow forecasting, and ' +
     `risk scoring to small agencies and consultancies on Xero at $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/vs-growfin',
-  keywords: ['Collectly vs Growfin', 'Growfin alternative', 'NetSuite AR alternative', 'Growfin vs Collectly'],
+  keywords: ['Mugavi vs Growfin', 'Growfin alternative', 'NetSuite AR alternative', 'Growfin vs Mugavi'],
 });
 
 const DIFFS = [
@@ -62,8 +62,8 @@ export default function VsGrowfinPage() {
       />
       <MarketingHeader />
       <ComparisonHero
-        title="Collectly vs Growfin"
-        subtitle="Growfin brings behavioral AI to enterprise order-to-cash on NetSuite. Collectly brings the AI parts that actually matter to small B2B services — tone-aware dunning, cash-flow forecasting, and customer risk scoring — without the ERP implementation."
+        title="Mugavi vs Growfin"
+        subtitle="Growfin brings behavioral AI to enterprise order-to-cash on NetSuite. Mugavi brings the AI parts that actually matter to small B2B services — tone-aware dunning, cash-flow forecasting, and customer risk scoring — without the ERP implementation."
         competitorName="Growfin"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Growfin" />
@@ -79,7 +79,7 @@ export default function VsGrowfinPage() {
       <WhenToChoose competitorName="Growfin" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="AI collections without the enterprise hangover"
-        body="Start your 14-day free trial. No credit card. See exactly what Collectly would send your customers in 10 minutes."
+        body="Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers in 10 minutes."
       />
       <MarketingFooter />
     </div>

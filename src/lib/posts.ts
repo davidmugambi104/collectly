@@ -22,7 +22,7 @@ For a 5-30 person business, the working capital locked up in unpaid invoices isn
 
 ## The tools don't fit
 
-We spent the first 6 weeks of building Collectly auditing every A/R tool we could find. The market splits into four buckets, and only one of them actually fits the 5-30 person segment.
+We spent the first 6 weeks of building Mugavi auditing every A/R tool we could find. The market splits into four buckets, and only one of them actually fits the 5-30 person segment.
 
 ### 1. Enterprise (HighRadius, YayPay, Rimilia)
 - Price: $3,000-$30,000/month
@@ -64,7 +64,7 @@ The gap is clear. Nobody is building for the 5-30 person business with:
 - **Branded payment portal** with card, ACH, and local rails
 - **$149-$399/mo** pricing
 
-That's the wedge. That's what we're building at Collectly.
+That's the wedge. That's what we're building at Mugavi.
 
 ## Why now
 
@@ -112,8 +112,8 @@ We're doing 10 customer interviews in the next 2 weeks. If you run a 5-30 person
 Reply to this email or book a 15-min call: https://cal.com/davie-collectly/15min
 
 — Davie
-Founder, Collectly
-https://getcollectly.app
+Founder, Mugavi
+https://mugavi.com
 `,
   },
 
@@ -203,9 +203,9 @@ The order matters. Aggressive chasing comes first because the cost is just your 
 
 Your bookkeeper's spreadsheet almost certainly uses straight-line aging. That's why their forecast is always wrong.
 
-The fix isn't complicated — it's just not the default. The math above is what every modern AR tool computes. We built it into Collectly because we couldn't find it anywhere else at this price.
+The fix isn't complicated — it's just not the default. The math above is what every modern AR tool computes. We built it into Mugavi because we couldn't find it anywhere else at this price.
 
-If you want to try it: https://getcollectly.app — 14-day free trial, no credit card, 10-minute setup.
+If you want to try it: https://mugavi.com — 14-day free trial, no credit card, 10-minute setup.
 
 — Davie
 `,
@@ -215,9 +215,9 @@ If you want to try it: https://getcollectly.app — 14-day free trial, no credit
     slug: 'best-dunning-templates-2026',
     title: 'The 7 dunning email templates that actually get invoices paid',
     date: '2026-07-05', read: '5 min',
-    excerpt: 'Patterns from what typically works in dunning emails — and what to avoid. Illustrative benchmarks, not a Collectly-run study.',
+    excerpt: 'Patterns from what typically works in dunning emails — and what to avoid. Illustrative benchmarks, not a Mugavi-run study.',
     tags: ['dunning', 'templates', 'collections'],
-    body: `These are illustrative benchmarks based on common collections-industry patterns, not a formal Collectly study — we're a small beta and don't have a dataset that size yet. Here's what tends to work.
+    body: `These are illustrative benchmarks based on common collections-industry patterns, not a formal Mugavi study — we're a small beta and don't have a dataset that size yet. Here's what tends to work.
 
 ## The numbers
 
@@ -369,7 +369,7 @@ Total recovery: **70-90%** of invoices paid within 30 days. Industry baseline wi
 
 **That's the difference between a healthy business and a constant cash-flow crisis.**
 
-If you want to test these templates without building the system: getcollectly.app automates all 7 in 10 minutes, from $149/mo. 14-day free trial.
+If you want to test these templates without building the system: mugavi.com automates all 7 in 10 minutes, from $149/mo. 14-day free trial.
 
 — Davie
 `,
@@ -408,7 +408,7 @@ Open the aging report. Sort by amount, not by date. The biggest unpaid invoice, 
 
 ### Step 2 — Set up a 3-step dunning sequence that auto-fires
 
-Friendly reminder at day +1. Firm reminder at day +7. Final notice at day +14. That's it. Anything more complicated and you'll never maintain it. The whole thing should take 30 minutes to set up in a tool like Collectly, or 2 hours in a spreadsheet + email rules.
+Friendly reminder at day +1. Firm reminder at day +7. Final notice at day +14. That's it. Anything more complicated and you'll never maintain it. The whole thing should take 30 minutes to set up in a tool like Mugavi, or 2 hours in a spreadsheet + email rules.
 
 ### Step 3 — Give every customer a frictionless pay link
 
@@ -424,7 +424,7 @@ Monthly DSO reports tell you what already happened. Weekly DSO tracking (5 minut
 
 ## What 18-day DSO actually looks like
 
-A 12-person creative agency we work with had a 58-day DSO when they started using Collectly. After 3 months:
+A 12-person creative agency we work with had a 58-day DSO when they started using Mugavi. After 3 months:
 
 | Metric | Before | After |
 |---|---|---|
@@ -456,7 +456,7 @@ The full 7-page playbook goes deeper:
 
 Pick one of the 5 steps above and do it this week. Don't try to implement all 5 at once. If you do nothing else, do Step 1 (the Monday morning aging audit). It costs you 5 minutes and surfaces 80% of your problems.
 
-If you want help implementing the rest — that's what Collectly does. 14-day free trial, no card required. → https://getcollectly.app/sign-up
+If you want help implementing the rest — that's what Mugavi does. 14-day free trial, no card required. → https://mugavi.com/sign-up
 
 — Davie
 `,
@@ -606,7 +606,7 @@ That's it. No exclamation points. No emoji. No "URGENT" in the subject. Just fac
 
 ### Template 2: The SMS version (under 320 chars)
 
-> Final notice: Invoice 2415 ($11,600) is 65+ days past due. To avoid service suspension on July 25, please pay or reply to discuss options: [link] — Davie, Collectly
+> Final notice: Invoice 2415 ($11,600) is 65+ days past due. To avoid service suspension on July 25, please pay or reply to discuss options: [link] — Davie, Mugavi
 
 SMS final notices work because the customer reads them. Don't use SMS for soft reminders; do use it for the final.
 

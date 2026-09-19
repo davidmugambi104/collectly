@@ -11,7 +11,7 @@ export const metadata = pageMetadata({
   description:
     'Real essays on accounts-receivable automation, Xero + QuickBooks workflows, ' +
     'cash-flow forecasting, and small-agency operations. Published by the team ' +
-    'building Collectly.',
+    'building Mugavi.',
   path: '/blog',
   keywords: [
     'accounts receivable blog',
@@ -37,13 +37,13 @@ export default function BlogPage() {
       <section className="container-page pt-16 pb-12">
         <p className="eyebrow">Blog</p>
         <h1 className="mt-3 h1">Notes on A/R, cash flow,<br/>and small-business finance.</h1>
-        <p className="mt-5 lead max-w-2xl">Real essays, not marketing content. Based on the data we&apos;ve collected building Collectly and the conversations we&apos;ve had with hundreds of small business owners.</p>
+        <p className="mt-5 lead max-w-2xl">Real essays, not marketing content. Based on the data we&apos;ve collected building Mugavi and the conversations we&apos;ve had with hundreds of small business owners.</p>
         <a
           href="/rss.xml"
           className="mt-4 inline-flex items-center gap-1.5 text-sm text-ink-600 hover:text-ink-900"
           rel="alternate"
           type="application/rss+xml"
-          aria-label="Collectly blog RSS feed"
+          aria-label="Mugavi blog RSS feed"
         >
           <Rss className="h-3.5 w-3.5" /> RSS feed
         </a>

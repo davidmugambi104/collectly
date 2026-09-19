@@ -7,7 +7,7 @@ export const metadata = pageMetadata({
   title: 'Quick question about how you handle overdue invoices',
   description: 'Four short questions about how you currently chase late payments. No pitch.',
   path: '/qualify',
-  keywords: ['Collectly qualify', 'AR workflow survey'],
+  keywords: ['Mugavi qualify', 'AR workflow survey'],
 });
 
 export default async function QualifyPage({

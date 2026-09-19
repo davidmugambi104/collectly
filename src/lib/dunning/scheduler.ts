@@ -70,7 +70,7 @@ async function notifyOwnerOfSends(orgId: string, entries: DigestEntry[]) {
       .join('');
     await sendEmail({
       to: ownerEmail,
-      subject: `Collectly sent ${entries.length} dunning reminder${entries.length === 1 ? '' : 's'} just now`,
+      subject: `Mugavi sent ${entries.length} dunning reminder${entries.length === 1 ? '' : 's'} just now`,
       html: `
         <!doctype html>
         <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 600px; margin: 0 auto; padding: 24px;">

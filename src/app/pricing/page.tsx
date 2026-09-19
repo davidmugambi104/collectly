@@ -10,7 +10,7 @@ import { TrackedLink } from '@/components/marketing/tracked-link';
 
 // The questions this page actually shows, now also the ones it declares.
 // The JSON-LD used to list five generic questions ("Can I cancel anytime?",
-// "What does Collectly charge per invoice?") while the visible section asked
+// "What does Mugavi charge per invoice?") while the visible section asked
 // eight entirely different and considerably more honest ones — wire transfer
 // only for now, manual invoicing for founding customers, card checkout not
 // live. The visible set is the better content, so it is the source.
@@ -28,14 +28,14 @@ const FAQS: FaqItem[] = [
 export const metadata = pageMetadata({
   title: `Pricing — A/R automation priced per client book, from $${PLAN_PRICING.starter.monthly}/mo`,
   description:
-    `Honest pricing for Collectly. $${PLAN_PRICING.starter.monthly}/mo for a single business, $${PLAN_PRICING.growth.monthly}/mo for ` +
+    `Honest pricing for Mugavi. $${PLAN_PRICING.starter.monthly}/mo for a single business, $${PLAN_PRICING.growth.monthly}/mo for ` +
     'a practice covering up to 10 client organizations ($40 a book). Founding ' +
     'cohort takes 40% off for 12 months. No per-invoice fees, no setup fees, ' +
     'no hidden costs. Cancel anytime.',
   path: '/pricing',
   image: '/og-pricing.png',
   keywords: [
-    'Collectly pricing',
+    'Mugavi pricing',
     'Xero AR tool pricing',
     'Chaser alternative cost',
     'invoice automation flat rate',
@@ -70,7 +70,7 @@ export default function PricingPage() {
 
         <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-3xl">
           {[
-            { label: 'Collectly Practice', price: `$${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo per client book`, note: `$${PLAN_PRICING.growth.monthly}/mo covering ${PRACTICE_INCLUDED_ORGS} organizations`, highlight: true },
+            { label: 'Mugavi Practice', price: `$${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo per client book`, note: `$${PLAN_PRICING.growth.monthly}/mo covering ${PRACTICE_INCLUDED_ORGS} organizations`, highlight: true },
             { label: 'Chaser', price: '~$259/mo', note: 'entry tier, one organization · source: chaser.com' },
           ].map((c) => (
             <div key={c.label} className={`rounded-xl border px-4 py-3 text-left ${c.highlight ? 'border-emerald-300 bg-emerald-50/40' : 'border-ink-200 bg-white'}`}>

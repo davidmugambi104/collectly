@@ -2,17 +2,17 @@
 import { useState } from 'react';
 import { Lock, ShieldCheck, Loader2, AlertTriangle } from 'lucide-react';
 
-// Currencies Collectly routes to Paystack instead of Stripe. Paystack also
+// Currencies Mugavi routes to Paystack instead of Stripe. Paystack also
 // supports USD, but we keep USD on Stripe (already live there) and only
 // add Paystack for currencies Stripe checkout isn't set up to charge in.
 const PAYSTACK_CURRENCIES = ['NGN', 'GHS', 'ZAR', 'KES'];
 
 // Disabled platform-wide (2026-08-05): every Paystack transaction runs
-// through Collectly's own single PAYSTACK_SECRET_KEY, exactly like the
+// through Mugavi's own single PAYSTACK_SECRET_KEY, exactly like the
 // Stripe bug that was fixed — except Paystack has no per-agency
 // subaccount/split mechanism at all (not even a disabled one), and no
 // transfer-to-agency step anywhere in the code. Money paid via Paystack
-// settles into Collectly's own account with zero way to reconcile it to
+// settles into Mugavi's own account with zero way to reconcile it to
 // the actual business. Do not re-enable until a real per-agency Paystack
 // subaccount + split_code flow exists (mirroring how Stripe Connect would
 // fix the same class of bug) — see [[stripe-connect-blocked-kenya]] for
@@ -50,9 +50,9 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
       // put the payer in touch with the business.
       //
       // This used to mail `${orgSlug}@getcollectly.app` — a synthetic address
-      // on Collectly's domain. No such mailbox is provisioned, so it went
+      // on Mugavi's domain. No such mailbox is provisioned, so it went
       // nowhere, and a catch-all would have been worse: it routes a payment
-      // enquiry to Collectly rather than to the business owed the money.
+      // enquiry to Mugavi rather than to the business owed the money.
       //
       // It matters because wire is currently the ONLY method offered. Card and
       // ACH need the business to have connected its own Stripe account, which
@@ -208,7 +208,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
               <div className="font-semibold text-ink-900">Pay by card via Square</div>
               <div className="text-ink-600 text-xs">
                 You&apos;ll be taken to a secure page hosted by Square. The payment goes
-                straight to {orgName ?? 'the business'} — Collectly never holds it.
+                straight to {orgName ?? 'the business'} — Mugavi never holds it.
               </div>
             </div>
           </div>

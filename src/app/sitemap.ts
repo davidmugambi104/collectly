@@ -99,7 +99,7 @@ function blogEntries(): MetadataRoute.Sitemap {
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
   const fixed = FIXED.map((p) => ({
     url: `${base}${p.path}`,
     lastModified: NOW,

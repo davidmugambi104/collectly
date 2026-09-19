@@ -10,16 +10,16 @@ import { PLAN_PRICING } from '@/lib/utils';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs BILL — dedicated AR automation vs all-in-one FinOps',
+  title: 'Mugavi vs BILL — dedicated AR automation vs all-in-one FinOps',
   description:
-    'Side-by-side of Collectly and BILL for accounts-receivable automation. ' +
+    'Side-by-side of Mugavi and BILL for accounts-receivable automation. ' +
     'BILL bundles AP, AR, and spend at $49 per user/month plus transaction ' +
-    `fees. Collectly is AR-native at $${PLAN_PRICING.starter.monthly}/mo for one ` +
+    `fees. Mugavi is AR-native at $${PLAN_PRICING.starter.monthly}/mo for one ` +
     `organization, no per-user or per-invoice fees, built for agencies, ` +
     'consultancies and bookkeeping practices.',
   path: '/vs-bill',
   image: '/og-vs-bill.png',
-  keywords: ['Collectly vs BILL', 'BILL alternative', 'AR automation', 'BILL vs Collectly'],
+  keywords: ['Mugavi vs BILL', 'BILL alternative', 'AR automation', 'BILL vs Mugavi'],
 });
 
 const DIFFS = [
@@ -43,10 +43,10 @@ export default function VsBillPage() {
 
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">Comparison</p>
-        <h1 className="mt-3 h1">Collectly vs BILL</h1>
+        <h1 className="mt-3 h1">Mugavi vs BILL</h1>
         <p className="mt-5 lead">
           BILL is a powerful all-in-one financial operations platform: AP, AR, cards, spend, and credit lines.
-          But if your main pain point is overdue invoices, Collectly is the simpler, AR-native choice:
+          But if your main pain point is overdue invoices, Mugavi is the simpler, AR-native choice:
           ${PLAN_PRICING.starter.monthly}/mo for one organization, no per-user charges, no per-invoice fees, and follow-up engineered for agencies and consultancies.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -67,7 +67,7 @@ export default function VsBillPage() {
                 <d.icon className="h-4 w-4 text-brand-600" /> {d.label}
               </div>
               <div className="mt-3">
-                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Collectly</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Mugavi</div>
                 <div className="text-sm text-ink-900">{d.collectly}</div>
               </div>
               <div className="mt-3">
@@ -116,7 +116,7 @@ export default function VsBillPage() {
           <h2 className="h2 text-center">When to choose which</h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
             <div className="card">
-              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Collectly if...</div>
+              <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Mugavi if...</div>
               <ul className="space-y-2 text-sm text-ink-700">
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />AR is your top cash-flow pain point</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />You want flat pricing without per-user or per-transaction fees</li>
@@ -140,7 +140,7 @@ export default function VsBillPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">AR-first, not finance-everything</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Collectly would send your customers in 10 minutes.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers in 10 minutes.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

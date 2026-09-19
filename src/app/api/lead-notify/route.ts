@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
   const html = `<!doctype html><html><body style="font-family:-apple-system,system-ui,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#16171c">
 <h2 style="margin:0 0 8px;font-size:18px">${escapeHtml(subject)}</h2>
-<p style="margin:0 0 16px;color:#6c6e76;font-size:13px">Type: <b>${escapeHtml(data.type)}</b> · Source: Collectly</p>
+<p style="margin:0 0 16px;color:#6c6e76;font-size:13px">Type: <b>${escapeHtml(data.type)}</b> · Source: Mugavi</p>
 <table style="width:100%;border-collapse:collapse;margin:0 0 16px;border:1px solid #eeeef0;border-radius:6px;overflow:hidden">
   <tr><td style="padding:4px 8px;color:#6c6e76;font-size:12px">Email</td><td style="padding:4px 8px;font-family:monospace;font-size:12px">${escapeHtml(data.email)}</td></tr>
   ${data.name ? `<tr><td style="padding:4px 8px;color:#6c6e76;font-size:12px">Name</td><td style="padding:4px 8px;font-family:monospace;font-size:12px">${escapeHtml(data.name)}</td></tr>` : ''}

@@ -1,5 +1,5 @@
 /**
- * Payment pushback — when a customer pays an invoice through Collectly,
+ * Payment pushback — when a customer pays an invoice through Mugavi,
  * we mirror that payment back into the connected accounting system so
  * the org's books stay reconciled without manual data entry.
  *

@@ -16,7 +16,7 @@ const CURSOR_KEY = `outreach:${process.env.ZOHO_IMAP_USER ?? MAILBOX}`;
  * sent from — ZOHO_IMAP_USER, e.g. davie@getcollectly.app) for replies
  * from prospects. Resend's inbound-receiving webhook
  * (src/lib/outreach-inbound.ts) was built for this but Resend inbound
- * receiving is disabled on getcollectly.app (its MX points at Zoho), so
+ * receiving is disabled on mugavi.com (its MX points at Zoho), so
  * that webhook has never actually received anything live — this polls
  * the real mailbox instead and feeds the same classification/persist
  * logic.

@@ -7,17 +7,17 @@ import { FOUNDING } from '@/lib/utils';
 export const metadata = pageMetadata({
   title: 'Contact — sales, support, partnerships, press',
   description:
-    'Talk to the team behind Collectly. Sales inquiries, customer support, ' +
+    'Talk to the team behind Mugavi. Sales inquiries, customer support, ' +
     'Xero + QuickBooks partnerships, and press. Replies within one business day.',
   path: '/contact',
-  keywords: ['Collectly contact', 'small business AR support', 'partnerships'],
+  keywords: ['Mugavi contact', 'small business AR support', 'partnerships'],
 });
 
 const contactJsonLd = JSON.stringify(
   webPageJsonLd({
-    title: 'Contact Collectly',
+    title: 'Contact Mugavi',
     description:
-      'Sales, support, partnerships, and press inquiries for Collectly. ' +
+      'Sales, support, partnerships, and press inquiries for Mugavi. ' +
       'Replies within one business day.',
     path: '/contact',
     kind: 'ContactPage',

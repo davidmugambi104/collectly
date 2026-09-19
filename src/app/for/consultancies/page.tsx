@@ -15,35 +15,35 @@ const FAQS: FaqItem[] = [
       q: 'How is consultancy invoicing different from agency invoicing?',
       a: 'Consultancies and boutique advisory firms typically invoice on longer ' +
          'cycles (net 30, net 60, monthly retainers, project milestones) and ' +
-         'have a smaller number of higher-value invoices per customer. Collectly ' +
+         'have a smaller number of higher-value invoices per customer. Mugavi ' +
          'treats each invoice individually, reads the original payment terms ' +
          'from Xero, and adapts the dunning cadence to the longer cycle.',
     },
     {
-      q: 'Does Collectly handle retainer invoices differently from project invoices?',
-      a: 'Yes. Recurring retainer customers can be flagged once; Collectly then ' +
+      q: 'Does Mugavi handle retainer invoices differently from project invoices?',
+      a: 'Yes. Recurring retainer customers can be flagged once; Mugavi then ' +
          'remembers their cadence, typical payment window, and any exclusions ' +
          'across all subsequent invoices. Project milestone invoices stay ' +
          'per-invoice so that a milestone dispute does not poison the broader ' +
          'customer relationship.',
     },
     {
-      q: 'Can Collectly keep track of CFO or fractional-finance escalations?',
+      q: 'Can Mugavi keep track of CFO or fractional-finance escalations?',
       a: 'Yes. You can configure per-customer exclusions for "any invoice ' +
          'over $X goes to manual review" and "any invoice over 90 days goes to ' +
          'manual review." These work in approval mode and serve as the ' +
          'escalation layer for senior team members.',
     },
     {
-      q: 'How does Collectly work with our bookkeeper or fractional CFO?',
+      q: 'How does Mugavi work with our bookkeeper or fractional CFO?',
       a: 'Your bookkeeper or fractional CFO gets a read-only seat on the ' +
-         'Collectly dashboard at no additional cost on the founding-customer ' +
+         'Mugavi dashboard at no additional cost on the founding-customer ' +
          'plan. They can review approvals, see dispute classifications, and ' +
          'audit the sequence without sending emails themselves.',
     },
     {
-      q: 'Will Collectly break confidentiality for our client list?',
-      a: 'No. Collectly never sends AR data to a third party. We do not train ' +
+      q: 'Will Mugavi break confidentiality for our client list?',
+      a: 'No. Mugavi never sends AR data to a third party. We do not train ' +
          'AI models on customer data. See the public AI-data disclosure in our ' +
          'security page for the full scope of what is and is not used.',
     },
@@ -71,7 +71,7 @@ const consultanciesJsonLd = JSON.stringify([
   webPageJsonLd({
     title: 'A/R automation for consultancies on Xero',
     description:
-      'How Collectly handles accounts receivable for 5-30 person consultancies ' +
+      'How Mugavi handles accounts receivable for 5-30 person consultancies ' +
       'and boutique advisory firms on Xero and QuickBooks.',
     path: '/for/consultancies',
   }),
@@ -140,7 +140,7 @@ export default function ForConsultanciesPage() {
             </h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               The dunning cadence is per-invoice and reads the original terms
-              from the Xero invoice. Net-60 customer? Collectly adapts without
+              from the Xero invoice. Net-60 customer? Mugavi adapts without
               a single configuration change.
             </p>
           </div>
@@ -149,10 +149,10 @@ export default function ForConsultanciesPage() {
       <section className="bg-ink-50 border-y border-ink-200">
         <div className="container-page py-16 max-w-3xl">
           <p className="eyebrow">For fractional finance teams</p>
-          <h2 className="mt-3 h2">Pair Collectly with a fractional CFO.</h2>
+          <h2 className="mt-3 h2">Pair Mugavi with a fractional CFO.</h2>
           <p className="mt-4 lead">
             If you already work with a fractional CFO or outsourced bookkeeping
-            provider, they get a free read-only seat on Collectly from the
+            provider, they get a free read-only seat on Mugavi from the
             founding-customer plan. They review approvals, see dispute
             classifications, and audit the sequence. You keep the senior
             escalation layer with the right person in the loop.

@@ -13,14 +13,14 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs Zoho Books — AR automation beyond bookkeeping',
+  title: 'Mugavi vs Zoho Books — AR automation beyond bookkeeping',
   description:
     'Zoho Books is a solid accounting suite with light invoicing and ' +
-    'payment reminders. Collectly adds AI tone-aware dunning, AR aging, ' +
+    'payment reminders. Mugavi adds AI tone-aware dunning, AR aging, ' +
     'cash-flow forecasting, and risk scoring for businesses that need ' +
     'real collections automation.',
   path: '/vs-zohobooks',
-  keywords: ['Collectly vs Zoho Books', 'Zoho Books alternative', 'Zoho AR', 'Zoho Books vs Collectly'],
+  keywords: ['Mugavi vs Zoho Books', 'Zoho Books alternative', 'Zoho AR', 'Zoho Books vs Mugavi'],
 });
 
 const DIFFS = [
@@ -63,8 +63,8 @@ export default function VsZohobooksPage() {
       />
       <MarketingHeader />
       <ComparisonHero
-        title="Collectly vs Zoho Books"
-        subtitle="Zoho Books is a capable accounting suite with light invoicing and reminders. Collectly is the AR specialist layer that turns overdue invoices into predictable cash — with AI dunning, forecasting, and risk scoring."
+        title="Mugavi vs Zoho Books"
+        subtitle="Zoho Books is a capable accounting suite with light invoicing and reminders. Mugavi is the AR specialist layer that turns overdue invoices into predictable cash — with AI dunning, forecasting, and risk scoring."
         competitorName="Zoho Books"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Zoho Books" />
@@ -80,7 +80,7 @@ export default function VsZohobooksPage() {
       <WhenToChoose competitorName="Zoho Books" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Turn Zoho invoices into faster payments"
-        body="Start your 14-day free trial. No credit card. See what Collectly would send your customers in 10 minutes."
+        body="Start your 14-day free trial. No credit card. See what Mugavi would send your customers in 10 minutes."
       />
       <MarketingFooter />
     </div>

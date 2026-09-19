@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   // admin/basic_member roles is a normal, reachable state even though
   // nothing else in this app distinguishes them (grepped: no other route
   // checks orgRole either). Without this, any invited teammate — a
-  // bookkeeper, a support rep, anyone with a Collectly login for this
+  // bookkeeper, a support rep, anyone with a Mugavi login for this
   // workspace — could type the org's own name (visible to them already)
   // into the confirm field and irreversibly wipe the entire tenant's
   // customers, invoices, payments, and dunning history. Checked against

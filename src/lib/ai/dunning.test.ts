@@ -32,11 +32,11 @@ describe('fallbackDunningMessage — payment link correctness', () => {
         const c = ctx({ tone, channel, priorMessages, invoiceId: 'unique_id_XYZ', invoiceNumber: 'INV-9999' });
         const { body } = fallbackDunningMessage(c);
         assert.ok(
-          body.includes('https://getcollectly.app/pay/unique_id_XYZ'),
+          body.includes('https://mugavi.com/pay/unique_id_XYZ'),
           `expected body to contain the pay link built from invoiceId, got: ${body}`,
         );
         assert.ok(
-          !body.includes('https://getcollectly.app/pay/INV-9999'),
+          !body.includes('https://mugavi.com/pay/INV-9999'),
           'pay link must not be built from invoiceNumber',
         );
       });

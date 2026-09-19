@@ -38,7 +38,7 @@ export function MarketingHeader() {
       <div className="container-page flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-ink-950 transition-opacity hover:opacity-70" onClick={() => setOpen(false)}>
           <Logo className="h-7 w-7" />
-          <span className="text-lg">Collectly</span>
+          <span className="text-lg">Mugavi</span>
         </Link>
 
         {/* Desktop nav */}

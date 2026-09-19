@@ -17,7 +17,7 @@ const body = z.object({ invoiceId: z.string() });
  * acting "by the seller, in the seller's country", so a platform operator
  * outside that list can still create payments for a US or UK business.
  *
- * Money settles into the SELLER's Square balance. Collectly never holds it.
+ * Money settles into the SELLER's Square balance. Mugavi never holds it.
  * That is the whole point — it is the same property that makes the Stripe
  * Connect path safe, and the absence of it is why Paystack is disabled.
  *

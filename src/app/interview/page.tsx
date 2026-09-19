@@ -10,7 +10,7 @@ export const metadata = pageMetadata({
     'overdue invoices, what works, and what does not. Founding-cohort ' +
     'participants get 3 months free.',
   path: '/interview',
-  keywords: ['Collectly customer interview', 'AR workflow interview', 'founding cohort'],
+  keywords: ['Mugavi customer interview', 'AR workflow interview', 'founding cohort'],
 });
 
 export default function InterviewPage() {

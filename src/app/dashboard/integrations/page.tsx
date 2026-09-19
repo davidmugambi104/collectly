@@ -141,7 +141,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
         <h2 className="app-heading">How integrations work</h2>
         <ol className="mt-3 space-y-2 text-sm text-ink-600 list-decimal pl-5">
           <li>Click <b>Connect</b> on the provider you use.</li>
-          <li>Authorize Collectly in the provider&apos;s OAuth flow.</li>
+          <li>Authorize Mugavi in the provider&apos;s OAuth flow.</li>
           <li>We pull your customer, invoice, and payment history (read-only, scoped to A/R).</li>
           <li>You can disconnect any time — we delete the tokens.</li>
         </ol>

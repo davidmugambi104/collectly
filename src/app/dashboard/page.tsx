@@ -618,7 +618,7 @@ function FirstRunChecklist() {
           <Sparkles className="h-5 w-5 text-white" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="app-title">Welcome to Collectly</h2>
+          <h2 className="app-title">Welcome to Mugavi</h2>
           <p className="app-body mt-1 text-ink-600">Get meaningful value in 3 steps. Total time: about 2 minutes.</p>
           <ol className="mt-5 space-y-3.5">
             <Step n={1} title="Connect QuickBooks, Xero, or load sample data" desc="Pulls in customers, invoices, and payment history automatically." cta="Connect or load sample data" href="/dashboard/integrations" />

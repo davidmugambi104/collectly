@@ -1,4 +1,4 @@
-# Collectly SEO
+# Mugavi SEO
 
 Everything that affects how this site appears in search, social cards, and AI
 crawlers is centralized in **`src/lib/seo.ts`**. If you ever rename the
@@ -6,7 +6,7 @@ product, that's the only file you need to edit.
 
 ## Why this exists
 
-The bare word "Collectly" is already taken on the open web by a $29M-funded
+The bare word "Mugavi" is already taken on the open web by a $29M-funded
 US healthcare billing platform. Outranking them on raw brand authority is a
 12-month fight we don't win. So instead of fighting that fight, we engineer
 around it:
@@ -15,8 +15,8 @@ around it:
    agencies and consultancies") so the SERP listing is unambiguous.
 2. **Structured data (JSON-LD)** declares our `Organization`,
    `SoftwareApplication`, `WebSite`, `BreadcrumbList`, and `FAQPage`
-   schemas. Google uses these to route queries to the right "Collectly."
-3. **Comparison pages** target intent queries ("Collectly vs Chaser",
+   schemas. Google uses these to route queries to the right "Mugavi."
+3. **Comparison pages** target intent queries ("Mugavi vs Chaser",
    "Chaser alternative") where the brand-conflict doesn't apply.
 4. **The brand disambiguator goes in every `<title>` and `<meta
    description>`** as a baseline.
@@ -50,7 +50,7 @@ export const metadata = pageMetadata({
 });
 ```
 
-The layout's `title.template` adds `· Collectly` automatically.
+The layout's `title.template` adds `· Mugavi` automatically.
 
 ## Adding FAQ rich results to a page
 
@@ -82,7 +82,7 @@ known gap we're tracking.)
 - **Bing Webmaster Tools** — submit `/rss.xml` and `/sitemap.xml` here;
   Bing is faster to index than Google. Token: `NEXT_PUBLIC_BING_TOKEN`.
 - **Capterra / G2 / Product Hunt review submissions** — the only way to
-  split SERP for the bare word "Collectly."
+  split SERP for the bare word "Mugavi."
 - **Google Business Profile** (optional, only if we operate a real
   office in Kenya that takes meetings).
 

@@ -10,7 +10,7 @@ import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 // visible <FaqSection> read this one array.
 const FAQS: FaqItem[] = [
     {
-      q: 'Which accounting platforms does Collectly integrate with?',
+      q: 'Which accounting platforms does Mugavi integrate with?',
       a: 'Xero is in production (live OAuth sync). QuickBooks Online is built and tested in sandbox; production credentials pending the Intuit App Assessment Questionnaire review.',
     },
     {
@@ -30,13 +30,13 @@ const FAQS: FaqItem[] = [
 export const metadata = pageMetadata({
   title: 'Integrations — Xero, QuickBooks, Stripe, Square, Twilio, Plaid',
   description:
-    'Live integrations status for Collectly: which accounting systems, ' +
+    'Live integrations status for Mugavi: which accounting systems, ' +
     'payment rails, and messaging channels are live, in beta, or queued. ' +
     'Xero is in production. QuickBooks, Square, Stripe and Twilio run on ' +
     'test keys until customer demand unlocks the production swap.',
   path: '/integrations',
   keywords: [
-    'Collectly integrations',
+    'Mugavi integrations',
     'Xero integration',
     'QuickBooks integration',
     'Stripe AR tool',
@@ -150,7 +150,7 @@ const categories = [
         bullets: [
           'SMS dunning route is built and ready',
           'Add a verified from-number and complete A2P registration for US sends',
-          'You\'re responsible for having lawful authority to text each recipient in their jurisdiction — Collectly doesn\'t verify consent on your behalf',
+          'You\'re responsible for having lawful authority to text each recipient in their jurisdiction — Mugavi doesn\'t verify consent on your behalf',
         ],
       },
     ],
@@ -332,7 +332,7 @@ export default function IntegrationsPage() {
               Request an integration
             </a>
             <Link href="/customers" className="btn-ghost">
-              See who else uses Collectly
+              See who else uses Mugavi
             </Link>
           </div>
         </div>

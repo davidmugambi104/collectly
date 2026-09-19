@@ -323,7 +323,7 @@ export async function qboRecordPayment(orgId: string, opts: {
       },
     ],
     // Private note shows in QBO UI for the customer; useful for trace
-    PrivateNote: `Collectly payment ${opts.paymentRef}`,
+    PrivateNote: `Mugavi payment ${opts.paymentRef}`,
   };
   return qboPost(orgId, '/payment?minorversion=70', body);
 }
@@ -351,7 +351,7 @@ interface QboSyncResult {
  * our DB. Existing rows are matched by (orgId, provider, externalId).
  * Already-paid invoices in QBO that are still 'sent'/'overdue' locally
  * are flipped to 'paid' (this is how we discover payments we didn't
- * initiate through Collectly).
+ * initiate through Mugavi).
  */
 export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   const t0 = Date.now();
@@ -535,6 +535,6 @@ export class QboReconnectRequiredError extends Error {
 }
 
 export function getQboReconnectUrl(orgId: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
   return `${base}/api/quickbooks/connect?orgId=${encodeURIComponent(orgId)}`;
 }

@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         `<tr><td style="padding:4px 12px 4px 0"><strong>Country</strong></td><td>${escapeHtml(data.country ?? 'n/a')}</td></tr>`,
         `</table>`,
         `<p><strong>Notes from customer:</strong><br/>${escapeHtml(data.notes ?? '(none)').replace(/\n/g, '<br/>')}</p>`,
-        `<p style="color:#666;font-size:12px">Request ID: ${created.id} — review at <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'}/admin/upgrade-requests">/admin/upgrade-requests</a></p>`,
+        `<p style="color:#666;font-size:12px">Request ID: ${created.id} — review at <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'}/admin/upgrade-requests">/admin/upgrade-requests</a></p>`,
       ].join('\n'),
     });
   } catch (e) {

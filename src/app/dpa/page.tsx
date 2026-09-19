@@ -6,7 +6,7 @@ import { pageMetadata } from '@/lib/seo';
 export const metadata = pageMetadata({
   title: 'Data Processing Agreement (DPA) — GDPR + UK GDPR compliant',
   description:
-    'The contract that governs how Collectly processes customer data on ' +
+    'The contract that governs how Mugavi processes customer data on ' +
     'your behalf. GDPR-compliant, US data residency with EU available on ' +
     'enterprise request, and Standard Contractual Clauses available.',
   path: '/dpa',
@@ -20,12 +20,12 @@ const sections = [
     body: (
       <>
         <p>
-          This Data Processing Agreement (&quot;DPA&quot;) forms part of the Collectly Terms of Service between you
-          (&quot;Controller&quot;) and Collectly, Inc. (&quot;Processor&quot;). It applies to the extent that Collectly
+          This Data Processing Agreement (&quot;DPA&quot;) forms part of the Mugavi Terms of Service between you
+          (&quot;Controller&quot;) and Mugavi, Inc. (&quot;Processor&quot;). It applies to the extent that Mugavi
           processes Personal Data on your behalf when you use the A/R automation service.
         </p>
         <p>
-          Collectly processes two categories of data: (a) <b>Customer Data</b> — invoices, customer contact
+          Mugavi processes two categories of data: (a) <b>Customer Data</b> — invoices, customer contact
           information, payment history, and dunning messages you provide or authorize us to pull from
           connected accounting systems; and (b) <b>Service Data</b> — telemetry, account information, and
           audit logs needed to operate the service.
@@ -39,7 +39,7 @@ const sections = [
     body: (
       <>
         <p>
-          Collectly processes Customer Data only on your documented instructions, including:
+          Mugavi processes Customer Data only on your documented instructions, including:
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
           <li>Syncing invoices, customers, and payments from connected systems (QuickBooks, Xero, Stripe, Square, Plaid).</li>
@@ -56,7 +56,7 @@ const sections = [
     body: (
       <>
         <p>
-          Collectly uses the following sub-processors. You can subscribe to changes at{' '}
+          Mugavi uses the following sub-processors. You can subscribe to changes at{' '}
           <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a>.
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
@@ -80,7 +80,7 @@ const sections = [
         <p>
           Self-serve accounts are currently processed in a single region (US). EU-only data residency is
           available for enterprise agreements on request. For transfers from the EEA, UK, or Switzerland to a
-          third country, Collectly relies on the European Commission&apos;s 2021 Standard Contractual Clauses
+          third country, Mugavi relies on the European Commission&apos;s 2021 Standard Contractual Clauses
           (Module 2: Controller-to-Processor) and the UK International Data Transfer Addendum. A copy of the
           executed SCCs is available on request.
         </p>
@@ -93,7 +93,7 @@ const sections = [
     body: (
       <>
         <p>
-          Collectly implements technical and organizational measures to protect Customer Data, including:
+          Mugavi implements technical and organizational measures to protect Customer Data, including:
           TLS 1.2+ in transit, AES-256 at rest, org-scoped queries, role-based access via Clerk, audit logging of
           all state changes, and quarterly access reviews. The current security posture is published on our{' '}
           <a href="/security" className="link">Security page</a>.
@@ -107,7 +107,7 @@ const sections = [
     body: (
       <>
         <p>
-          Collectly will assist you in responding to data-subject requests (access, rectification, deletion,
+          Mugavi will assist you in responding to data-subject requests (access, rectification, deletion,
           portability, objection) within 10 business days. You can also export or delete your data at any time
           from <a href="/dashboard/settings" className="link">Settings → Data</a>, and we provide a one-click
           full-account deletion that purges all Customer Data within 30 days, with backups rotating out on the same 30-day cycle.
@@ -121,7 +121,7 @@ const sections = [
     body: (
       <>
         <p>
-          Collectly will notify affected Controllers without undue delay, and in any case within 72 hours, after
+          Mugavi will notify affected Controllers without undue delay, and in any case within 72 hours, after
           becoming aware of a Personal Data breach affecting Customer Data. Notification will include the
           information required by GDPR Article 33(3) to the extent available.
         </p>
@@ -134,7 +134,7 @@ const sections = [
     body: (
       <>
         <p>
-          On termination of your account, Collectly will delete all Customer Data within 30 days, except where
+          On termination of your account, Mugavi will delete all Customer Data within 30 days, except where
           retention is required by law (e.g. tax records, AML logs). Backups rotate on a 30-day cycle.
         </p>
       </>
@@ -151,7 +151,7 @@ export default function DPAPage() {
         <p className="eyebrow">Legal</p>
         <h1 className="mt-3 h1">Data Processing Agreement</h1>
         <p className="mt-6 lead">
-          The contract that governs how Collectly processes your customer data on your behalf. Written
+          The contract that governs how Mugavi processes your customer data on your behalf. Written
           in plain English, GDPR-compliant, available in English (US) and English (UK).
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-500">

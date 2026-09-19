@@ -1,36 +1,43 @@
 // Centralized SEO helpers.
 //
-// The Collectly brand name collides with a $29M-Series-A healthcare billing
-// company (collectly.com / collectly.io). We work around this by:
-//  1. Repeating a brand disambiguator on every public surface.
-//  2. Using structured data (Organization, Product, SoftwareApplication, FAQPage,
-//     BreadcrumbList) so Google can match our result to the small-business-AR
-//     niche even when it can't beat the other Collectly on raw domain authority.
-//  3. Putting exact-intent phrasing (Xero, invoice reminder, agency, etc.) in
-//     titles + descriptions — not the bare brand name.
+// The product was renamed from Mugavi to Mugavi on 2026-09-20, and the
+// rename IS the SEO strategy. "Mugavi" collides with a $29M-Series-A
+// healthcare billing company on collectly.com and collectly.io, and that fight
+// was never winnable: we were spending every public surface on a disambiguator,
+// leaning on structured data to compensate for losing on domain authority, and
+// deliberately keeping the bare brand name out of titles because it ranked the
+// competitor instead of us.
 //
-// If we ever rename, the only file that needs editing is this one: every page
-// pulls metadata through `pageMetadata()` or one of the typed builders below.
+// Mugavi has no incumbent. That means the brand name can now do the job a brand
+// name is supposed to do -- carry exact-match intent -- rather than being a
+// liability to work around. Domain authority starts near zero either way, since
+// mugavi.com was 60 days old and barely indexed.
+//
+// What that changes below: the brand name is safe in titles now, and the
+// disambiguator is a description of the product rather than a defence against
+// being confused with someone else.
+//
+// If we ever rename again, change BRAND and DOMAIN here -- but note that the
+// old claim "the only file that needs editing is this one" was not true: 345
+// occurrences of the brand name lived in copy across 78 files.
 
 import type { Metadata } from 'next';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_INCLUDED_ORGS } from '@/lib/utils';
 
-export const BRAND = 'Collectly';
-// All absolute URLs returned to crawlers must use the live production
-// domain (getcollectly.app). collectly.app is the parked brand-fallback we
-// may point at this Vercel project later — until then, every canonical,
-// OpenGraph, JSON-LD `url`, and RSS link references getcollectly.app.
+export const BRAND = 'Mugavi';
+// All absolute URLs returned to crawlers must use the live production domain.
+// mugavi.com stays attached to the Vercel project and 301s here -- it must
+// keep resolving, because ~415 outreach recipients hold emails whose unsubscribe
+// links point at it.
 //
-// If we ever rename, change DOMAIN here and the SITE fields below — no
-// other file is edited.
-export const DOMAIN = 'https://getcollectly.app';
+export const DOMAIN = 'https://mugavi.com';
 
 // The disambiguator that goes on every brand surface. Keep it short — under
 // 60 chars when combined with the brand, or it kills OG titles.
 export const TAGLINE = 'AR automation for small agencies and consultancies';
 export const BRAND_LONG = `${BRAND} — ${TAGLINE}`;
 
-// Phrases that Google's "site:collectly.app" / "Collectly for Xero" queries
+// Phrases that Google's "Mugavi for Xero" queries
 // need to find. Use these in page titles and H1s.
 export const KEYWORDS_PRIMARY = [
   'Xero invoice reminder',
@@ -43,7 +50,7 @@ export const KEYWORDS_PRIMARY = [
 
 export const SITE = {
   name: BRAND,
-  alternateName: ['Collectly for Xero', 'Collectly AR', 'Collectly App'],
+  alternateName: ['Mugavi for Xero', 'Mugavi AR', 'Mugavi App'],
   description:
     `${BRAND} is the accounts-receivable automation tool for 5-30 person ` +
     `agencies and consultancies on Xero and QuickBooks. It drafts client-safe ` +
@@ -75,7 +82,7 @@ export function pageMetadata(input: PageMetaInput): Metadata {
   const image = input.image ?? `${SITE.url}/og.png`;
   return {
     // Mark `title` as `absolute` so the layout-level title.template ('%s ·
-    // Collectly') is NOT auto-applied. We control the brand suffix
+    // Mugavi') is NOT auto-applied. We control the brand suffix
     // explicitly in OG/Twitter cards below and keep the page title
     // standalone so long page titles are not duplicated in the SERP.
     title: { absolute: input.title },
@@ -258,7 +265,7 @@ export function articleJsonLd(input: {
 }
 
 // Pricing-page Product + Offer. Surfaces a "from $149/mo" rich result
-// for queries like "Collectly pricing" and "small-business AR pricing".
+// for queries like "Mugavi pricing" and "small-business AR pricing".
 // Every number here is read from PLAN_PRICING rather than restated: the
 // offers, the page body and the FAQ answers used to disagree with each
 // other and with the app, which is how a $49 headline ended up advertising

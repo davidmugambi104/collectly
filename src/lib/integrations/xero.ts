@@ -289,7 +289,7 @@ export async function saveXeroConnection(orgId: string, tokens: {
  * List all AUTHORISED + PAID invoices that still have a balance due.
  * Xero's status field is uppercase string: 'AUTHORISED' | 'PAID' | 'VOIDED' | 'DRAFT'.
  * We fetch both AUTHORISED (open) and PAID (zero balance) so we can
- * detect payments the customer made outside Collectly.
+ * detect payments the customer made outside Mugavi.
  */
 const XERO_PAGE_SIZE = 100; // Xero's fixed page size for list endpoints
 
@@ -321,7 +321,7 @@ export async function xeroListContacts(orgId: string): Promise<{ contacts: XeroC
 
 /**
  * Create a Payment in Xero and allocate it to the given invoice.
- * This is how we push a Collectly-collected payment back to the
+ * This is how we push a Mugavi-collected payment back to the
  * customer's books.
  */
 export async function xeroRecordPayment(orgId: string, opts: {
@@ -337,7 +337,7 @@ export async function xeroRecordPayment(orgId: string, opts: {
     Account: opts.accountCode ? { Code: opts.accountCode } : { Code: '200' }, // 200 = "Accounts Receivable" default
     Amount: opts.amount,
     CurrencyRate: 1, // For single-currency orgs; multi-currency needs lookup
-    Reference: `Collectly ${opts.reference}`,
+    Reference: `Mugavi ${opts.reference}`,
     Date: new Date().toISOString().slice(0, 10),
   };
   if (opts.currency) body.Currency = { Code: opts.currency };

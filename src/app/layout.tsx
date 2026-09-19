@@ -54,10 +54,10 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'),
-  title: { default: 'Collectly — AR automation for small agencies on Xero & QuickBooks', template: '%s · Collectly' },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'),
+  title: { default: 'Mugavi — AR automation for small agencies on Xero & QuickBooks', template: '%s · Mugavi' },
   description:
-    'Collectly is the accounts-receivable automation tool for 5-30 person agencies and consultancies. It drafts client-safe invoice reminders, pauses when a customer replies or pays, tracks promised-payment dates, and separates disputes from ordinary late payment. Built for Xero and QuickBooks. From $' + PLAN_PRICING.starter.monthly + '/mo.',
+    'Mugavi is the accounts-receivable automation tool for 5-30 person agencies and consultancies. It drafts client-safe invoice reminders, pauses when a customer replies or pays, tracks promised-payment dates, and separates disputes from ordinary late payment. Built for Xero and QuickBooks. From $' + PLAN_PRICING.starter.monthly + '/mo.',
   keywords: [
     'Xero invoice reminder', 'accounts receivable automation',
     'AR automation for agencies', 'Chaser alternative',
@@ -65,28 +65,28 @@ export const metadata: Metadata = {
     'small business cash flow', 'promise to pay tracking',
     'QuickBooks AR', 'Xero AR', 'agency operations',
   ],
-  authors: [{ name: 'Davie', url: 'https://getcollectly.app' }],
+  authors: [{ name: 'Davie', url: 'https://mugavi.com' }],
   creator: 'Davie',
-  publisher: 'Collectly',
+  publisher: 'Mugavi',
   category: 'Business Software',
-  applicationName: 'Collectly',
+  applicationName: 'Mugavi',
   referrer: 'origin-when-cross-origin',
   formatDetection: { email: false, address: false, telephone: false },
   openGraph: {
     type: 'website',
-    title: 'Collectly — AR automation for small agencies on Xero & QuickBooks',
+    title: 'Mugavi — AR automation for small agencies on Xero & QuickBooks',
     description:
       `AI-native AR for agencies, consultancies and bookkeeping practices. Tone-aware email + SMS dunning on Xero and QuickBooks. From $${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees.`,
-    url: 'https://getcollectly.app',
-    siteName: 'Collectly — AR automation for agencies',
+    url: 'https://mugavi.com',
+    siteName: 'Mugavi — AR automation for agencies',
     images: [
-      { url: '/og.png', width: 1200, height: 630, alt: 'Collectly — AR automation for small agencies on Xero & QuickBooks' },
+      { url: '/og.png', width: 1200, height: 630, alt: 'Mugavi — AR automation for small agencies on Xero & QuickBooks' },
     ],
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Collectly — AR automation for agencies',
+    title: 'Mugavi — AR automation for agencies',
     description:
       `AI-native AR for agencies, consultancies and bookkeeping practices on Xero & QuickBooks. From $${PLAN_PRICING.starter.monthly}/mo.`,
     images: ['/og.png'],
@@ -114,11 +114,11 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   alternates: {
-    canonical: 'https://getcollectly.app',
-    languages: { 'en-US': 'https://getcollectly.app' },
+    canonical: 'https://mugavi.com',
+    languages: { 'en-US': 'https://mugavi.com' },
     types: {
       'application/rss+xml': [
-        { url: 'https://getcollectly.app/rss.xml', title: 'Collectly blog' },
+        { url: 'https://mugavi.com/rss.xml', title: 'Mugavi blog' },
       ],
     },
   },

@@ -13,13 +13,13 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs HighRadius — SMB AR vs autonomous enterprise finance',
+  title: 'Mugavi vs HighRadius — SMB AR vs autonomous enterprise finance',
   description:
     'HighRadius builds autonomous finance for the Office of the CFO. ' +
-    'Collectly is the simple, AR-native alternative for small agencies ' +
+    'Mugavi is the simple, AR-native alternative for small agencies ' +
     `and consultancies on Xero starting at $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/vs-highradius',
-  keywords: ['Collectly vs HighRadius', 'HighRadius alternative', 'enterprise AR alternative', 'HighRadius vs Collectly'],
+  keywords: ['Mugavi vs HighRadius', 'HighRadius alternative', 'enterprise AR alternative', 'HighRadius vs Mugavi'],
 });
 
 const DIFFS = [
@@ -62,8 +62,8 @@ export default function VsHighradiusPage() {
       />
       <MarketingHeader />
       <ComparisonHero
-        title="Collectly vs HighRadius"
-        subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Collectly is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast — live in 10 minutes from $${PLAN_PRICING.starter.monthly}/mo.`}
+        title="Mugavi vs HighRadius"
+        subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Mugavi is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast — live in 10 minutes from $${PLAN_PRICING.starter.monthly}/mo.`}
         competitorName="HighRadius"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="HighRadius" />
@@ -79,7 +79,7 @@ export default function VsHighradiusPage() {
       <WhenToChoose competitorName="HighRadius" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Big-company AI, small-company speed"
-        body="Start your 14-day free trial. No credit card. See what Collectly would send your customers in 10 minutes."
+        body="Start your 14-day free trial. No credit card. See what Mugavi would send your customers in 10 minutes."
       />
       <MarketingFooter />
     </div>

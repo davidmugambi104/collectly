@@ -22,7 +22,7 @@ export default async function InterviewsPage({ searchParams }: { searchParams: P
       <AppShell title="Customer interviews">
         <div className="card max-w-md mx-auto text-center py-12">
           <h2 className="h3">Not authorized</h2>
-          <p className="mt-2 text-sm text-ink-600">This page is for the Collectly team only.</p>
+          <p className="mt-2 text-sm text-ink-600">This page is for the Mugavi team only.</p>
         </div>
       </AppShell>
     );
@@ -173,7 +173,7 @@ export default async function InterviewsPage({ searchParams }: { searchParams: P
                   </div>
                   <div className="flex flex-col gap-2 shrink-0">
                     <TaggingControls id={row.id} currentTag={effectiveTag === 'icp' ? 'icp' : effectiveTag === 'no' ? 'no' : 'maybe'} />
-                    <a href={`mailto:${row.email}?subject=Re: Collectly interview — quick follow-up&body=Hi ${row.name?.split(' ')[0] ?? 'there'},%0A%0AThanks for taking the time to share your AR workflow...`} className="btn-primary text-xs whitespace-nowrap">
+                    <a href={`mailto:${row.email}?subject=Re: Mugavi interview — quick follow-up&body=Hi ${row.name?.split(' ')[0] ?? 'there'},%0A%0AThanks for taking the time to share your AR workflow...`} className="btn-primary text-xs whitespace-nowrap">
                       <ArrowUpRight className="h-3 w-3" />Reply
                     </a>
                   </div>

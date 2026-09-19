@@ -34,7 +34,7 @@ const FAQS: FaqItem[] = [
       q: 'How do I reduce DSO without losing customers?',
       a: 'Use a 3-step consistent follow-up sequence (friendly → firm → ' +
          'final) that pauses the moment a customer replies. Pair this with ' +
-         'a frictionless pay link in every reminder. Collectly automates ' +
+         'a frictionless pay link in every reminder. Mugavi automates ' +
          'both — see the free AR audit for a personalised analysis.',
     },
     {
@@ -58,7 +58,7 @@ const FAQS: FaqItem[] = [
 // "DSO calculator", "calculate days sales outstanding", "DSO formula",
 // "average DSO for agencies", "DSO benchmark". The page also includes
 // worked examples for agencies, consultancies, and SaaS — three of the
-// industries Collectly targets.
+// industries Mugavi targets.
 
 export const metadata = pageMetadata({
   title: 'DSO calculator + benchmark for small agencies and consultancies',

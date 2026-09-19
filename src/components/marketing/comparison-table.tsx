@@ -4,7 +4,7 @@ import { LazyMotion, domAnimation, m, useReducedMotion } from 'framer-motion';
 import { PLAN_PRICING } from '@/lib/utils';
 import { COMPETITORS, type CompetitorKey } from './comparison-data';
 
-// Scope note: this table compares Collectly to the AR/invoicing tools SMBs
+// Scope note: this table compares Mugavi to the AR/invoicing tools SMBs
 // actually evaluate (Chaser, BILL, Melio, QuickBooks AR, FreshBooks). We
 // deliberately exclude enterprise AR platforms (Gaviti, Growfin,
 // HighRadius) — they target $50M+ ARR NetSuite/ERP-first orgs, not the
@@ -56,7 +56,7 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
 }
 
 /**
- * Pass `only` to render Collectly against ONE competitor.
+ * Pass `only` to render Mugavi against ONE competitor.
  *
  * Without it this is the six-way matrix, which is the point of /compare and
  * fine there. It was also rendering on all nine /vs-* pages, where measurement

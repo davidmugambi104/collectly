@@ -48,7 +48,7 @@ async function plaidPost<T>(path: string, body: Record<string, unknown>): Promis
 export async function plaidCreateLinkToken(orgId: string) {
   return plaidPost<PlaidLinkTokenResponse>('/link/token/create', {
     user: { client_user_id: orgId },
-    client_name: 'Collectly',
+    client_name: 'Mugavi',
     products: ['auth', 'transactions'],
     country_codes: ['US', 'CA', 'GB'],
     language: 'en',

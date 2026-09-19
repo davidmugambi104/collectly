@@ -6,11 +6,11 @@ import { pageMetadata } from '@/lib/seo';
 export const metadata = pageMetadata({
   title: 'Security — encryption, infrastructure, and access control',
   description:
-    'How Collectly protects your data, your customers, and your money. ' +
+    'How Mugavi protects your data, your customers, and your money. ' +
     'Encryption in transit + at rest, audit log, role-based access, and ' +
     'the compliance posture we hold today and what we are building toward.',
   path: '/security',
-  keywords: ['Collectly security', 'encryption at rest', 'SOC 2', 'data security', 'GDPR'],
+  keywords: ['Mugavi security', 'encryption at rest', 'SOC 2', 'data security', 'GDPR'],
 });
 
 const principles = [
@@ -27,7 +27,7 @@ const principles = [
   {
     icon: Server,
     title: 'Hardened infrastructure',
-    body: 'Collectly runs on Vercel (compute) and managed Postgres (data). All secrets live in Vercel environment variables — never in code, never in the client bundle. No SSH access is provisioned.',
+    body: 'Mugavi runs on Vercel (compute) and managed Postgres (data). All secrets live in Vercel environment variables — never in code, never in the client bundle. No SSH access is provisioned.',
   },
   {
     icon: Eye,
@@ -65,7 +65,7 @@ export default function SecurityPage() {
         <p className="eyebrow">Security</p>
         <h1 className="mt-3 h1">Your invoices are sensitive. We treat them that way.</h1>
         <p className="mt-6 lead">
-          Collectly sits between your books and your customers. That means we see customer names, balances,
+          Mugavi sits between your books and your customers. That means we see customer names, balances,
           payment behavior, and the dunning messages you send. Here&apos;s exactly what we do — and don&apos;t do — with that access.
         </p>
       </section>
@@ -166,7 +166,7 @@ export default function SecurityPage() {
         <p className="eyebrow">Compliance</p>
         <h2 className="mt-3 h2">Where the data lives, who can see it.</h2>
         <p className="mt-4 text-ink-600 leading-relaxed">
-          Collectly is built for small businesses in the US, UK, EU, Australia, and Canada. Self-serve accounts are
+          Mugavi is built for small businesses in the US, UK, EU, Australia, and Canada. Self-serve accounts are
           currently processed in a single region (US); EU-only data residency is available for enterprise
           agreements on request. We act as the data processor for your customer data; you remain the data
           controller. Our Data Processing Agreement is available below.

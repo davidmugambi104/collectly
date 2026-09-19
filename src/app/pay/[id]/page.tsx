@@ -36,7 +36,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
   const { invoice, customer, org } = row;
   // Card/ACH only get offered once this business has connected their own
   // Stripe account — /api/payment/create-checkout charges the connected
-  // account directly, deliberately with no fallback to Collectly's own
+  // account directly, deliberately with no fallback to Mugavi's own
   // platform account, so the option shouldn't be shown as if it works
   // when it can't yet.
   const cardAchAvailable = !!(await getConnectedStripeAccountId(org.id));
@@ -49,9 +49,9 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
   // Who a payer should contact to arrange a wire.
   //
   // This used to be `${orgSlug}@getcollectly.app`, a synthetic address on
-  // Collectly's own domain built from the business's slug. Two things wrong
+  // Mugavi's own domain built from the business's slug. Two things wrong
   // with it: no such mailbox is provisioned, so the mail goes nowhere; and
-  // even if a catch-all existed it would route a payment enquiry to Collectly
+  // even if a catch-all existed it would route a payment enquiry to Mugavi
   // rather than to the business the money is owed to.
   //
   // That matters more than it looks right now. Card and ACH require the
@@ -87,7 +87,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
               <div className="text-xs text-ink-500">Secure payment</div>
             </div>
           </div>
-          <div className="text-xs text-ink-500 flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" />Encrypted by Collectly</div>
+          <div className="text-xs text-ink-500 flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" />Encrypted by Mugavi</div>
         </div>
       </header>
 
@@ -164,9 +164,9 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
           </div>
 
           <div className="card bg-ink-50/50">
-            <h3 className="font-semibold text-ink-900 text-sm">Powered by Collectly</h3>
+            <h3 className="font-semibold text-ink-900 text-sm">Powered by Mugavi</h3>
             <p className="mt-1 text-xs text-ink-600">AI-native accounts-receivable for small businesses.</p>
-            <a href="https://getcollectly.app" className="mt-2 inline-flex items-center gap-1 text-xs text-brand-600 font-medium">Learn more <ExternalLink className="h-3 w-3" /></a>
+            <a href="https://mugavi.com" className="mt-2 inline-flex items-center gap-1 text-xs text-brand-600 font-medium">Learn more <ExternalLink className="h-3 w-3" /></a>
           </div>
         </div>
       </div>

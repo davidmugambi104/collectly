@@ -1,7 +1,7 @@
 import { POSTS } from '@/lib/posts';
 import { SITE, BRAND } from '@/lib/seo';
 
-// RSS 2.0 feed for the Collectly blog. Served at /rss.xml.
+// RSS 2.0 feed for the Mugavi blog. Served at /rss.xml.
 //
 // Why: 1) Bing Webmaster + Feedly submissions want an RSS URL.
 //      2) Anyone using a reader gets a soft signal that we publish real

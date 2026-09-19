@@ -33,7 +33,7 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'How long does an invoice dispute typically take to resolve?',
-      a: 'For small businesses on Xero: 5-10 business days. The Collectly ' +
+      a: 'For small businesses on Xero: 5-10 business days. The Mugavi ' +
          'dispute classifier pauses reminders automatically during the ' +
          'dispute window so customers never receive a redundant reminder ' +
          'while the dispute is open.',
@@ -186,7 +186,7 @@ export default function DisputeTemplatePage() {
         <div className="container-page py-12 max-w-3xl">
           <h2 className="h2">Don&apos;t keep writing these by hand.</h2>
           <p className="mt-4 lead text-brand-100">
-            Collectly classifies incoming replies automatically and pauses the
+            Mugavi classifies incoming replies automatically and pauses the
             reminder sequence on every disputed invoice. No more chasing the
             customer who already told you they have an issue.
           </p>
@@ -195,7 +195,7 @@ export default function DisputeTemplatePage() {
               Get a free A/R health audit <ArrowRight className="h-4 w-4" />
             </a>
             <a href="/pricing" className="btn-secondary inline-flex items-center gap-1.5">
-              See Collectly pricing
+              See Mugavi pricing
             </a>
           </div>
         </div>

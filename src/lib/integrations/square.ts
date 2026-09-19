@@ -47,11 +47,11 @@ export async function squareAuthUrl(state: string): Promise<string> {
   }
   const params = new URLSearchParams({
     client_id: process.env.SQUARE_CLIENT_ID ?? '',
-    // PAYMENTS_WRITE is what lets Collectly create a payment on the seller's
+    // PAYMENTS_WRITE is what lets Mugavi create a payment on the seller's
     // behalf. Deliberately NOT requesting PAYMENTS_WRITE_ADDITIONAL_RECIPIENTS:
     // that scope exists to take an application fee, and application fees are
     // only collectable from countries where the PLATFORM holds a Square
-    // account. Collectly earns from the subscription, not a cut of each
+    // account. Mugavi earns from the subscription, not a cut of each
     // invoice, so skipping it keeps the whole flow available to a platform
     // operator outside Square's supported list — which is the entire reason
     // this rail works while Stripe Connect does not.
@@ -267,7 +267,7 @@ export async function isSquareConnected(orgId: string): Promise<boolean> {
  *
  * Mirrors the Stripe Checkout flow in /api/payment/create-checkout: the payer
  * is redirected to a page Square hosts, and the money settles into the
- * SELLER's Square balance. Collectly never holds it, so there is no
+ * SELLER's Square balance. Mugavi never holds it, so there is no
  * reconciliation step and no platform float — the failure that made Paystack
  * unusable, where every charge landed in one shared account with no way to
  * attribute it back to the business that was owed.

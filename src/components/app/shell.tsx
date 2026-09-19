@@ -247,7 +247,7 @@ export function AppShell({
             className="flex items-center gap-2 rounded-md px-0.5 py-1 text-[14px] font-semibold tracking-[-0.01em] text-ink-950"
           >
             <Logo className="h-6 w-6" />
-            <span>Collectly</span>
+            <span>Mugavi</span>
           </Link>
         </div>
 

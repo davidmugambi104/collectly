@@ -27,7 +27,7 @@ const FAQS: FaqItem[] = [
          'hours with the one-page report.',
     },
     {
-      q: 'Will you try to sell me Collectly after the audit?',
+      q: 'Will you try to sell me Mugavi after the audit?',
       a: 'Only if we have a credible case study or product behaviour that ' +
          'matches what your audit reveals. If the report says the right move ' +
          'is a different tool, or no tool at all, we say so. We do not run a ' +
@@ -36,8 +36,8 @@ const FAQS: FaqItem[] = [
     {
       q: 'What do you do with the data you collect?',
       a: 'We use it once, to produce the audit, then delete the source data ' +
-         'within 30 days. If you opt into a Collectly trial during the audit, ' +
-         'your data is reused under the Collectly privacy policy. Otherwise, ' +
+         'within 30 days. If you opt into a Mugavi trial during the audit, ' +
+         'your data is reused under the Mugavi privacy policy. Otherwise, ' +
          'it is purged.',
     },
 ];
@@ -73,7 +73,7 @@ const PROMISES = [
   {
     icon: ShieldCheck,
     title: 'No pitch, no spam',
-    body: 'The audit is free and independent. We will mention Collectly, but only if it genuinely fits your workflow.',
+    body: 'The audit is free and independent. We will mention Mugavi, but only if it genuinely fits your workflow.',
   },
   {
     icon: Sparkles,

@@ -72,7 +72,7 @@ describe('generateDunningMessage — happy path (valid Gemini response)', () => 
     // (Gemini shipping literal "[payment_link]" placeholder text because
     // it was never given a real link to use).
     assert.ok(result.body.startsWith('Hi Jane, invoice INV-2370 is due.'));
-    assert.ok(result.body.includes('https://getcollectly.app/pay/inv_nanoid_abc123'));
+    assert.ok(result.body.includes('https://mugavi.com/pay/inv_nanoid_abc123'));
   });
 
   test('sms: returns only a body, no subject, with the real pay link appended', async (t) => {
@@ -80,7 +80,7 @@ describe('generateDunningMessage — happy path (valid Gemini response)', () => 
     const result = await generateDunningMessage(ctx({ channel: 'sms' }));
     assert.equal(result.subject, undefined);
     assert.ok(result.body.startsWith('Invoice INV-2370 is due, please pay.'));
-    assert.ok(result.body.includes('https://getcollectly.app/pay/inv_nanoid_abc123'));
+    assert.ok(result.body.includes('https://mugavi.com/pay/inv_nanoid_abc123'));
     assert.ok(result.body.length <= 320);
   });
 
@@ -88,7 +88,7 @@ describe('generateDunningMessage — happy path (valid Gemini response)', () => 
     mockGeminiText(t, JSON.stringify({ subject: 'Quick reminder', body: 'Hi Jane, please settle it here: [payment_link]. Thanks.' }));
     const result = await generateDunningMessage(ctx({ channel: 'email' }));
     assert.ok(!/\[payment_link\]/i.test(result.body), `placeholder should have been replaced, got: ${result.body}`);
-    assert.ok(result.body.includes('https://getcollectly.app/pay/inv_nanoid_abc123'));
+    assert.ok(result.body.includes('https://mugavi.com/pay/inv_nanoid_abc123'));
   });
 });
 

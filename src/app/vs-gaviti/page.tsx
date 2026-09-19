@@ -13,13 +13,13 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs Gaviti — SMB AR automation without enterprise complexity',
+  title: 'Mugavi vs Gaviti — SMB AR automation without enterprise complexity',
   description:
     'Gaviti is AI-powered invoice-to-cash for mid-market and enterprise. ' +
-    'Collectly is the simple, transparent, self-serve alternative for ' +
+    'Mugavi is the simple, transparent, self-serve alternative for ' +
     `small B2B service businesses starting at $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/vs-gaviti',
-  keywords: ['Collectly vs Gaviti', 'Gaviti alternative', 'AR automation', 'Gaviti vs Collectly'],
+  keywords: ['Mugavi vs Gaviti', 'Gaviti alternative', 'AR automation', 'Gaviti vs Mugavi'],
 });
 
 const DIFFS = [
@@ -62,8 +62,8 @@ export default function VsGavitiPage() {
       />
       <MarketingHeader />
       <ComparisonHero
-        title="Collectly vs Gaviti"
-        subtitle={`Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Collectly takes the parts that matter most to small B2B services — smart dunning, cash-flow forecasting, and risk scoring — and packages them in a $${PLAN_PRICING.starter.monthly}/mo tool you can set up in 10 minutes.`}
+        title="Mugavi vs Gaviti"
+        subtitle={`Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Mugavi takes the parts that matter most to small B2B services — smart dunning, cash-flow forecasting, and risk scoring — and packages them in a $${PLAN_PRICING.starter.monthly}/mo tool you can set up in 10 minutes.`}
         competitorName="Gaviti"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Gaviti" />
@@ -79,7 +79,7 @@ export default function VsGavitiPage() {
       <WhenToChoose competitorName="Gaviti" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Enterprise power without enterprise pain"
-        body="Start your 14-day free trial. No credit card. Connect Xero and see Collectly run in under a minute (QuickBooks integration is in beta)."
+        body="Start your 14-day free trial. No credit card. Connect Xero and see Mugavi run in under a minute (QuickBooks integration is in beta)."
       />
       <MarketingFooter />
     </div>

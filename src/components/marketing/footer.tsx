@@ -20,7 +20,7 @@ export function MarketingFooter() {
           <div className="lg:col-span-4">
             <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-ink-950 transition-opacity hover:opacity-70">
               <Logo className="h-7 w-7" />
-              <span>Collectly</span>
+              <span>Mugavi</span>
             </Link>
             <p className="mt-3 max-w-sm text-sm text-ink-600">Honest AR automation for 5-30 person agencies and consultancies on Xero. Built in Nairobi.</p>
             <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-ink-500">
@@ -28,7 +28,7 @@ export function MarketingFooter() {
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">5–30 person teams</span>
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Xero (QuickBooks beta)</span>
             </div>
-            <p className="mt-6 text-xs text-ink-500">© 2026 Collectly, Inc. · Built in Nairobi.</p>
+            <p className="mt-6 text-xs text-ink-500">© 2026 Mugavi, Inc. · Built in Nairobi.</p>
           </div>
           <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
             <div>

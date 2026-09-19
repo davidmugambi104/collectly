@@ -13,13 +13,13 @@ import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
 export const metadata = pageMetadata({
-  title: 'Collectly vs FreshBooks — from simple invoicing to real AR automation',
+  title: 'Mugavi vs FreshBooks — from simple invoicing to real AR automation',
   description:
     'FreshBooks is easy invoicing for freelancers and small agencies. ' +
-    'Collectly adds AI tone-aware dunning, AR aging, cash-flow forecasting, ' +
+    'Mugavi adds AI tone-aware dunning, AR aging, cash-flow forecasting, ' +
     'and risk scoring for businesses that have outgrown basic reminders.',
   path: '/vs-freshbooks',
-  keywords: ['Collectly vs FreshBooks', 'FreshBooks alternative', 'AR automation', 'FreshBooks vs Collectly'],
+  keywords: ['Mugavi vs FreshBooks', 'FreshBooks alternative', 'AR automation', 'FreshBooks vs Mugavi'],
 });
 
 const DIFFS = [
@@ -32,7 +32,7 @@ const DIFFS = [
 const STRATEGY = [
   { title: 'Freelancer-first UX', body: 'FreshBooks won by being easier than QuickBooks for solo operators and small agencies.' },
   { title: 'Simple pricing and free trials', body: 'Transparent plans and a strong free-trial funnel lowered the barrier to first invoice.' },
-  { title: 'Service-business positioning', body: 'Marketing focused on designers, agencies, and consultants — exactly the ICP Collectly wants.' },
+  { title: 'Service-business positioning', body: 'Marketing focused on designers, agencies, and consultants — exactly the ICP Mugavi wants.' },
   { title: 'Product-led expansion', body: 'Time tracking, expenses, and payments kept users inside the platform as they grew.' },
 ];
 
@@ -62,8 +62,8 @@ export default function VsFreshbooksPage() {
       />
       <MarketingHeader />
       <ComparisonHero
-        title="Collectly vs FreshBooks"
-        subtitle="FreshBooks makes invoicing simple. But when your invoices start going overdue and cash flow gets unpredictable, you need more than reminders. Collectly adds AI dunning, forecasting, and risk scoring while keeping your accounting workflow intact."
+        title="Mugavi vs FreshBooks"
+        subtitle="FreshBooks makes invoicing simple. But when your invoices start going overdue and cash flow gets unpredictable, you need more than reminders. Mugavi adds AI dunning, forecasting, and risk scoring while keeping your accounting workflow intact."
         competitorName="FreshBooks"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="FreshBooks" />
@@ -77,7 +77,7 @@ export default function VsFreshbooksPage() {
       <WhenToChoose competitorName="FreshBooks" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Outgrown FreshBooks reminders?"
-        body="Start your 14-day free trial. No credit card. Connect your books and see what Collectly would send your customers."
+        body="Start your 14-day free trial. No credit card. Connect your books and see what Mugavi would send your customers."
       />
       <MarketingFooter />
     </div>

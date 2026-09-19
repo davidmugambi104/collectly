@@ -2,7 +2,7 @@
   "name": "collectly-video",
   "version": "1.0.0",
   "private": true,
-  "description": "Remotion project for the Collectly product demo video. Separate from the Next app on purpose: Remotion pulls ~200MB including its own headless Chrome, and none of it belongs in the site's build or its node_modules.",
+  "description": "Remotion project for the Mugavi product demo video. Separate from the Next app on purpose: Remotion pulls ~200MB including its own headless Chrome, and none of it belongs in the site's build or its node_modules.",
   "scripts": {
     "studio": "remotion studio",
     "render": "remotion render DemoWalkthrough out/collectly-demo.mp4",

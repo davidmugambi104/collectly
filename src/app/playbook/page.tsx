@@ -129,7 +129,7 @@ export default function PlaybookPage() {
             <p className="eyebrow">What&apos;s inside</p>
             <h2 className="mt-2 h2">5 steps, each with the exact action to take.</h2>
             <p className="mt-4 lead">No theory, no &quot;consider doing X&quot; — each step ends with a concrete ritual you can start this week.</p>
-            <p className="mt-3 text-xs text-ink-500">Figures below are typical benchmarks from common A/R patterns, not Collectly&apos;s own customer data — we&apos;re pre-launch and don&apos;t have that yet.</p>
+            <p className="mt-3 text-xs text-ink-500">Figures below are typical benchmarks from common A/R patterns, not Mugavi&apos;s own customer data — we&apos;re pre-launch and don&apos;t have that yet.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {STEPS.map((s) => (
@@ -159,7 +159,7 @@ export default function PlaybookPage() {
               <div className="h-10 w-10 rounded-full bg-white/20" />
               <div className="text-left">
                 <div className="font-semibold">Davie Mugambi</div>
-                <div className="text-sm text-brand-100">Founder, Collectly · building in public</div>
+                <div className="text-sm text-brand-100">Founder, Mugavi · building in public</div>
               </div>
             </div>
           </div>

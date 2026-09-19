@@ -15,11 +15,11 @@ const FAQS: FaqItem[] = [
       q: 'How much time does an agency typically spend chasing invoices?',
       a: 'For a 5-30 person agency on a 30-day payment cycle, the founder or ' +
          'operations lead typically spends 3 to 5 hours per week chasing late ' +
-         'invoices. Collectly reduces that to under 30 minutes per week after ' +
+         'invoices. Mugavi reduces that to under 30 minutes per week after ' +
          'the first 14 days of consistent approve-and-send operation.',
     },
     {
-      q: 'How does Collectly handle project milestone invoices?',
+      q: 'How does Mugavi handle project milestone invoices?',
       a: 'Each invoice, regardless of whether it is a recurring retainer or a ' +
          'project milestone, is monitored individually. The dunning sequence is ' +
          'per-invoice, not per-customer. Project milestone invoices typically ' +
@@ -27,23 +27,23 @@ const FAQS: FaqItem[] = [
          'time-bounded and a single missed payment can break the deal flow.',
     },
     {
-      q: 'Will Collectly send reminders to clients we want to keep close?',
-      a: 'Yes, unless you exclude them. The Collectly dashboard has a single-click ' +
+      q: 'Will Mugavi send reminders to clients we want to keep close?',
+      a: 'Yes, unless you exclude them. The Mugavi dashboard has a single-click ' +
          'exclude button per customer. You can mark a customer as strategic and ' +
-         'Collectly stops all automated reminders on that customer; only the ' +
+         'Mugavi stops all automated reminders on that customer; only the ' +
          'human-in-the-loop approval prompt remains.',
     },
     {
       q: 'Does this work for agencies on net-30 or net-60 terms?',
       a: 'Both. The dunning cadence is configurable per organization. Net-60 ' +
          'customers typically get a friendlier initial tone and a longer gap ' +
-         'before the firm stage. Collectly adapts by reading the original payment ' +
+         'before the firm stage. Mugavi adapts by reading the original payment ' +
          'terms on the Xero invoice.',
     },
     {
-      q: 'How does Collectly handle retainer continuity disputes?',
+      q: 'How does Mugavi handle retainer continuity disputes?',
       a: 'When a customer replies "we cancelled the retainer last month," ' +
-         'Collectly classifies the reply as a blocker (not a promise-to-pay), ' +
+         'Mugavi classifies the reply as a blocker (not a promise-to-pay), ' +
          'pauses reminders on that invoice, and surfaces it in your disputes ' +
          'worklist so the team can resolve the dispute (often: confirm the ' +
          'cancellation date, update Xero, and write off or refund as needed).',
@@ -75,7 +75,7 @@ const agenciesJsonLd = JSON.stringify([
   webPageJsonLd({
     title: 'A/R automation for agencies on Xero',
     description:
-      'How Collectly handles accounts receivable for 5-30 person agencies: ' +
+      'How Mugavi handles accounts receivable for 5-30 person agencies: ' +
       'tone-aware AI reminders, Xero integration, reply-or-pay pause, and ' +
       'promise-to-pay tracking.',
     path: '/for/agencies',
@@ -121,7 +121,7 @@ export default function ForAgenciesPage() {
             <h2 className="mt-3 text-lg font-semibold text-ink-900">Pause on reply. Always.</h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Agency clients pay slowly, not never. When they reply to a reminder,
-              Collectly pauses the sequence and surfaces the conversation for human
+              Mugavi pauses the sequence and surfaces the conversation for human
               follow-up. The worst thing an A/R tool can do is double-chase a
               customer who is already paying.
             </p>
@@ -132,7 +132,7 @@ export default function ForAgenciesPage() {
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Strategic accounts get friendly. New clients get firm. Long-overdue
               accounts get a final-touch before human handoff. Tone rules are
-              per-customer and per-customer-stage — you set them once, Collectly
+              per-customer and per-customer-stage — you set them once, Mugavi
               follows them.
             </p>
           </div>
@@ -142,20 +142,20 @@ export default function ForAgenciesPage() {
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Some invoices should never go on autopilot. Strategic accounts,
               disputed accounts, accounts over a year old, accounts above a value
-              threshold — Collectly surfaces them for human review every time.
+              threshold — Mugavi surfaces them for human review every time.
             </p>
           </div>
         </div>
       </section>
       <section className="bg-ink-50 border-y border-ink-200">
         <div className="container-page py-16 max-w-3xl">
-          <p className="eyebrow">Why agencies pick Collectly over Chaser and BILL</p>
+          <p className="eyebrow">Why agencies pick Mugavi over Chaser and BILL</p>
           <h2 className="mt-3 h2">Built for the SMB agency long tail.</h2>
           <p className="mt-4 lead">
             Chaser is templated reminders starting around $259/mo for one
             organization. BILL bundles AP, AR, and spend at $49 per user/month plus
             transaction fees. Neither is wrong — they&apos;re just priced and
-            positioned for different teams. Collectly prices per client book, which
+            positioned for different teams. Mugavi prices per client book, which
             works out near ${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo
             a book for a practice.
           </p>

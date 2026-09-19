@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
 
 // Paystack has no official TS types package -- minimal shape for the
 // fields this route actually reads from GET /transaction/verify/:reference.

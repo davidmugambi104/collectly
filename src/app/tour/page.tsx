@@ -7,14 +7,14 @@ import { pageMetadata } from '@/lib/seo';
 import { TrackView } from '@/components/marketing/track-view';
 
 export const metadata = pageMetadata({
-  title: 'Product tour — how Collectly follows up on overdue invoices',
+  title: 'Product tour — how Mugavi follows up on overdue invoices',
   description:
-    'Watch a 2-minute tour of how Collectly follows up on overdue ' +
+    'Watch a 2-minute tour of how Mugavi follows up on overdue ' +
     'invoices, collects payments through a branded portal, and forecasts ' +
     'cash flow — without the awkward chase. Built for small agencies and ' +
     'consultancies on Xero.',
   path: '/tour',
-  keywords: ['Collectly tour', 'AR product demo', 'Xero dunning demo', 'invoice reminder demo'],
+  keywords: ['Mugavi tour', 'AR product demo', 'Xero dunning demo', 'invoice reminder demo'],
 });
 
 export default function TourPage() {
@@ -28,7 +28,7 @@ export default function TourPage() {
 
       <section className="container-page pt-16 pb-12 max-w-3xl text-center">
         <p className="eyebrow">Product tour</p>
-        <h1 className="mt-3 h1">See exactly how Collectly works — no sales call required.</h1>
+        <h1 className="mt-3 h1">See exactly how Mugavi works — no sales call required.</h1>
         <p className="mt-5 lead">
           Short videos, a live demo you can try in your browser, and the honest truth about what is ready today.
         </p>
@@ -67,7 +67,7 @@ export default function TourPage() {
           <h2 className="h2 mb-4">Want a walkthrough now, not later?</h2>
           <p className="text-ink-600 mb-8">
             Product videos are being recorded. For now, email the founder directly and we&apos;ll find a time —
-            we&apos;ll show you exactly how Collectly works for your business and answer your questions.
+            we&apos;ll show you exactly how Mugavi works for your business and answer your questions.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a

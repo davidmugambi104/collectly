@@ -34,7 +34,7 @@ type Shot = {
 const PRIMARY: Shot = {
   src: '/product/dashboard.webp',
   alt:
-    'Collectly overview screen showing outstanding accounts receivable of $211,850, ' +
+    'Mugavi overview screen showing outstanding accounts receivable of $211,850, ' +
     '$151,550 overdue, a 21-day DSO, $40,650 collected month to date, and a ranked ' +
     'list of AI-prioritised next actions.',
   title: 'Every number you need, ranked by what to do about it',
@@ -49,7 +49,7 @@ const SECONDARY: Shot[] = [
   {
     src: '/product/inbox.webp',
     alt:
-      'Collectly inbox showing four customer replies, each tagged by AI — general question, ' +
+      'Mugavi inbox showing four customer replies, each tagged by AI — general question, ' +
       'needs PO paperwork, says already paid, will pay by date — with a recommended next step ' +
       'under each one.',
     title: 'Replies come back classified',
@@ -62,7 +62,7 @@ const SECONDARY: Shot[] = [
   {
     src: '/product/cashflow.webp',
     alt:
-      'Collectly cash-flow screen showing a four-week collection forecast built from invoice ' +
+      'Mugavi cash-flow screen showing a four-week collection forecast built from invoice ' +
       'due dates and customer payment history.',
     title: 'Four weeks of cash, before it lands',
     body:
@@ -93,7 +93,7 @@ function Frame({
           <span className="h-2.5 w-2.5 rounded-full bg-ink-300" />
           <span className="h-2.5 w-2.5 rounded-full bg-ink-300" />
         </span>
-        <span className="ml-1 truncate font-mono text-[11px] text-ink-500">app.getcollectly.app</span>
+        <span className="ml-1 truncate font-mono text-[11px] text-ink-500">app.mugavi.com</span>
         <span className="ml-auto shrink-0 rounded-full border border-ink-200 bg-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-ink-500">
           Sample data
         </span>

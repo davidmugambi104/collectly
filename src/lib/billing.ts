@@ -45,7 +45,7 @@ export async function createCheckoutSession(opts: { orgId: string; plan: PlanKey
       price_data: {
         currency: 'usd',
         recurring: { interval: 'month' },
-        product_data: { name: `Collectly ${plan.name}` },
+        product_data: { name: `Mugavi ${plan.name}` },
         unit_amount: plan.monthly * 100,
       },
       quantity: 1,
@@ -78,7 +78,7 @@ export async function handleStripeEvent(event: Stripe.Event) {
         await markInvoicePaidFromSession(session, invoiceId);
         break;
       }
-      // Subscription checkout (new customer subscribing to a Collectly plan)
+      // Subscription checkout (new customer subscribing to a Mugavi plan)
       if (orgId && plan && PLAN_PRICING[plan]) {
         const existing = await db.select().from(subscriptions).where(eq(subscriptions.orgId, orgId)).limit(1);
         if (existing[0]) {
@@ -277,7 +277,7 @@ async function notifyOwnerOfChargeback(orgId: string, info: { amount: number; cu
       ? `Chargeback opened on an invoice payment — ${org.name}`
       : `Chargeback ${info.won ? 'won' : 'lost'} — ${org.name}`;
     const body = info.won === null
-      ? `<p>A customer disputed a card payment made through your Collectly payment portal.</p>
+      ? `<p>A customer disputed a card payment made through your Mugavi payment portal.</p>
          <ul><li>Amount: ${info.amount} ${info.currency}</li><li>Card network reason: ${info.reason}</li><li>Invoice: ${info.invoiceId}</li></ul>
          <p>Stripe usually requires evidence within a few days — check your Stripe dashboard.</p>`
       : info.won
@@ -522,10 +522,10 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
           `<ol>`,
           `<li>I'll email your invoice within 12 hours (bank transfer, Wise, or PayPal — your call).</li>`,
           `<li>Once paid, I'll upgrade your account manually and confirm by email.</li>`,
-          `<li>You can keep using Collectly during this window — no interruption.</li>`,
+          `<li>You can keep using Mugavi during this window — no interruption.</li>`,
           `</ol>`,
           `<p>If you have any questions in the meantime, just reply to this email.</p>`,
-          `<p>— David<br/>Founder, Collectly</p>`,
+          `<p>— David<br/>Founder, Mugavi</p>`,
           `<hr/><p style="color:#666;font-size:12px">Request ID: ${created.id} &mdash; ${planInfo.name} ($${planInfo.monthly}/mo)</p>`,
         ].join('\n'),
       });
@@ -549,7 +549,7 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
         `<tr><td style="padding:4px 12px 4px 0"><strong>Country</strong></td><td>${opts.country ?? 'n/a'}</td></tr>`,
         `</table>`,
         `<p><strong>Notes from customer:</strong><br/>${(opts.notes ?? '(none)').replace(/</g, '&lt;').replace(/\n/g, '<br/>')}</p>`,
-        `<p style="color:#666;font-size:12px">Request ID: ${created.id} &mdash; review at <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://getcollectly.app'}/admin/upgrade-requests">/admin/upgrade-requests</a></p>`,
+        `<p style="color:#666;font-size:12px">Request ID: ${created.id} &mdash; review at <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'}/admin/upgrade-requests">/admin/upgrade-requests</a></p>`,
       ].join('\n'),
     });
   } catch (e) {
