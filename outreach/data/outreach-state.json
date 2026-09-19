@@ -268,7 +268,7 @@
       "last_contact": "2026-08-18T22:15:06.033335+00:00"
     },
     "joy@bookkeepingjoy.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -277,14 +277,22 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787086668-01",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:16.713203+00:00",
+          "message_id": "01a0bb0f-e53b-725d-9ea3-47c3369c3fb3",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787086668-01",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T22:15:07.561185+00:00",
-      "last_contact": "2026-08-18T22:15:07.561185+00:00"
+      "last_contact": "2026-09-19T19:06:16.713203+00:00"
     },
     "fjmbookkeeping@gmail.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -293,14 +301,22 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787086668-02",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:18.614822+00:00",
+          "message_id": "01a0bb0f-ecaa-7659-92c7-866e48441140",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787086668-02",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T22:58:08.135200+00:00",
-      "last_contact": "2026-08-18T22:58:08.135200+00:00"
+      "last_contact": "2026-09-19T19:06:18.614822+00:00"
     },
     "vaibhav@accountfirstglobal.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -309,11 +325,19 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787086668-03",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:19.990469+00:00",
+          "message_id": "01a0bb0f-f1fb-700c-b314-3219a2c7033d",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787086668-03",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T22:59:34.073554+00:00",
-      "last_contact": "2026-08-18T22:59:34.073554+00:00"
+      "last_contact": "2026-09-19T19:06:19.990469+00:00"
     },
     "edward@sameaccounting.com": {
       "state": "t1_sent",
@@ -348,7 +372,7 @@
       "last_contact": "2026-08-18T23:00:05.700244+00:00"
     },
     "stephanie@empowerbookkeeping.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -357,14 +381,22 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787087013-10",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:21.790657+00:00",
+          "message_id": "01a0bb0f-f914-76ae-92f3-337485f0eb1f",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787087013-10",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:00:08.050384+00:00",
-      "last_contact": "2026-08-18T23:00:08.050384+00:00"
+      "last_contact": "2026-09-19T19:06:21.790657+00:00"
     },
     "robert@lodestaradvisors.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -373,14 +405,22 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787087013-11",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:23.147951+00:00",
+          "message_id": "01a0bb0f-fe5f-716d-8a83-e6337d57662b",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787087013-11",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:05:12.509781+00:00",
-      "last_contact": "2026-08-18T23:05:12.509781+00:00"
+      "last_contact": "2026-09-19T19:06:23.147951+00:00"
     },
     "frank@goodyearfinancial.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -389,14 +429,22 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787087013-12",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:24.754125+00:00",
+          "message_id": "01a0bb10-04a4-760e-9644-95b19163a412",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787087013-12",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:05:14.230641+00:00",
-      "last_contact": "2026-08-18T23:05:14.230641+00:00"
+      "last_contact": "2026-09-19T19:06:24.754125+00:00"
     },
     "graham.hearfield@edna.studio": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -405,11 +453,19 @@
           "campaign": "tier2",
           "prospect_id": "P003",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:26.150399+00:00",
+          "message_id": "01a0bb10-0a19-71bb-bb2d-d35f3e2babcd",
+          "campaign": "tier1",
+          "prospect_id": "P003",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:10:06.294849+00:00",
-      "last_contact": "2026-08-18T23:10:06.294849+00:00"
+      "last_contact": "2026-09-19T19:06:26.150399+00:00"
     },
     "mellor@duo.at": {
       "state": "t1_sent",
@@ -444,7 +500,7 @@
       "last_contact": "2026-08-18T23:15:06.195499+00:00"
     },
     "eleanor@oslo.agency": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -453,14 +509,22 @@
           "campaign": "tier2",
           "prospect_id": "P007",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:27.489273+00:00",
+          "message_id": "01a0bb10-0f5b-72f6-a990-5cb4ae395d39",
+          "campaign": "tier1",
+          "prospect_id": "P007",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:15:07.982827+00:00",
-      "last_contact": "2026-08-18T23:15:07.982827+00:00"
+      "last_contact": "2026-09-19T19:06:27.489273+00:00"
     },
     "jason@madebyshape.co.uk": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -469,14 +533,22 @@
           "campaign": "tier2",
           "prospect_id": "P010",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:28.827756+00:00",
+          "message_id": "01a0bb10-1490-768e-8acd-bb1e2d23c5b1",
+          "campaign": "tier1",
+          "prospect_id": "P010",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:20:05.648355+00:00",
-      "last_contact": "2026-08-18T23:20:05.648355+00:00"
+      "last_contact": "2026-09-19T19:06:28.827756+00:00"
     },
     "sam@buckleycreative.co.uk": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -485,14 +557,22 @@
           "campaign": "tier2",
           "prospect_id": "P011",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:30.159843+00:00",
+          "message_id": "01a0bb10-19c4-777d-8b2a-1cb2fa4a819a",
+          "campaign": "tier1",
+          "prospect_id": "P011",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:20:06.866701+00:00",
-      "last_contact": "2026-08-18T23:20:06.866701+00:00"
+      "last_contact": "2026-09-19T19:06:30.159843+00:00"
     },
     "ilyass@carbon.studio": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -501,14 +581,22 @@
           "campaign": "tier2",
           "prospect_id": "P012",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:31.531263+00:00",
+          "message_id": "01a0bb10-1f19-7778-912c-fd1a56a8dfeb",
+          "campaign": "tier1",
+          "prospect_id": "P012",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:25:06.391361+00:00",
-      "last_contact": "2026-08-18T23:25:06.391361+00:00"
+      "last_contact": "2026-09-19T19:06:31.531263+00:00"
     },
     "matt@yeahnice.studio": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -517,14 +605,22 @@
           "campaign": "tier2",
           "prospect_id": "P013",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:32.885337+00:00",
+          "message_id": "01a0bb10-246d-713e-893b-21d3ab048be5",
+          "campaign": "tier1",
+          "prospect_id": "P013",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:25:07.558270+00:00",
-      "last_contact": "2026-08-18T23:25:07.558270+00:00"
+      "last_contact": "2026-09-19T19:06:32.885337+00:00"
     },
     "rosa@weareflow.uk": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -533,14 +629,22 @@
           "campaign": "tier2",
           "prospect_id": "P014",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:35.262679+00:00",
+          "message_id": "01a0bb10-2dae-752c-9776-00797207c5b1",
+          "campaign": "tier1",
+          "prospect_id": "P014",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:30:13.448410+00:00",
-      "last_contact": "2026-08-18T23:30:13.448410+00:00"
+      "last_contact": "2026-09-19T19:06:35.262679+00:00"
     },
     "josh@geist.studio": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -549,14 +653,22 @@
           "campaign": "tier2",
           "prospect_id": "P015",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:37.644015+00:00",
+          "message_id": "01a0bb10-3704-71ba-b65a-6ffd49573fcc",
+          "campaign": "tier1",
+          "prospect_id": "P015",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:30:16.822672+00:00",
-      "last_contact": "2026-08-18T23:30:16.822672+00:00"
+      "last_contact": "2026-09-19T19:06:37.644015+00:00"
     },
     "stan@stanbranding.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -565,14 +677,22 @@
           "campaign": "tier3",
           "prospect_id": "P031",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:39.030034+00:00",
+          "message_id": "01a0bb10-3c68-71f1-9e23-49ac5545751b",
+          "campaign": "tier1",
+          "prospect_id": "P031",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:35:11.824432+00:00",
-      "last_contact": "2026-08-18T23:35:11.824432+00:00"
+      "last_contact": "2026-09-19T19:06:39.030034+00:00"
     },
     "andy@ninesixty.co.uk": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -581,11 +701,19 @@
           "campaign": "tier2",
           "prospect_id": "P016",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:40.374993+00:00",
+          "message_id": "01a0bb10-41af-757e-92bb-689ec8329524",
+          "campaign": "tier1",
+          "prospect_id": "P016",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:35:14.213262+00:00",
-      "last_contact": "2026-08-18T23:35:14.213262+00:00"
+      "last_contact": "2026-09-19T19:06:40.374993+00:00"
     },
     "hello@underlineagency.com": {
       "state": "t1_sent",
@@ -604,7 +732,7 @@
       "last_contact": "2026-08-18T23:40:38.489459+00:00"
     },
     "angela@loveandlogic.co.uk": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -613,14 +741,22 @@
           "campaign": "tier2",
           "prospect_id": "P018",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:42.393139+00:00",
+          "message_id": "01a0bb10-491a-7393-93b8-5b6328ffe18b",
+          "campaign": "tier1",
+          "prospect_id": "P018",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:40:42.076993+00:00",
-      "last_contact": "2026-08-18T23:40:42.076993+00:00"
+      "last_contact": "2026-09-19T19:06:42.393139+00:00"
     },
     "joe@aperitif.agency": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -629,14 +765,22 @@
           "campaign": "tier2",
           "prospect_id": "P022",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:43.779199+00:00",
+          "message_id": "01a0bb10-4f00-77dd-8fd6-3fbd605b97a4",
+          "campaign": "tier1",
+          "prospect_id": "P022",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:45:10.870140+00:00",
-      "last_contact": "2026-08-18T23:45:10.870140+00:00"
+      "last_contact": "2026-09-19T19:06:43.779199+00:00"
     },
     "heather@denningbookkeeping.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -645,14 +789,22 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787095571-00",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:45.131356+00:00",
+          "message_id": "01a0bb10-5443-706e-b4a7-792112944362",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787095571-00",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:45:13.243792+00:00",
-      "last_contact": "2026-08-18T23:45:13.243792+00:00"
+      "last_contact": "2026-09-19T19:06:45.131356+00:00"
     },
     "beilbk@yahoo.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -661,14 +813,22 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787095571-01",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:46.537617+00:00",
+          "message_id": "01a0bb10-5997-7648-82f2-15027aef68b2",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787095571-01",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:50:07.742757+00:00",
-      "last_contact": "2026-08-18T23:50:07.742757+00:00"
+      "last_contact": "2026-09-19T19:06:46.537617+00:00"
     },
     "scott@parkfinancialllc.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -677,11 +837,19 @@
           "campaign": "tier1",
           "prospect_id": "PX-1787095571-02",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:47.932783+00:00",
+          "message_id": "01a0bb10-5f2e-7638-9232-f2cde2c6275b",
+          "campaign": "tier1",
+          "prospect_id": "PX-1787095571-02",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-18T23:50:09.776504+00:00",
-      "last_contact": "2026-08-18T23:50:09.776504+00:00"
+      "last_contact": "2026-09-19T19:06:47.932783+00:00"
     },
     "nadege@bookkeepingsimple.co.uk": {
       "state": "t1_sent",
@@ -700,7 +868,7 @@
       "last_contact": "2026-08-19T00:00:11.320215+00:00"
     },
     "goran@artversion.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -709,11 +877,19 @@
           "campaign": "tier2",
           "prospect_id": "P028",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:49.328785+00:00",
+          "message_id": "01a0bb10-64a5-76e8-a0ec-826ec4ce3345",
+          "campaign": "tier1",
+          "prospect_id": "P028",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:00:14.078982+00:00",
-      "last_contact": "2026-08-19T00:00:14.078982+00:00"
+      "last_contact": "2026-09-19T19:06:49.328785+00:00"
     },
     "info@flamingoagency.com": {
       "state": "t1_sent",
@@ -748,7 +924,7 @@
       "last_contact": "2026-08-19T00:05:10.228967+00:00"
     },
     "sarah@makeitclear.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -757,14 +933,22 @@
           "campaign": "tier2",
           "prospect_id": "P034",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:50.685929+00:00",
+          "message_id": "01a0bb10-69f6-70d8-9a3f-4486c7cae6c6",
+          "campaign": "tier1",
+          "prospect_id": "P034",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:10:08.514145+00:00",
-      "last_contact": "2026-08-19T00:10:08.514145+00:00"
+      "last_contact": "2026-09-19T19:06:50.685929+00:00"
     },
     "mo@motacreative.co.uk": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -773,14 +957,22 @@
           "campaign": "tier2",
           "prospect_id": "P035",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:52.037114+00:00",
+          "message_id": "01a0bb10-6f39-7306-823b-4829b1c812d1",
+          "campaign": "tier1",
+          "prospect_id": "P035",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:10:09.832928+00:00",
-      "last_contact": "2026-08-19T00:10:09.832928+00:00"
+      "last_contact": "2026-09-19T19:06:52.037114+00:00"
     },
     "brian@ignytebrands.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -789,14 +981,22 @@
           "campaign": "tier2",
           "prospect_id": "P037",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:53.426136+00:00",
+          "message_id": "01a0bb10-74ab-7192-93d1-a38a3dce3a74",
+          "campaign": "tier1",
+          "prospect_id": "P037",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:15:07.832782+00:00",
-      "last_contact": "2026-08-19T00:15:07.832782+00:00"
+      "last_contact": "2026-09-19T19:06:53.426136+00:00"
     },
     "katie@smakkstudios.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -805,11 +1005,19 @@
           "campaign": "tier2",
           "prospect_id": "P039",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:54.826551+00:00",
+          "message_id": "01a0bb10-7a1b-707e-9d7d-8c55f307c040",
+          "campaign": "tier1",
+          "prospect_id": "P039",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:15:09.241095+00:00",
-      "last_contact": "2026-08-19T00:15:09.241095+00:00"
+      "last_contact": "2026-09-19T19:06:54.826551+00:00"
     },
     "philip.young@birdmarketing.co.uk": {
       "state": "t1_sent",
@@ -828,7 +1036,7 @@
       "last_contact": "2026-08-19T00:20:06.836454+00:00"
     },
     "markerle@soapmedia.co.uk": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -837,14 +1045,22 @@
           "campaign": "tier2",
           "prospect_id": "P045",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:56.746741+00:00",
+          "message_id": "01a0bb10-8088-703f-b36f-c8be031d1fdf",
+          "campaign": "tier1",
+          "prospect_id": "P045",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:20:07.945268+00:00",
-      "last_contact": "2026-08-19T00:20:07.945268+00:00"
+      "last_contact": "2026-09-19T19:06:56.746741+00:00"
     },
     "kim@squibble.design": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -853,11 +1069,19 @@
           "campaign": "tier2",
           "prospect_id": "P046",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:58.150034+00:00",
+          "message_id": "01a0bb10-8711-710a-84fb-23662b5ae734",
+          "campaign": "tier1",
+          "prospect_id": "P046",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:25:06.517415+00:00",
-      "last_contact": "2026-08-19T00:25:06.517415+00:00"
+      "last_contact": "2026-09-19T19:06:58.150034+00:00"
     },
     "lee@polar.agency": {
       "state": "t1_sent",
@@ -892,7 +1116,7 @@
       "last_contact": "2026-08-19T00:30:07.565383+00:00"
     },
     "james@tronviggroup.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -901,14 +1125,22 @@
           "campaign": "tier2",
           "prospect_id": "P052",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:06:59.539374+00:00",
+          "message_id": "01a0bb10-8c79-7261-b7a0-0f202df70d15",
+          "campaign": "tier1",
+          "prospect_id": "P052",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T00:30:09.406715+00:00",
-      "last_contact": "2026-08-19T00:30:09.406715+00:00"
+      "last_contact": "2026-09-19T19:06:59.539374+00:00"
     },
     "chad@bebolddigital.com": {
-      "state": "t1_sent",
+      "state": "t2_sent",
       "sent_history": [
         {
           "touch": "t1",
@@ -917,11 +1149,19 @@
           "campaign": "tier2",
           "prospect_id": "P020",
           "meta": {}
+        },
+        {
+          "touch": "t2",
+          "sent_at": "2026-09-19T19:07:00.895789+00:00",
+          "message_id": "01a0bb10-91d5-7237-9677-f349e229547d",
+          "campaign": "tier1",
+          "prospect_id": "P020",
+          "meta": {}
         }
       ],
       "replies": [],
       "created_at": "2026-08-19T09:50:12.887345+00:00",
-      "last_contact": "2026-08-19T09:50:12.887345+00:00"
+      "last_contact": "2026-09-19T19:07:00.895789+00:00"
     },
     "nikki@pennock.co": {
       "state": "t1_sent",
@@ -5193,7 +5433,37 @@
     "interns@triple8mgmt.com:t1": "2026-09-10T17:10:08.579557+00:00",
     "info@clinkclink.co.uk:t1": "2026-09-10T17:10:11.192417+00:00",
     "hello@nuewaystudios.com:t1": "2026-09-10T17:15:08.602636+00:00",
-    "info@launchxd.com:t1": "2026-09-10T17:15:10.437832+00:00"
+    "info@launchxd.com:t1": "2026-09-10T17:15:10.437832+00:00",
+    "joy@bookkeepingjoy.com:t2": "2026-09-19T19:06:16.713203+00:00",
+    "fjmbookkeeping@gmail.com:t2": "2026-09-19T19:06:18.614822+00:00",
+    "vaibhav@accountfirstglobal.com:t2": "2026-09-19T19:06:19.990469+00:00",
+    "stephanie@empowerbookkeeping.com:t2": "2026-09-19T19:06:21.790657+00:00",
+    "robert@lodestaradvisors.com:t2": "2026-09-19T19:06:23.147951+00:00",
+    "frank@goodyearfinancial.com:t2": "2026-09-19T19:06:24.754125+00:00",
+    "graham.hearfield@edna.studio:t2": "2026-09-19T19:06:26.150399+00:00",
+    "eleanor@oslo.agency:t2": "2026-09-19T19:06:27.489273+00:00",
+    "jason@madebyshape.co.uk:t2": "2026-09-19T19:06:28.827756+00:00",
+    "sam@buckleycreative.co.uk:t2": "2026-09-19T19:06:30.159843+00:00",
+    "ilyass@carbon.studio:t2": "2026-09-19T19:06:31.531263+00:00",
+    "matt@yeahnice.studio:t2": "2026-09-19T19:06:32.885337+00:00",
+    "rosa@weareflow.uk:t2": "2026-09-19T19:06:35.262679+00:00",
+    "josh@geist.studio:t2": "2026-09-19T19:06:37.644015+00:00",
+    "stan@stanbranding.com:t2": "2026-09-19T19:06:39.030034+00:00",
+    "andy@ninesixty.co.uk:t2": "2026-09-19T19:06:40.374993+00:00",
+    "angela@loveandlogic.co.uk:t2": "2026-09-19T19:06:42.393139+00:00",
+    "joe@aperitif.agency:t2": "2026-09-19T19:06:43.779199+00:00",
+    "heather@denningbookkeeping.com:t2": "2026-09-19T19:06:45.131356+00:00",
+    "beilbk@yahoo.com:t2": "2026-09-19T19:06:46.537617+00:00",
+    "scott@parkfinancialllc.com:t2": "2026-09-19T19:06:47.932783+00:00",
+    "goran@artversion.com:t2": "2026-09-19T19:06:49.328785+00:00",
+    "sarah@makeitclear.com:t2": "2026-09-19T19:06:50.685929+00:00",
+    "mo@motacreative.co.uk:t2": "2026-09-19T19:06:52.037114+00:00",
+    "brian@ignytebrands.com:t2": "2026-09-19T19:06:53.426136+00:00",
+    "katie@smakkstudios.com:t2": "2026-09-19T19:06:54.826551+00:00",
+    "markerle@soapmedia.co.uk:t2": "2026-09-19T19:06:56.746741+00:00",
+    "kim@squibble.design:t2": "2026-09-19T19:06:58.150034+00:00",
+    "james@tronviggroup.com:t2": "2026-09-19T19:06:59.539374+00:00",
+    "chad@bebolddigital.com:t2": "2026-09-19T19:07:00.895789+00:00"
   },
   "notes": []
 }
