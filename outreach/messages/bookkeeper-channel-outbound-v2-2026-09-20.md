@@ -65,9 +65,12 @@ checked 2026-09-20.
 | …b5e07d | Ward Law, LLC | **drop** | A Philadelphia litigation firm, not an AR advisor. Wrong channel. |
 | …b5e07e | Joe Mastriano, P.C. | **drop** | IRS tax controversy — liens, levies, offers in compromise. Wrong job. |
 
-Ward Law is not worthless, it is misfiled: a 26-person law firm bills clients and
-has its own AR problem. That is a *customer* pitch on `prospects.csv`, not a
-partner pitch here. Moved rather than deleted.
+Ward Law is misfiled rather than worthless: a 26-person law firm bills clients
+and has its own AR problem, so it is a *customer* pitch, not a partner pitch. It
+is marked `out_of_channel` here and has **not** been added to `prospects.csv` —
+the fit is unverified (law firms usually run practice-management software rather
+than Xero) and I am not padding a list that has returned zero from 292. If it
+goes anywhere it needs the same site-read qualification as the three above.
 
 ---
 
