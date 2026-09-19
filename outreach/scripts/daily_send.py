@@ -19,6 +19,7 @@ Required secrets:
     FROM_EMAIL is read from .env.local as RESEND_FROM_EMAIL
 """
 import argparse
+import base64
 import csv
 import re
 import json
@@ -352,6 +353,143 @@ def _check_gate(gate_path: str = None) -> int:
     return 2
 
 
+FOLLOWUP_QUEUE = os.path.join(DATA_DIR, "follow-up-queue.csv") if "DATA_DIR" in dir() else os.path.join(os.path.dirname(PROSPECTS_CSV), "follow-up-queue.csv")
+
+
+def unsubscribe_token(email: str) -> str:
+    """base64url(email) — the format /api/unsubscribe decodes."""
+    return base64.urlsafe_b64encode(email.strip().lower().encode()).decode().rstrip("=")
+
+
+def _prior_subject_for(email: str, log: List[Dict[str, str]]) -> str:
+    """The subject line this address was actually sent, or "" if unknown."""
+    variant = ""
+    for row in log:
+        if (row.get("email") or "").strip().lower() != email:
+            continue
+        if (row.get("touch") or "") != "t1":
+            continue
+        details = row.get("signal_details") or ""
+        for token in details.split(";"):
+            token = token.strip()
+            if token.startswith("subj:"):
+                variant = token.split(":", 1)[1].strip()
+    if not variant:
+        return ""
+    for vid, text in experiment.SUBJECT_VARIANTS:
+        if vid == variant:
+            return text
+    return ""
+
+
+def pick_followups(limit: int, log: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    """Prospects due a t2, from the follow-up queue built by build_followup_queue.py.
+
+    The queue carries only an email address, so each row is joined back to
+    prospects.csv for the name and company the template needs. A queued address
+    with no prospect record is skipped rather than sent an email addressed to
+    nobody.
+
+    Every guard that applies to a t1 applies here. That is the whole reason this
+    lives in daily_send.py rather than in send_touch.py, send_touch_v2.py or
+    send_t1_t2.py: none of those three checks the deliverability gate, reads the
+    queue, or consults the suppression list, and send_t1_t2.py routes through
+    the Gmail fallback that is explicitly out of scope. Sending 104 follow-ups
+    through any of them would bypass every safeguard added after the 2026-08-01
+    incident.
+    """
+    if not os.path.exists(FOLLOWUP_QUEUE):
+        return []
+    with open(FOLLOWUP_QUEUE, newline="") as f:
+        queued = [r for r in csv.DictReader(f) if (r.get("email") or "").strip()]
+    if not queued:
+        return []
+    # A queue row still marked paused is not eligible, whatever the cap says.
+    queued = [r for r in queued if not (r.get("paused_reason") or "").strip()]
+
+    with open(PROSPECTS_CSV, newline="") as f:
+        by_email = {
+            (r.get("email") or "").strip().lower(): r
+            for r in csv.DictReader(f)
+            if (r.get("email") or "").strip()
+        }
+
+    suppressed = pu.load_suppressed_emails()
+    already = {(r.get("email") or "").strip().lower() for r in log if (r.get("touch") or "") == "t2"}
+
+    out: List[Dict[str, str]] = []
+    for row in queued:
+        email = row["email"].strip().lower()
+        if email in suppressed:
+            continue
+        if is_role_address(email):
+            # Same rule as t1. A follow-up to accounts@ bounces exactly as hard
+            # as a first touch to accounts@ did.
+            continue
+        if email in already:
+            continue
+        p = by_email.get(email)
+        if not p:
+            continue
+        ok, _reason = state_can_send(email, "t2")
+        if not ok:
+            continue
+        # Thread on the subject this person actually received.
+        #
+        # t2-followup.md hardcodes "Re: Who chases invoices?", which is not one
+        # of the four subjects ever sent (they are in experiment.py:
+        # SUBJECT_VARIANTS). A "Re:" on a thread that never existed is a spam
+        # tactic, it breaks threading in the recipient's client, and on a site
+        # whose homepage promises no invented anything it is the wrong thing to
+        # put in a stranger's inbox. The log records which variant each address
+        # got as `subj:X`, so the real one is recoverable.
+        p = dict(p)
+        p["_prior_subject"] = _prior_subject_for(email, log)
+        out.append(p)
+        if len(out) >= limit:
+            break
+    return out
+
+
+def render_followup(template: str, prospect: Dict[str, str]) -> Dict[str, str]:
+    """Render the t2 file, whose header is `Subject: ...` rather than `## Subject`.
+
+    Also fills {{unsubscribe_token}}, which render_template() does not know
+    about — and which is not decoration: an unsubscribe link is what makes these
+    lawful under CAN-SPAM and PECR.
+    """
+    lines = template.splitlines()
+    subject = ""
+    body_start = 0
+    prior = (prospect.get("_prior_subject") or "").strip()
+    for i, line in enumerate(lines):
+        if line.strip().lower().startswith("subject:"):
+            subject = line.split(":", 1)[1].strip()
+            body_start = i + 1
+            break
+    body = "\n".join(lines[body_start:]).strip()
+    first = (prospect.get("first_name") or "there").strip()
+    repl = {
+        "{{first_name}}": first,
+        "{{last_name}}": (prospect.get("last_name") or "").strip(),
+        "{{company}}": (prospect.get("company") or "your team").strip(),
+        "{{unsubscribe_token}}": unsubscribe_token(prospect.get("email", "")),
+    }
+    for k, v in repl.items():
+        subject = subject.replace(k, v)
+        body = body.replace(k, v)
+    if prior:
+        # Real thread, real Re:.
+        subject = prior if prior.lower().startswith("re:") else f"Re: {prior}"
+        for k, v in repl.items():
+            subject = subject.replace(k, v)
+    elif subject.lower().startswith("re:"):
+        # No record of what they were sent, so drop the Re: rather than invent
+        # a thread. A follow-up that admits it is a new message is still honest.
+        subject = subject[3:].strip()
+    return {"subject": subject, "body": body}
+
+
 def cmd_send(args):
     env = load_env()
     log = load_log()
@@ -364,10 +502,16 @@ def cmd_send(args):
     if gate_exit != 0:
         return gate_exit
 
-    prospects = pick_prospects(args.tier, args.limit, log)
-    if not prospects:
-        print(f"No eligible prospects for tier {args.tier}.")
-        return 1
+    if args.touch == "t2":
+        prospects = pick_followups(args.limit, log)
+        if not prospects:
+            print("No eligible follow-ups in the queue.")
+            return 1
+    else:
+        prospects = pick_prospects(args.tier, args.limit, log)
+        if not prospects:
+            print(f"No eligible prospects for tier {args.tier}.")
+            return 1
 
     if args.dry_run:
         print(f"DRY RUN — would send {len(prospects)} emails using {args.template}:")
@@ -396,8 +540,16 @@ def cmd_send(args):
         exp_index += 1
         hook_id = experiment.pick_hook(hook_index, hook_weights)
         hook_index += 1
-        rendered = render_template(template, p, hook_override=experiment.hook_text(hook_id, p))
-        rendered["subject"] = experiment.subject_text(variant_id, p)
+        if args.touch == "t2":
+            # No subject/hook experiment on a follow-up: the four-way t1
+            # subject test already ran at ~73 sends per variant and returned
+            # one reply in total, so splitting 104 four ways would measure
+            # nothing.
+            rendered = render_followup(template, p)
+            variant_id = hook_id = "-"
+        else:
+            rendered = render_template(template, p, hook_override=experiment.hook_text(hook_id, p))
+            rendered["subject"] = experiment.subject_text(variant_id, p)
         result = send_one(env, p["email"], rendered["subject"], rendered["body"])
         results.append({"id": p["id"], "email": p["email"], "ok": result.get("ok"), "result": result})
 
@@ -405,7 +557,7 @@ def cmd_send(args):
         row = {
             "id": p["id"],
             "email": p["email"],
-            "touch": "t1",
+            "touch": args.touch,
             "timestamp": sent_at,
             "replied": "",
             "signal": "sent" if result.get("ok") else "send_failed",
@@ -420,7 +572,7 @@ def cmd_send(args):
 
         if result.get("ok"):
             state_record_send(
-                p["email"], "t1",
+                p["email"], args.touch,
                 message_id=row["message_id"],
                 campaign=f"tier{args.tier}",
                 prospect_id=p["id"],
@@ -442,6 +594,8 @@ def cmd_send(args):
 def main():
     p = argparse.ArgumentParser(description="Daily send pipeline")
     p.add_argument("--tier", type=int, required=True, choices=[1, 2, 3])
+    p.add_argument("--touch", default="t1", choices=["t1", "t2"],
+                   help="t1 reads prospects.csv; t2 reads the follow-up queue")
     p.add_argument("--limit", type=int, default=5)
     p.add_argument("--template", default="t1-cold-v3-industry-variants.md")
     p.add_argument("--dry-run", action="store_true", help="Show what would be sent, do not actually send")
