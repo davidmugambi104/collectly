@@ -180,3 +180,4 @@ info@wangmicpa.com,bounce,,2026-09-11T14:52:43+03:00,"hard bounce in Resend 7d w
 support@lgtax.com,bounce,,2026-09-11T14:52:43+03:00,"hard bounce in Resend 7d window as of 2026-09-11; was NOT suppressed, would have been re-sent"
 joe@aperitif.agency,bounce_auto,01a0bb10-4f00-77dd-8fd6-3fbd605b97a4,2026-09-19T19:21:37.548754+00:00,auto-suppressed from Resend last_event=bounced
 frank@goodyearfinancial.com,bounce_auto,01a0bb10-04a4-760e-9644-95b19163a412,2026-09-19T19:21:37.548754+00:00,auto-suppressed from Resend last_event=bounced
+josh@goldfront.com,opted_out,P050,2026-09-19T21:35:41+00:00,"Replied 2026-08-03 ""Thanks, but I am not interested."" Was emailed 3 more times after that; never suppressed."
