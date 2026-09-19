@@ -187,6 +187,12 @@ async function seedIfEmpty(client: PGlite) {
     const pIssue = new Date(pi.paidAt.getTime() - 21 * 86400000).toISOString();
     const pDue = new Date(pi.paidAt.getTime() + 9 * 86400000).toISOString();
     const pid = nanoid();
+    // Register paid invoices in invMap too. Only the unpaid loop did, so a
+    // dunning run could never reference an invoice that was later paid — which
+    // made "Recovered via dunning" structurally zero, because that figure sums
+    // PAID invoices carrying a dunning run. The page read $0.00 and 0% recovery
+    // rate no matter what the seed contained.
+    invMap.set(pi.number, pid);
     await client.exec(`INSERT INTO invoices (id, org_id, customer_id, number, status, amount, amount_paid, currency, issue_date, due_date, paid_at, description, created_at, updated_at) VALUES ('${pid}', '${orgId}', '${pcid}', '${pi.number}', 'paid', ${pi.amount}, ${pi.amount}, 'USD', '${pIssue}', '${pDue}', '${paidIso}', 'Design services', '${now}', '${now}')`);
     await client.exec(`INSERT INTO payments (id, org_id, invoice_id, customer_id, amount, currency, method, paid_at, created_at) VALUES ('${nanoid()}', '${orgId}', '${pid}', '${pcid}', ${pi.amount}, 'USD', '${pi.method}', '${paidIso}', '${now}')`);
   }
@@ -272,6 +278,14 @@ async function seedIfEmpty(client: PGlite) {
     { inv: 'INV-2380', step: 's3', ch: 'email', st: 'failed', d: 8 },
     { inv: 'INV-2370', step: 's4', ch: 'sms', st: 'sent', d: 5 },
     { inv: 'INV-2402', step: 's1', ch: 'email', st: 'delivered', d: 1 },
+    // Two chases that WORKED: reminded, then paid. Without these the dunning
+    // page can only ever show failure — every run pointed at an invoice still
+    // outstanding, so "Recovered via dunning" read $0.00 and the recovery rate
+    // 0%, which demos a product that does not work. Dated before their
+    // payments (INV-2396 paid on the 3rd, INV-2400 on the 15th).
+    { inv: 'INV-2396', step: 's1', ch: 'email', st: 'delivered', d: 22 },
+    { inv: 'INV-2396', step: 's2', ch: 'email', st: 'delivered', d: 18 },
+    { inv: 'INV-2400', step: 's1', ch: 'email', st: 'delivered', d: 8 },
   ]) {
     const iid = invMap.get(r.inv);
     if (!iid) continue;

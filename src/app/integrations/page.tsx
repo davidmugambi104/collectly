@@ -162,11 +162,21 @@ const categories = [
       {
         name: 'Upstash Redis',
         slug: 'upstash',
-        status: 'live',
+        // Declared 'live' here while no UPSTASH_REDIS_REST_URL or _TOKEN
+        // exists in production — getRedis() returns null, so rate limiting
+        // silently falls back to a per-instance memory map that does not hold
+        // across serverless invocations. The page was claiming a working
+        // limiter, which is the same shape of problem as the Clerk webhook
+        // reading one env name while production set another: the page said one
+        // thing and the environment said another.
+        //
+        // Flip this back to 'live' the moment the credentials are provisioned;
+        // the code path is written and needs no change.
+        status: 'disabled',
         bullets: [
-          'Distributed rate limiting for public forms and API routes',
-          'Low-latency caching for forecasts and session state',
-          'Serverless-friendly REST client with automatic failover',
+          'Not provisioned yet — no credentials in the production environment',
+          'Rate limiting currently falls back to per-instance memory, which does not hold across serverless invocations',
+          'Code path is ready: distributed limiting for public forms and API routes turns on with the credentials',
         ],
       },
       {
