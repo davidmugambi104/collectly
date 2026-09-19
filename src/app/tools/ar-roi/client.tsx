@@ -4,6 +4,7 @@ import { PLAN_PRICING } from '@/lib/utils';
 import { Calculator, ArrowRight, TrendingUp, Clock, DollarSign, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
+import { ToolLeadCapture } from '@/components/marketing/tool-lead-capture';
 
 const CURRENCIES = [
   { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -194,6 +195,16 @@ export function RoiCalculator() {
             Try Collectly free for 14 days <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <p className="mt-3 text-xs text-ink-500 text-center">No credit card. 10-minute setup. Cancel anytime.</p>
+          {/* The highest-intent moment this site produces: someone has just been
+              shown a number about their own book. Asking for a trial here asks
+              them to decide; asking to send them the number does not, and it
+              captures the lead either way. The summary carries their actual
+              inputs so a reply can open on their figures. */}
+          <ToolLeadCapture
+            className="mt-5"
+            source="ar-roi-calculator"
+            summary={`freed-up cash ${formatCurrency(result.freedUpAr, currency)}, annual benefit ${formatCurrency(result.total, currency)}, DSO ${dso}d against a ${targetDso}d target`}
+          />
         </div>
       </div>
     </div>

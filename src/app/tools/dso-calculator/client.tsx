@@ -2,6 +2,7 @@
 import { useMemo, useState } from 'react';
 import { Calculator } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { ToolLeadCapture } from '@/components/marketing/tool-lead-capture';
 
 const PERIODS = [
   { label: 'Annual (365 days)', days: 365 },
@@ -59,6 +60,18 @@ export function DsoCalculator({ benchmarks }: { benchmarks: Array<{ region: stri
           </div>
         )}
       </div>
+      {/* Capture sits outside the dark result card on purpose: a white form
+          inside a brand-gradient panel reads as an ad. Same reasoning as the
+          ROI calculator — the moment someone sees their own DSO against a
+          benchmark is when the number is worth having in writing. */}
+      {revenue > 0 && (
+        <ToolLeadCapture
+          className="mt-4"
+          source="dso-calculator"
+          label="Email me this DSO breakdown"
+          summary={`DSO ${dso.toFixed(1)} days on ${formatCurrency(ar)} A/R against ${formatCurrency(revenue)} revenue over ${periodDays} days${nearest ? `, benchmark ${nearest.region} ${nearest.dso}d` : ''}`}
+        />
+      )}
     </div>
   );
 }
