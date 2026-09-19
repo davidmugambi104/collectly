@@ -42,6 +42,10 @@ const FIXED: Array<{
   { path: '/for/uk-agencies', priority: 0.9, changefreq: 'monthly' },
   // High-intent tools
   { path: '/ar-audit', priority: 0.8, changefreq: 'monthly' },
+  // Public since the middleware fix that stopped Clerk intercepting it.
+  // It is a lead-capture page with its own copy, so leaving it out of the
+  // sitemap hid a page built to be found.
+  { path: '/qualify', priority: 0.7, changefreq: 'monthly' },
   { path: '/tour', priority: 0.8, changefreq: 'monthly' },
   // Free tools — capture 'free template' / 'free calculator' long-tail.
   // /ar-roi was listed here instead of /tools/ar-roi — the real page,

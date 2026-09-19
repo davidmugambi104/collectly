@@ -74,24 +74,54 @@ export async function POST() {
   }
 
   // One paid invoice + payment (so DSO history exists)
-  const paidCust = custIds['Brightline Legal'];
-  const paidIssue = new Date(now.getTime() - 25 * 86400000);
-  const paidDue = new Date(paidIssue.getTime() + 30 * 86400000);
-  const paidPaidAt = new Date(now.getTime() - 18 * 86400000);
-  const paidId = nanoid();
-  await db.insert(schema.invoices).values({
-    id: paidId, orgId, customerId: paidCust, number: 'INV-2395', status: 'paid',
-    amount: '18000.00', amountPaid: '18000.00', currency: 'USD', issueDate: paidIssue, dueDate: paidDue, paidAt: paidPaidAt,
-    description: 'Brand sprint', createdAt: now, updatedAt: now,
-  });
-  await db.insert(schema.payments).values({
-    id: nanoid(), orgId, invoiceId: paidId, customerId: paidCust, amount: '18000.00', currency: 'USD',
-    method: 'ach', paidAt: paidPaidAt, createdAt: now,
-  });
-  await db.insert(schema.payments).values({
-    id: nanoid(), orgId, invoiceId: paidId, customerId: paidCust, amount: '4500.00', currency: 'USD',
-    method: 'card', paidAt: new Date(now.getTime() - 4 * 86400000), createdAt: now,
-  });
+    // Payment history, anchored to the CALENDAR rather than to a day offset.
+    //
+    // This used to be one invoice paid `now - 18 days`. For most of any month
+    // that lands in the PREVIOUS month, so a brand-new signup who clicked
+    // "Load sample data" saw "Collected MTD $0.00" and a red "-100% vs last
+    // month" on the first screen of the product — a demo reporting that the
+    // product does not work, shown to someone deciding whether it does.
+    // Whether it looked broken depended on the day they signed up.
+    //
+    // The same bug was fixed in bootstrap-db.ts for the dev seed. This is the
+    // path REAL signups take, so it mattered more here and was missed.
+    //
+    // Three payments this month and three last gives a meaningful
+    // month-to-date figure, a real month-over-month delta, and enough paid
+    // invoices to clear the 5-invoice threshold the forecaster needs.
+    const dayIn = (monthOffset: number, day: number) =>
+      new Date(now.getFullYear(), now.getMonth() + monthOffset, day, 10, 0, 0);
+    const thisMonth = (day: number) => dayIn(0, Math.min(day, now.getDate()));
+
+    const paidSet = [
+      { cust: 'Brightline Legal', number: 'INV-2395', amount: '18000.00', paidAt: dayIn(-1, 12), method: 'ach' },
+      { cust: 'Westgate Advisory', number: 'INV-2388', amount: '11200.00', paidAt: dayIn(-1, 19), method: 'card' },
+      { cust: 'Riverstone Co.', number: 'INV-2391', amount: '7400.00', paidAt: dayIn(-1, 26), method: 'ach' },
+      { cust: 'Harbor Painting Co', number: 'INV-2396', amount: '14600.00', paidAt: thisMonth(3), method: 'ach' },
+      { cust: 'Northstar Marketing', number: 'INV-2398', amount: '9250.00', paidAt: thisMonth(9), method: 'card' },
+      { cust: 'Brightline Legal', number: 'INV-2400', amount: '16800.00', paidAt: thisMonth(15), method: 'ach' },
+    ];
+    for (const pi of paidSet) {
+      const pcid = custIds[pi.cust];
+      // Throw rather than skip: a mistyped name silently removes money from the
+      // month-to-date total, and the only symptom is a figure that looks low.
+      if (!pcid) throw new Error(`seed-sample: unknown customer ${pi.cust} for ${pi.number}`);
+      const pIssue = new Date(pi.paidAt.getTime() - 21 * 86400000);
+      const pDue = new Date(pi.paidAt.getTime() + 9 * 86400000);
+      const pid = nanoid();
+      invIds[pi.number] = pid;
+      await db.insert(schema.invoices).values({
+        id: pid, orgId, customerId: pcid, number: pi.number, status: 'paid',
+        amount: pi.amount, amountPaid: pi.amount, currency: 'USD',
+        issueDate: pIssue, dueDate: pDue, paidAt: pi.paidAt,
+        description: 'Design services', createdAt: now, updatedAt: now,
+      });
+      await db.insert(schema.payments).values({
+        id: nanoid(), orgId, invoiceId: pid, customerId: pcid, amount: pi.amount, currency: 'USD',
+        method: pi.method, paidAt: pi.paidAt, createdAt: now,
+      });
+    }
+
   // Mark a connection as connected so "Quick actions" doesn't nag
   await db.insert(schema.integrations).values({
     id: nanoid(), orgId, provider: 'quickbooks', status: 'connected', realmId: 'demo-realm-1',
