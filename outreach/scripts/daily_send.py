@@ -108,13 +108,18 @@ def pick_prospects(tier: int, limit: int, log: List[Dict[str, str]]) -> List[Dic
     with open(PROSPECTS_CSV, newline="") as f:
         all_rows = list(csv.DictReader(f))
 
-    sent_ids = {r.get("id") for r in log}
+    # Identity is the email address, not the id column. 12 rows in
+    # prospects.csv have a blank id and 4 ids are duplicated, and the old
+    # id-keyed cooldown skipped blank ids entirely ("if rid and ...") -- so
+    # those 12 had no cooldown at all. Two of them were sent a t2 on
+    # 2026-09-19 and were next in line for a fresh t1 cold opener the
+    # following day: two emails in two days, in the wrong order.
     last_sent: Dict[str, str] = {}
     for r in log:
-        rid = r.get("id")
-        if rid and r.get("timestamp"):
-            if rid not in last_sent or r["timestamp"] > last_sent[rid]:
-                last_sent[rid] = r["timestamp"]
+        key = (r.get("email") or "").strip().lower()
+        if key and r.get("timestamp"):
+            if key not in last_sent or r["timestamp"] > last_sent[key]:
+                last_sent[key] = r["timestamp"]
 
     cutoff = (datetime.now(timezone.utc) - timedelta(days=14)).isoformat().replace("+00:00", "Z")  # 14 days ago, dynamic
     suppressed = pu.load_suppressed_emails()
@@ -138,9 +143,10 @@ def pick_prospects(tier: int, limit: int, log: List[Dict[str, str]]) -> List[Dic
             # window they bounce at 39.1% (68/174) against 1.8% (4/221) for
             # personal addresses. 68 of the 72 bounces are role mailboxes.
             continue
-        rid = r.get("id")
-        # Cooldown: don't re-t1 within 14 days
-        if rid in last_sent and last_sent[rid] > cutoff:
+        # Cooldown: don't re-t1 within 14 days of ANY prior touch to this
+        # address, t1 or t2.
+        key = r["email"].strip().lower()
+        if key in last_sent and last_sent[key] > cutoff:
             continue
         # Cross-channel dedup: outreach_state.py is shared with send_with_guard.py
         # (bookkeeper channel). A prospect present in both prospects.csv and
