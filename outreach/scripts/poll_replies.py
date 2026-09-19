@@ -54,10 +54,27 @@ DATA = os.path.join(os.path.dirname(HERE), "data")
 LOG_PATH = os.environ.get("OUTREACH_LOG_PATH", os.path.join(DATA, "outreach-log.csv"))
 SUPPRESSION_PATH = os.path.join(DATA, "suppression.csv")
 
-IMAP_HOST = os.environ.get("IMAP_HOST", "imap.zoho.com")
-IMAP_USER = os.environ.get("IMAP_USER", "davie@getcollectly.app")
-IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "")
-MAILBOXES = [m.strip() for m in os.environ.get("IMAP_MAILBOXES", "INBOX,Spam").split(",") if m.strip()]
+def _env(*names: str, default: str = "") -> str:
+    """First of `names` that is set.
+
+    The Vercel crons (/api/cron/outreach-poll) run the TypeScript pollers,
+    which read ZOHO_IMAP_* — and those are already configured in production.
+    Introducing IMAP_PASSWORD as a separate name would mean two variables
+    holding the same Zoho app password, drifting the first time one is
+    rotated. This script reads the names that already exist and keeps IMAP_*
+    only as a local override.
+    """
+    for name in names:
+        value = os.environ.get(name)
+        if value:
+            return value
+    return default
+
+
+IMAP_HOST = _env("IMAP_HOST", "ZOHO_IMAP_HOST", default="imap.zoho.com")
+IMAP_USER = _env("IMAP_USER", "ZOHO_IMAP_USER", default="davie@getcollectly.app")
+IMAP_PASSWORD = _env("IMAP_PASSWORD", "ZOHO_IMAP_APP_PASSWORD", "AR_DUNNING_IMAP_APP_PASSWORD")
+MAILBOXES = [m.strip() for m in _env("IMAP_MAILBOXES", default="INBOX,Spam").split(",") if m.strip()]
 
 # Ordered: the first pattern that matches wins, so a refusal beats a pleasantry
 # in the same message ("Thanks, but I am not interested" is not a thank-you).
@@ -149,7 +166,7 @@ def main() -> int:
     args = ap.parse_args()
 
     if not IMAP_PASSWORD:
-        print("ERROR: set IMAP_PASSWORD (a Zoho application-specific password).", file=sys.stderr)
+        print("ERROR: set ZOHO_IMAP_APP_PASSWORD (or IMAP_PASSWORD) to a Zoho app password.", file=sys.stderr)
         return 2
 
     rows, fieldnames = load_log()
