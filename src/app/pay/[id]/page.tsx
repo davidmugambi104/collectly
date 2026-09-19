@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { invoices, customers, organizations } from '@/db/schema';
+import { invoices, customers, organizations, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
 import { PaymentForm } from '@/components/payment/payment-form';
@@ -15,10 +15,18 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
   const { paid, cancelled, session_id } = await searchParams;
 
   const [row] = await db
-    .select({ invoice: invoices, customer: customers, org: organizations })
+    .select({
+      invoice: invoices,
+      customer: customers,
+      org: organizations,
+      // The business's own owner. A payer arranging a wire needs to reach the
+      // business they owe money to — see the note on payerContactEmail below.
+      ownerEmail: users.email,
+    })
     .from(invoices)
     .innerJoin(customers, eq(customers.id, invoices.customerId))
     .innerJoin(organizations, eq(organizations.id, invoices.orgId))
+    .leftJoin(users, eq(users.id, organizations.ownerId))
     .where(eq(invoices.id, id))
     .limit(1);
 
@@ -31,6 +39,20 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
   // platform account, so the option shouldn't be shown as if it works
   // when it can't yet.
   const cardAchAvailable = !!(await getConnectedStripeAccountId(org.id));
+  // Who a payer should contact to arrange a wire.
+  //
+  // This used to be `${orgSlug}@getcollectly.app`, a synthetic address on
+  // Collectly's own domain built from the business's slug. Two things wrong
+  // with it: no such mailbox is provisioned, so the mail goes nowhere; and
+  // even if a catch-all existed it would route a payment enquiry to Collectly
+  // rather than to the business the money is owed to.
+  //
+  // That matters more than it looks right now. Card and ACH require the
+  // business to have connected its own Stripe account, which cannot happen
+  // while STRIPE_CONNECT_CLIENT_ID is unset, and Paystack is disabled
+  // platform-wide. Wire is therefore the ONLY option on every payment link in
+  // every dunning email — and it was pointing at a dead address.
+  const payerContactEmail = row.ownerEmail ?? null;
   const balance = Number(invoice.amount) - Number(invoice.amountPaid);
   const days = daysOverdue(invoice.dueDate);
   const isOverdue = days > 0;
@@ -74,7 +96,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                 <p className="mt-2 text-sm text-ink-600">Thank you. We received your payment for invoice <b>#{invoice.number}</b>.</p>
                 <p className="mt-1 text-sm text-ink-600">A receipt has been emailed to <span className="font-mono">{customer.email ?? 'your address'}</span>.</p>
                 {session_id && <p className="mt-1 text-xs text-ink-500 font-mono">Stripe session: {session_id.substring(0, 18)}…</p>}
-                <p className="mt-4 text-xs text-ink-500">If you have any questions, reply to the receipt email or contact <a className="link" href={`mailto:${org.slug}@getcollectly.app`}>{org.slug}@getcollectly.app</a>.</p>
+                <p className="mt-4 text-xs text-ink-500">If you have any questions, reply to the receipt email{payerContactEmail ? <> or contact <a className="link" href={`mailto:${payerContactEmail}`}>{payerContactEmail}</a></> : <> from {org.name}</>}.</p>
               </div>
             ) : paidButUnconfirmed ? (
               <div className="text-center py-6">
@@ -87,14 +109,14 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                   few seconds. {balance > 0 ? `Remaining balance shown is $${balance.toFixed(2)} until it clears.` : ''}
                 </p>
                 <p className="mt-1 text-sm text-ink-600">Refresh this page in a moment, or check back — a receipt will be emailed once it&apos;s confirmed.</p>
-                <p className="mt-4 text-xs text-ink-500">If this doesn&apos;t update within a few minutes, contact <a className="link" href={`mailto:${org.slug}@getcollectly.app`}>{org.slug}@getcollectly.app</a> and we&apos;ll sort it out.</p>
+                <p className="mt-4 text-xs text-ink-500">If this doesn&apos;t update within a few minutes, {payerContactEmail ? <>contact <a className="link" href={`mailto:${payerContactEmail}`}>{payerContactEmail}</a></> : <>reply to the email this link came from</>} and it will get sorted out.</p>
               </div>
             ) : cancelled ? (
               <div>
                 <h1 className="h3">Payment cancelled</h1>
                 <p className="mt-2 text-sm text-ink-600">No charge was made. You can try again below or contact {org.name} with any questions.</p>
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} orgName={org.name} payerContactEmail={payerContactEmail} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
                 </div>
               </div>
             ) : (
@@ -108,7 +130,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                   </div>
                 )}
                 <div className="mt-6">
-                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
+                  <PaymentForm amount={balance} currency={invoice.currency} invoiceNumber={invoice.number} invoiceId={invoice.id} orgSlug={org.slug} orgName={org.name} payerContactEmail={payerContactEmail} customerEmail={customer.email} cardAchAvailable={cardAchAvailable} />
                 </div>
               </>
             )}
@@ -131,7 +153,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
 
           <div className="card">
             <h2 className="font-semibold text-ink-900">Questions?</h2>
-            <p className="mt-1 text-sm text-ink-600">Reply to the email this link came from, or contact <a href={`mailto:${org.slug}@getcollectly.app`} className="link">{org.slug}@getcollectly.app</a>.</p>
+            <p className="mt-1 text-sm text-ink-600">Reply to the email this link came from{payerContactEmail ? <>, or contact <a href={`mailto:${payerContactEmail}`} className="link">{payerContactEmail}</a></> : <></>}.</p>
           </div>
 
           <div className="card bg-ink-50/50">

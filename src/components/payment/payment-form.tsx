@@ -19,7 +19,7 @@ const PAYSTACK_CURRENCIES = ['NGN', 'GHS', 'ZAR', 'KES'];
 // the analogous Stripe situation.
 const PAYSTACK_ENABLED = false;
 
-export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug, customerEmail, cardAchAvailable }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string; customerEmail?: string | null; cardAchAvailable: boolean }) {
+export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlug, orgName, payerContactEmail, customerEmail, cardAchAvailable }: { amount: number; currency: string; invoiceNumber: string; invoiceId: string; orgSlug: string; orgName?: string; payerContactEmail?: string | null; customerEmail?: string | null; cardAchAvailable: boolean }) {
   const paystackEligible = PAYSTACK_ENABLED && PAYSTACK_CURRENCIES.includes((currency ?? '').toUpperCase());
   const allMethods = paystackEligible ? (['card', 'ach', 'paystack', 'wire'] as const) : (['card', 'ach', 'wire'] as const);
   // Card/ACH charge through the business's own connected Stripe account —
@@ -34,8 +34,31 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
   async function pay(e: React.FormEvent) {
     e.preventDefault();
     if (method === 'wire') {
-      // Wire transfers can't be initiated online — surface instructions
-      window.location.href = `mailto:${orgSlug}@getcollectly.app?subject=Wire transfer for invoice ${invoiceNumber}`;
+      // Wire transfers can't be initiated online, so the best this can do is
+      // put the payer in touch with the business.
+      //
+      // This used to mail `${orgSlug}@getcollectly.app` — a synthetic address
+      // on Collectly's domain. No such mailbox is provisioned, so it went
+      // nowhere, and a catch-all would have been worse: it routes a payment
+      // enquiry to Collectly rather than to the business owed the money.
+      //
+      // It matters because wire is currently the ONLY method offered. Card and
+      // ACH need the business to have connected its own Stripe account, which
+      // cannot happen while STRIPE_CONNECT_CLIENT_ID is unset, and Paystack is
+      // off platform-wide. Every payment link in every dunning email lands
+      // here.
+      if (!payerContactEmail) {
+        setError(
+          `${orgName ?? 'This business'} has not published bank details yet. Reply to their invoice email to arrange payment.`,
+        );
+        setLoading(false);
+        return;
+      }
+      const subject = encodeURIComponent(`Wire transfer for invoice ${invoiceNumber}`);
+      const body = encodeURIComponent(
+        `Hi,\n\nI'd like to pay invoice ${invoiceNumber} by bank transfer. Could you send your account details?\n\nThanks`,
+      );
+      window.location.href = `mailto:${payerContactEmail}?subject=${subject}&body=${body}`;
       return;
     }
     if (method === 'paystack') {
@@ -108,7 +131,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
             <div className="font-semibold">Payment setup failed</div>
             <div className="mt-1">{error}</div>
             <div className="mt-2 text-xs text-red-600">
-              If this persists, contact <a href={`mailto:${orgSlug}@getcollectly.app`} className="underline">{orgSlug}@getcollectly.app</a>.
+              If this persists, {payerContactEmail ? <>contact <a href={`mailto:${payerContactEmail}`} className="underline">{payerContactEmail}</a></> : <>reply to the email this link came from</>}.
             </div>
           </div>
         </div>
