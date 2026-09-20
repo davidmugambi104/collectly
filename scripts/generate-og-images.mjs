@@ -16,8 +16,33 @@
  * Needs Inter installed for fontconfig; falls back to any sans otherwise.
  */
 import sharp from 'sharp';
-import { writeFile } from 'node:fs/promises';
+import { writeFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
+
+/**
+ * Prices are READ from src/lib/utils.ts, never written here.
+ *
+ * The cards these replace were baked in August and still advertised "$49/mo"
+ * and "the founding 20 customers" long after the repricing to $149 list / $89
+ * founding / 10 seats. Every social share was quoting a price that had not
+ * existed for weeks, and regenerating them verbatim carried that forward.
+ *
+ * Parsing the constants means the cards cannot silently drift again: if the
+ * shape changes, this throws instead of emitting a stale number.
+ */
+async function prices() {
+  const src = await readFile(new URL('../src/lib/utils.ts', import.meta.url), 'utf8');
+  const list = Number(src.match(/starter:\s*\{[^}]*?monthly:\s*(\d+)/s)?.[1]);
+  const discountPct = Number(src.match(/discountPct:\s*(\d+)/)?.[1]);
+  const seats = Number(src.match(/seats:\s*(\d+)/)?.[1]);
+  if (!list || !discountPct || !seats) {
+    throw new Error('Could not read PLAN_PRICING/FOUNDING from src/lib/utils.ts — refusing to emit a guessed price.');
+  }
+  return { list, founding: Math.round((list * (100 - discountPct)) / 100), seats };
+}
+
+const P = await prices();
+console.log(`  prices read from source: list $${P.list}/mo, founding $${P.founding}/mo, ${P.seats} seats\n`);
 
 const BRAND = 'Mugavi';
 const MARK = 'M';
@@ -26,9 +51,9 @@ const CORNER = 'Built for Xero and QuickBooks';
 
 const CARDS = [
   { file: 'og.png', head: ['Stop chasing late', 'invoices.'],
-    sub: ['AR automation for 5-30 person agencies on Xero. From $49/mo', 'flat.'] },
+    sub: [`AR automation for 5-30 person agencies on Xero. From $${P.list}/mo`, 'flat.'] },
   { file: 'og-pricing.png', head: ['Honest pricing. No per-', 'invoice fees.'],
-    sub: ['From $49/mo flat for the founding 20 customers. Cancel anytime.'] },
+    sub: [`From $${P.founding}/mo flat for the founding ${P.seats} customers. Cancel anytime.`] },
   { file: 'og-features.png', head: ['Six things. Each gets you', 'paid faster.'],
     sub: ['Tone-aware AI dunning. Reply-or-pay pause. Promise-to-pay', 'tracking.'] },
   { file: 'og-ar-audit.png', head: ['Free A/R health audit.'],
@@ -38,7 +63,7 @@ const CARDS = [
   { file: 'og-for-uk-agencies.png', head: ['AR automation for UK', 'agencies.'],
     sub: ['Built for 5-30 person UK agencies on Xero. BACS, Faster', 'Payments, GDPR.'] },
   { file: 'og-vs-chaser.png', head: [`${BRAND} vs Chaser.`],
-    sub: [`Chaser starts at ~$259/mo. ${BRAND} from $49/mo flat for`, 'founders.'] },
+    sub: [`Chaser starts at ~$259/mo. ${BRAND} from $${P.founding}/mo flat for`, 'founders.'] },
   { file: 'og-vs-bill.png', head: [`${BRAND} vs BILL.`],
     sub: ['BILL bundles AP + AR + spend at $49/user/mo + fees. We are AR-', 'only flat.'] },
   { file: 'og-vs-quickbooks.png', head: [`${BRAND} vs QuickBooks.`],
