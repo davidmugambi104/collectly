@@ -150,7 +150,16 @@ export const metadata: Metadata = {
     //
     // mugavi.com is verified as a DOMAIN property via a DNS TXT record
     // instead, so it needs no meta tag here at all.
-    google: process.env.NEXT_PUBLIC_GSC_TOKEN,
+    // Comma-separated: both domains serve this same app, and each Search
+    // Console property has its own token. Serving both tags keeps
+    // getcollectly.app's meta verification alive while mugavi.com is verified,
+    // rather than one silently replacing the other. getcollectly.app is also
+    // DNS-verified, so it would survive either way -- but a property that
+    // depends on a single method is one edit from unverified.
+    google: (process.env.NEXT_PUBLIC_GSC_TOKEN ?? '')
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean),
     other: process.env.NEXT_PUBLIC_BING_TOKEN
       ? { 'msvalidate.01': process.env.NEXT_PUBLIC_BING_TOKEN }
       : undefined,
