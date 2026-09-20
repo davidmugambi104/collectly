@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { sendLeadNotification } from '@/lib/lead-notify';
+import { parseJsonBody } from '@/lib/parse-body';
 
 const schema = z.object({
   type: z.enum(['waitlist', 'interview', 'dunning_test', 'async_qualify']),
@@ -27,7 +28,9 @@ export async function POST(req: NextRequest) {
     );
   }
   await ensureBootstrapped();
-  const data = schema.parse(await req.json());
+  const _parsed = await parseJsonBody(req, schema);
+  if (!_parsed.ok) return _parsed.response;
+  const data = _parsed.data;
   const result = await sendLeadNotification(data);
   // A notification failure must not fail the submission that triggered it.
   return NextResponse.json({ ok: true, notified: result.ok, ...(result.error ? { error: result.error } : {}) });

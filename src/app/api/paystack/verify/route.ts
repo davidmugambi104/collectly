@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Kept in step with /api/paystack/initialize, which is gated the same way.
+// Verify is the other half of that flow: if a charge can never be initialised,
+// there is nothing legitimate to verify, and leaving this half open meant the
+// disabled feature still had a live, unauthenticated endpoint.
+const PAYSTACK_ENABLED = false;
+
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
 
@@ -14,8 +20,16 @@ interface PaystackVerifyResponse {
 }
 
 export async function GET(req: NextRequest) {
-  if (!PAYSTACK_SECRET) {
-    return NextResponse.json({ error: 'PAYSTACK_SECRET_KEY not configured' }, { status: 500 });
+  if (!PAYSTACK_ENABLED || !PAYSTACK_SECRET) {
+    // 503, not 500. This is a deliberately disabled feature, not a fault: a 500
+    // says the server broke and pollutes error monitoring with a permanent
+    // false alarm. The message no longer names the missing variable either --
+    // this endpoint is public, and which secrets are unset is not something an
+    // anonymous caller needs told.
+    return NextResponse.json(
+      { error: 'Paystack payments are not available.' },
+      { status: 503, headers: { 'cache-control': 'no-store' } },
+    );
   }
 
   const url = new URL(req.url);

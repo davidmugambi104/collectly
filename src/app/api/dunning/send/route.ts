@@ -7,6 +7,7 @@ import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeader
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
+import { parseJsonBody } from '@/lib/parse-body';
 
 const bodySchema = z.object({
   invoiceId: z.string(),
@@ -21,7 +22,9 @@ export async function POST(req: NextRequest) {
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
-  const data = bodySchema.parse(await req.json());
+  const _parsed = await parseJsonBody(req, bodySchema);
+  if (!_parsed.ok) return _parsed.response;
+  const data = _parsed.data;
 
   const [inv] = await db.select().from(invoices).where(eq(invoices.id, data.invoiceId)).limit(1);
   if (!inv || inv.orgId !== orgId) return NextResponse.json({ error: 'not found' }, { status: 404 });

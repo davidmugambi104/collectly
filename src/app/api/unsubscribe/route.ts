@@ -23,6 +23,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { pool } from '@/db';
 import { randomUUID } from 'crypto';
+import { parseJsonBody } from '@/lib/parse-body';
 
 const bodySchema = z.object({ token: z.string().min(1) });
 
@@ -100,7 +101,9 @@ export async function POST(req: NextRequest) {
     token = String(form.get('token') ?? url.searchParams.get('token') ?? '');
     includeDnd = form.get('includeDnd') === '1' || url.searchParams.get('includeDnd') === '1';
   } else if (contentType.includes('application/json')) {
-    const data = bodySchema.parse(await req.json());
+    const _parsed = await parseJsonBody(req, bodySchema);
+    if (!_parsed.ok) return _parsed.response;
+    const data = _parsed.data;
     token = data.token;
   } else {
     // also support ?token=... for simple one-click links (one-click is

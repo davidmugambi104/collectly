@@ -7,6 +7,7 @@ import { generateDunningMessage, fallbackDunningMessage } from '@/lib/ai/dunning
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { daysOverdue } from '@/lib/utils';
+import { parseJsonBody } from '@/lib/parse-body';
 
 const body = z.object({
   invoiceId: z.string().optional(),
@@ -36,7 +37,9 @@ export async function POST(req: NextRequest) {
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
-  const data = body.parse(await req.json());
+  const _parsed = await parseJsonBody(req, body);
+  if (!_parsed.ok) return _parsed.response;
+  const data = _parsed.data;
 
   let row: { invoice: typeof invoices.$inferSelect; customer: typeof customers.$inferSelect; org: typeof organizations.$inferSelect } | undefined;
 

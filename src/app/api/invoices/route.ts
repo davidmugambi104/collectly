@@ -7,6 +7,7 @@ import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { recordEvent } from '@/lib/events';
+import { parseJsonBody } from '@/lib/parse-body';
 
 const schema = z.object({
   customerId: z.string(),
@@ -22,7 +23,9 @@ export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const data = schema.parse(await req.json());
+  const _parsed = await parseJsonBody(req, schema);
+  if (!_parsed.ok) return _parsed.response;
+  const data = _parsed.data;
 
   // SECURITY: customerId comes straight from the request body. Without this
   // check, a caller could pass any org's customer id, and the resulting

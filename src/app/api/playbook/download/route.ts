@@ -6,6 +6,7 @@ import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { generatePlaybookPdf } from '@/lib/playbook-pdf';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
+import { parseJsonBody } from '@/lib/parse-body';
 
 const schema = z.object({
   email: z.string().email(),
@@ -26,7 +27,9 @@ export async function POST(req: NextRequest) {
   if (!rl.allowed) return NextResponse.json({ error: 'Too many requests. Try again in a minute.' }, { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } });
 
   await ensureBootstrapped();
-  const data = schema.parse(await req.json());
+  const _parsed = await parseJsonBody(req, schema);
+  if (!_parsed.ok) return _parsed.response;
+  const data = _parsed.data;
   const [row] = await db.insert(waitlist).values({
     id: nanoid(),
     email: data.email,

@@ -7,6 +7,7 @@ import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { recordEvent } from '@/lib/events';
+import { parseJsonBody } from '@/lib/parse-body';
 
 const schema = z.object({ invoiceId: z.string() });
 
@@ -14,7 +15,9 @@ export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const { invoiceId } = schema.parse(await req.json());
+  const _parsed = await parseJsonBody(req, schema);
+  if (!_parsed.ok) return _parsed.response;
+  const { invoiceId } = _parsed.data;
   const [inv] = await db.select().from(invoices).where(eq(invoices.id, invoiceId)).limit(1);
   if (!inv || inv.orgId !== orgId) return NextResponse.json({ error: 'not found' }, { status: 404 });
 
