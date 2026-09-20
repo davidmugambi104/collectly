@@ -5707,6 +5707,57 @@
       "replies": [],
       "created_at": "2026-09-10T17:15:10.437832+00:00",
       "last_contact": "2026-09-10T17:15:10.437832+00:00"
+    },
+    "roz@sparqpartners.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:53:00.407120+00:00",
+          "message_id": "01a0bf17-73dd-710d-b9e5-2b55a3493172",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e07b",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:53:00.407120+00:00",
+      "last_contact": "2026-09-20T13:53:00.420705+00:00",
+      "note": "sent t1 via Resend, id=01a0bf17-73dd-710d-b9e5-2b55a3493172"
+    },
+    "afreeman@mooreacctg.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:53:01.153280+00:00",
+          "message_id": "01a0bf17-76f6-70ba-b292-8cad4374dc8d",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e071",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:53:01.153280+00:00",
+      "last_contact": "2026-09-20T13:53:01.159905+00:00",
+      "note": "sent t1 via Resend, id=01a0bf17-76f6-70ba-b292-8cad4374dc8d"
+    },
+    "kelle@kommaswithkelle.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:53:02.276245+00:00",
+          "message_id": "01a0bf17-7b15-775b-9857-9fc34f5aca6b",
+          "campaign": "bookkeeper_channel",
+          "prospect_id": "6a6b115b96b7e90001b5e080",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:53:02.276245+00:00",
+      "last_contact": "2026-09-20T13:53:02.282350+00:00",
+      "note": "sent t1 via Resend, id=01a0bf17-7b15-775b-9857-9fc34f5aca6b"
     }
   },
   "emails": {
@@ -6112,7 +6163,10 @@
     "tax@gwsaccountants.com.au:t2": "2026-09-19T21:46:24.807188+00:00",
     "znevar@wasabimedia.ca:t2": "2026-09-19T21:46:26.138744+00:00",
     "dtr@pda.studio:t2": "2026-09-19T21:46:27.571460+00:00",
-    "interns@triple8mgmt.com:t2": "2026-09-19T21:46:29.004017+00:00"
+    "interns@triple8mgmt.com:t2": "2026-09-19T21:46:29.004017+00:00",
+    "roz@sparqpartners.com:t1": "2026-09-20T13:53:00.407120+00:00",
+    "afreeman@mooreacctg.com:t1": "2026-09-20T13:53:01.153280+00:00",
+    "kelle@kommaswithkelle.com:t1": "2026-09-20T13:53:02.276245+00:00"
   },
   "notes": []
 }

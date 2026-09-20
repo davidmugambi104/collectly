@@ -8,6 +8,7 @@ Example:
     send_with_guard.py P001 t1 "Hello" "path/to/body.txt"
 """
 import argparse
+import csv
 import os
 import sys
 from datetime import datetime, timezone
