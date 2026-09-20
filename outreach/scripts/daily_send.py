@@ -683,7 +683,26 @@ def cmd_send(args):
             variant_id = hook_id = "-"
         else:
             rendered = render_template(template, p, hook_override=experiment.hook_text(hook_id, p))
-            rendered["subject"] = experiment.subject_text(variant_id, p)
+            # The template's own subject wins. This line used to overwrite it
+            # unconditionally with experiment.py's four-way v3 matrix, so
+            # --template had no effect on the subject at all: 7 v6 sends went
+            # out under v3 subjects like "Awkward client invoice still unpaid?",
+            # which is the exact copy v6 exists to replace, and one rendered as
+            # " -- quick one on your overdue QBO invoices" because that variant
+            # interpolates a first_name the prospect did not have.
+            #
+            # The four-way subject test already ran to ~73 sends per variant for
+            # one reply in total, so there is nothing left for it to measure on
+            # a template that ships its own subject. It still applies to v3,
+            # which has a single "## Subject" header and relies on the rotation.
+            if rendered.get("variant"):
+                # A v6-style template: it ships a subject per arm, and the arm is
+                # chosen by a stable hash of the recipient. Keep both.
+                variant_id = rendered["variant"]
+            else:
+                # v2/v3: one "## Subject" header, and the four-way rotation is
+                # what varies it. Unchanged.
+                rendered["subject"] = experiment.subject_text(variant_id, p)
         result = send_one(env, p["email"], rendered["subject"], rendered["body"])
         results.append({"id": p["id"], "email": p["email"], "ok": result.get("ok"), "result": result})
 

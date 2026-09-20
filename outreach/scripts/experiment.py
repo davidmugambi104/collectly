@@ -88,7 +88,15 @@ def variant_ids() -> List[str]:
 def subject_text(variant_id: str, prospect: Dict[str, str]) -> str:
     for vid, text in SUBJECT_VARIANTS:
         if vid == variant_id:
-            return text.replace("{{first_name}}", prospect.get("first_name", ""))
+            # Variant C interpolates the name straight into the subject, so a
+            # prospect without one produced " -- quick one on your overdue QBO
+            # invoices" -- leading space, no name, visibly broken in the inbox.
+            # One real send went out like that. Fall back the same way the body
+            # does, and drop the separator entirely when there is no name.
+            first = (prospect.get("first_name") or "").strip()
+            if first:
+                return text.replace("{{first_name}}", first)
+            return text.replace("{{first_name}} -- ", "").replace("{{first_name}}", "").strip()
     return SUBJECT_VARIANTS[0][1]
 
 
