@@ -19,7 +19,7 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'Do you integrate with Twilio for SMS?',
-      a: 'Twilio is wired and in test mode. SMS is offered to founding customers as a pass-through-cost add-on until we unlock the production tier.',
+      a: 'Twilio is wired with live credentials, but the account is still on Twilio\'s trial tier — which only delivers to numbers verified on that account. SMS dunning therefore reaches verified numbers only until the account is upgraded; email dunning is unaffected, and a failed SMS marks that one step failed rather than interrupting the run. Offered to founding customers as a pass-through-cost add-on.',
     },
     {
       q: 'Do you integrate with Plaid?',
@@ -162,21 +162,17 @@ const categories = [
       {
         name: 'Upstash Redis',
         slug: 'upstash',
-        // Declared 'live' here while no UPSTASH_REDIS_REST_URL or _TOKEN
-        // exists in production — getRedis() returns null, so rate limiting
-        // silently falls back to a per-instance memory map that does not hold
-        // across serverless invocations. The page was claiming a working
-        // limiter, which is the same shape of problem as the Clerk webhook
-        // reading one env name while production set another: the page said one
-        // thing and the environment said another.
-        //
-        // Flip this back to 'live' the moment the credentials are provisioned;
-        // the code path is written and needs no change.
-        status: 'disabled',
+        // Provisioned 2026-09-20. Credentials verified against the REST API
+        // (set/get/del round-trip) before flipping this, rather than trusting
+        // that adding the env vars was enough — the whole reason this said
+        // 'disabled' was a page claiming a working limiter while getRedis()
+        // returned null and rate limiting fell back to a per-instance memory
+        // map that does not survive a serverless invocation.
+        status: 'live',
         bullets: [
-          'Not provisioned yet — no credentials in the production environment',
-          'Rate limiting currently falls back to per-instance memory, which does not hold across serverless invocations',
-          'Code path is ready: distributed limiting for public forms and API routes turns on with the credentials',
+          'Distributed rate limiting for public forms and API routes',
+          'Replaces a per-instance memory fallback that did not hold across serverless invocations',
+          'Applies to the waitlist, A/R audit, qualify, unsubscribe and payment endpoints',
         ],
       },
       {
