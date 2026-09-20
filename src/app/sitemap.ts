@@ -32,6 +32,7 @@ const FIXED: Array<{
   { path: '/vs-quickbooks', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-freshbooks', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-gaviti', priority: 0.9, changefreq: 'monthly' },
+  { path: '/vs-upflow', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-growfin', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-highradius', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-zohobooks', priority: 0.9, changefreq: 'monthly' },

@@ -27,6 +27,7 @@ const COMPARISONS = [
   { href: '/vs-gaviti', name: 'Gaviti', pitch: 'AI-powered invoice-to-cash for mid-market and enterprise.' },
   { href: '/vs-growfin', name: 'Growfin', pitch: 'Behavioral AI AR automation for NetSuite/ERP-first enterprises.' },
   { href: '/vs-highradius', name: 'HighRadius', pitch: 'Autonomous finance for the Office of the CFO.' },
+  { href: '/vs-upflow', name: 'Upflow', pitch: 'Financial Relationship Management for B2B finance teams — demo-gated pricing.' },
   { href: '/vs-freshbooks', name: 'FreshBooks', pitch: 'Simple invoicing and accounting for freelancers and small agencies.' },
 ];
 
