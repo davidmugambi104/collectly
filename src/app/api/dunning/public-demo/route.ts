@@ -1,10 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fallbackDunningMessage } from '@/lib/ai/dunning';
+import { parseJsonBody } from '@/lib/parse-body';
+
+/**
+ * Both numeric fields accept a number or a numeric string.
+ *
+ * The asymmetry here was accidental rather than intended: the demo form's days
+ * slider does Number(e.target.value) so daysOverdue arrived as a number, while
+ * the amount field is an <input type="number"> whose .value is a string and was
+ * never converted. The schema was written to match whatever each happened to
+ * send, so this public endpoint rejected {"amount": 5000} -- the obvious thing
+ * for any caller who is not that one form.
+ *
+ * DunningContext.amount is a string and formatAmount() already takes
+ * string | number, so the boundary normalises rather than widening the internal
+ * type. Non-numeric input is rejected here instead of falling through to
+ * formatAmount's "USD abc" escape hatch.
+ */
+const numericAmount = z
+  .union([z.string(), z.number()])
+  .refine((v) => Number.isFinite(Number(v)) && String(v).trim() !== '', {
+    message: 'must be a number',
+  })
+  .transform((v) => String(v));
 
 const schema = z.object({
-  amount: z.string().default('12500'),
-  daysOverdue: z.number().int().min(0).default(35),
+  amount: numericAmount.default('12500'),
+  // Capped: the form's slider stops at 120, and an uncapped value lands in
+  // `Date.now() - daysOverdue * 86400000`, which for a large enough number
+  // produces an invalid date rather than an error.
+  daysOverdue: z.coerce.number().int().min(0).max(3650).default(35),
   tone: z.enum(['friendly', 'firm', 'final']).default('firm'),
   channel: z.enum(['email', 'sms']).default('email'),
 });
@@ -24,7 +50,9 @@ const schema = z.object({
  */
 export async function POST(req: NextRequest) {
   try {
-    const data = schema.parse(await req.json());
+    const _parsed = await parseJsonBody(req, schema);
+    if (!_parsed.ok) return _parsed.response;
+    const data = _parsed.data;
     const result = fallbackDunningMessage({
       // Sentinel: the demo output is rendered as code, never as a clickable
       // hyperlink. Using a stable placeholder keeps the link readable in
