@@ -126,12 +126,33 @@ export async function POST(req: NextRequest) {
     // was honoured nowhere and they kept receiving mail. email_suppressions
     // accepts any address; outreach/scripts/sync_suppressions.py pulls it into
     // the CSV the send scripts read.
-    await client.query(
-      `INSERT INTO email_suppressions (id, email, reason, source, created_at)
-       VALUES ($1, $2, 'unsubscribe', 'unsubscribe_link', $3)
-       ON CONFLICT (email) DO NOTHING`,
-      [randomUUID(), email, now]
-    );
+    const recordSuppression = () =>
+      client.query(
+        `INSERT INTO email_suppressions (id, email, reason, source, created_at)
+         VALUES ($1, $2, 'unsubscribe', 'unsubscribe_link', $3)
+         ON CONFLICT (email) DO NOTHING`,
+        [randomUUID(), email, now]
+      );
+    try {
+      await recordSuppression();
+    } catch (e: unknown) {
+      // 42P01 = undefined_table. drizzle/0004 adds this table, but there is no
+      // reliable way to run a migration against production from outside the
+      // running app -- the same reason webhook_events_seen self-creates in
+      // /api/webhooks/stripe. An opt-out must not be lost because a migration
+      // has not been run yet, so create it here and retry once.
+      if ((e as { code?: string })?.code !== '42P01') throw e;
+      await client.query(
+        `CREATE TABLE IF NOT EXISTS email_suppressions (
+           id         text PRIMARY KEY,
+           email      text NOT NULL UNIQUE,
+           reason     text NOT NULL DEFAULT 'unsubscribe',
+           source     text,
+           created_at timestamptz NOT NULL DEFAULT now()
+         )`
+      );
+      await recordSuppression();
+    }
     // 1. Mark the waitlist entry unsubscribed (if any)
     await client.query(
       `UPDATE waitlist SET unsubscribed_at = $1 WHERE email = $2 AND unsubscribed_at IS NULL`,
