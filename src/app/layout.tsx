@@ -137,7 +137,20 @@ export const metadata: Metadata = {
   // to the account that owns the property. If we go open-source, move these
   // to env (NEXT_PUBLIC_GSC_TOKEN / NEXT_PUBLIC_BING_TOKEN) at deploy time.
   verification: {
-    google: 'PtjQY7SHV7PPDNQaeXMj7kKYyqfIsV7eZvhXenPzRL8',
+    // Read from env, not committed. This repo is public, and the note above
+    // said so before the token was hardcoded here anyway. Bing's was already
+    // env-driven; Google's is now too.
+    //
+    // The previously committed value is exposed in git history and cannot be
+    // un-leaked by deleting this line, so it should be rotated in Search
+    // Console: remove the property's verification, re-verify, and update
+    // NEXT_PUBLIC_GSC_TOKEN. Practical risk is low -- a token only grants
+    // ownership to someone who can also serve it on the domain -- but it is a
+    // secret that is public, and it costs nothing to replace.
+    //
+    // mugavi.com is verified as a DOMAIN property via a DNS TXT record
+    // instead, so it needs no meta tag here at all.
+    google: process.env.NEXT_PUBLIC_GSC_TOKEN,
     other: process.env.NEXT_PUBLIC_BING_TOKEN
       ? { 'msvalidate.01': process.env.NEXT_PUBLIC_BING_TOKEN }
       : undefined,
