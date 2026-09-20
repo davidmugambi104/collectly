@@ -4,6 +4,7 @@ import { db } from '@/db';
 import * as schema from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
+import { sendLeadNotification } from '@/lib/lead-notify';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
 const body = z.object({
@@ -15,20 +16,6 @@ const body = z.object({
   frustration: z.string().min(1),
   wouldSwitch: z.enum(['yes', 'no', 'maybe']),
 });
-
-function notify(data: {
-  email: string;
-  name?: string;
-  company?: string;
-  meta: Record<string, string | undefined>;
-}) {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3030}`;
-  fetch(`${base}/api/lead-notify`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ type: 'async_qualify', ...data }),
-  }).catch(() => {});
-}
 
 export async function POST(req: NextRequest) {
   const rl = await rateLimit(getIp(req), { max: 10, key: 'qualify' });
@@ -47,7 +34,8 @@ export async function POST(req: NextRequest) {
       painPoint: `[ASYNC-QUALIFY] Currently using: ${data.currentTool}. Hours/week chasing payments: ${data.hoursPerWeek}. Would switch: ${data.wouldSwitch}.\n\n${data.frustration}`,
       source: 'async-qualify-form',
     }).onConflictDoNothing({ target: schema.waitlist.email }).returning();
-    notify({
+    await sendLeadNotification({
+      type: 'async_qualify',
       email: data.email,
       name: data.name,
       company: data.company,

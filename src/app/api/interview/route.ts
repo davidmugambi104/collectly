@@ -4,6 +4,7 @@ import { db } from '@/db';
 import * as schema from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
+import { sendLeadNotification } from '@/lib/lead-notify';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 
 const body = z.object({
@@ -18,15 +19,6 @@ const body = z.object({
   tool: z.string().optional(),
   pain: z.string().min(1),
 });
-
-function notify(type: 'waitlist' | 'interview', data: Record<string, unknown>) {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3030}`;
-  fetch(`${base}/api/lead-notify`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ type, ...data }),
-  }).catch(() => {});
-}
 
 export async function POST(req: NextRequest) {
   const rl = await rateLimit(getIp(req), { max: 10, key: 'interview' });
@@ -45,7 +37,8 @@ export async function POST(req: NextRequest) {
       painPoint: `[INTERVIEW] Industry: ${data.industry}, DSO: ${data.dso}, A/R: ${data.outstanding ?? '?'}, Tool: ${data.tool ?? '?'}\n\n${data.pain}`,
       source: 'interview-form',
     }).onConflictDoNothing({ target: schema.waitlist.email }).returning();
-    notify('interview', {
+    await sendLeadNotification({
+      type: 'interview',
       email: data.email,
       name: data.name,
       company: data.company,
