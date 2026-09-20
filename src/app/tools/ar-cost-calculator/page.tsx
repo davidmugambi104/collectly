@@ -20,7 +20,7 @@ export default function ArCostCalculatorPage() {
   return (
     <>
       <MarketingHeader />
-      <main className="min-h-screen bg-gradient-to-b from-white to-ink-50">
+      <div className="min-h-screen bg-gradient-to-b from-white to-ink-50">
         <section className="max-w-5xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
           <div className="text-center max-w-2xl mx-auto">
             <p className="text-xs font-semibold text-brand-600 uppercase tracking-wider">Free tool · 2 minutes</p>
@@ -46,7 +46,7 @@ export default function ArCostCalculatorPage() {
             </Link>
           </div>
         </section>
-      </main>
+      </div>
       <MarketingFooter />
     </>
   );

@@ -96,7 +96,7 @@ export default function PlaybookPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: playbookJsonLd }} />
       <MarketingHeader />
-      <main className="min-h-screen bg-gradient-to-b from-white to-brand-50">
+      <div className="min-h-screen bg-gradient-to-b from-white to-brand-50">
         {/* Hero */}
         <section className="container-page py-14 sm:py-20">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
@@ -176,7 +176,7 @@ export default function PlaybookPage() {
             </div>
           </div>
         </section>
-      </main>
+      </div>
       <FaqSection items={FAQS} title="About the playbook" />
       <MarketingFooter />
     </>

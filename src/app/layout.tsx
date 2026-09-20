@@ -186,6 +186,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        {/* First focusable thing in the document, so a keyboard or screen-reader
+            visitor can jump the nav instead of tabbing it on every page.
+            Invisible until focused. */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+        >
+          Skip to content
+        </a>
         {/* Third-party scripts live in GatedScripts and mount only once the
             visitor has allowed them. Nothing non-essential is in the document
             before that: AdSense and Clarity both set cookies on load, and the
@@ -194,7 +203,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GatedScripts />
           <ClerkProvider>
             <Suspense>
-              <PostHogProvider>{children}</PostHogProvider>
+              {/* The one <main> landmark for every route. 34 of 37 public pages
+                  had none, and no layout supplied one, so assistive tech had
+                  nothing to jump to. Pages must not add their own -- a second
+                  <main> in the document is invalid and breaks the landmark. */}
+              <main id="main-content">
+                <PostHogProvider>{children}</PostHogProvider>
+              </main>
             </Suspense>
           </ClerkProvider>
           <ConsentBanner />
