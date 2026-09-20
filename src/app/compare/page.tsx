@@ -20,6 +20,7 @@ export const metadata = pageMetadata({
 
 const COMPARISONS = [
   { href: '/vs-chaser', name: 'Chaser', pitch: 'SMB receivables automation starting at ~$259/mo.' },
+  { href: '/vs-paidnice', name: 'Paidnice', pitch: 'Xero App Store favourite, priced per invoice plus $29 per extra entity.' },
   { href: '/vs-bill', name: 'BILL', pitch: 'All-in-one AP + AR + spend platform with per-user pricing.' },
   { href: '/vs-melio', name: 'Melio', pitch: 'Free AP-first B2B payments with light invoicing.' },
   { href: '/vs-quickbooks', name: 'QuickBooks', pitch: 'The default SMB invoicing and payments stack.' },

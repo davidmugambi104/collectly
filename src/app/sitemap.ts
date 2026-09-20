@@ -28,6 +28,7 @@ const FIXED: Array<{
   // Compare (highest organic-intent pages we publish)
   { path: '/vs-bill', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-chaser', priority: 0.9, changefreq: 'monthly' },
+  { path: '/vs-paidnice', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-melio', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-quickbooks', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-freshbooks', priority: 0.9, changefreq: 'monthly' },
