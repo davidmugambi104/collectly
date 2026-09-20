@@ -59,6 +59,11 @@ export const SITE = {
     `payment. From $${PLAN_PRICING.starter.monthly}/mo flat.`,
   url: DOMAIN,
   locale: 'en_US',
+  // NOT migrated with the rebrand, deliberately. This is a social handle, not a
+  // domain: changing it to '@mugavi' would point twitter:site and
+  // twitter:creator at whoever actually owns that handle, attributing this
+  // site's content to a stranger. Update it only once the new handle is
+  // registered to us -- and if it never is, delete these two tags instead.
   twitter: '@getcollectly',
   email: 'hello@getcollectly.app',
 };
