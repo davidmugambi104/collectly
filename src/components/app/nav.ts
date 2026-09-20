@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Inbox, FileText, Building2, ArrowDownToLine,
-  Send, TrendingUp, History, Plug, Settings, type LucideIcon,
+  Send, TrendingUp, History, Plug, Settings, MessageSquareText, type LucideIcon,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -61,6 +61,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Insights',
     items: [
       { href: '/dashboard/cash-flow', label: 'Cash flow', icon: TrendingUp },
+      { href: '/dashboard/sms-consent', label: 'SMS consent', icon: MessageSquareText },
       { href: '/dashboard/events', label: 'Activity', icon: History },
     ],
   },
