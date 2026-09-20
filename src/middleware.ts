@@ -45,6 +45,9 @@ const isPublicRoute = createRouteMatcher([
   // Public demo / preview / seed flows (no auth needed)
   '/api/cron/dunning', '/api/cron/inbox-poll', '/api/cron/outreach-poll', '/api/webhooks/stripe', '/api/webhooks/clerk',
   '/api/webhooks/resend-inbound', '/api/webhooks/resend-delivery', '/api/webhooks/twilio-status',
+  // Inbound SMS: Twilio cannot carry a Clerk token, and a gated opt-out webhook
+  // would mean a STOP never reaches us.
+  '/api/webhooks/twilio-inbound',
   '/api/quickbooks/callback', '/api/quickbooks/connect',
   '/api/xero/callback', '/api/xero/connect',
   '/api/stripe-connect/callback', '/api/stripe-connect/connect',

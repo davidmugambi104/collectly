@@ -9,6 +9,8 @@ import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { parseJsonBody } from '@/lib/parse-body';
+import { maySendSms } from '@/lib/sms-consent';
+import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
 
 const body = z.object({
   invoiceId: z.string(),
@@ -23,6 +25,7 @@ const body = z.object({
  * message — useful for QA and screenshots.
  */
 export async function POST(req: NextRequest) {
+  await ensureSmsConsentSchema();
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -108,6 +111,10 @@ export async function POST(req: NextRequest) {
         if (!row.customer.phone) {
           await db.update(dunningRuns).set({ status: 'cancelled', error: 'no phone on file' }).where(eq(dunningRuns.id, run.id));
           return NextResponse.json({ ok: false, error: 'customer has no phone', dryRun: false, ...result }, { status: 400 });
+        }
+        if (!maySendSms(row.customer)) {
+          await db.update(dunningRuns).set({ status: 'cancelled', error: `sms consent: ${row.customer.smsConsentStatus ?? 'none'}` }).where(eq(dunningRuns.id, run.id));
+          return NextResponse.json({ ok: false, error: 'customer has not opted in to SMS', dryRun: false, ...result }, { status: 409 });
         }
         const sms = await sendSms({ to: row.customer.phone, body: result.body });
         await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));

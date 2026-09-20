@@ -3,11 +3,13 @@ import { getAuth } from '@/lib/auth-helper';
 import { db } from "@/db";
 import { dunningSequences, dunningRuns, invoices, customers } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { maySendSms } from '@/lib/sms-consent';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { parseJsonBody } from '@/lib/parse-body';
+import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
 
 const bodySchema = z.object({
   invoiceId: z.string(),
@@ -18,6 +20,7 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  await ensureSmsConsentSchema();
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -88,6 +91,13 @@ export async function POST(req: NextRequest) {
       await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));
     } else {
       if (!cust.phone) throw new Error('Customer has no phone');
+      // Same consent gate as the scheduler. A manual send is still an SMS to a
+      // person who has to have agreed to receive one, and leaving this path
+      // ungated would make the gate decorative.
+      if (!maySendSms(cust)) {
+        await db.update(dunningRuns).set({ status: 'cancelled', error: `sms consent: ${cust.smsConsentStatus ?? 'none'}` }).where(eq(dunningRuns.id, run.id));
+        return NextResponse.json({ error: 'Customer has not opted in to SMS. Send them an opt-in invite first.' }, { status: 409 });
+      }
       const sms = await sendSms({ to: cust.phone, body: data.body });
       await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date(), externalMessageId: sms.sid }).where(eq(dunningRuns.id, run.id));
     }

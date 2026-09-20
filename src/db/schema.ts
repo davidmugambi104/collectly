@@ -11,6 +11,12 @@ export const integrationStatus = pgEnum('integration_status', ['connected', 'dis
 export const integrationProvider = pgEnum('integration_provider', ['quickbooks', 'xero', 'stripe', 'square', 'plaid']);
 export const invoiceStatus = pgEnum('invoice_status', ['draft', 'sent', 'viewed', 'partial', 'paid', 'overdue', 'disputed', 'written_off']);
 export const dunningChannel = pgEnum('dunning_channel', ['email', 'sms', 'phone', 'letter']);
+// SMS consent, tracked separately from customers.dndAt. dndAt is a blanket
+// "stop all dunning" switch; this is specifically the express written consent
+// Twilio requires for toll-free verification, and it starts at 'none' rather
+// than assuming a phone number on file implies permission to text it.
+export const smsConsentStatus = pgEnum('sms_consent_status', ['none', 'pending', 'opted_in', 'opted_out']);
+export const smsConsentEventType = pgEnum('sms_consent_event_type', ['invite_sent', 'opted_in', 'opted_out']);
 export const dunningStatus = pgEnum('dunning_status', ['scheduled', 'sent', 'delivered', 'opened', 'clicked', 'replied', 'paid', 'failed', 'cancelled']);
 export const planTier = pgEnum('plan_tier', ['starter', 'growth', 'scale', 'enterprise']);
 export const subStatus = pgEnum('sub_status', ['trialing', 'active', 'past_due', 'cancelled', 'incomplete']);
@@ -76,6 +82,11 @@ export const customers = pgTable('customers', {
   // Set via /api/unsubscribe or future in-app preference. Honored by the
   // dunning scheduler and the manual send endpoint.
   dndAt: timestamp('dnd_at', { withTimezone: true }),
+  // Express consent for SMS specifically. Defaults to 'none': having a phone
+  // number is not permission to text it, and Twilio's toll-free verification
+  // requires proof that the recipient opted in.
+  smsConsentStatus: smsConsentStatus('sms_consent_status').notNull().default('none'),
+  smsConsentAt: timestamp('sms_consent_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({
@@ -350,6 +361,36 @@ export const emailSuppressions = pgTable('email_suppressions', {
   source: text('source'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
+/**
+ * Append-only audit of every SMS consent interaction.
+ *
+ * Twilio's toll-free verification asks for proof of consent, and "the customer
+ * row says opted_in" is an assertion, not proof. This records what was sent,
+ * what came back, and when -- so the thread can be reconstructed from our own
+ * data rather than from a screenshot.
+ *
+ * Keyed on the phone number as well as the customer, because a STOP can arrive
+ * from a number we have not matched to a customer row and must still be
+ * honoured.
+ */
+export const smsConsentEvents = pgTable('sms_consent_events', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').references(() => organizations.id, { onDelete: 'cascade' }),
+  customerId: text('customer_id').references(() => customers.id, { onDelete: 'set null' }),
+  // Kept even when customerId is null: an unmatched STOP still binds us.
+  phone: text('phone').notNull(),
+  eventType: smsConsentEventType('event_type').notNull(),
+  // The exact text we sent, or the exact body they replied with. Verbatim on
+  // purpose -- a paraphrase is not evidence.
+  messageText: text('message_text'),
+  twilioSid: text('twilio_sid'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  phoneIdx: index('sms_consent_events_phone_idx').on(t.phone),
+  customerIdx: index('sms_consent_events_customer_idx').on(t.customerId),
+  createdAtIdx: index('sms_consent_events_created_at_idx').on(t.createdAt),
+}));
 
 /* ----------------------------- RELATIONS ----------------------------- */
 

@@ -8,6 +8,8 @@ import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { recordEvent } from '@/lib/events';
+import { maySendSms } from '@/lib/sms-consent';
+import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
 import { nanoid, errorMessage } from '@/lib/utils';
 
 // Mirrors the inline element type of dunningSequences.steps's jsonb
@@ -91,6 +93,11 @@ async function notifyOwnerOfSends(orgId: string, entries: DigestEntry[]) {
 }
 
 export async function processDunning() {
+  // Before any customers query: the model now includes sms_consent_status,
+  // and Drizzle's select-all would throw undefined_column against a database
+  // that has not had drizzle/0005 applied -- which would take down email
+  // dunning too, not just SMS.
+  await ensureSmsConsentSchema();
   const now = new Date();
   const sequences = await db.select().from(dunningSequences).where(eq(dunningSequences.isActive, true));
   let scheduled = 0, sent = 0, errors = 0;
@@ -301,6 +308,22 @@ export async function processDunning() {
               orgDigest.set(seq.orgId, digest);
             }
           } else if (lastStep.channel === 'sms' && customer.phone) {
+            // Express consent is required before any marketing-adjacent SMS,
+            // and Twilio's toll-free verification is granted on the strength of
+            // this gate existing. A phone number arriving from Xero is not
+            // permission to text it, so the default is 'none' and this refuses
+            // anything that is not an explicit opted_in.
+            //
+            // Cancelled rather than failed: nothing broke, we simply do not
+            // have permission, and a 'failed' run would show up in the error
+            // count and invite someone to retry it.
+            if (!maySendSms(customer)) {
+              await db
+                .update(dunningRuns)
+                .set({ status: 'cancelled', error: `sms consent: ${customer.smsConsentStatus ?? 'none'}` })
+                .where(eq(dunningRuns.id, run.id));
+              continue;
+            }
             const sms = await sendSms({ to: customer.phone, body: result.body });
             // sendSms returns { sid: 'dev-stub', status: 'skipped' as const }
             // when Twilio isn't configured, mirroring sendEmail's contract.
