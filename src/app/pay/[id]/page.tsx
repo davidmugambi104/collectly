@@ -9,6 +9,26 @@ import { notFound } from 'next/navigation';
 import { getConnectedStripeAccountId } from '@/lib/integrations/stripe-connect';
 import { isSquareConnected } from '@/lib/integrations/square';
 
+/**
+ * Never index a payment portal.
+ *
+ * This page exported no metadata, so it inherited `index: true, follow: true`
+ * from the root layout, and robots.txt does not disallow /pay. Each page
+ * renders a third party's business data -- customer name, company, invoice
+ * number, amount outstanding, due date, days overdue. The ids are nanoids and
+ * so not guessable, but the URLs travel in dunning emails, and anything a
+ * recipient pastes into a public tracker, forum or shared doc becomes
+ * crawlable. An invoice is not ours to publish.
+ *
+ * noindex rather than a robots.txt Disallow on purpose: Disallow stops the
+ * crawl, which would stop Google ever seeing this directive, and a URL blocked
+ * from crawling can still be indexed from inbound links. Letting it crawl and
+ * telling it not to index is the combination that actually keeps these out.
+ */
+export const metadata = {
+  robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
+};
+
 export const dynamic = 'force-dynamic';
 
 export default async function PaymentPortal({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ paid?: string; session_id?: string; cancelled?: string }> }) {
