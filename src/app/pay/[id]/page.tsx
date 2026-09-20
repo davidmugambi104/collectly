@@ -20,10 +20,22 @@ import { isSquareConnected } from '@/lib/integrations/square';
  * recipient pastes into a public tracker, forum or shared doc becomes
  * crawlable. An invoice is not ours to publish.
  *
- * noindex rather than a robots.txt Disallow on purpose: Disallow stops the
- * crawl, which would stop Google ever seeing this directive, and a URL blocked
- * from crawling can still be indexed from inbound links. Letting it crawl and
- * telling it not to index is the combination that actually keeps these out.
+ * Belt and braces with robots.txt, which also Disallows /pay and /pay/*.
+ *
+ * An earlier version of this comment claimed robots.txt did NOT disallow /pay
+ * and justified noindex on that basis. It does. The two are usually an
+ * anti-pattern -- Disallow stops the crawl, so a crawler never sees the
+ * noindex, and a blocked URL can still be indexed from an inbound link showing
+ * the bare URL. Both are kept here anyway, deliberately:
+ *
+ *  - Disallow is the stronger privacy control. It stops Googlebot fetching a
+ *    page that renders a third party's invoice at all, which matters more than
+ *    the index entry does.
+ *  - noindex covers crawlers that ignore robots.txt, and the URL-only indexing
+ *    risk is small because the id is a nanoid, so a bare URL in results
+ *    discloses nothing.
+ *
+ * If one has to go, drop the Disallow, not this.
  */
 export const metadata = {
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
