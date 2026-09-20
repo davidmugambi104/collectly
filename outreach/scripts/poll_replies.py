@@ -54,6 +54,35 @@ DATA = os.path.join(os.path.dirname(HERE), "data")
 LOG_PATH = os.environ.get("OUTREACH_LOG_PATH", os.path.join(DATA, "outreach-log.csv"))
 SUPPRESSION_PATH = os.path.join(DATA, "suppression.csv")
 
+def _load_dotenv() -> dict:
+    """Read .env.local, same file and format daily_send.py uses.
+
+    Without this the poller saw only the process environment, so it printed
+    "set ZOHO_IMAP_APP_PASSWORD" even with the password sitting in .env.local
+    next to RESEND_API_KEY. Every other script in this directory reads that
+    file; this one silently did not, which made it look like a credentials
+    problem rather than a loading one.
+
+    The real environment still wins, so Vercel's configured values are never
+    shadowed by a stale local file.
+    """
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env.local")
+    out = {}
+    if not os.path.exists(path):
+        return out
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            out[k.strip()] = v.strip().strip('"').strip("'")
+    return out
+
+
+_DOTENV = _load_dotenv()
+
+
 def _env(*names: str, default: str = "") -> str:
     """First of `names` that is set.
 
@@ -65,7 +94,7 @@ def _env(*names: str, default: str = "") -> str:
     only as a local override.
     """
     for name in names:
-        value = os.environ.get(name)
+        value = os.environ.get(name) or _DOTENV.get(name)
         if value:
             return value
     return default
