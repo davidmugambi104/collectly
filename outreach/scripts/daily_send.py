@@ -89,7 +89,13 @@ ROLE_ADDRESS_RE = re.compile(
     # person, and it behaves like every other role box — 39.1% bounce against
     # 1.8% for personal addresses.
     r"|advice|tax|intern|interns|hr|jobs|careers|booking|bookings|studio|hi|hey"
-    r"|ask|talk|press|media|legal|audit|payroll|client|clients|general)@",
+    r"|ask|talk|press|media|legal|audit|payroll|client|general|team)s?@",
+    # The trailing `s?` is the point. The list was singulars matched exactly, so
+    # services@ sailed past service@, and teams@ past team@ -- one of them was
+    # in a live send queue. Role mailboxes are the single biggest driver of
+    # bounces here (39.1% against 1.8% for personal addresses), so the filter
+    # has to catch the plural a firm actually uses.
+
     re.IGNORECASE,
 )
 
@@ -269,7 +275,13 @@ def render_template(template: str, prospect: Dict[str, str], hook_override: str 
     For v2: subject from "## Subject", body from the single code block
     under "## Body".
     """
-    first = prospect.get("first_name", "")
+    # "there" rather than "", matching render_followup. Without it a prospect
+    # with no first_name got an email opening "Hi ," -- a mail-merge failure in
+    # the first two characters, which is worse than no personalisation at all.
+    # 6 of 7 in a live queue had no first_name.
+    # Strip BEFORE the fallback: `(x or "there").strip()` lets a whitespace-only
+    # name through as "" and renders "Hi ,".
+    first = (prospect.get("first_name") or "").strip() or "there"
     last = prospect.get("last_name", "")
     company = prospect.get("company", "")
     industry = prospect.get("industry", "")
@@ -569,7 +581,9 @@ def render_followup(template: str, prospect: Dict[str, str]) -> Dict[str, str]:
             body_start = i + 1
             break
     body = "\n".join(lines[body_start:]).strip()
-    first = (prospect.get("first_name") or "there").strip()
+    # Strip BEFORE the fallback: `(x or "there").strip()` lets a whitespace-only
+    # name through as "" and renders "Hi ,".
+    first = (prospect.get("first_name") or "").strip() or "there"
     repl = {
         "{{first_name}}": first,
         "{{last_name}}": (prospect.get("last_name") or "").strip(),

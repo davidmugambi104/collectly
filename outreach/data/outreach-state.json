@@ -5758,6 +5758,118 @@
       "created_at": "2026-09-20T13:53:02.276245+00:00",
       "last_contact": "2026-09-20T13:53:02.282350+00:00",
       "note": "sent t1 via Resend, id=01a0bf17-7b15-775b-9857-9fc34f5aca6b"
+    },
+    "lkortenhaus@kortenhaus.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:54:50.382504+00:00",
+          "message_id": "01a0bf19-21a6-770d-b0d5-2a4bd3334f47",
+          "campaign": "tier1",
+          "prospect_id": "118",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:54:50.382504+00:00",
+      "last_contact": "2026-09-20T13:54:50.382504+00:00"
+    },
+    "chris@authenticff.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:54:51.762728+00:00",
+          "message_id": "01a0bf19-26fe-76dd-9aa0-81e9a49d63fa",
+          "campaign": "tier1",
+          "prospect_id": "P209",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:54:51.762728+00:00",
+      "last_contact": "2026-09-20T13:54:51.762728+00:00"
+    },
+    "caitlin@fyvemarketing.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:54:53.536281+00:00",
+          "message_id": "01a0bf19-2dfb-71e8-8bb4-758cbd78cade",
+          "campaign": "tier1",
+          "prospect_id": "P215",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:54:53.536281+00:00",
+      "last_contact": "2026-09-20T13:54:53.536281+00:00"
+    },
+    "win@recreationdallas.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:54:55.317675+00:00",
+          "message_id": "01a0bf19-34f0-7520-a23c-3b0c6900a1d0",
+          "campaign": "tier1",
+          "prospect_id": "P220",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:54:55.317675+00:00",
+      "last_contact": "2026-09-20T13:54:55.317675+00:00"
+    },
+    "lynn@askmycpa.com": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:54:56.791894+00:00",
+          "message_id": "01a0bf19-3ab3-77bb-a9e6-599c94d85747",
+          "campaign": "tier1",
+          "prospect_id": "P225",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:54:56.791894+00:00",
+      "last_contact": "2026-09-20T13:54:56.791894+00:00"
+    },
+    "michael@travelmedia.ie": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:54:58.152180+00:00",
+          "message_id": "01a0bf19-4002-768e-ad07-b7d89b0f5fd8",
+          "campaign": "tier1",
+          "prospect_id": "P232",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:54:58.152180+00:00",
+      "last_contact": "2026-09-20T13:54:58.152180+00:00"
+    },
+    "john@focusadvertising.ie": {
+      "state": "t1_sent",
+      "sent_history": [
+        {
+          "touch": "t1",
+          "sent_at": "2026-09-20T13:54:59.485126+00:00",
+          "message_id": "01a0bf19-4534-774d-9609-7216bdda35e4",
+          "campaign": "tier1",
+          "prospect_id": "P233",
+          "meta": {}
+        }
+      ],
+      "replies": [],
+      "created_at": "2026-09-20T13:54:59.485126+00:00",
+      "last_contact": "2026-09-20T13:54:59.485126+00:00"
     }
   },
   "emails": {
@@ -6166,7 +6278,14 @@
     "interns@triple8mgmt.com:t2": "2026-09-19T21:46:29.004017+00:00",
     "roz@sparqpartners.com:t1": "2026-09-20T13:53:00.407120+00:00",
     "afreeman@mooreacctg.com:t1": "2026-09-20T13:53:01.153280+00:00",
-    "kelle@kommaswithkelle.com:t1": "2026-09-20T13:53:02.276245+00:00"
+    "kelle@kommaswithkelle.com:t1": "2026-09-20T13:53:02.276245+00:00",
+    "lkortenhaus@kortenhaus.com:t1": "2026-09-20T13:54:50.382504+00:00",
+    "chris@authenticff.com:t1": "2026-09-20T13:54:51.762728+00:00",
+    "caitlin@fyvemarketing.com:t1": "2026-09-20T13:54:53.536281+00:00",
+    "win@recreationdallas.com:t1": "2026-09-20T13:54:55.317675+00:00",
+    "lynn@askmycpa.com:t1": "2026-09-20T13:54:56.791894+00:00",
+    "michael@travelmedia.ie:t1": "2026-09-20T13:54:58.152180+00:00",
+    "john@focusadvertising.ie:t1": "2026-09-20T13:54:59.485126+00:00"
   },
   "notes": []
 }
