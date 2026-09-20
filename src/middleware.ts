@@ -35,7 +35,13 @@ const isPublicRoute = createRouteMatcher([
   // /api/webhooks/* must remain public (webhooks can't carry Clerk tokens).
   '/pay/(.*)', '/api/payment/(.*)', '/api/paystack/(.*)',
   // Public marketing APIs
-  '/api/waitlist', '/api/lead-notify', '/api/interview', '/api/ar-audit',
+  // Every endpoint a public marketing form posts to. /api/qualify was missing
+  // for the same reason /qualify itself was: the page got fixed, the endpoint
+  // it submits to did not. The page returned 200 and the POST returned 401, so
+  // the form was broken for exactly the anonymous visitors it exists to
+  // capture. src/lib/public-routes.test.ts now asserts this list covers every
+  // /api/ call made from src/components/marketing.
+  '/api/waitlist', '/api/lead-notify', '/api/interview', '/api/ar-audit', '/api/qualify',
   // Public demo / preview / seed flows (no auth needed)
   '/api/cron/dunning', '/api/cron/inbox-poll', '/api/cron/outreach-poll', '/api/webhooks/stripe', '/api/webhooks/clerk',
   '/api/webhooks/resend-inbound', '/api/webhooks/resend-delivery', '/api/webhooks/twilio-status',

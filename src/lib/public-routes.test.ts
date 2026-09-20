@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 
 /**
  * Every URL in the sitemap must be reachable without signing in.
@@ -45,6 +45,28 @@ test('every sitemap path is a public route', () => {
     gated,
     [],
     `these are in the sitemap but not public, so anonymous visitors and crawlers get redirected to sign-in:\n  ${gated.join('\n  ')}`,
+  );
+});
+
+test('every /api endpoint a public marketing form posts to is public', () => {
+  // The other half of the same bug: /qualify was made public but /api/qualify
+  // was not, so the page rendered for anonymous visitors and their submission
+  // came back 401. Components under src/components/marketing are public-facing
+  // by definition, so anything they fetch must be reachable without a session.
+  const dir = new URL('../components/marketing/', import.meta.url);
+  const endpoints = new Set<string>();
+  for (const f of readdirSync(dir)) {
+    if (!f.endsWith('.tsx') && !f.endsWith('.ts')) continue;
+    const src = readFileSync(new URL(f, dir), 'utf8');
+    for (const m of src.matchAll(/fetch\(\s*['`](\/api\/[^'`?]+)/g)) endpoints.add(m[1]);
+  }
+  assert.ok(endpoints.size > 0, 'no /api fetches found in src/components/marketing — has the path moved?');
+  const matchers = publicMatchers();
+  const gated = [...endpoints].filter((e) => !matchers.some((re) => re.test(e)));
+  assert.deepEqual(
+    gated,
+    [],
+    `public marketing forms post to these, but they require a session:\n  ${gated.join('\n  ')}`,
   );
 });
 
