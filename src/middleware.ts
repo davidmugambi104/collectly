@@ -17,8 +17,11 @@ const isPublicRoute = createRouteMatcher([
   // lead-capture survey that emitted `index, follow` and a self-canonical
   // while Clerk 302'd every anonymous visitor and Googlebot to /sign-in.
   '/qualify',
-  '/vs-chaser', '/vs-bill', '/vs-melio', '/vs-quickbooks',
-  '/vs-gaviti', '/vs-growfin', '/vs-highradius', '/vs-freshbooks', '/vs-zohobooks',
+  // Competitor comparison pages. A pattern, not a list: /vs-upflow shipped to
+  // production auth-gated because it was added to the sitemap, /compare and the
+  // app router, but not to the ten hardcoded entries that used to live here.
+  // Every /vs-* route is a public marketing page by definition.
+  '/vs-(.*)',
   // Industry landing pages — keyword-targeted long-tail entry points.
   // Keep these in front of Clerk so anonymous users can read them (and we
   // can index the URLs in GSC). The CTAs land on /ar-audit, which is also
