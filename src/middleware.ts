@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { legacyRedirectHost } from '@/lib/legacy-domain';
+import { hostRedirect } from '@/lib/legacy-domain';
 import { COUNTRY_COOKIE, COUNTRY_COOKIE_MAX_AGE, countryFromHeaders } from '@/lib/consent';
 
 const isPublicRoute = createRouteMatcher([
@@ -123,19 +123,22 @@ function countryCookieResponse(req: NextRequest): NextResponse | undefined {
 }
 
 /**
- * 301 the retired domain to the canonical one. The decision lives in
- * src/lib/legacy-domain.ts so its /api carve-out is unit-testable; done in
- * middleware rather than as a Vercel dashboard redirect so it ships and reverts
- * with the code, and because a domain-level redirect is all-or-nothing.
+ * Route each request to the host that can serve it. The decision lives in
+ * src/lib/legacy-domain.ts, where the reasoning and its unit tests are: the
+ * public surface moved to mugavi.com, the application stayed on
+ * getcollectly.app because Clerk is bound there, and /api never moves.
+ *
+ * Done in middleware rather than as a Vercel dashboard redirect because a
+ * domain-level redirect is all-or-nothing and cannot express any of that.
  */
-function legacyDomainRedirect(req: NextRequest): NextResponse | undefined {
-  const target = legacyRedirectHost(req.headers.get('host'), req.nextUrl.pathname);
+function domainRedirect(req: NextRequest): NextResponse | undefined {
+  const target = hostRedirect(req.headers.get('host'), req.nextUrl.pathname);
   if (!target) return undefined;
   const url = req.nextUrl.clone();
-  url.host = target;
+  url.host = target.host;
   url.protocol = 'https:';
   url.port = '';
-  return NextResponse.redirect(url, 301);
+  return NextResponse.redirect(url, target.status);
 }
 
 const hasClerk = isDevAuthShimAllowed()
@@ -144,7 +147,7 @@ const hasClerk = isDevAuthShimAllowed()
 
 export default hasClerk
   ? clerkMiddleware(async (auth, req: NextRequest) => {
-      const moved = legacyDomainRedirect(req);
+      const moved = domainRedirect(req);
       if (moved) return moved;
       if (!isPublicRoute(req)) {
         // Manual auth check instead of auth.protect() to avoid Clerk's
@@ -168,7 +171,7 @@ export default hasClerk
       return countryCookieResponse(req);
     })
   : (req: NextRequest) => {
-      const moved = legacyDomainRedirect(req);
+      const moved = domainRedirect(req);
       if (moved) return moved;
       // No auth in dev without Clerk, but the country cookie still needs
       // setting or the banner cannot be tested locally.
