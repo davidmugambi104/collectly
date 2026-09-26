@@ -88,7 +88,14 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white/80 backdrop-blur px-3 py-1 text-xs font-medium text-ink-700">
                 <Sparkles className="h-3.5 w-3.5 text-brand-600" /> Founding cohort of {FOUNDING.seats} · built in Nairobi
               </div>
-              <h1 className="mt-5 h1">
+              {/* Bigger than .h1's site-wide default. Every other page's h1
+                  runs the same length across many topics, so the shared
+                  scale has to stay conservative -- but this is four words,
+                  it is the only h1 competing for attention on the whole
+                  page, and a utility class after .h1 in the cascade
+                  (components layer, then utilities) wins without touching
+                  the shared token every other page depends on. */}
+              <h1 className="mt-5 h1 lg:text-7xl leading-[1.02]">
                 Stop chasing late invoices.
                 {/* block, not an inline span after a <br />: as an inline box
                     it inherited the h1's 60px line-height strut, so each line
@@ -144,13 +151,30 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-5 relative">
               {/* The one thing every visitor's eye lands on first after the
                   headline. It rendered instantly on load with everything
                   else, so it never got a moment of its own -- a half-beat
                   delay after the headline reads as the product arriving,
-                  not the page finishing loading. */}
-              <Reveal delay={0.15}><ArAgingPanel /></Reveal>
+                  not the page finishing loading.
+
+                  Depth, not just placement: a soft brand-tinted glow behind
+                  the panel (fixed to this wrapper, not the section, so it
+                  cannot bleed into other content) and a barely-there tilt
+                  that relaxes flat on hover. A flat panel dropped in a
+                  column reads as a screenshot; the same panel with a light
+                  source and a hint of physical presence behind it reads as
+                  a product. `isolate` keeps the glow's stacking context
+                  from fighting the panel's own shadows. */}
+              <div
+                aria-hidden="true"
+                className="absolute -inset-8 -z-10 rounded-[2rem] bg-brand-400/25 blur-3xl"
+              />
+              <Reveal delay={0.15}>
+                <div className="isolate transition-transform duration-500 [transform:perspective(1400px)_rotateY(-2deg)_rotateX(1deg)] hover:[transform:perspective(1400px)_rotateY(0deg)_rotateX(0deg)] motion-reduce:!transform-none motion-reduce:transition-none">
+                  <ArAgingPanel />
+                </div>
+              </Reveal>
               {/* mt-10, not mt-3: the Auto-collected card is absolutely
                   positioned at -bottom-4, so it hangs a full rem below the
                   panel it is pinned to. At mt-3 this caption ran straight
