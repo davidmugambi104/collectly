@@ -3,11 +3,11 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Customer outcomes — agencies and consultancies on Mugavi',
+  title: 'Customer outcomes: agencies and consultancies on Mugavi',
   description:
     'We don\'t publish polished case studies until we have enough customers ' +
     'to mean something. Here\'s how the founding cohort is using Mugavi ' +
-    'on Xero and QuickBooks — what they\'re trying to do, what we expect ' +
+    'on Xero and QuickBooks: what they\'re trying to do, what we expect ' +
     'to see, and what we will and won\'t claim.',
   path: '/customers',
   keywords: [
@@ -37,7 +37,7 @@ export default function CustomersPage() {
             instead of replacing one. The hard <br/> is gone so the headline
             breaks on its own measure. */}
         <h1 className="mt-3 h1 max-w-2xl text-balance">What Mugavi is built to do.</h1>
-        <p className="mt-5 lead">These are the outcomes the product is built to produce, drawn from the A/R maths rather than from customer stories — we publish named case studies only once a founding customer has a full quarter of data behind them, with their permission.</p>
+        <p className="mt-5 lead">These are the outcomes the product is built to produce, drawn from the A/R maths rather than from customer stories. We publish named case studies only once a founding customer has a full quarter of data behind them, with their permission.</p>
       </section>
       <section className="container-page pb-20">
         <div className="grid md:grid-cols-3 gap-5">

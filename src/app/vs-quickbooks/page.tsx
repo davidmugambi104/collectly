@@ -11,7 +11,7 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs QuickBooks — smarter AR automation for QBO users',
+  title: 'Mugavi vs QuickBooks: smarter AR automation for QBO users',
   description:
     'QuickBooks handles invoicing and payments but not smart collections. ' +
     'Mugavi adds AI tone-aware AI dunning, AR aging, cash-flow forecasting, ' +
@@ -45,9 +45,9 @@ export default function VsQuickbooksPage() {
         <h1 className="mt-3 h1">Mugavi vs QuickBooks</h1>
         <p className="mt-5 lead">
           QuickBooks is the default for small-business invoicing and payments. But its collections features
-          are basic — reminders, not real dunning. Mugavi sits on top of Xero (production-ready today) or
+          are basic: reminders, not real dunning. Mugavi sits on top of Xero (production-ready today) or
           QuickBooks (integration in beta) to add AI tone-aware follow-ups, AR aging, cash-flow forecasting,
-          and risk scoring — without forcing you to migrate.
+          and risk scoring, without forcing you to migrate.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/sign-up">
@@ -140,7 +140,7 @@ export default function VsQuickbooksPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Keep QuickBooks. Upgrade your collections.</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. QuickBooks integration is in beta — Xero connects in under a minute today.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. QuickBooks integration is in beta. Xero connects in under a minute today.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

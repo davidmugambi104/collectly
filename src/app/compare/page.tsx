@@ -24,11 +24,11 @@ const COMPARISONS = [
   { href: '/vs-bill', name: 'BILL', pitch: 'All-in-one AP + AR + spend platform with per-user pricing.' },
   { href: '/vs-melio', name: 'Melio', pitch: 'Free AP-first B2B payments with light invoicing.' },
   { href: '/vs-quickbooks', name: 'QuickBooks', pitch: 'The default SMB invoicing and payments stack.' },
-  { href: '/vs-zohobooks', name: 'Zoho Books', pitch: 'All-in-one accounting with light AR — built for the Zoho ecosystem.' },
+  { href: '/vs-zohobooks', name: 'Zoho Books', pitch: 'All-in-one accounting with light AR. Built for the Zoho ecosystem.' },
   { href: '/vs-gaviti', name: 'Gaviti', pitch: 'AI-powered invoice-to-cash for mid-market and enterprise.' },
   { href: '/vs-growfin', name: 'Growfin', pitch: 'Behavioral AI AR automation for NetSuite/ERP-first enterprises.' },
   { href: '/vs-highradius', name: 'HighRadius', pitch: 'Autonomous finance for the Office of the CFO.' },
-  { href: '/vs-upflow', name: 'Upflow', pitch: 'Financial Relationship Management for B2B finance teams — demo-gated pricing.' },
+  { href: '/vs-upflow', name: 'Upflow', pitch: 'Financial Relationship Management for B2B finance teams. Demo-gated pricing.' },
   { href: '/vs-freshbooks', name: 'FreshBooks', pitch: 'Simple invoicing and accounting for freelancers and small agencies.' },
 ];
 

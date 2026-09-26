@@ -13,7 +13,7 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Gaviti — SMB AR automation without enterprise complexity',
+  title: 'Mugavi vs Gaviti: SMB AR automation without enterprise complexity',
   description:
     'Gaviti is AI-powered invoice-to-cash for mid-market and enterprise. ' +
     'Mugavi is the simple, transparent, self-serve alternative for ' +
@@ -63,7 +63,7 @@ export default function VsGavitiPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs Gaviti"
-        subtitle={`Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Mugavi takes the parts that matter most to small B2B services — smart dunning, cash-flow forecasting, and risk scoring — and packages them in a $${PLAN_PRICING.starter.monthly}/mo tool you can set up in 10 minutes.`}
+        subtitle={`Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Mugavi takes the parts that matter most to small B2B services (smart dunning, cash-flow forecasting, and risk scoring) and packages them in a $${PLAN_PRICING.starter.monthly}/mo tool you can set up in 10 minutes.`}
         competitorName="Gaviti"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Gaviti" />
@@ -74,7 +74,7 @@ export default function VsGavitiPage() {
         competitorName="Gaviti"
         summary="Gaviti grew by selling a full invoice-to-cash platform to finance leaders who needed credit, deductions, and collections in one place."
         cards={STRATEGY}
-        takeaway="Gaviti sells as an enterprise implementation — demo, scoping, onboarding, a named owner. That is the right shape if you have a controller who will run it. It is a lot of process for a founder who wants the reminders to go out on Monday."
+        takeaway="Gaviti sells as an enterprise implementation: demo, scoping, onboarding, a named owner. That is the right shape if you have a controller who will run it. It is a lot of process for a founder who wants the reminders to go out on Monday."
       />
       <WhenToChoose competitorName="Gaviti" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

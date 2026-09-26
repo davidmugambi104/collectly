@@ -10,12 +10,12 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Chaser — better AR automation for small B2B services',
+  title: 'Mugavi vs Chaser: better AR automation for small B2B services',
   description:
     'Side-by-side of Mugavi and Chaser. Chaser starts around $259/mo ' +
     `with templated reminders. Mugavi starts at $${PLAN_PRICING.starter.monthly}/mo with tone-aware ` +
     'AI dunning, no per-invoice fees, 10-minute setup, and reply-or-pay ' +
-    'pause — built for 5-30 person agencies and consultancies on Xero.',
+    'pause, built for 5-30 person agencies and consultancies on Xero.',
   path: '/vs-chaser',
   image: '/og-vs-chaser.png',
   keywords: ['Mugavi vs Chaser', 'Chaser alternative', 'Xero invoice reminder', 'Chaser vs Mugavi'],
@@ -44,7 +44,7 @@ export default function VsChaserPage() {
         <p className="eyebrow">Comparison</p>
         <h1 className="mt-3 h1">Mugavi vs Chaser</h1>
         <p className="mt-5 lead">
-          Chaser is a solid receivables tool — but it&apos;s priced for bigger businesses and starts at ~$259/mo.
+          Chaser is a solid receivables tool, but it&apos;s priced for bigger businesses and starts at ~$259/mo.
           Mugavi gives small B2B service businesses the same AR automation from ${PLAN_PRICING.starter.monthly}/mo, with no per-invoice fees
           and a 10-minute setup.
         </p>

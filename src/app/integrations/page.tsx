@@ -19,7 +19,7 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'Do you integrate with Twilio for SMS?',
-      a: 'Twilio is wired with live credentials, but the account is still on Twilio\'s trial tier — which only delivers to numbers verified on that account. SMS dunning therefore reaches verified numbers only until the account is upgraded; email dunning is unaffected, and a failed SMS marks that one step failed rather than interrupting the run. Offered to founding customers as a pass-through-cost add-on.',
+      a: 'Twilio is wired with live credentials, but the account is still on Twilio\'s trial tier, which only delivers to numbers verified on that account. SMS dunning therefore reaches verified numbers only until the account is upgraded; email dunning is unaffected, and a failed SMS marks that one step failed rather than interrupting the run. Offered to founding customers as a pass-through-cost add-on.',
     },
     {
       q: 'Do you integrate with Plaid?',
@@ -28,7 +28,7 @@ const FAQS: FaqItem[] = [
 ];
 
 export const metadata = pageMetadata({
-  title: 'Integrations — Xero, QuickBooks, Stripe, Square, Twilio, Plaid',
+  title: 'Integrations: Xero, QuickBooks, Stripe, Square, Twilio, Plaid',
   description:
     'Live integrations status for Mugavi: which accounting systems, ' +
     'payment rails, and messaging channels are live, in beta, or queued. ' +
@@ -72,7 +72,7 @@ const categories = [
         bullets: [
           'OAuth 2.0 callback and token-refresh flow, verified against a real external Xero organization',
           'Sync contacts, invoices, and payments',
-          'Granular API scopes only — read-only on invoices, no access beyond what dunning requires',
+          'Granular API scopes only: read-only on invoices, no access beyond what dunning requires',
         ],
       },
     ],
@@ -123,7 +123,7 @@ const categories = [
         status: 'beta',
         bullets: [
           'Secure bank connection via Plaid Link',
-          'Balance and transaction sync in progress — not yet feeding the cash-flow forecast',
+          'Balance and transaction sync in progress, not yet feeding the cash-flow forecast',
           'Sandbox support for testing',
         ],
       },
@@ -150,7 +150,7 @@ const categories = [
         bullets: [
           'SMS dunning route is built and ready',
           'Add a verified from-number and complete A2P registration for US sends',
-          'You\'re responsible for having lawful authority to text each recipient in their jurisdiction — Mugavi doesn\'t verify consent on your behalf',
+          'You\'re responsible for having lawful authority to text each recipient in their jurisdiction. Mugavi doesn\'t verify consent on your behalf',
         ],
       },
     ],
@@ -191,7 +191,7 @@ const categories = [
         status: 'live',
         bullets: [
           'Powers tone-aware dunning message generation',
-          'Sends invoice number, amount, due date, contact name, and payment-history summary — never account credentials or full payment details',
+          'Sends invoice number, amount, due date, contact name, and payment-history summary, never account credentials or full payment details',
           'Prompts are versioned and reviewable',
         ],
       },
@@ -299,7 +299,7 @@ export default function IntegrationsPage() {
         <h2 className="mt-3 h2">60 seconds to your first synced invoice.</h2>
         <ol className="mt-8 space-y-5 text-ink-700">
           {[
-            { icon: Database, title: 'Pick a provider', body: 'Click Connect on any integration card. We open the provider\'s official OAuth flow — not a fake form.' },
+            { icon: Database, title: 'Pick a provider', body: 'Click Connect on any integration card. We open the provider\'s official OAuth flow, not a fake form.' },
             { icon: Lock, title: 'Authorize the scopes', body: 'You see exactly what we\'re asking for. Most providers let you scope to a single company or org.' },
             { icon: BarChart3, title: 'We pull a snapshot', body: 'Initial sync takes 10-30 seconds for typical A/R volumes. Older data is paginated in the background.' },
             { icon: MessageSquare, title: 'Dunning kicks in', body: 'New overdue invoices automatically enter your dunning sequence. You can pause, edit, or override anytime.' },

@@ -13,7 +13,7 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Growfin — behavioral AI AR for the rest of us',
+  title: 'Mugavi vs Growfin: behavioral AI AR for the rest of us',
   description:
     'Growfin uses behavioral AI for enterprise order-to-cash on NetSuite. ' +
     'Mugavi brings AI tone-aware dunning, cash-flow forecasting, and ' +
@@ -63,7 +63,7 @@ export default function VsGrowfinPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs Growfin"
-        subtitle="Growfin brings behavioral AI to enterprise order-to-cash on NetSuite. Mugavi brings the AI parts that actually matter to small B2B services — tone-aware dunning, cash-flow forecasting, and customer risk scoring — without the ERP implementation."
+        subtitle="Growfin brings behavioral AI to enterprise order-to-cash on NetSuite. Mugavi brings the AI parts that actually matter to small B2B services (tone-aware dunning, cash-flow forecasting, and customer risk scoring) without the ERP implementation."
         competitorName="Growfin"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Growfin" />

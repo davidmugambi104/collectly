@@ -13,7 +13,7 @@ import { pageMetadata } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs FreshBooks — from simple invoicing to real AR automation',
+  title: 'Mugavi vs FreshBooks: from simple invoicing to real AR automation',
   description:
     'FreshBooks is easy invoicing for freelancers and small agencies. ' +
     'Mugavi adds AI tone-aware dunning, AR aging, cash-flow forecasting, ' +
@@ -32,7 +32,7 @@ const DIFFS = [
 const STRATEGY = [
   { title: 'Freelancer-first UX', body: 'FreshBooks won by being easier than QuickBooks for solo operators and small agencies.' },
   { title: 'Simple pricing and free trials', body: 'Transparent plans and a strong free-trial funnel lowered the barrier to first invoice.' },
-  { title: 'Service-business positioning', body: 'Marketing focused on designers, agencies, and consultants — exactly the ICP Mugavi wants.' },
+  { title: 'Service-business positioning', body: 'Marketing focused on designers, agencies, and consultants, exactly the ICP Mugavi wants.' },
   { title: 'Product-led expansion', body: 'Time tracking, expenses, and payments kept users inside the platform as they grew.' },
 ];
 

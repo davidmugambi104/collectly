@@ -13,7 +13,7 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Zoho Books — AR automation beyond bookkeeping',
+  title: 'Mugavi vs Zoho Books: AR automation beyond bookkeeping',
   description:
     'Zoho Books is a solid accounting suite with light invoicing and ' +
     'payment reminders. Mugavi adds AI tone-aware dunning, AR aging, ' +
@@ -31,7 +31,7 @@ const DIFFS = [
 ];
 
 const STRATEGY = [
-  { title: 'Zoho ecosystem bundling', body: 'Zoho Books grew as part of the broader Zoho suite — CRM, Projects, Inventory, and People — making it sticky for SMBs already in the ecosystem.' },
+  { title: 'Zoho ecosystem bundling', body: 'Zoho Books grew as part of the broader Zoho suite (CRM, Projects, Inventory, and People), making it sticky for SMBs already in the ecosystem.' },
   { title: 'Affordable accounting entry point', body: 'A low starting price and generous free tier made Zoho Books attractive to cost-sensitive small businesses.' },
   { title: 'Global SMB focus', body: 'Strong localization and multi-currency support won international micro-businesses.' },
   { title: 'DIY onboarding', body: 'Self-serve setup and extensive docs made Zoho Books popular with founders who handle their own books.' },
@@ -64,7 +64,7 @@ export default function VsZohobooksPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs Zoho Books"
-        subtitle="Zoho Books is a capable accounting suite with light invoicing and reminders. Mugavi is the AR specialist layer that turns overdue invoices into predictable cash — with AI dunning, forecasting, and risk scoring."
+        subtitle="Zoho Books is a capable accounting suite with light invoicing and reminders. Mugavi is the AR specialist layer that turns overdue invoices into predictable cash, with AI dunning, forecasting, and risk scoring."
         competitorName="Zoho Books"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Zoho Books" />

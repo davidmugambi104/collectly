@@ -61,7 +61,7 @@ const ROWS = [1, 5, 10, 15, 20, 30, 50, 100].map((books) => {
 });
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Paidnice — per client book, not per invoice',
+  title: 'Mugavi vs Paidnice: per client book, not per invoice',
   description:
     'Paidnice charges by invoice volume plus $29 per extra entity. Mugavi ' +
     `charges per client book: $${PLAN_PRICING.growth.monthly}/mo for ${PRACTICE_INCLUDED_ORGS} of them. ` +
@@ -81,13 +81,13 @@ const DIFFS = [
     icon: FileText,
     label: 'Invoice limits',
     collectly: 'None. A busy month costs the same as a quiet one',
-    competitor: 'Capped per tier and shared across all entities — 300 invoices on Pro entry, whether that is one book or ten',
+    competitor: 'Capped per tier and shared across all entities: 300 invoices on Pro entry, whether that is one book or ten',
   },
   {
     icon: DollarSign,
     label: 'A single business',
     collectly: `$${PLAN_PRICING.starter.monthly}/mo`,
-    competitor: '$69/mo Essentials, or $99/mo Pro — genuinely cheaper here',
+    competitor: '$69/mo Essentials, or $99/mo Pro, genuinely cheaper here',
   },
   {
     icon: Users,
@@ -117,14 +117,14 @@ const STRATEGY = [
 ];
 
 const CHOOSE_US = [
-  { label: `You run more than about a dozen client books — the arithmetic flips there` },
+  { label: `You run more than about a dozen client books, the arithmetic flips there` },
   { label: 'You want one predictable number per month, not a bill that moves with invoice volume' },
   { label: 'A busy month should not cost more than a quiet one' },
   { label: 'You want consolidated AR across every client book in one view' },
 ];
 
 const CHOOSE_THEM = [
-  { label: 'You are one business chasing your own invoices — they are cheaper, straightforwardly' },
+  { label: 'You are one business chasing your own invoices, they are cheaper, straightforwardly' },
   { label: 'You run a handful of books and your invoice volume is low and steady' },
   { label: 'You want late fees, prompt-payment discounts and payment plans as well as chasing' },
   { label: 'You would rather buy the tool the Xero App Store ranks first' },
@@ -143,7 +143,7 @@ export default function VsPaidnicePage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs Paidnice"
-        subtitle={`Paidnice is a good product and, for a single business, a cheaper one. The difference is what you are charged for: they price invoice volume and add $${PAIDNICE_ENTITY_MONTHLY} a month per extra entity, we price the client book. Below about a dozen books they cost less. Above it we do — and the gap widens fast.`}
+        subtitle={`Paidnice is a good product and, for a single business, a cheaper one. The difference is what you are charged for: they price invoice volume and add $${PAIDNICE_ENTITY_MONTHLY} a month per extra entity, we price the client book. Below about a dozen books they cost less. Above it we do, and the gap widens fast.`}
         competitorName="Paidnice"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Paidnice" />
@@ -183,7 +183,7 @@ export default function VsPaidnicePage() {
         <p className="mt-4 app-meta">
           Paidnice figures from paidnice.com/pricing, read 2026-09-20. Their invoice allowance is shared across
           entities, so a practice hits the next tier sooner than the same invoice count in one book would.
-          Check their current pricing before deciding — we would rather you did.
+          Check their current pricing before deciding. We would rather you did.
         </p>
       </section>
 

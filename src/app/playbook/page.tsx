@@ -13,7 +13,7 @@ import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 const FAQS: FaqItem[] = [
     {
       q: 'Is this playbook free?',
-      a: 'Yes, fully free — no email gate, no upsell. We ask for an email address in exchange so we can send the 7-page PDF.',
+      a: 'Yes, fully free. No email gate, no upsell. We ask for an email address in exchange so we can send the 7-page PDF.',
     },
     {
       q: 'Do I need a full-time credit controller to follow it?',
@@ -21,7 +21,7 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'Does this work for non-Xero businesses?',
-      a: 'Yes — the methods apply to any small B2B services business. Step 2 references Xero and QuickBooks because that is where most 5-30 person agencies and consultancies keep their books, but the principles are platform-neutral.',
+      a: 'Yes, the methods apply to any small B2B services business. Step 2 references Xero and QuickBooks because that is where most 5-30 person agencies and consultancies keep their books, but the principles are platform-neutral.',
     },
     {
       q: 'What is DSO and why does it matter?',
@@ -30,7 +30,7 @@ const FAQS: FaqItem[] = [
   ];
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Free guide — 5-step method to cut DSO from 45 days to 18',
+  title: 'Free guide: 5-step method to cut DSO from 45 days to 18',
   description:
     'A free 7-page PDF with a 5-step method to help 5-30 person agencies ' +
     'and consultancies cut DSO from 45 days to 18 in 90 days. Built for ' +
@@ -128,8 +128,8 @@ export default function PlaybookPage() {
           <div className="max-w-2xl mx-auto text-center">
             <p className="eyebrow">What&apos;s inside</p>
             <h2 className="mt-2 h2">5 steps, each with the exact action to take.</h2>
-            <p className="mt-4 lead">No theory, no &quot;consider doing X&quot; — each step ends with a concrete ritual you can start this week.</p>
-            <p className="mt-3 text-xs text-ink-500">Figures below are typical benchmarks from common A/R patterns, not Mugavi&apos;s own customer data — we&apos;re pre-launch and don&apos;t have that yet.</p>
+            <p className="mt-4 lead">No theory, no &quot;consider doing X&quot;: each step ends with a concrete ritual you can start this week.</p>
+            <p className="mt-3 text-xs text-ink-500">Figures below are typical benchmarks from common A/R patterns, not Mugavi&apos;s own customer data. We&apos;re pre-launch and don&apos;t have that yet.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {STEPS.map((s) => (

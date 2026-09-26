@@ -61,7 +61,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'),
-  title: { default: 'Mugavi — AR automation for small agencies on Xero & QuickBooks', template: '%s · Mugavi' },
+  title: { default: 'Mugavi: AR automation for small agencies on Xero & QuickBooks', template: '%s · Mugavi' },
   description:
     'Mugavi is the accounts-receivable automation tool for 5-30 person agencies and consultancies. It drafts client-safe invoice reminders, pauses when a customer replies or pays, tracks promised-payment dates, and separates disputes from ordinary late payment. Built for Xero and QuickBooks. From $' + PLAN_PRICING.starter.monthly + '/mo.',
   keywords: [
@@ -80,19 +80,19 @@ export const metadata: Metadata = {
   formatDetection: { email: false, address: false, telephone: false },
   openGraph: {
     type: 'website',
-    title: 'Mugavi — AR automation for small agencies on Xero & QuickBooks',
+    title: 'Mugavi: AR automation for small agencies on Xero & QuickBooks',
     description:
       `AI-native AR for agencies, consultancies and bookkeeping practices. Tone-aware email + SMS dunning on Xero and QuickBooks. From $${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees.`,
     url: 'https://mugavi.com',
-    siteName: 'Mugavi — AR automation for agencies',
+    siteName: 'Mugavi: AR automation for agencies',
     images: [
-      { url: '/og.png', width: 1200, height: 630, alt: 'Mugavi — AR automation for small agencies on Xero & QuickBooks' },
+      { url: '/og.png', width: 1200, height: 630, alt: 'Mugavi: AR automation for small agencies on Xero & QuickBooks' },
     ],
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mugavi — AR automation for agencies',
+    title: 'Mugavi: AR automation for agencies',
     description:
       `AI-native AR for agencies, consultancies and bookkeeping practices on Xero & QuickBooks. From $${PLAN_PRICING.starter.monthly}/mo.`,
     images: ['/og.png'],
@@ -189,7 +189,7 @@ const siteJsonLd = JSON.stringify([
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: `${BRAND} — ${TAGLINE}`,
+    name: `${BRAND}: ${TAGLINE}`,
     url: SITE.url,
     potentialAction: {
       '@type': 'SearchAction',

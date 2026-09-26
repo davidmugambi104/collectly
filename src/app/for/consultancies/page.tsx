@@ -50,11 +50,11 @@ const FAQS: FaqItem[] = [
   ];
 
 export const metadata = pageMetadata({
-  title: 'A/R automation for consultancies on Xero — founder-assisted pilot',
+  title: 'A/R automation for consultancies on Xero: founder-assisted pilot',
   description:
     'Built for 5-30 person consultancies and boutique advisory firms on Xero. ' +
     'AI tone-aware dunning, reply-or-pay pause, promise-to-pay tracking, and ' +
-    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo. Founder-assisted onboarding for ` +
+    `dispute classification: from $${PLAN_PRICING.starter.monthly}/mo. Founder-assisted onboarding for ` +
     'agencies, consultancies and bookkeeping practices.',
   path: '/for/consultancies',
   keywords: [

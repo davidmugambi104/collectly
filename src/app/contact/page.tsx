@@ -5,7 +5,7 @@ import { pageMetadata, webPageJsonLd } from '@/lib/seo';
 import { FOUNDING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Contact — sales, support, partnerships, press',
+  title: 'Contact: sales, support, partnerships, press',
   description:
     'Talk to the team behind Mugavi. Sales inquiries, customer support, ' +
     'Xero + QuickBooks partnerships, and press. Replies within one business day.',

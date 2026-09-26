@@ -10,7 +10,7 @@ import { pageMetadata } from '@/lib/seo';
 // directly from the site footer. See the matching fix on
 // src/app/tools/ar-roi/page.tsx for the same gap.
 export const metadata: Metadata = pageMetadata({
-  title: 'Late Payment Cost Calculator — How much is your agency losing?',
+  title: 'Late Payment Cost Calculator: How much is your agency losing?',
   description: 'Free 2-minute calculator: see how much late invoices and manual chasing are costing your agency every year. Built for 5-30 person agencies and consultancies.',
   path: '/tools/ar-cost-calculator',
   keywords: ['late payment cost', 'agency cash flow', 'invoice chasing cost', 'AR calculator', 'accounts receivable calculator'],

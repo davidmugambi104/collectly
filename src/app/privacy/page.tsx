@@ -1,7 +1,7 @@
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Privacy Policy — plain English, not legalese',
+  title: 'Privacy Policy: plain English, not legalese',
   description:
     'How Mugavi handles data: what we collect, how we use it, ' +
     'what we never do, and what choices you have. Plain-English privacy ' +
@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       <div className="container-tight py-16 prose prose-ink max-w-none">
         <h1 className="text-4xl font-display font-bold">Privacy Policy</h1>
         <p className="text-ink-500 text-sm">Last updated: July 13, 2026</p>
-        <p className="lead">Mugavi is a business-to-business accounts-receivable tool. This policy describes the data we collect, how we use it, and the choices you have. It&apos;s written in plain English, not legalese — but it&apos;s a real policy, not a draft. If you have questions, email privacy@getcollectly.app.</p>
+        <p className="lead">Mugavi is a business-to-business accounts-receivable tool. This policy describes the data we collect, how we use it, and the choices you have. It&apos;s written in plain English, not legalese, but it&apos;s a real policy, not a draft. If you have questions, email privacy@getcollectly.app.</p>
         <h2 className="font-display font-semibold text-xl mt-8">What we collect</h2>
         <p>Email, name, billing info, and the data you put in our platform (customers, invoices, payment records).</p>
         <h2 className="font-display font-semibold text-xl mt-8">How we use it</h2>
@@ -38,24 +38,24 @@ export default function PrivacyPage() {
         </p>
         <ul>
           <li>
-            <b>Strictly necessary</b> — keeping you signed in, remembering your answer to the
+            <b>Strictly necessary</b>: keeping you signed in, remembering your answer to the
             cookie banner, and a two-letter country code used to decide whether you are shown
             the banner at all. That country cookie holds nothing but the country. These cannot
             be switched off, and we do not ask about them.
           </li>
           <li>
-            <b>Analytics</b> — PostHog, for which pages get read and where people get stuck,
+            <b>Analytics</b>: PostHog, for which pages get read and where people get stuck,
             and Microsoft Clarity, which records the session and builds heatmaps. Clarity masks
             what you type into form fields.
           </li>
           <li>
-            <b>Advertising</b> — Google AdSense, which sets cookies used to select and measure
+            <b>Advertising</b>: Google AdSense, which sets cookies used to select and measure
             ads.
           </li>
         </ul>
         <p>
           In the UK, EU, EEA and Switzerland nothing in the second and third groups loads until
-          you say yes — not as a blocked cookie, but as a script that is never added to the page.
+          you say yes, not as a blocked cookie, but as a script that is never added to the page.
           Elsewhere they load by default and we do not interrupt you to ask, but{' '}
           <b>Cookie preferences</b> in the footer works everywhere: switch something off from
           there, anywhere in the world, and we honour it. Turning analytics off stops collection

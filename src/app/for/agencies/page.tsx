@@ -51,11 +51,11 @@ const FAQS: FaqItem[] = [
   ];
 
 export const metadata = pageMetadata({
-  title: 'A/R automation for agencies on Xero — stop chasing late invoices',
+  title: 'A/R automation for agencies on Xero: stop chasing late invoices',
   description:
     'AR automation built for 5-30 person agencies and consultancies on Xero. ' +
     'Tone-aware AI reminders, reply-or-pay pause, promise-to-pay tracking, and ' +
-    `dispute classification — from $${PLAN_PRICING.starter.monthly}/mo.`,
+    `dispute classification: from $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/for/agencies',
   keywords: [
     'AR automation for agencies',
@@ -132,7 +132,7 @@ export default function ForAgenciesPage() {
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Strategic accounts get friendly. New clients get firm. Long-overdue
               accounts get a final-touch before human handoff. Tone rules are
-              per-customer and per-customer-stage — you set them once, Mugavi
+              per-customer and per-customer-stage: you set them once, Mugavi
               follows them.
             </p>
           </div>
@@ -142,7 +142,7 @@ export default function ForAgenciesPage() {
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Some invoices should never go on autopilot. Strategic accounts,
               disputed accounts, accounts over a year old, accounts above a value
-              threshold — Mugavi surfaces them for human review every time.
+              threshold: Mugavi surfaces them for human review every time.
             </p>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function ForAgenciesPage() {
           <p className="mt-4 lead">
             Chaser is templated reminders starting around $259/mo for one
             organization. BILL bundles AP, AR, and spend at $49 per user/month plus
-            transaction fees. Neither is wrong — they&apos;re just priced and
+            transaction fees. Neither is wrong: they&apos;re just priced and
             positioned for different teams. Mugavi prices per client book, which
             works out near ${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo
             a book for a practice.

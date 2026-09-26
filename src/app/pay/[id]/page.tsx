@@ -144,10 +144,10 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                 </div>
                 <h1 className="mt-4 h3">Confirming your payment…</h1>
                 <p className="mt-2 text-sm text-ink-600">
-                  We got the redirect back from checkout, but it hasn&apos;t finished processing yet — this is usually a
+                  We got the redirect back from checkout, but it hasn&apos;t finished processing yet. This is usually a
                   few seconds. {balance > 0 ? `Remaining balance shown is $${balance.toFixed(2)} until it clears.` : ''}
                 </p>
-                <p className="mt-1 text-sm text-ink-600">Refresh this page in a moment, or check back — a receipt will be emailed once it&apos;s confirmed.</p>
+                <p className="mt-1 text-sm text-ink-600">Refresh this page in a moment, or check back. A receipt will be emailed once it&apos;s confirmed.</p>
                 <p className="mt-4 text-xs text-ink-500">If this doesn&apos;t update within a few minutes, {payerContactEmail ? <>contact <a className="link" href={`mailto:${payerContactEmail}`}>{payerContactEmail}</a></> : <>reply to the email this link came from</>} and it will get sorted out.</p>
               </div>
             ) : cancelled ? (

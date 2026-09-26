@@ -13,7 +13,7 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs HighRadius — SMB AR vs autonomous enterprise finance',
+  title: 'Mugavi vs HighRadius: SMB AR vs autonomous enterprise finance',
   description:
     'HighRadius builds autonomous finance for the Office of the CFO. ' +
     'Mugavi is the simple, AR-native alternative for small agencies ' +
@@ -63,7 +63,7 @@ export default function VsHighradiusPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs HighRadius"
-        subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Mugavi is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast — live in 10 minutes from $${PLAN_PRICING.starter.monthly}/mo.`}
+        subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Mugavi is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast, live in 10 minutes from $${PLAN_PRICING.starter.monthly}/mo.`}
         competitorName="HighRadius"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="HighRadius" />
@@ -74,7 +74,7 @@ export default function VsHighradiusPage() {
         competitorName="HighRadius"
         summary="HighRadius grew by selling a complete autonomous finance platform to CFOs who wanted one vendor for O2C, AP, Treasury, and Close."
         cards={STRATEGY}
-        takeaway="HighRadius proves AI belongs in AR — at enterprise scale, on an enterprise timeline, at an enterprise price. The capability is real. The fit below mid-market is not."
+        takeaway="HighRadius proves AI belongs in AR: at enterprise scale, on an enterprise timeline, at an enterprise price. The capability is real. The fit below mid-market is not."
       />
       <WhenToChoose competitorName="HighRadius" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

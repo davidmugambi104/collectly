@@ -19,7 +19,7 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'What is the most common invoice dispute?',
-      a: 'Missing purchase order (PO) — accounts payable teams cannot ' +
+      a: 'Missing purchase order (PO): accounts payable teams cannot ' +
          'release payment without a matching PO. The dispute reply should ' +
          'confirm whether the PO exists, request a copy, or note that ' +
          'future invoices will require a PO on file before being issued.',
@@ -49,7 +49,7 @@ const FAQS: FaqItem[] = [
 //   3. Funnel into the audit or the founding-cohort.
 
 export const metadata = pageMetadata({
-  title: 'Free invoice-dispute email template — works for missing PO and pricing',
+  title: 'Free invoice-dispute email template: works for missing PO and pricing',
   description:
     '5 free, copy-paste email templates for the most common invoice ' +
     'disputes: missing PO, wrong amount, wrong billing details, not yet ' +
@@ -83,12 +83,12 @@ const disputeJsonLd = JSON.stringify([
 const TEMPLATES = [
   {
     name: 'Missing purchase order',
-    subject: 'Re: Invoice {{invoiceNo}} — PO needed to release payment',
+    subject: 'Re: Invoice {{invoiceNo}}: PO needed to release payment',
     body: `Hi {{firstName}},
 
 Thanks for the heads-up that invoice {{invoiceNo}} is on hold pending a PO.
 
-Could you confirm whether the PO exists on your side and share it back to me? If a PO wasn't raised internally for this work, I'd appreciate the chance to send through a credit note for any time we worked outside the agreed scope — and I'll make sure future invoices include the PO on the invoice itself so this doesn't happen again.
+Could you confirm whether the PO exists on your side and share it back to me? If a PO wasn't raised internally for this work, I'd appreciate the chance to send through a credit note for any time we worked outside the agreed scope, and I'll make sure future invoices include the PO on the invoice itself so this doesn't happen again.
 
 If you'd like to send through the PO today, I can confirm receipt and arrange for the invoice to be re-released to your accounts payable team within an hour.
 
@@ -98,10 +98,10 @@ Best,
   },
   {
     name: 'Wrong amount',
-    subject: 'Re: Invoice {{invoiceNo}} — amount discrepancy',
+    subject: 'Re: Invoice {{invoiceNo}}: amount discrepancy',
     body: `Hi {{firstName}},
 
-Thanks for flagging the amount question on invoice {{invoiceNo}}. The invoice was issued for {{oursAmount}} based on the {{referenceDoc}} we agreed on {{agreedDate}} — I've attached a copy for your reference.
+Thanks for flagging the amount question on invoice {{invoiceNo}}. The invoice was issued for {{oursAmount}} based on the {{referenceDoc}} we agreed on {{agreedDate}}. I've attached a copy for your reference.
 
 If your team has a different record of the agreed value, could you share that with me so we can reconcile? I'll hold the invoice in dispute status until we've both signed off on the figure, then issue a credit note and re-invoice if needed.
 
@@ -111,12 +111,12 @@ Best,
   },
   {
     name: 'Invoice not received by AP',
-    subject: 'Re: Invoice {{invoiceNo}} — confirming receipt on your end',
+    subject: 'Re: Invoice {{invoiceNo}}: confirming receipt on your end',
     body: `Hi {{firstName}},
 
-Thanks for letting me know invoice {{invoiceNo}} didn't reach your accounts payable team. The invoice was sent on {{issuedDate}} from our billing system to {{theirEmail}} — could you confirm whether that is the correct address for AP?
+Thanks for letting me know invoice {{invoiceNo}} didn't reach your accounts payable team. The invoice was sent on {{issuedDate}} from our billing system to {{theirEmail}}. Could you confirm whether that is the correct address for AP?
 
-If not, I'll update our records and re-send the invoice to the right contact today. If yes, it's possible the email was caught in a spam filter — happy to send a PDF copy directly to whoever needs it for processing.
+If not, I'll update our records and re-send the invoice to the right contact today. If yes, it's possible the email was caught in a spam filter. Happy to send a PDF copy directly to whoever needs it for processing.
 
 Best,
 {{yourName}}`,
@@ -124,10 +124,10 @@ Best,
   },
   {
     name: 'Wrong billing details',
-    subject: 'Re: Invoice {{invoiceNo}} — billing details update',
+    subject: 'Re: Invoice {{invoiceNo}}: billing details update',
     body: `Hi {{firstName}},
 
-Thanks for the updated billing details. I'll reissue invoice {{invoiceNo}} today with the right entity name, address, and any tax IDs you need on there — could you send through the official "bill to" details so I get this right the first time?
+Thanks for the updated billing details. I'll reissue invoice {{invoiceNo}} today with the right entity name, address, and any tax IDs you need on there. Could you send through the official "bill to" details so I get this right the first time?
 
 I'll mark the original invoice as void in our system at the same time so there is no confusion on your AP side. The new invoice will land in your inbox within an hour.
 
@@ -137,10 +137,10 @@ Best,
   },
   {
     name: 'Pricing dispute (agreement unclear)',
-    subject: 'Re: Invoice {{invoiceNo}} — pricing alignment',
+    subject: 'Re: Invoice {{invoiceNo}}: pricing alignment',
     body: `Hi {{firstName}},
 
-Appreciate you raising the pricing question on invoice {{invoiceNo}}. The {{lineItem}} line on this invoice reflects the {{rateType}} rate we agreed in {{referenceDoc}} on {{agreedDate}} — I've attached that document here for your records.
+Appreciate you raising the pricing question on invoice {{invoiceNo}}. The {{lineItem}} line on this invoice reflects the {{rateType}} rate we agreed in {{referenceDoc}} on {{agreedDate}}. I've attached that document here for your records.
 
 If the rate we billed is different from what your side expects, I'd like to understand the gap before either re-invoicing or issuing a credit note. Could you share the rate sheet or contract reference you're working from, and I'll reconcile?
 

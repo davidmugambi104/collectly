@@ -43,7 +43,7 @@ const FAQS: FaqItem[] = [
 ];
 
 export const metadata = pageMetadata({
-  title: 'Free A/R health audit — find what\'s slowing your cash flow',
+  title: 'Free A/R health audit: find what\'s slowing your cash flow',
   description:
     'Get a free A/R health audit in 24 hours. No sales call, no pitch. ' +
     'We analyze your outstanding invoices, DSO, and collections workflow ' +
@@ -68,7 +68,7 @@ const PROMISES = [
   {
     icon: Clock,
     title: 'Reply within 24 hours',
-    body: 'We review your snapshot manually and send a short, actionable report — usually the same day.',
+    body: 'We review your snapshot manually and send a short, actionable report, usually the same day.',
   },
   {
     icon: ShieldCheck,
@@ -99,9 +99,9 @@ export default function ArAuditPage() {
       <section className="container-tight py-16">
         <div className="max-w-2xl mx-auto text-center">
           <p className="eyebrow">Free A/R health audit</p>
-          <h1 className="mt-3 h1">Find out why your cash flow feels stuck — in 2 minutes</h1>
+          <h1 className="mt-3 h1">Find out why your cash flow feels stuck. In 2 minutes</h1>
           <p className="mt-5 lead">
-            Send us a snapshot of your A/R. We will reply within 24 hours with 3 specific things slowing your collections —
+            Send us a snapshot of your A/R. We will reply within 24 hours with 3 specific things slowing your collections,
             and what to do about each one. No sales call. No credit card. No fake case studies.
           </p>
         </div>

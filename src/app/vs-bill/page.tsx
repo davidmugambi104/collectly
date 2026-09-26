@@ -10,7 +10,7 @@ import { PLAN_PRICING } from '@/lib/utils';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs BILL — dedicated AR automation vs all-in-one FinOps',
+  title: 'Mugavi vs BILL: dedicated AR automation vs all-in-one FinOps',
   description:
     'Side-by-side of Mugavi and BILL for accounts-receivable automation. ' +
     'BILL bundles AP, AR, and spend at $49 per user/month plus transaction ' +
@@ -23,7 +23,7 @@ export const metadata = pageMetadata({
 });
 
 const DIFFS = [
-  { icon: Layers, label: 'Scope', collectly: 'AR-only — deep dunning, forecasting, risk scoring', bill: 'AP + AR + spend/expense platform' },
+  { icon: Layers, label: 'Scope', collectly: 'AR-only: deep dunning, forecasting, risk scoring', bill: 'AP + AR + spend/expense platform' },
   { icon: DollarSign, label: 'Pricing', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-user or per-invoice fees`, bill: '$49/user/mo + ACH/card/wire fees' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', bill: 'SMBs and accounting firms needing broad FinOps' },
   { icon: Receipt, label: 'AR depth', collectly: 'Tone-aware AI dunning + AR aging + cashflow forecast', bill: 'Invoicing, reminders, payment acceptance' },
@@ -86,7 +86,7 @@ export default function VsBillPage() {
       <section className="bg-ink-50 border-y border-ink-200">
         <div className="container-page py-16 max-w-3xl">
           <h2 className="h2 text-center">How BILL built its clientele</h2>
-          <p className="mt-4 text-center text-ink-600">BILL became a platform by combining AP, AR, cards, and credit lines — then distributing through accountants.</p>
+          <p className="mt-4 text-center text-ink-600">BILL became a platform by combining AP, AR, cards, and credit lines, then distributing through accountants.</p>
           <div className="mt-8 grid sm:grid-cols-2 gap-4 text-sm text-ink-700">
             <div className="card">
               <div className="font-semibold text-ink-900">Accountant/bookkeeper channel</div>

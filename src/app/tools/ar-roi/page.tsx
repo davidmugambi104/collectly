@@ -12,7 +12,7 @@ import { pageMetadata } from '@/lib/seo';
 // crawlable destination, linked directly from the footer — had none at
 // all, and was also missing from sitemap.ts entirely.
 export const metadata: Metadata = pageMetadata({
-  title: 'A/R ROI Calculator — How much is slow invoicing costing you?',
+  title: 'A/R ROI Calculator: How much is slow invoicing costing you?',
   description: 'Free calculator: see exactly how much cash faster invoicing would free up for your service business. Built for 5-30 person agencies and consultancies on net-30 / net-60 terms.',
   path: '/tools/ar-roi',
   keywords: ['AR calculator', 'DSO calculator', 'days sales outstanding', 'cash flow calculator', 'small business AR'],

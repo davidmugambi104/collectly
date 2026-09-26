@@ -40,16 +40,16 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'Will Mugavi send messages without my approval?',
-      a: 'By default, no. Every founding customer runs in approval mode — nothing goes out until you review and send. Autopilot unlocks after 25 reviewed messages with no unedited-send rate over a 14-day window, and can be turned off any time.',
+      a: 'By default, no. Every founding customer runs in approval mode. Nothing goes out until you review and send. Autopilot unlocks after 25 reviewed messages with no unedited-send rate over a 14-day window, and can be turned off any time.',
     },
     {
       q: 'What happens when a customer replies "we\'ll pay next Friday"?',
-      a: 'Mugavi detects the reply, pauses the reminder sequence, extracts the promised date, and asks a human to confirm before logging it. The promised date shows up in your work queue. After that Friday passes without payment, the next reminder is queued — not auto-sent.',
+      a: 'Mugavi detects the reply, pauses the reminder sequence, extracts the promised date, and asks a human to confirm before logging it. The promised date shows up in your work queue. After that Friday passes without payment, the next reminder is queued, not auto-sent.',
     },
 ];
 
 export const metadata = pageMetadata({
-  title: 'Stop chasing late invoices — AR automation for small agencies',
+  title: 'Stop chasing late invoices: AR automation for small agencies',
   description:
     'Connect Mugavi to Xero or QuickBooks. It drafts client-safe invoice ' +
     'reminders, pauses when customers reply or pay, tracks promised-payment ' +
@@ -227,7 +227,7 @@ export default function HomePage() {
             n={2}
             icon={<Bot className="h-4 w-4" />}
             title="Set the tone"
-            body="Pick how firm Mugavi should be — friendly, firm, final — when to escalate, and which invoices to leave alone entirely. You set the boundary; Mugavi stays inside it."
+            body="Pick how firm Mugavi should be (friendly, firm, final) when to escalate, and which invoices to leave alone entirely. You set the boundary; Mugavi stays inside it."
           />
           <TimelineStep
             n={3}
@@ -248,10 +248,10 @@ export default function HomePage() {
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             <FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="Reminders that don't sound like a robot" body="AI writes tone-aware email and SMS reminders in your voice, pauses on reply or payment automatically, and stays fully editable before anything sends." />
-            <FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="A single branded link to get paid" body="Customers see every outstanding invoice in one portal and settle with their preferred method — ACH, card, wire, or local rails." />
+            <FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="A single branded link to get paid" body="Customers see every outstanding invoice in one portal and settle with their preferred method: ACH, card, wire, or local rails." />
             <FeatureCard icon={<BarChart3 className="h-5 w-5 text-brand-600" />} title="Know if you can make payroll" body="Four-week cash forecast based on invoice age, customer payment history, and promised pay dates. See exactly when dollars are expected to land." />
             <FeatureCard icon={<Clock className="h-5 w-5 text-brand-600" />} title="See who owes what, right now" body="Live buckets: current, 1-30, 31-60, 61-90, 90+. Drill into any customer without opening QuickBooks or Xero." />
-            <FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Cash lands in the right invoice automatically" body="Incoming payments are matched the moment they arrive — no reconciling 200 uncategorized transactions at month-end." />
+            <FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Cash lands in the right invoice automatically" body="Incoming payments are matched the moment they arrive. No reconciling 200 uncategorized transactions at month-end." />
             <FeatureCard icon={<Globe2 className="h-5 w-5 text-brand-600" />} title="Every major currency, one dashboard" body="USD, GBP, AUD, CAD, EUR, KES, NGN and more, with local payment methods per region." />
           </div>
         </div>
@@ -266,7 +266,7 @@ export default function HomePage() {
             No signup. No data stored. Pick a tone, pick a channel, click generate.
             You&apos;ll see a sample message in our three voices. The production composer
             (in the dashboard) generates real, customer-specific copy with Gemini,
-            then lets you edit before sending — this demo shows the structure and
+            then lets you edit before sending. This demo shows the structure and
             tone only, with placeholder names.
           </p>
         </div>
@@ -308,7 +308,7 @@ export default function HomePage() {
           <h3 className="h3">What that looks like over a year</h3>
           <p className="mt-2 text-sm text-ink-600">
             Same feature gap, in dollars, for a three-person team on each vendor&apos;s
-            publicly listed entry tier. Platform cost only — transaction fees are
+            publicly listed entry tier. Platform cost only: transaction fees are
             charged on top where noted, and your own volume decides those.
           </p>
         </div>
@@ -433,7 +433,7 @@ export default function HomePage() {
               Most forecasts give you one number and no way to argue with it. This one
               separates the money a customer has promised in writing from the money a
               reliable payer will probably send, and from the money that is genuinely in
-              doubt — so you can see the week where payroll gets tight before it arrives.
+              doubt, so you can see the week where payroll gets tight before it arrives.
             </p>
             <p className="mt-4 max-w-[34rem] text-sm text-ink-500">
               Hover any week to see the split.
@@ -478,18 +478,18 @@ export default function HomePage() {
             <h2 className="h2">See your own invoices in it before you decide.</h2>
             <p className="mt-4 lead max-w-xl mx-auto">
               Connect Xero or QuickBooks, watch it draft reminders for your actual overdue invoices, and decide
-              from there. If it&apos;s not clearly saving you time by day 14, cancel — no retention call.
+              from there. If it&apos;s not clearly saving you time by day 14, cancel. No retention call.
             </p>
             <div className="mt-6 max-w-md mx-auto">
               <Link href="/sign-up" className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-ink-950 px-5 py-3 text-sm font-semibold text-white hover:bg-ink-800 transition-colors">
                 Start free trial <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <p className="mt-3 text-xs text-ink-500">Founding customers take {FOUNDING.discountPct}% off for {FOUNDING.months} months — ${FOUNDING.monthly('growth')}/mo for {PLAN_PRICING.growth.name}, then ${PLAN_PRICING.growth.monthly}/mo. First {FOUNDING.seats} only.</p>
+            <p className="mt-3 text-xs text-ink-500">Founding customers take {FOUNDING.discountPct}% off for {FOUNDING.months} months, ${FOUNDING.monthly('growth')}/mo for {PLAN_PRICING.growth.name}, then ${PLAN_PRICING.growth.monthly}/mo. First {FOUNDING.seats} only.</p>
           </div>
           <div className="mt-8 border-t border-ink-200/60 px-6 py-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink-700">
             <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> No credit card required</span>
-            <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Data stays yours — disconnect anytime</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Data stays yours, disconnect anytime</span>
             <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Not ready? <Link href="/ar-audit" className="link">Get a free AR audit</Link> instead</span>
           </div>
         </div>

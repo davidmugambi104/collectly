@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Clock, Tag, Rss } from 'lucide-react';
 
 export const metadata = pageMetadata({
-  title: 'Blog — notes on A/R, cash flow & small-business finance',
+  title: 'Blog: notes on A/R, cash flow & small-business finance',
   description:
     'Real essays on accounts-receivable automation, Xero + QuickBooks workflows, ' +
     'cash-flow forecasting, and small-agency operations. Published by the team ' +

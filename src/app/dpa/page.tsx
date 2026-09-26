@@ -4,7 +4,7 @@ import { Mail, Globe2, Server, Users } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Data Processing Agreement (DPA) — GDPR + UK GDPR compliant',
+  title: 'Data Processing Agreement (DPA): GDPR + UK GDPR compliant',
   description:
     'The contract that governs how Mugavi processes customer data on ' +
     'your behalf. GDPR-compliant, US data residency with EU available on ' +
@@ -25,9 +25,9 @@ const sections = [
           processes Personal Data on your behalf when you use the A/R automation service.
         </p>
         <p>
-          Mugavi processes two categories of data: (a) <b>Customer Data</b> — invoices, customer contact
+          Mugavi processes two categories of data: (a) <b>Customer Data</b>: invoices, customer contact
           information, payment history, and dunning messages you provide or authorize us to pull from
-          connected accounting systems; and (b) <b>Service Data</b> — telemetry, account information, and
+          connected accounting systems; and (b) <b>Service Data</b>: telemetry, account information, and
           audit logs needed to operate the service.
         </p>
       </>
@@ -60,14 +60,14 @@ const sections = [
           <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a>.
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
-          <li><b>Vercel</b> — application hosting.</li>
-          <li><b>DigitalOcean</b> — managed Postgres database.</li>
-          <li><b>Clerk</b> — authentication and identity.</li>
-          <li><b>Resend</b> — transactional email delivery.</li>
-          <li><b>Twilio</b> — SMS delivery.</li>
-          <li><b>Google (Gemini)</b> — AI message generation. Paid-tier API; not used for model training. See processing instructions above for retention detail.</li>
-          <li><b>PostHog</b> — product analytics. Receives account identifiers (user ID, organization ID) and standard web-analytics data (pages viewed, device/browser info, approximate location from IP); never receives invoice, customer, or payment content.</li>
-          <li><b>Upstash</b> — Redis-backed rate limiting and caching.</li>
+          <li><b>Vercel</b>: application hosting.</li>
+          <li><b>DigitalOcean</b>: managed Postgres database.</li>
+          <li><b>Clerk</b>: authentication and identity.</li>
+          <li><b>Resend</b>: transactional email delivery.</li>
+          <li><b>Twilio</b>: SMS delivery.</li>
+          <li><b>Google (Gemini)</b>: AI message generation. Paid-tier API; not used for model training. See processing instructions above for retention detail.</li>
+          <li><b>PostHog</b>: product analytics. Receives account identifiers (user ID, organization ID) and standard web-analytics data (pages viewed, device/browser info, approximate location from IP); never receives invoice, customer, or payment content.</li>
+          <li><b>Upstash</b>: Redis-backed rate limiting and caching.</li>
         </ul>
       </>
     ),

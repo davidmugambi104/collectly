@@ -3,7 +3,7 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { pageMetadata, personJsonLd, webPageJsonLd } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'About — built by a founder, not a Series-B committee',
+  title: 'About: built by a founder, not a Series-B committee',
   description:
     'Mugavi is built by Davie in Nairobi for small agencies and ' +
     'consultancies on Xero and QuickBooks. Read about the founding story, ' +
@@ -18,7 +18,7 @@ export const metadata = pageMetadata({
 // about page for branded query "Mugavi founder" / "who built Mugavi".
 const aboutJsonLd = JSON.stringify([
   webPageJsonLd({
-    title: 'About Mugavi — built in Nairobi for small agencies',
+    title: 'About Mugavi: built in Nairobi for small agencies',
     description:
       'The founding story behind Mugavi: a small SaaS built for the ' +
       '5-30 person agency and consultancy long tail on Xero and QuickBooks.',
@@ -40,17 +40,17 @@ export default function AboutPage() {
       <section className="container-page pb-20 max-w-3xl prose prose-ink">
         <p className="lead">Mugavi is being built for 5–30 person agencies and consultancies using Xero, where a founder or operations lead still manages overdue invoices manually.</p>
         <h2 className="h3 mt-10">Why we exist</h2>
-        <p>The A/R automation market is $4-6B and growing. It&apos;s also dominated by tools priced for 500-person companies. QuickBooks and Xero now cover the invoicing and reminders basics — what&apos;s missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
+        <p>The A/R automation market is $4-6B and growing. It&apos;s also dominated by tools priced for 500-person companies. QuickBooks and Xero now cover the invoicing and reminders basics. What&apos;s missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
         <h2 className="h3 mt-10">What we believe</h2>
         <ul>
           <li><b>Small business owners are not stupid.</b> They&apos;re under-resourced, under-tooled, and overwhelmed. The right tool respects their time.</li>
-          <li><b>AI is leverage, not magic.</b> The right AI removes the boring 80% of A/R work — the 6th reminder, the cash-flow projection, the cash application. It doesn&apos;t replace the owner.</li>
+          <li><b>AI is leverage, not magic.</b> The right AI removes the boring 80% of A/R work: the 6th reminder, the cash-flow projection, the cash application. It doesn&apos;t replace the owner.</li>
           <li><b>Honest pricing wins.</b> No per-invoice fees. No setup costs. No annual contracts. No &quot;premium&quot; support tiers.</li>
         </ul>
         <h2 className="h3 mt-10">Where we are</h2>
-        <p>Mugavi is built in Nairobi. The team is small and ships fast. We&apos;re taking on our first founding cohort from agencies and consultancies in the US, UK, AU, and CA — ten of them, with founder-assisted setup and a direct line in.</p>
+        <p>Mugavi is built in Nairobi. The team is small and ships fast. We&apos;re taking on our first founding cohort from agencies and consultancies in the US, UK, AU, and CA (ten of them), with founder-assisted setup and a direct line in.</p>
         <h2 className="h3 mt-10">Who we serve</h2>
-        <p>5-30 person agencies and consultancies on Xero with 5+ open invoices at any time and no full-time credit controller. We&apos;re starting narrow on purpose — accountants and bookkeepers are a future distribution channel, not today&apos;s primary customer.</p>
+        <p>5-30 person agencies and consultancies on Xero with 5+ open invoices at any time and no full-time credit controller. We&apos;re starting narrow on purpose. Accountants and bookkeepers are a future distribution channel, not today&apos;s primary customer.</p>
       </section>
       <MarketingFooter />
     </div>

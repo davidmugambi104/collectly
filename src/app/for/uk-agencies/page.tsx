@@ -60,7 +60,7 @@ const FAQS: FaqItem[] = [
   ];
 
 export const metadata = pageMetadata({
-  title: 'A/R automation for UK agencies on Xero — founded-pilot offer',
+  title: 'A/R automation for UK agencies on Xero: founded-pilot offer',
   description:
     'AI-native accounts-receivable automation for UK agencies and consultancies ' +
     'on Xero. Built for the long tail: 5-30 person teams, monthly B2B invoices, ' +
@@ -134,7 +134,7 @@ export default function ForUkAgenciesPage() {
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Net-30 is the UK norm but receipt-to-payment routinely runs 8+ days
               past the due date. Mugavi reads the original Xero payment terms
-              and adapts the cadence accordingly — friendlier on net-30 first
+              and adapts the cadence accordingly: friendlier on net-30 first
               touch, firmer on net-60 overdue buckets.
             </p>
           </div>
@@ -164,7 +164,7 @@ export default function ForUkAgenciesPage() {
           <h2 className="mt-3 h2">Founding-customer offer.</h2>
           <p className="mt-4 lead">
             The first {FOUNDING.seats} founding customers take {FOUNDING.discountPct}% off
-            for {FOUNDING.months} months — ${FOUNDING.monthly('growth')}/mo for a practice
+            for {FOUNDING.months} months, ${FOUNDING.monthly('growth')}/mo for a practice
             covering up to {PRACTICE_INCLUDED_ORGS} client organisations, then
             ${PLAN_PRICING.growth.monthly}/mo. A single organisation is
             ${PLAN_PRICING.starter.monthly}/mo. Billing is via Stripe in GBP; cancel any time.

@@ -10,7 +10,7 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Melio — AR automation beyond payment links',
+  title: 'Mugavi vs Melio: AR automation beyond payment links',
   description:
     'Side-by-side of Mugavi and Melio. Melio is free for AP-first B2B ' +
     'payments with light invoicing. Mugavi is AR-native: AI tone-aware ' +
@@ -45,7 +45,7 @@ export default function VsMelioPage() {
         <p className="mt-5 lead">
           Melio is a great way to pay bills and send free invoices. But if your real problem is
           overdue invoices, awkward follow-ups, and unpredictable cash flow, Mugavi is built for that.
-          AI tone-aware dunning, cash-flow forecasting, customer risk scoring — from ${PLAN_PRICING.starter.monthly}/mo.
+          AI tone-aware dunning, cash-flow forecasting, customer risk scoring, from ${PLAN_PRICING.starter.monthly}/mo.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/sign-up">
@@ -104,7 +104,7 @@ export default function VsMelioPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>Bottom line:</strong> Melio is an AP tool — it pays your bills, on time, for free. It does not chase your invoices. If the money going out is the problem, use Melio. If the money not coming in is the problem, it will not touch it.
+            <strong>Bottom line:</strong> Melio is an AP tool: it pays your bills, on time, for free. It does not chase your invoices. If the money going out is the problem, use Melio. If the money not coming in is the problem, it will not touch it.
           </div>
         </div>
       </section>

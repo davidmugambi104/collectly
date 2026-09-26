@@ -35,13 +35,13 @@ const FAQS: FaqItem[] = [
       a: 'Use a 3-step consistent follow-up sequence (friendly → firm → ' +
          'final) that pauses the moment a customer replies. Pair this with ' +
          'a frictionless pay link in every reminder. Mugavi automates ' +
-         'both — see the free AR audit for a personalised analysis.',
+         'both. See the free AR audit for a personalised analysis.',
     },
     {
       q: 'What is the difference between DSO and DPO?',
       a: 'DSO measures how fast you collect. DPO (Days Payable Outstanding) ' +
          'measures how fast you pay your own suppliers. Healthy SMBs keep ' +
-         'DSO low and DPO moderate — chasing customers late while paying ' +
+         'DSO low and DPO moderate: chasing customers late while paying ' +
          'suppliers early is the worst cash combination.',
     },
     {
@@ -50,7 +50,7 @@ const FAQS: FaqItem[] = [
          'runs 5-10 days. Software / SaaS runs 45-75 days (annual contracts ' +
          'with monthly invoicing). Manufacturing runs 45-60 days. The ' +
          'benchmark for your specific industry is the comparison that ' +
-         'actually matters — not the all-industry average.',
+         'actually matters, not the all-industry average.',
     },
   ];
 
@@ -180,7 +180,7 @@ export default function DsoCalculatorPage() {
             <h2 className="h2">DSO benchmarks by region</h2>
           </div>
           <p className="mt-3 lead">
-            Where does your business sit? Lower is better — every day past your
+            Where does your business sit? Lower is better: every day past your
             payment terms is working capital you do not have.
           </p>
           <div className="mt-6 overflow-x-auto">

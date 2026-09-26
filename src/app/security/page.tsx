@@ -4,7 +4,7 @@ import { ShieldCheck, Lock, Server, KeyRound, Eye, FileCheck2, AlertTriangle, Gl
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Security — encryption, infrastructure, and access control',
+  title: 'Security: encryption, infrastructure, and access control',
   description:
     'How Mugavi protects your data, your customers, and your money. ' +
     'Encryption in transit + at rest, audit log, role-based access, and ' +
@@ -27,7 +27,7 @@ const principles = [
   {
     icon: Server,
     title: 'Hardened infrastructure',
-    body: 'Mugavi runs on Vercel (compute) and managed Postgres (data). All secrets live in Vercel environment variables — never in code, never in the client bundle. No SSH access is provisioned.',
+    body: 'Mugavi runs on Vercel (compute) and managed Postgres (data). All secrets live in Vercel environment variables, never in code, never in the client bundle. No SSH access is provisioned.',
   },
   {
     icon: Eye,
@@ -66,7 +66,7 @@ export default function SecurityPage() {
         <h1 className="mt-3 h1">Your invoices are sensitive. We treat them that way.</h1>
         <p className="mt-6 lead">
           Mugavi sits between your books and your customers. That means we see customer names, balances,
-          payment behavior, and the dunning messages you send. Here&apos;s exactly what we do — and don&apos;t do — with that access.
+          payment behavior, and the dunning messages you send. Here&apos;s exactly what we do (and don&apos;t do) with that access.
         </p>
       </section>
 

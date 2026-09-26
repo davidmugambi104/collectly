@@ -4,7 +4,7 @@ import { InterviewForm } from '@/components/marketing/interview-form';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Customer interview — share your A/R workflow',
+  title: 'Customer interview: share your A/R workflow',
   description:
     '15-minute customer-interview call about how you currently chase ' +
     'overdue invoices, what works, and what does not. Founding-cohort ' +
@@ -20,7 +20,7 @@ export default function InterviewPage() {
       <section className="container-tight py-16">
         <p className="eyebrow">Customer research</p>
         <h1 className="mt-3 h1">What was the last invoice you had to chase?</h1>
-        <p className="mt-5 lead">We&apos;re doing 10 short customer interviews with founders and finance leads at 5-30 person agencies and consultancies. We pay you $25 for your time. No pitch — just 10 questions about how late-payment follow-up actually works for you.</p>
+        <p className="mt-5 lead">We&apos;re doing 10 short customer interviews with founders and finance leads at 5-30 person agencies and consultancies. We pay you $25 for your time. No pitch, just 10 questions about how late-payment follow-up actually works for you.</p>
 
         <div className="mt-10 card-lg">
           <InterviewForm />

@@ -3,7 +3,7 @@ import { pageMetadata } from '@/lib/seo';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 
 export const metadata = pageMetadata({
-  title: 'Changelog — what we shipped, and when',
+  title: 'Changelog: what we shipped, and when',
   description:
     'What we shipped, and when. Updates weekly. Real entries from a ' +
     'small product team, not a marketing roundup.',
@@ -22,7 +22,7 @@ export default function ChangelogPage() {
           {[
             {
               date: '2026-07-13',
-              title: 'Public launch — A/R ROI calculator + AI cash-flow forecast',
+              title: 'Public launch: A/R ROI calculator + AI cash-flow forecast',
               body: 'New /tools/ar-roi public lead-gen tool. AI cash-flow forecast wired to /api/forecast with weighted fallback. New /api/lead-notify endpoint that emails the founder on every waitlist + interview submission (no more silent form-fills).',
             },
             {
@@ -33,7 +33,7 @@ export default function ChangelogPage() {
             {
               date: '2026-07-05',
               title: 'Beta: opening the founding cohort',
-              body: 'Opened signups for the first 20 founding customers. No customers onboarded yet — this is day one of outreach.',
+              body: 'Opened signups for the first 20 founding customers. No customers onboarded yet. This is day one of outreach.',
             },
             {
               date: '2026-06-20',

@@ -35,7 +35,7 @@ export const DOMAIN = 'https://mugavi.com';
 // The disambiguator that goes on every brand surface. Keep it short — under
 // 60 chars when combined with the brand, or it kills OG titles.
 export const TAGLINE = 'AR automation for small agencies and consultancies';
-export const BRAND_LONG = `${BRAND} — ${TAGLINE}`;
+export const BRAND_LONG = `${BRAND}: ${TAGLINE}`;
 
 // Phrases that Google's "Mugavi for Xero" queries
 // need to find. Use these in page titles and H1s.

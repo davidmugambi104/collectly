@@ -20,10 +20,10 @@ import { PLAN_PRICING } from '@/lib/utils';
  * this page says exactly that instead of picking a number and asserting it.
  */
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Upflow — published pricing for teams without a finance department',
+  title: 'Mugavi vs Upflow: published pricing for teams without a finance department',
   description:
     'Upflow is a Financial Relationship Management platform for B2B finance ' +
-    'teams, with collections, payments and cash application — and pricing you ' +
+    'teams, with collections, payments and cash application, and pricing you ' +
     'have to book a demo to learn. Mugavi does AR chasing for 5-30 person ' +
     `agencies on Xero at a published $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/vs-upflow',
@@ -35,19 +35,19 @@ const DIFFS = [
     icon: DollarSign,
     label: 'Pricing',
     collectly: `Published: $${PLAN_PRICING.starter.monthly}/mo, flat, no per-invoice fees`,
-    competitor: 'Not published — demo required. Third-party listings range from ~$249 to $500+/mo, on ARR-based tiers',
+    competitor: 'Not published. Demo required. Third-party listings range from ~$249 to $500+/mo, on ARR-based tiers',
   },
   {
     icon: Target,
     label: 'Built for',
     collectly: '5-30 person agencies and consultancies with no AR function',
-    competitor: 'B2B finance teams — their site names CFOs, Controllers and AR Managers',
+    competitor: 'B2B finance teams: their site names CFOs, Controllers and AR Managers',
   },
   {
     icon: Building2,
     label: 'Scope',
     collectly: 'AR chasing, done properly: dunning, promises, risk, forecast',
-    competitor: 'Four products — Insights, Collections, Payments and Cash App reconciliation',
+    competitor: 'Four products: Insights, Collections, Payments and Cash App reconciliation',
   },
   {
     icon: Clock,
@@ -77,14 +77,14 @@ const STRATEGY = [
 ];
 
 const CHOOSE_US = [
-  { label: 'Nobody at your company owns AR — it lands on the founder or the bookkeeper' },
+  { label: 'Nobody at your company owns AR, it lands on the founder or the bookkeeper' },
   { label: 'You want to see the price before you talk to anyone' },
   { label: 'You run on Xero and want chasing live this afternoon' },
   { label: 'Your problem is invoices going unchased, not cash application at volume' },
 ];
 
 const CHOOSE_THEM = [
-  { label: 'You have a finance team — a Controller or a dedicated AR Manager' },
+  { label: 'You have a finance team: a Controller or a dedicated AR Manager' },
   { label: 'You need cash application and reconciliation, not just chasing' },
   { label: 'Your billing runs through NetSuite, Sage Intacct, Zuora or Chargebee' },
   { label: 'You want 12+ payment methods on a B2B payment portal' },
@@ -103,7 +103,7 @@ export default function VsUpflowPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs Upflow"
-        subtitle="Upflow is a capable platform built for B2B finance teams — collections, payments and cash application, with AI agents you can dial from suggestion-only to autonomous. It is also demo-gated, and priced for companies that have a Controller. Mugavi does the chasing part, on Xero, for teams where AR is nobody's job."
+        subtitle="Upflow is a capable platform built for B2B finance teams: collections, payments and cash application, with AI agents you can dial from suggestion-only to autonomous. It is also demo-gated, and priced for companies that have a Controller. Mugavi does the chasing part, on Xero, for teams where AR is nobody's job."
         competitorName="Upflow"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Upflow" />

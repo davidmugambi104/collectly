@@ -7,11 +7,11 @@ import { pageMetadata } from '@/lib/seo';
 import { TrackView } from '@/components/marketing/track-view';
 
 export const metadata = pageMetadata({
-  title: 'Product tour — how Mugavi follows up on overdue invoices',
+  title: 'Product tour: how Mugavi follows up on overdue invoices',
   description:
     'Watch a 2-minute tour of how Mugavi follows up on overdue ' +
     'invoices, collects payments through a branded portal, and forecasts ' +
-    'cash flow — without the awkward chase. Built for small agencies and ' +
+    'cash flow, without the awkward chase. Built for small agencies and ' +
     'consultancies on Xero.',
   path: '/tour',
   keywords: ['Mugavi tour', 'AR product demo', 'Xero dunning demo', 'invoice reminder demo'],
@@ -28,7 +28,7 @@ export default function TourPage() {
 
       <section className="container-page pt-16 pb-12 max-w-3xl text-center">
         <p className="eyebrow">Product tour</p>
-        <h1 className="mt-3 h1">See exactly how Mugavi works — no sales call required.</h1>
+        <h1 className="mt-3 h1">See exactly how Mugavi works. No sales call required.</h1>
         <p className="mt-5 lead">
           Short videos, a live demo you can try in your browser, and the honest truth about what is ready today.
         </p>
@@ -66,8 +66,7 @@ export default function TourPage() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="h2 mb-4">Want a walkthrough now, not later?</h2>
           <p className="text-ink-600 mb-8">
-            Product videos are being recorded. For now, email the founder directly and we&apos;ll find a time —
-            we&apos;ll show you exactly how Mugavi works for your business and answer your questions.
+            Product videos are being recorded. For now, email the founder directly and we&apos;ll find a time. We&apos;ll show you exactly how Mugavi works for your business and answer your questions.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a
@@ -85,7 +84,7 @@ export default function TourPage() {
               page's own CTA into a waiting room. */}
           <p className="mt-6 text-xs text-ink-500">
             A founder walkthrough covers the same ground live: connecting Xero, the dunning
-            sequence, the payment portal and the cash-flow forecast — on your own books.
+            sequence, the payment portal and the cash-flow forecast, on your own books.
           </p>
         </div>
       </section>
@@ -96,10 +95,10 @@ export default function TourPage() {
           <p className="text-xs font-semibold uppercase tracking-widest text-ink-500 text-center mb-5">What the walkthrough covers</p>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm">
             {[
-              { icon: Mail, label: 'Tone-aware dunning — friendly → firm → final, automatically' },
-              { icon: Wallet, label: 'Branded payment portal — customers pay without calling you' },
-              { icon: BarChart3, label: '4-week cash forecast — know if you can make payroll' },
-              { icon: Clock, label: '10-minute setup — connect QBO/Xero and go' },
+              { icon: Mail, label: 'Tone-aware dunning: friendly → firm → final, automatically' },
+              { icon: Wallet, label: 'Branded payment portal: customers pay without calling you' },
+              { icon: BarChart3, label: '4-week cash forecast: know if you can make payroll' },
+              { icon: Clock, label: '10-minute setup: connect QBO/Xero and go' },
             ].map(({ icon: Icon, label }) => (
               <span key={label} className="inline-flex items-center gap-2 text-ink-700">
                 <Icon className="h-4 w-4 text-brand-600 shrink-0" />{label}
