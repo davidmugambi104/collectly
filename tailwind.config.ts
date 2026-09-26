@@ -6,12 +6,12 @@ const config: Config = {
     extend: {
       // ink + brand resolve through CSS variables so the SAME utility classes
       // (`bg-ink-50`, `text-brand-600`, ...) can carry different values in
-      // different parts of the product. :root in globals.css keeps the original
-      // marketing palette untouched; the `.app` scope wrapping the dashboard
-      // redefines them as a warm neutral + violet accent. That is what lets the
-      // authenticated app be restyled without rewriting the ~77 existing colour
-      // usages across src/app/dashboard and src/components, and without moving
-      // a single pixel on the marketing site.
+      // different parts of the product. :root in globals.css carries the
+      // shared warm ink neutral plus a marketing-only teal accent; the `.app`
+      // scope wrapping the dashboard redefines brand as its own violet accent.
+      // That is what lets each surface hold its own accent colour without
+      // rewriting the ~77 existing colour usages across src/app/dashboard and
+      // src/components, and without the two ever fighting on the same page.
       // Channel-triplet form is required for Tailwind's <alpha-value> support,
       // so `bg-ink-900/40` keeps working.
       colors: {

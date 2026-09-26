@@ -47,7 +47,7 @@ export function MarketingHeader() {
             <Link key={l.href} href={l.href} className="hover:text-ink-950">{l.label}</Link>
           ))}
           <Link href={HIGHLIGHT_LINK.href} className="hover:text-ink-950 inline-flex items-center gap-1">
-            <Sparkles className="h-3 w-3 text-emerald-600" />
+            <Sparkles className="h-3 w-3 text-brand-600" />
             {HIGHLIGHT_LINK.label}
           </Link>
           {NAV_LINKS.slice(5).map((l) => (
@@ -57,8 +57,12 @@ export function MarketingHeader() {
 
         <div className="flex items-center gap-2">
           <Link href="/sign-in" className="hidden sm:inline-flex btn-ghost text-sm">Sign in</Link>
+          {/* Was "Join founding" here against "Start free trial" everywhere
+              the same /sign-up link appears on the homepage — one signup
+              intent, two labels, visible on the same screen the moment
+              someone scrolls. Matched to the label used everywhere else. */}
           <Link href="/sign-up" className="hidden sm:inline-flex">
-            <Button size="sm">Join founding</Button>
+            <Button size="sm">Start free trial</Button>
           </Link>
 
           {/* Mobile hamburger */}
@@ -93,7 +97,7 @@ export function MarketingHeader() {
                 >
                   {l.label === HIGHLIGHT_LINK.label ? (
                     <span className="inline-flex items-center gap-1.5">
-                      <Sparkles className="h-4 w-4 text-emerald-600" />
+                      <Sparkles className="h-4 w-4 text-brand-600" />
                       {l.label}
                     </span>
                   ) : l.label}
@@ -104,7 +108,7 @@ export function MarketingHeader() {
                   Sign in
                 </Link>
                 <Link href="/sign-up" onClick={() => setOpen(false)}>
-                  <Button size="sm" className="w-full">Join founding</Button>
+                  <Button size="sm" className="w-full">Start free trial</Button>
                 </Link>
               </div>
             </nav>

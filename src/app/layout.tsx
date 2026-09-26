@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono, Fraunces } from 'next/font/google';
+import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 
 import { PostHogProvider } from '@/components/posthog-provider';
@@ -38,16 +38,22 @@ const jetbrainsMono = JetBrains_Mono({
 // so every headline on the site was Inter Bold sitting over Inter Regular —
 // which is, precisely, what a Tailwind starter looks like. One editorial face
 // used only for h1/h2 is the cheapest change on the site that reads as
-// "designed"; Inter keeps everything else. Fraunces is variable, so this costs
-// one file, and swapping it is one identifier here plus one in tailwind.config.
-const fraunces = Fraunces({
+// "designed"; Inter keeps everything else.
+//
+// This was Fraunces until this pass. Fraunces (and Instrument Serif) are
+// specifically the two display serifs an LLM reaches for by default when a
+// brief says "make it feel designed" — which made the fix into a second,
+// more expensive tell of the same problem it was solving. A serif is only
+// earned when the brand is genuinely editorial, luxury or heritage; an AR
+// automation tool for agencies is none of those. Space Grotesk is a
+// geometric sans with enough personality in the numerals and terminals to
+// read as chosen rather than default, without borrowing gravitas the brand
+// hasn't earned.
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  // No `axes` here: next/font rejects axes alongside an explicit weight list
-  // ("Axes can only be defined for variable fonts when the weight property is
-  // nonexistent or set to `variable`"). Two static weights is all the display
-  // face needs, and it keeps the payload smaller than shipping the full
-  // variable range for two headline levels.
-  weight: ['600', '700'],
+  // .h1/.h2 use font-bold (700), .h3 uses font-semibold (600). 500 covers
+  // any lighter display use; all three are real static cuts of this family.
+  weight: ['500', '600', '700'],
   style: ['normal'],
   variable: '--font-display',
   display: 'swap',
@@ -198,7 +204,7 @@ const siteJsonLd = JSON.stringify([
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${inter.variable} ${jetbrainsMono.variable} ${fraunces.variable}`}>
+    <html lang="en-GB" className={`${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable}`}>
       <head>
         <script
           type="application/ld+json"

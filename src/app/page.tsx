@@ -81,7 +81,6 @@ export default function HomePage() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 grad-hero" />
-        <div className="absolute inset-0 ring-grid opacity-30" />
         <div className="container-page relative pt-16 pb-12 sm:pt-20 sm:pb-16">
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7">
@@ -368,7 +367,7 @@ export default function HomePage() {
       <section className="bg-ink-950 text-white">
         <div className="container-page pt-14 pb-16 sm:pt-16 sm:pb-20">
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-widest text-emerald-400">Pricing</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-brand-300">Pricing</p>
             <h2 className="mt-2 text-3xl sm:text-4xl font-display font-bold tracking-tight">Honest pricing. No per-invoice fees. No setup costs.</h2>
             <p className="mt-4 text-lg text-ink-300">14-day trial, founder-assisted setup. Upgrade when you&apos;re hooked. Cancel anytime.</p>
           </div>

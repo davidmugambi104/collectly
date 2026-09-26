@@ -34,7 +34,7 @@ export default function TourPage() {
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/sign-up" className="btn-primary">
-            Start founding trial <ArrowRight className="h-4 w-4" />
+            Start free trial <ArrowRight className="h-4 w-4" />
           </Link>
           <Link href="/ar-audit" className="btn-ghost">
             Get a free A/R audit

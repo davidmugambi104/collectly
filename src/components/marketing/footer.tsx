@@ -92,7 +92,7 @@ export function MarketingFooter() {
                     scrolled to the bottom looking for a way to get in touch —
                     which is where people look — found nothing. */}
                 <li><Link href="/contact" className="inline-block py-1.5 hover:text-ink-900">Contact</Link></li>
-                <li><a href="mailto:hello@getcollectly.app" className="inline-block py-1.5 hover:text-ink-900">Contact</a></li>
+                <li><a href="mailto:hello@getcollectly.app" className="inline-block py-1.5 hover:text-ink-900">Email us directly</a></li>
               </ul>
             </div>
             <div>

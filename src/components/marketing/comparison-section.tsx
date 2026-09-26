@@ -25,9 +25,13 @@ export function ComparisonHero({
       <h1 className="mt-3 h1">{title}</h1>
       <p className="mt-5 lead">{subtitle}</p>
       <div className="mt-8 flex flex-wrap gap-3">
+        {/* Was "Start founding trial" -- a fourth wording for the same
+            /sign-up action that reads "Start free trial" on the homepage,
+            the nav, and 7 of the other 10 comparison pages. Matched to the
+            majority label. */}
         <Link href={ctaHref}>
           <Button className="gap-1.5">
-            Start founding trial <ArrowRight className="h-4 w-4" />
+            Start free trial <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>
         <Link href="/pricing">
@@ -48,7 +52,7 @@ export function ComparisonDiffGrid({ diffs, competitorName }: { diffs: DiffCard[
               <d.icon className="h-4 w-4 text-brand-600" /> {d.label}
             </div>
             <div className="mt-3">
-              <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Mugavi</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-brand-700">Mugavi</div>
               <div className="text-sm text-ink-900">{d.collectly}</div>
             </div>
             <div className="mt-3">
@@ -120,11 +124,11 @@ export function WhenToChoose({
         <h2 className="h2 text-center">When to choose which</h2>
         <div className="mt-8 grid md:grid-cols-2 gap-6">
           <div className="card">
-            <div className="text-sm font-semibold text-emerald-700 mb-2">Choose Mugavi if...</div>
+            <div className="text-sm font-semibold text-brand-700 mb-2">Choose Mugavi if...</div>
             <ul className="space-y-2 text-sm text-ink-700">
               {chooseCollectly.map((r) => (
                 <li key={r.label} className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  <Check className="h-4 w-4 text-brand-600 mt-0.5 flex-shrink-0" />
                   {r.label}
                 </li>
               ))}

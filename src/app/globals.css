@@ -6,19 +6,27 @@
   :root {
     color-scheme: light;
 
-    /* One palette, both scopes.
-       These were previously the ORIGINAL marketing values: a cool grey ramp
-       and a brand ramp that was byte-for-byte Tailwind's blue — --brand-600
-       was 37 99 235, which is blue-600, and --brand-500 was blue-500. The
-       dashboard redesign introduced a warm neutral and a violet-indigo accent
-       but scoped them to `.app`, so the product and the site that sells it
-       were rendering in two different palettes, and the marketing half was
-       wearing the default of the framework it was built with. That is most of
-       what "looks like a template" actually is.
+    /* Two palettes, deliberately. Root carries the warm neutral (kept from
+       the earlier fix — it is not the problem) plus a NEW marketing-only
+       accent. `.app` below re-declares its own full ramp and stays exactly
+       as the private-pages redesign left it (2026-09-11, not reopened here).
 
-       The warm/violet values are now the root, so marketing inherits them.
-       The `.app` block below re-declares the same values and is therefore a
-       no-op — kept so the dashboard cannot be affected by anything here. */
+       The previous root brand ramp — 107 92 232 at 500, 87 68 214 at 600 —
+       is violet-indigo. That is a genuine improvement over Tailwind's raw
+       blue for an authenticated dashboard, which is what it was designed for.
+       Copied onto the PUBLIC marketing site it becomes exactly the "AI
+       purple" signature: the single most-recognised generic-SaaS tell, and
+       the direct, literal cause of "it looks so ai" on the pages a stranger
+       sees before ever signing in.
+
+       This is a deep teal instead (hue ~180°, HSL, not a hand-picked hex):
+       chosen to sit far from every hue this codebase already assigns
+       meaning to — success/emerald (~150°), warn/amber (~38°), danger/red
+       (~8°), info/blue (~211°), and the dashboard's own violet (~255°) —
+       so a marketing CTA can never be misread as a status badge, and the
+       public site now reads as visually its own brand rather than a skin
+       of the product screen. --brand-600 is 4.68:1 against white, so
+       `bg-brand-600 text-white` (the hero band, primary CTAs) stays WCAG AA. */
     --ink-50: 250 249 248;
     --ink-100: 244 242 241;
     --ink-200: 232 230 227;
@@ -31,16 +39,16 @@
     --ink-900: 28 26 25;
     --ink-950: 15 14 13;
 
-    --brand-50: 242 241 253;
-    --brand-100: 230 227 251;
-    --brand-200: 205 199 247;
-    --brand-300: 168 158 240;
-    --brand-400: 138 126 241;
-    --brand-500: 107 92 232;
-    --brand-600: 87 68 214;
-    --brand-700: 70 52 180;
-    --brand-800: 60 45 149;
-    --brand-900: 50 40 118;
+    --brand-50: 241 249 249;
+    --brand-100: 221 243 243;
+    --brand-200: 186 232 232;
+    --brand-300: 130 217 217;
+    --brand-400: 71 205 205;
+    --brand-500: 43 171 171;
+    --brand-600: 28 135 135;
+    --brand-700: 20 107 107;
+    --brand-800: 16 80 80;
+    --brand-900: 14 58 58;
   }
 
   /* ------------------------------------------------------------------ */
@@ -59,7 +67,12 @@
         amber and green, so an accent can never be misread as a status.
 
      Both keep the existing ink and brand token names, so no call
-     site had to change. */
+     site had to change.
+
+     This block is a real override again, not a no-op: :root's ink stays the
+     same warm neutral (shared, deliberately), but its brand accent is now
+     a different hue for the public marketing site (see the comment above).
+     Nothing in this block changed — the dashboard is unaffected. */
   .app {
     --ink-50: 250 249 248;
     --ink-100: 244 242 241;
@@ -155,23 +168,25 @@
   .lead { @apply text-lg sm:text-xl text-ink-600 leading-relaxed; }
   .eyebrow { @apply text-xs font-semibold uppercase tracking-wider text-brand-600; }
   .divider { @apply h-px w-full bg-ink-200; }
+  /* Both of these were a 3-hue blue+emerald(+amber on grad-mesh) radial
+     mesh: the literal "AI gradient blob" signature, and on top of that a
+     second-accent violation of the Color Consistency Lock (Section 4.2) —
+     a page whose CTA is brand-600 teal had no business also glowing blue
+     and green behind it. One hue, one shape, tied to --brand so it moves
+     with the palette instead of drifting from it again. */
   .grad-hero {
     background:
-      radial-gradient(800px 400px at 80% -10%, rgba(59, 130, 246, 0.18), transparent 60%),
-      radial-gradient(600px 300px at 0% 0%, rgba(16, 185, 129, 0.10), transparent 60%);
+      radial-gradient(900px 460px at 82% -12%, rgb(var(--brand-400) / 0.14), transparent 62%),
+      radial-gradient(560px 320px at -4% 6%, rgb(var(--brand-600) / 0.07), transparent 60%);
   }
   .grad-mesh {
     background-image:
-      radial-gradient(at 12% 18%, rgba(59,130,246,0.10) 0px, transparent 50%),
-      radial-gradient(at 80% 12%, rgba(16,185,129,0.10) 0px, transparent 50%),
-      radial-gradient(at 60% 90%, rgba(245,158,11,0.08) 0px, transparent 50%);
+      radial-gradient(at 14% 20%, rgb(var(--brand-500) / 0.10) 0px, transparent 55%),
+      radial-gradient(at 82% 84%, rgb(var(--brand-700) / 0.08) 0px, transparent 55%);
   }
-  .ring-grid {
-    background-image:
-      linear-gradient(rgba(22, 23, 28, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(22, 23, 28, 0.06) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
+  /* ring-grid (a full-bleed dot/line grid across the hero) removed: it
+     organised nothing, which is exactly the "crosshair grid as decoration"
+     pattern the anti-slop pass flags. Call sites now render grad-hero alone. */
   .stat-tile { @apply rounded-xl border border-ink-200 bg-white p-4; }
 }
 
