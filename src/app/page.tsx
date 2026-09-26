@@ -17,6 +17,7 @@ import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONT
 import { ArAgingPanel } from '@/components/marketing/ar-aging-panel';
 import { CashForecastChartLazy } from '@/components/marketing/cash-forecast-chart-lazy';
 import { TrackedLink } from '@/components/marketing/tracked-link';
+import { Reveal } from '@/components/marketing/reveal';
 
 // Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports. Both the FAQPage markup below and the
@@ -144,7 +145,12 @@ export default function HomePage() {
             </div>
 
             <div className="lg:col-span-5">
-              <ArAgingPanel />
+              {/* The one thing every visitor's eye lands on first after the
+                  headline. It rendered instantly on load with everything
+                  else, so it never got a moment of its own -- a half-beat
+                  delay after the headline reads as the product arriving,
+                  not the page finishing loading. */}
+              <Reveal delay={0.15}><ArAgingPanel /></Reveal>
               {/* mt-10, not mt-3: the Auto-collected card is absolutely
                   positioned at -bottom-4, so it hangs a full rem below the
                   panel it is pinned to. At mt-3 this caption ran straight
@@ -247,12 +253,17 @@ export default function HomePage() {
             <p className="mt-4 lead">Designed for 5–30 person agencies and consultancies on Xero. Priced for the long tail.</p>
           </div>
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="Reminders that don't sound like a robot" body="AI writes tone-aware email and SMS reminders in your voice, pauses on reply or payment automatically, and stays fully editable before anything sends." />
-            <FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="A single branded link to get paid" body="Customers see every outstanding invoice in one portal and settle with their preferred method: ACH, card, wire, or local rails." />
-            <FeatureCard icon={<BarChart3 className="h-5 w-5 text-brand-600" />} title="Know if you can make payroll" body="Four-week cash forecast based on invoice age, customer payment history, and promised pay dates. See exactly when dollars are expected to land." />
-            <FeatureCard icon={<Clock className="h-5 w-5 text-brand-600" />} title="See who owes what, right now" body="Live buckets: current, 1-30, 31-60, 61-90, 90+. Drill into any customer without opening QuickBooks or Xero." />
-            <FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Cash lands in the right invoice automatically" body="Incoming payments are matched the moment they arrive. No reconciling 200 uncategorized transactions at month-end." />
-            <FeatureCard icon={<Globe2 className="h-5 w-5 text-brand-600" />} title="Every major currency, one dashboard" body="USD, GBP, AUD, CAD, EUR, KES, NGN and more, with local payment methods per region." />
+            {/* Staggered by 60ms per card so they arrive in reading order,
+                same pattern already proven on /pricing. The homepage had
+                framer-motion installed and completely unused -- every
+                section simply appeared, which is most of why a page with
+                a corrected palette and font still read as static. */}
+            <Reveal delay={0 * 0.06}><FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="Reminders that don't sound like a robot" body="AI writes tone-aware email and SMS reminders in your voice, pauses on reply or payment automatically, and stays fully editable before anything sends." /></Reveal>
+            <Reveal delay={1 * 0.06}><FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="A single branded link to get paid" body="Customers see every outstanding invoice in one portal and settle with their preferred method: ACH, card, wire, or local rails." /></Reveal>
+            <Reveal delay={2 * 0.06}><FeatureCard icon={<BarChart3 className="h-5 w-5 text-brand-600" />} title="Know if you can make payroll" body="Four-week cash forecast based on invoice age, customer payment history, and promised pay dates. See exactly when dollars are expected to land." /></Reveal>
+            <Reveal delay={3 * 0.06}><FeatureCard icon={<Clock className="h-5 w-5 text-brand-600" />} title="See who owes what, right now" body="Live buckets: current, 1-30, 31-60, 61-90, 90+. Drill into any customer without opening QuickBooks or Xero." /></Reveal>
+            <Reveal delay={4 * 0.06}><FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Cash lands in the right invoice automatically" body="Incoming payments are matched the moment they arrive. No reconciling 200 uncategorized transactions at month-end." /></Reveal>
+            <Reveal delay={5 * 0.06}><FeatureCard icon={<Globe2 className="h-5 w-5 text-brand-600" />} title="Every major currency, one dashboard" body="USD, GBP, AUD, CAD, EUR, KES, NGN and more, with local payment methods per region." /></Reveal>
           </div>
         </div>
       </section>

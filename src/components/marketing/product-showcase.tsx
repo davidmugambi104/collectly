@@ -39,7 +39,7 @@ const PRIMARY: Shot = {
     'list of AI-prioritised next actions.',
   title: 'Every number you need, ranked by what to do about it',
   body:
-    'Outstanding, overdue, DSO, collected this month and a 30-day forecast — then the ' +
+    'Outstanding, overdue, DSO, collected this month and a 30-day forecast. Then the ' +
     'part that matters: which invoice to chase first and why.',
   width: 2160,
   height: 1350,
@@ -49,12 +49,12 @@ const SECONDARY: Shot[] = [
   {
     src: '/product/inbox.webp',
     alt:
-      'Mugavi inbox showing four customer replies, each tagged by AI — general question, ' +
-      'needs PO paperwork, says already paid, will pay by date — with a recommended next step ' +
+      'Mugavi inbox showing four customer replies, each tagged by AI (general question, ' +
+      'needs PO paperwork, says already paid, will pay by date), with a recommended next step ' +
       'under each one.',
     title: 'Replies come back classified',
     body:
-      '"We paid this already", "we need a PO", "it goes out Friday" — each one read, tagged and ' +
+      '"We paid this already", "we need a PO", "it goes out Friday", each one read, tagged and ' +
       'answered with a next step, instead of landing in your inbox as one more thing to triage.',
     width: 1400,
     height: 589,
@@ -66,7 +66,7 @@ const SECONDARY: Shot[] = [
       'due dates and customer payment history.',
     title: 'Four weeks of cash, before it lands',
     body:
-      'Built from real due dates and how each customer has actually paid you — not from a ' +
+      'Built from real due dates and how each customer has actually paid you, not from a ' +
       'straight line drawn through last quarter.',
     width: 1400,
     height: 589,

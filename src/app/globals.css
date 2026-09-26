@@ -151,8 +151,15 @@
   .btn-ghost { @apply btn text-ink-700 hover:text-ink-900 hover:bg-ink-100; }
   .btn-brand { @apply btn bg-brand-600 text-white hover:bg-brand-700 active:scale-[0.98]; }
   .btn-success { @apply btn bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.98]; }
-  .card { @apply rounded-xl border border-ink-200 bg-white p-6 shadow-sm; }
-  .card-lg { @apply rounded-2xl border border-ink-200 bg-white p-8 shadow-sm; }
+  /* Every card on the marketing site was a flat rectangle: a border and
+     shadow-sm, no response to a cursor, identical resting and hovered.
+     That reads as static regardless of what color or font sits on top of
+     it. A card that lifts and deepens its shadow on hover is the cheapest
+     signal that the page is a built product, not a document -- and this
+     is the base class every card site-wide inherits from, so it moves
+     pricing cards, feature cards, FAQ items and comparison cards at once. */
+  .card { @apply rounded-xl border border-ink-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-ink-300; }
+  .card-lg { @apply rounded-2xl border border-ink-200 bg-white p-8 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-ink-300; }
   .input { @apply w-full rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none; }
   .label { @apply block text-sm font-medium text-ink-700 mb-1.5; }
   .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }

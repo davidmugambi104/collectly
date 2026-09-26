@@ -72,7 +72,7 @@ function AgingRows({ rows }: { rows: DemoRow[] }) {
   if (rows.length === 0) {
     return (
       <p className="px-3 py-6 text-center text-sm text-ink-500">
-        Nothing in this bucket — which is the point.
+        Nothing in this bucket. Which is the point.
       </p>
     );
   }
@@ -166,7 +166,7 @@ export function ArAgingPanel() {
             </span>
             <div>
               <div className="text-xs font-semibold text-ink-900">Auto-collected</div>
-              <div className="text-[11px] text-ink-500">Consulting Group — 12 min ago</div>
+              <div className="text-[11px] text-ink-500">Consulting Group, 12 min ago</div>
             </div>
           </div>
           <div className="font-mono font-semibold tabular-nums text-success-700">$2,840</div>

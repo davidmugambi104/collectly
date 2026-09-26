@@ -48,7 +48,7 @@ export function QualifyForm({
     return (
       <div className="text-center py-6">
         <div className="h-12 w-12 mx-auto rounded-full bg-emerald-50 grid place-items-center"><CheckCircle2 className="h-6 w-6 text-emerald-600" /></div>
-        <h2 className="mt-3 font-display font-semibold text-xl text-ink-950">Thanks — that&apos;s genuinely useful.</h2>
+        <h2 className="mt-3 font-display font-semibold text-xl text-ink-950">Thanks, that&apos;s genuinely useful.</h2>
         <p className="mt-2 text-sm text-ink-600">No pitch coming your way unless you want one. We&apos;ll only follow up if it looks like a fit.</p>
       </div>
     );
