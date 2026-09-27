@@ -340,6 +340,138 @@ export function pricingProductJsonLd(): JsonLdThing {
   };
 }
 
+// ─── Competitor facts (one source, two consumers) ──────────────────────────
+//
+// Keyed by the /vs-<slug> route. Every value here is what the corresponding
+// comparison page already claims in its own DIFFS table — this map exists so
+// /llms.txt and the pages' FAQ schema quote the same figures the page shows a
+// human, rather than a third and fourth version of them.
+//
+// `pricing` is deliberately a posture phrase, not a number, for the vendors who
+// do not publish one. Writing "$333/mo" for a quote-only vendor because a
+// third-party listing said so is how a comparison page earns a correction.
+export const COMPETITORS: Record<
+  string,
+  { name: string; pricing: string; builtFor: string; shape: string }
+> = {
+  bill: {
+    name: 'BILL',
+    pricing: '$49 per user/mo plus ACH, card and wire fees',
+    builtFor: 'SMBs and accounting firms wanting broad FinOps',
+    shape: 'an AP + AR + spend platform',
+  },
+  chaser: {
+    name: 'Chaser',
+    pricing: 'around $259/mo on its entry plan',
+    builtFor: 'SMB to mid-market businesses, roughly $5M–$120M revenue',
+    shape: 'a templated reminder-sequence tool',
+  },
+  freshbooks: {
+    name: 'FreshBooks',
+    pricing: 'from about $19/mo',
+    builtFor: 'freelancers and small service businesses',
+    shape: 'invoicing with basic payment tracking',
+  },
+  gaviti: {
+    name: 'Gaviti',
+    pricing: 'custom, quote on request',
+    builtFor: 'mid-market and enterprise finance teams',
+    shape: 'an implementation-led invoice-to-cash platform',
+  },
+  growfin: {
+    name: 'Growfin',
+    pricing: 'not published, quote on request',
+    builtFor: 'enterprise AR managers and controllers',
+    shape: 'a collections CRM for enterprise finance',
+  },
+  highradius: {
+    name: 'HighRadius',
+    pricing: 'enterprise contracts, quote on request',
+    builtFor: 'large enterprises and the Office of the CFO',
+    shape: 'a full order-to-cash, treasury and close suite',
+  },
+  melio: {
+    name: 'Melio',
+    pricing: '$0/mo with free ACH limits, then per-transaction fees',
+    builtFor: 'small businesses paying bills',
+    shape: 'AP-first bill pay with light invoicing',
+  },
+  paidnice: {
+    name: 'Paidnice',
+    pricing: 'by invoice volume, plus $29/mo for every entity after the first',
+    builtFor: 'Xero and QuickBooks users wanting automated penalties and reminders',
+    shape: 'rules-based reminders with invoice caps shared across entities',
+  },
+  quickbooks: {
+    name: 'QuickBooks',
+    pricing: '$0/mo extra, plus payment processing fees',
+    builtFor: 'businesses already working inside QuickBooks',
+    shape: 'basic built-in payment reminders',
+  },
+  upflow: {
+    name: 'Upflow',
+    pricing: 'not published, demo required',
+    builtFor: 'B2B finance teams with CFOs, controllers and AR managers',
+    shape: 'an AR collections platform',
+  },
+  zohobooks: {
+    name: 'Zoho Books',
+    pricing: 'tiered within the Zoho suite',
+    builtFor: 'small businesses standardising on one Zoho suite',
+    shape: 'invoicing and payment tracking inside Zoho',
+  },
+};
+
+// FAQPage for a /vs-<slug> page. These pages are the highest-intent surfaces on
+// the site and carried no FAQ markup at all, which matters more for answer
+// engines than for Google: "cheapest Chaser alternative for a bookkeeping
+// practice" is a question, and a page that answers questions in a machine-
+// readable shape is the one that gets quoted.
+export function comparisonFaqJsonLd(slug: string): JsonLdThing | null {
+  const c = COMPETITORS[slug];
+  if (!c) return null;
+  const perBook = Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS);
+  return faqJsonLd([
+    {
+      q: `How much does ${BRAND} cost compared to ${c.name}?`,
+      a:
+        `${BRAND} is $${PLAN_PRICING.starter.monthly}/mo for a single business and ` +
+        `$${PLAN_PRICING.growth.monthly}/mo for a practice covering up to ${PRACTICE_INCLUDED_ORGS} client ` +
+        `organizations, which works out near $${perBook} per client book. There are no ` +
+        `per-invoice, per-reminder or per-user fees. ${c.name} is ${c.pricing}.`,
+    },
+    {
+      q: `Is ${BRAND} or ${c.name} better for a small agency or bookkeeping practice?`,
+      a:
+        `${c.name} is ${c.shape}, built for ${c.builtFor}. ${BRAND} is built for ` +
+        `bookkeepers and accountants chasing AR across many client books, and for ` +
+        `5-30 person agencies chasing their own. If you have a full-time credit ` +
+        `controller and an ERP, ${c.name} is the more natural fit. If you do not, ` +
+        `${BRAND} is priced and scoped for you.`,
+    },
+    {
+      q: `What is the best ${c.name} alternative for chasing overdue invoices?`,
+      a:
+        `${BRAND} writes each reminder in context rather than filling a template, ` +
+        `and stops the sequence automatically the moment a customer replies or pays. ` +
+        `It extracts promised payment dates from replies and classifies disputes so ` +
+        `they do not receive another chase. Setup runs under 10 minutes on Xero.`,
+    },
+    {
+      q: `Does ${BRAND} work with Xero and QuickBooks?`,
+      a:
+        `Xero OAuth sync is live. QuickBooks OAuth sync is in beta. ${BRAND} reads ` +
+        `your invoices and customers, and never posts changes back without approval.`,
+    },
+    {
+      q: `Can I switch from ${c.name} to ${BRAND}?`,
+      a:
+        `Yes. Migration is free and founder-assisted, and the 14-day trial needs no ` +
+        `credit card, so you can run both in parallel before moving anything.`,
+    },
+  ]);
+}
+
 // Per-page WebPage schema. Useful on landing pages where you want a
 // richer snippet than the bare URL.
 export function webPageJsonLd(input: {

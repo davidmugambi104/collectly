@@ -8,7 +8,7 @@ import {
   ComparisonCta,
 } from '@/components/marketing/comparison-section';
 import { Bot, DollarSign, Layers, Target } from 'lucide-react';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
@@ -54,6 +54,10 @@ const CHOOSE_THEM = [
 export default function VsZohobooksPage() {
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonFaqJsonLd('zohobooks')) }}
+      />
       <StructuredBreadcrumbs
         items={[
           { name: 'Home', path: '/' },

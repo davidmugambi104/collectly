@@ -15,7 +15,9 @@ import { absoluteUrl } from '@/lib/seo';
 // `lastModified` is intentionally the build timestamp: cheaper than per-page
 // file mtimes and Google tolerates it as long as it never moves backwards.
 
-const FIXED: Array<{
+// Exported so /llms.txt builds its route list from the same source. Two
+// hand-maintained lists of the site's own pages is how one of them goes stale.
+export const FIXED: Array<{
   path: string;
   priority: number;
   changefreq: MetadataRoute.Sitemap[number]['changeFrequency'];

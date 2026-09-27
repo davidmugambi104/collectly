@@ -7,12 +7,12 @@
 # the exact path a new visitor walks before they have an account. Meant
 # to be scheduled daily (see .github/workflows/daily-funnel-check.yml).
 #
-# Usage: BASE=https://getcollectly.app ./ops/smoke-prod.sh
+# Usage: BASE=https://mugavi.com ./ops/smoke-prod.sh
 #   or:  ./ops/smoke-prod.sh   (defaults to production)
 
 set -uo pipefail
 
-BASE="${BASE:-https://getcollectly.app}"
+BASE="${BASE:-https://mugavi.com}"
 PASS=0
 FAIL=0
 
@@ -27,7 +27,7 @@ check() {
 
 http() { curl -sS -o /tmp/smoke-prod.html -w "%{http_code}" --max-time 15 "$@"; }
 
-echo "=== Collectly public-funnel smoke test against $BASE ==="
+echo "=== Mugavi public-funnel smoke test against $BASE ==="
 
 # 1-11. Every public marketing/legal page a visitor or crawler can land on.
 for path in / /sign-up /sign-in /tour /pricing /integrations /security /dpa /privacy /terms /customers /about /contact /compare; do
@@ -52,6 +52,24 @@ else
   echo "✅ No stale/fragmented domain on homepage"
   PASS=$((PASS+1))
 fi
+
+# 13b. Server-rendered markup must actually be present. A 200 proves the route
+# answered, not that it rendered: if the content only exists inside
+# self.__next_f flight payload, a browser hydrates and looks perfect while
+# every crawler and answer engine sees an empty document. Check the two tags
+# whose absence means "no markup": the H1 and the site's own links.
+for path in / /pricing /vs-chaser; do
+  http "$BASE$path" > /dev/null
+  anchors=$(grep -o '<a ' /tmp/smoke-prod.html | wc -l | tr -d ' ')
+  h1s=$(grep -o '<h1' /tmp/smoke-prod.html | wc -l | tr -d ' ')
+  if [[ "$h1s" -ge 1 && "$anchors" -ge 5 ]]; then
+    echo "✅ $path server-renders real markup ($h1s h1, $anchors links)"
+    PASS=$((PASS+1))
+  else
+    echo "❌ $path served no server-rendered markup ($h1s h1, $anchors links) — content is JS-only, crawlers see nothing"
+    FAIL=$((FAIL+1))
+  fi
+done
 
 # 14. /dashboard must not 500 for a signed-out visitor, and must not leak
 # real data — it should either show a sign-in wall or redirect, never 200

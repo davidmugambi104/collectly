@@ -15,5 +15,5 @@ jobs:
         env:
           BASE: ${{ vars.PROD_URL }}
         run: |
-          BASE="${BASE:-https://getcollectly.app}"
+          BASE="${BASE:-https://mugavi.com}"
           BASE="$BASE" bash ops/smoke-prod.sh

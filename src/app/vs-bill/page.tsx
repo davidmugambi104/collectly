@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { Check, ArrowRight, DollarSign, Layers, Target, Receipt } from 'lucide-react';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { PLAN_PRICING } from '@/lib/utils';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
@@ -32,6 +32,10 @@ const DIFFS = [
 export default function VsBillPage() {
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonFaqJsonLd('bill')) }}
+      />
       <StructuredBreadcrumbs
         items={[
           { name: 'Home', path: '/' },

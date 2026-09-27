@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
 import { Check, ArrowRight, DollarSign, Clock, Zap, Users } from 'lucide-react';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
@@ -31,6 +31,10 @@ const DIFFS = [
 export default function VsChaserPage() {
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonFaqJsonLd('chaser')) }}
+      />
       <StructuredBreadcrumbs
         items={[
           { name: 'Home', path: '/' },

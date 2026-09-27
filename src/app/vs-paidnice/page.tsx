@@ -8,7 +8,7 @@ import {
   ComparisonCta,
 } from '@/components/marketing/comparison-section';
 import { DollarSign, Layers, Users, FileText } from 'lucide-react';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import {
   PLAN_PRICING,
@@ -133,6 +133,10 @@ const CHOOSE_THEM = [
 export default function VsPaidnicePage() {
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonFaqJsonLd('paidnice')) }}
+      />
       <StructuredBreadcrumbs
         items={[
           { name: 'Home', path: '/' },
