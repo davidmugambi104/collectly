@@ -1,4 +1,5 @@
 import { getAuth as auth } from '@/lib/auth-helper';
+import { ClerkProvider } from '@/components/clerk-provider';
 import { IdentifyUser } from '@/components/app/identify-user';
 import { WorkspaceProvider, type WorkspaceChrome } from '@/components/app/workspace-context';
 import { db } from '@/db';
@@ -67,8 +68,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { userId, orgId } = await auth();
   const chrome = await loadChrome(orgId);
 
+  // ClerkProvider scopes to the dashboard rather than the root layout: AppShell
+  // renders Clerk's UserButton and OrganizationSwitcher on the client, and
+  // nothing on the public marketing side touches Clerk at all. Keeping it out
+  // of the root layout is what lets mugavi.com server-render — see the note in
+  // src/app/layout.tsx.
   return (
-    <>
+    <ClerkProvider>
       <IdentifyUser userId={userId ?? undefined} orgId={orgId ?? undefined} />
       {/* `.app` scopes the authenticated product's palette and component
           overrides (see the APP LAYER block in globals.css). It is applied
@@ -79,6 +85,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="app contents">
         <WorkspaceProvider value={chrome}>{children}</WorkspaceProvider>
       </div>
-    </>
+    </ClerkProvider>
   );
 }

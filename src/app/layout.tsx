@@ -3,7 +3,6 @@ import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 
 import { PostHogProvider } from '@/components/posthog-provider';
-import { ClerkProvider } from '@/components/clerk-provider';
 import { Suspense } from 'react';
 import { orgJsonLd, softwareAppJsonLd, SITE, BRAND, TAGLINE } from '@/lib/seo';
 import { PLAN_PRICING } from '@/lib/utils';
@@ -229,8 +228,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             site is en-GB with areaServed GB, so PECR reg. 6 applies. */}
         <ConsentProvider>
           <GatedScripts />
-          <ClerkProvider>
-            <Suspense>
+          {/* ClerkProvider is deliberately NOT here. It wrapped every route,
+              including the public marketing pages, and Clerk's production
+              instance is bound to getcollectly.app — it rejects another origin
+              with `origin_invalid` (see lib/legacy-domain.ts). On mugavi.com the
+              provider therefore threw during the server render, this Suspense
+              boundary bailed out, and the response shipped as an empty
+              `<div hidden>` plus RSC flight payload: real browsers hydrated and
+              looked perfect while every crawler and answer engine received a
+              document with one anchor and no h1. /pricing served 1 anchor in
+              production against 47 from the same commit built locally, because
+              locally NEXT_PUBLIC_USE_DEV_AUTH=1 turns the provider into a
+              passthrough and hides the whole failure.
+
+              No marketing component imports Clerk. The provider now wraps only
+              what needs it on the client — the dashboard shell's UserButton and
+              OrganizationSwitcher, and the <SignIn>/<SignUp> pages — via
+              layouts under /dashboard, /sign-in and /sign-up. Server-side
+              auth() from @clerk/nextjs/server never needed this provider, so
+              middleware and the API routes are unaffected. */}
+          <Suspense>
               {/* The one <main> landmark for every route. 34 of 37 public pages
                   had none, and no layout supplied one, so assistive tech had
                   nothing to jump to. Pages must not add their own -- a second
@@ -238,8 +255,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <main id="main-content">
                 <PostHogProvider>{children}</PostHogProvider>
               </main>
-            </Suspense>
-          </ClerkProvider>
+          </Suspense>
           <ConsentBanner />
         </ConsentProvider>
       </body>
