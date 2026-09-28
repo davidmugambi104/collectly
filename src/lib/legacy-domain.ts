@@ -43,23 +43,53 @@ export interface HostRedirect {
 }
 
 /**
- * Returns where to send the request, or null to serve it as-is.
+ * Whether Clerk's production instance now answers for PUBLIC_HOST.
+ *
+ * Flip this on (CLERK_ON_PUBLIC_HOST=1) only after Clerk's dashboard shows
+ * mugavi.com as the production domain, its CNAMEs resolve, and the new
+ * publishable/secret keys are in the environment. Until then it must stay off:
+ * clerk.getcollectly.app answers `origin_invalid` for any other origin, so
+ * flipping early sends every visitor to a domain where they cannot sign in.
+ *
+ * Read at call time rather than module load so it is testable and so a Vercel
+ * env change takes effect on redeploy without a code change.
  */
-export function hostRedirect(host: string | null, pathname: string): HostRedirect | null {
+export function clerkOnPublicHost(): boolean {
+  return (
+    process.env.NEXT_PUBLIC_CLERK_ON_PUBLIC_HOST === '1' ||
+    process.env.CLERK_ON_PUBLIC_HOST === '1'
+  );
+}
+
+/**
+ * Returns where to send the request, or null to serve it as-is.
+ *
+ * `opts.clerkOnPublicHost` exists for tests; production reads the env.
+ */
+export function hostRedirect(
+  host: string | null,
+  pathname: string,
+  opts?: { clerkOnPublicHost?: boolean },
+): HostRedirect | null {
   const h = (host ?? '').toLowerCase().split(':')[0];
+  const migrated = opts?.clerkOnPublicHost ?? clerkOnPublicHost();
 
   // Never redirect the API, on any host. See the note above.
   if (pathname === '/api' || pathname.startsWith('/api/')) return null;
 
-  // Public pages on the retired domain move to the public one, permanently.
   if (LEGACY_HOSTS.has(h)) {
-    return isAppPath(pathname) ? null : { host: PUBLIC_HOST, status: 301 };
+    // Public pages on the retired domain move to the public one, permanently.
+    if (!isAppPath(pathname)) return { host: PUBLIC_HOST, status: 301 };
+    // App routes follow once Clerk does. 302 rather than 301 even after the
+    // move: a cached permanent redirect here would survive a rollback, and
+    // rolling back is the whole point of keeping this a flag.
+    return migrated ? { host: PUBLIC_HOST, status: 302 } : null;
   }
 
-  // App routes reached on the public domain go back to where Clerk works.
-  // 302, not 301: this is temporary and reverses the day Clerk moves, and a
-  // cached 301 would outlive the reason for it.
   if (h === PUBLIC_HOST || h === `www.${PUBLIC_HOST}`) {
+    // App routes reached on the public domain go back to where Clerk works.
+    // Once Clerk is bound here, they stay put.
+    if (migrated) return null;
     return isAppPath(pathname) ? { host: APP_HOST, status: 302 } : null;
   }
 

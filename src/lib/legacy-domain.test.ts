@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { hostRedirect, isAppPath, PUBLIC_HOST, APP_HOST } from './legacy-domain.ts';
+import { hostRedirect, isAppPath, clerkOnPublicHost, PUBLIC_HOST, APP_HOST } from './legacy-domain.ts';
 
 test('public pages on the retired domain move permanently to the public host', () => {
   assert.deepEqual(hostRedirect('getcollectly.app', '/'), { host: PUBLIC_HOST, status: 301 });
@@ -49,4 +49,39 @@ test('isAppPath matches prefixes, not substrings', () => {
   assert.equal(isAppPath('/dashboarding'), false);
   assert.equal(isAppPath('/blog/dashboard-tips'), false);
   assert.equal(isAppPath('/sign-in-help'), false);
+});
+
+// ─── Post-migration behaviour, behind CLERK_ON_PUBLIC_HOST ─────────────────
+// The flag is passed explicitly here; production reads the env at call time.
+
+test('with Clerk migrated, app routes stay on the public host', () => {
+  const on = { clerkOnPublicHost: true };
+  for (const p of ['/sign-in', '/sign-up', '/dashboard', '/dashboard/invoices', '/admin/upgrade-requests']) {
+    assert.equal(hostRedirect('mugavi.com', p, on), null, `${p} should be served in place`);
+  }
+});
+
+test('with Clerk migrated, app routes on the retired domain move forward', () => {
+  const on = { clerkOnPublicHost: true };
+  assert.deepEqual(hostRedirect('getcollectly.app', '/sign-in', on), { host: PUBLIC_HOST, status: 302 });
+  assert.deepEqual(hostRedirect('getcollectly.app', '/dashboard', on), { host: PUBLIC_HOST, status: 302 });
+});
+
+test('the post-migration app redirect is 302, so a rollback is not cached', () => {
+  assert.equal(hostRedirect('getcollectly.app', '/dashboard', { clerkOnPublicHost: true })?.status, 302);
+});
+
+test('migration never affects /api or public pages', () => {
+  const on = { clerkOnPublicHost: true };
+  assert.equal(hostRedirect('getcollectly.app', '/api/unsubscribe', on), null);
+  assert.equal(hostRedirect('mugavi.com', '/api/webhooks/resend-delivery', on), null);
+  assert.deepEqual(hostRedirect('getcollectly.app', '/pricing', on), { host: PUBLIC_HOST, status: 301 });
+  assert.equal(hostRedirect('mugavi.com', '/pricing', on), null);
+});
+
+test('the flag defaults off, so nothing changes until it is set', () => {
+  delete process.env.CLERK_ON_PUBLIC_HOST;
+  delete process.env.NEXT_PUBLIC_CLERK_ON_PUBLIC_HOST;
+  assert.equal(clerkOnPublicHost(), false);
+  assert.deepEqual(hostRedirect('mugavi.com', '/sign-in'), { host: APP_HOST, status: 302 });
 });
