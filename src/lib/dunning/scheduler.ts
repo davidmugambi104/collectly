@@ -3,7 +3,7 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, type Invoice } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, type Invoice } from '@/db/schema';
 import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
@@ -177,6 +177,19 @@ export async function processDunning() {
             AND ${promisesToPay.status} = 'active'
             AND ${promisesToPay.promisedDate} >= ${now}
         )`,
+        // Pause on reply. A customer who has answered a reminder has said
+        // something a person needs to read ("we paid Friday", "wrong PO",
+        // "call me"), and another automated nudge over the top of it is the
+        // exact failure owners complain about. The reply stays 'new' in the
+        // inbox until someone marks it handled or dismissed, and reminders for
+        // that invoice wait until then. Honours the sequence's pauseOnReply.
+        seq.pauseOnReply
+          ? sql`NOT EXISTS (
+              SELECT 1 FROM ${inboxMessages}
+              WHERE ${inboxMessages.invoiceId} = ${invoices.id}
+                AND ${inboxMessages.status} = 'new'
+            )`
+          : sql`TRUE`,
         // An owner-set hold ("I've spoken to them, leave it with me") pauses
         // automatic reminders for that customer, until its end date or until
         // the owner resumes. Deliberately separate from customers.dndAt, the

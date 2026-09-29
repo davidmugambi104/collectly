@@ -16,7 +16,7 @@
  *     recipient's consent.
  */
 import { db } from '@/db';
-import { dunningApprovals, dunningRuns, invoices, customers, organizations } from '@/db/schema';
+import { dunningApprovals, dunningRuns, dunningSequences, inboxMessages, invoices, customers, organizations } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
 import { formatDunningFrom } from '@/lib/email-from';
@@ -74,7 +74,17 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
   const { run, invoice, customer } = row;
   const channel = run.channel === 'sms' ? 'sms' : 'email';
 
+  // A reply that nobody has handled yet blocks the send, unless this sequence
+  // has reply-pause switched off. Same rule the scheduler applies.
+  const [seq] = await db.select({ pauseOnReply: dunningSequences.pauseOnReply }).from(dunningSequences).where(eq(dunningSequences.id, run.sequenceId)).limit(1);
+  const [reply] = await db
+    .select({ id: inboxMessages.id })
+    .from(inboxMessages)
+    .where(and(eq(inboxMessages.invoiceId, invoice.id), eq(inboxMessages.status, 'new')))
+    .limit(1);
+
   const blocker = approvalBlocker({
+    unhandledReply: (seq?.pauseOnReply ?? true) && !!reply,
     invoiceStatus: invoice.status,
     customerDndAt: customer.dndAt,
     channel,

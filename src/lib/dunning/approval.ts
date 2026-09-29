@@ -23,11 +23,14 @@ export function approvalBlocker(opts: {
   customerEmail: string | null;
   customerPhone: string | null;
   smsAllowed: boolean;
+  /** The customer answered a reminder and nobody has handled the reply yet. */
+  unhandledReply?: boolean;
 }): string | null {
   if (CLOSED_INVOICE_STATUSES.has(opts.invoiceStatus)) {
     return `invoice is ${opts.invoiceStatus.replace('_', ' ')} now, so there is nothing to chase`;
   }
   if (opts.customerDndAt) return 'customer has unsubscribed from reminders';
+  if (opts.unhandledReply) return 'the customer has replied and the reply is still waiting in your inbox';
   if (opts.channel === 'email' && !opts.customerEmail) return 'customer has no email on file';
   if (opts.channel === 'sms') {
     if (!opts.customerPhone) return 'customer has no phone number on file';

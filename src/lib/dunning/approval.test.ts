@@ -44,3 +44,8 @@ test('owner edits replace the draft; blanks keep it', () => {
   assert.deepEqual(applyEdits(d, { subject: '  ', body: '' }), d);
   assert.deepEqual(applyEdits(d, { subject: 'New\r\nBcc: x', body: '  mine  ' }), { subject: 'New Bcc: x', body: 'mine' });
 });
+
+test('an unhandled customer reply blocks the send, so a draft cannot talk over it', () => {
+  assert.match(approvalBlocker({ ...base, unhandledReply: true }) ?? '', /replied/);
+  assert.equal(approvalBlocker({ ...base, unhandledReply: false }), null);
+});
