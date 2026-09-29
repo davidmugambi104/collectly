@@ -3,10 +3,12 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, type Invoice } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, type Invoice } from '@/db/schema';
 import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
+import { formatDunningFrom } from '@/lib/email-from';
+import { ensureDunningHoldSchema } from '@/lib/dunning-hold-schema';
 import { recordEvent } from '@/lib/events';
 import { maySendSms } from '@/lib/sms-consent';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
@@ -98,6 +100,8 @@ export async function processDunning() {
   // that has not had drizzle/0005 applied -- which would take down email
   // dunning too, not just SMS.
   await ensureSmsConsentSchema();
+  // The overdue query below asks about holds, so the table must exist first.
+  await ensureDunningHoldSchema();
   const now = new Date();
   const sequences = await db.select().from(dunningSequences).where(eq(dunningSequences.isActive, true));
   let scheduled = 0, sent = 0, errors = 0;
@@ -129,6 +133,15 @@ export async function processDunning() {
           WHERE ${promisesToPay.invoiceId} = ${invoices.id}
             AND ${promisesToPay.status} = 'active'
             AND ${promisesToPay.promisedDate} >= ${now}
+        )`,
+        // An owner-set hold ("I've spoken to them, leave it with me") pauses
+        // automatic reminders for that customer, until its end date or until
+        // the owner resumes. Deliberately separate from customers.dndAt, the
+        // compliance switch below, which the app never clears.
+        sql`NOT EXISTS (
+          SELECT 1 FROM ${dunningHolds}
+          WHERE ${dunningHolds.customerId} = ${customers.id}
+            AND (${dunningHolds.heldUntil} IS NULL OR ${dunningHolds.heldUntil} > ${now})
         )`,
       ));
 
@@ -276,6 +289,9 @@ export async function processDunning() {
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
               html: withUnsubscribeFooter(renderEmailHtml({ body: result.body, invoice, businessName }), customer.email),
               headers: dunningListUnsubscribeHeaders(customer.email),
+              // "Acme Studio via Mugavi", so the recipient sees who they owe
+              // rather than an unexplained platform address.
+              from: formatDunningFrom(businessName, getDefaultFrom()),
               replyTo: getDunningReplyToAddress(),
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns

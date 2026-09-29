@@ -1,12 +1,15 @@
 import { AppShell } from '@/components/app/shell';
 import { db } from '@/db';
-import { customers, invoices, payments, timelineEvents, promisesToPay, disputes } from '@/db/schema';
+import { customers, invoices, payments, timelineEvents, promisesToPay, disputes, dunningHolds } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { getCustomerInsights } from '@/lib/analytics';
 import { PromisePanel } from '@/components/customers/promise-panel';
+import { HoldPanel } from '@/components/customers/hold-panel';
+import { ensureDunningHoldSchema } from '@/lib/dunning-hold-schema';
+import { isHoldActive } from '@/lib/dunning/hold';
 import { DisputePanel } from '@/components/customers/dispute-panel';
 import { AddNoteForm } from '@/components/customers/add-note-form';
 import {
@@ -63,6 +66,19 @@ export default async function CustomerStatementPage({
   if (customer.length === 0) notFound();
 
   const cust = customer[0];
+
+  // An owner-set pause on automatic reminders. Wrapped so a failure here (say
+  // the table could not be created) costs this one panel, not the whole page.
+  let hold: { heldUntil: string | null; reason: string | null } | null = null;
+  try {
+    await ensureDunningHoldSchema();
+    const [row] = await db.select().from(dunningHolds).where(eq(dunningHolds.customerId, cust.id)).limit(1);
+    if (row && isHoldActive({ heldUntil: row.heldUntil })) {
+      hold = { heldUntil: row.heldUntil ? row.heldUntil.toISOString() : null, reason: row.reason };
+    }
+  } catch (e) {
+    console.error('[customer page] hold lookup failed:', e instanceof Error ? e.message : e);
+  }
 
   // Fetch all related data
   const [customerInvoices, , customerTimeline, customerPromises, customerDisputes] = await Promise.all([
@@ -131,6 +147,19 @@ export default async function CustomerStatementPage({
               </div>
             </div>
           ) : null}
+
+          {/* Automatic reminders. A customer who unsubscribed (dndAt) is off
+              regardless, and that is not something the owner can flip here. */}
+          {cust.dndAt ? (
+            <section className="section" aria-labelledby="hold-heading">
+              <h2 id="hold-heading" className="app-heading">Automatic reminders</h2>
+              <p className="app-meta mt-0.5 font-normal">
+                Off. {cust.name} unsubscribed or their address bounced, so Mugavi will not email them. This can&apos;t be switched back on from here.
+              </p>
+            </section>
+          ) : (
+            <HoldPanel customerId={cust.id} customerName={cust.name} hold={hold} />
+          )}
 
           {/* Promises to pay + disputes — panels handle both display and the
               create/act forms (log a promise, mark fulfilled/broken, open a

@@ -471,6 +471,22 @@ export const promisesToPay = pgTable('promises_to_pay', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+/**
+ * Owner-set pause on automatic reminders for one customer. Separate from
+ * customers.dnd_at, which is the compliance switch (unsubscribe, hard bounce,
+ * spam complaint) and must never be clearable from the app. See
+ * src/lib/dunning/hold.ts. A separate table, not a customers column: adding a
+ * column would make every select-all on customers fail until the DDL had run.
+ */
+export const dunningHolds = pgTable('dunning_holds', {
+  customerId: text('customer_id').primaryKey().references(() => customers.id, { onDelete: 'cascade' }),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  heldUntil: timestamp('held_until', { withTimezone: true }), // null = until the owner resumes
+  reason: text('reason'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const disputes = pgTable('disputes', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),

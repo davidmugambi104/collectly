@@ -22,6 +22,8 @@ export type EventType =
   | 'dunning.run.sent'
   | 'dunning.run.failed'
   | 'dunning.run.cancelled'
+  | 'dunning.hold.set'
+  | 'dunning.hold.cleared'
   | 'payment.succeeded'
   | 'payment.refunded'
   | 'payment.disputed'

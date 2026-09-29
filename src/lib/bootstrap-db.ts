@@ -46,6 +46,8 @@ CREATE INDEX IF NOT EXISTS dunning_runs_external_msg_idx ON dunning_runs(externa
 CREATE UNIQUE INDEX IF NOT EXISTS dunning_runs_invoice_seq_step_uniq ON dunning_runs(invoice_id, sequence_id, step_id);
 CREATE UNIQUE INDEX IF NOT EXISTS subs_org_idx ON subscriptions(org_id);
 CREATE INDEX IF NOT EXISTS timeline_cust_idx ON timeline_events(customer_id);
+CREATE TABLE IF NOT EXISTS dunning_holds (customer_id text PRIMARY KEY REFERENCES customers(id) ON DELETE CASCADE, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, held_until timestamptz, reason text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS dunning_holds_org_idx ON dunning_holds(org_id);
 CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);
 CREATE INDEX IF NOT EXISTS disputes_cust_idx ON disputes(customer_id);
 CREATE INDEX IF NOT EXISTS inbox_org_status_idx ON inbox_messages(org_id, status);

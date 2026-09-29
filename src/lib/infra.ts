@@ -95,6 +95,18 @@ export type SendSmsResult =
   | { sid: string; status: 'skipped' }
   | { sid: string; status: 'sent' };
 
+/**
+ * The configured sender. Prefers RESEND_FROM_EMAIL when it is already a full
+ * "Name <email>" string (the common Resend pattern), otherwise combines
+ * RESEND_FROM_NAME and RESEND_FROM_EMAIL. Unconditionally combining them once
+ * produced nested angle brackets and Resend rejected every dunning email.
+ */
+export function getDefaultFrom(): string {
+  const configured = process.env.RESEND_FROM_EMAIL;
+  if (configured && /<.*>/.test(configured)) return configured;
+  return `${process.env.RESEND_FROM_NAME ?? 'Mugavi'} <${configured ?? 'hello@getcollectly.app'}>`;
+}
+
 export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }): Promise<SendEmailResult> {
   if (!process.env.RESEND_API_KEY) {
     console.warn('[email] RESEND_API_KEY missing — skipping send');
@@ -107,9 +119,7 @@ export async function sendEmail(opts: { to: string; subject: string; html: strin
     // unconditional combination produced nested angle brackets when
     // RESEND_FROM_EMAIL was a full string, causing Resend to reject every
     // dunning email with "Invalid `from` field".
-    from: opts.from ?? (process.env.RESEND_FROM_EMAIL && /<.*>/.test(process.env.RESEND_FROM_EMAIL)
-      ? process.env.RESEND_FROM_EMAIL
-      : `${process.env.RESEND_FROM_NAME ?? 'Mugavi'} <${process.env.RESEND_FROM_EMAIL ?? 'hello@getcollectly.app'}>`),
+    from: opts.from ?? getDefaultFrom(),
     to: opts.to,
     subject: opts.subject,
     html: opts.html,

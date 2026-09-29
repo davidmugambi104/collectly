@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
 import { db } from "@/db";
-import { dunningSequences, dunningRuns, invoices, customers } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { maySendSms } from '@/lib/sms-consent';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
+import { formatDunningFrom } from '@/lib/email-from';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
@@ -75,11 +76,15 @@ export async function POST(req: NextRequest) {
   try {
     if (data.channel === 'email') {
       if (!cust.email) throw new Error('Customer has no email');
+      // Same legible sender as the scheduled path. A manual send is still an
+      // owner action, so it is not blocked by a hold on automatic reminders.
+      const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
       const sendResult = await sendEmail({
         to: cust.email,
         subject: data.subject ?? `Invoice ${inv.number}`,
         html: withUnsubscribeFooter(`<p style="white-space:pre-wrap;font-family:system-ui;">${data.body}</p>`, cust.email),
         headers: dunningListUnsubscribeHeaders(cust.email),
+        from: formatDunningFrom(org?.name, getDefaultFrom()),
         replyTo: getDunningReplyToAddress(),
       });
       try {
