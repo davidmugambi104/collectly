@@ -2,6 +2,46 @@ type Post = { slug: string; title: string; date: string; read: string; excerpt: 
 
 export const POSTS: Post[] = [
   {
+    slug: 'stop-quickbooks-emailing-your-customers',
+    title: 'How to stop QuickBooks Online from emailing your customers without asking',
+    date: '2026-09-30', read: '4 min',
+    excerpt: 'Business owners keep finding that QuickBooks sent their customers reminders they never approved. What people report, where to look, and how to stay in control.',
+    tags: ['QuickBooks', 'invoice reminders', 'A/R automation'],
+    body: `If a customer told you they got a "finish your payment" or "payment overdue" email you never sent, you are not imagining it. QuickBooks Online can send reminders on its own, and several business owners have recently posted about finding out from their clients.
+
+Here is what people report, and what you can do about it. We have not verified every report ourselves, and QuickBooks changes its settings often, so check each step in your own account.
+
+## What people are seeing
+
+- **Reminders for invoices that are already paid.** If a customer pays by check or transfer and you have not recorded it in QuickBooks yet, QuickBooks still sees an open invoice. One owner found late notices going to their only client after that client had paid.
+- **Reminders that ignore your arrangements.** An owner who makes verbal payment arrangements said reminders started one day past due, and even went out for an invoice due three days later. They had to apologize to customers.
+- **"Finish your payment" emails.** A few owners say their customers get an email after opening an invoice without paying. One said support called it a beta test.
+- **Text you did not write.** Some users say QuickBooks adds wording to invoice emails that they cannot edit, or offers customers other ways to pay.
+
+## Check your reminder settings
+
+Several users pointed to the same place: the gear icon, then Account and settings, then Sales, then Reminders. Look for automatic invoice reminders and either turn them off or set them the way you actually want. QuickBooks has also moved reminders into its Workflows area, so if you do not see them there, look for a workflow that contains your invoice reminders.
+
+Two warnings from people who tried:
+
+- Turning reminders off for one invoice did not always stop them, according to one accounting firm. Check the result instead of trusting the toggle.
+- Send a test invoice to yourself before you rely on a setting. You will see what your customer sees.
+
+## Record payments the day they arrive
+
+The most common cause of a wrong reminder is a paid invoice that is still marked open. If you are waiting for the bank feed to catch up, a reminder can beat it. Record checks and transfers as soon as you know about them.
+
+## Decide who owns the follow-up
+
+One commenter put it well: problems start "when both sides think the other person is doing it." If you have a bookkeeper, agree who sends the routine reminders, who makes the call when an invoice is two weeks late, and who decides to pause work at 30 days.
+
+## When QuickBooks reminders are not enough
+
+Users say QuickBooks sends the same message to everyone, with no way to hold one customer or use a different tone for a long-standing client. If you need to skip customers, pause when someone replies, or track a promised payment date, you will need either a manual process or a separate tool.
+
+Disclosure: this article is from Mugavi, which makes accounts receivable software. Mugavi drafts each reminder and waits for your approval by default, lets you pause any customer, and pauses reminders when a customer replies. We wrote this because the questions keep coming up, not because the fixes above need our product. Every step above works without us.`,
+  },
+  {
     slug: 'ar-automation-for-small-business-2026',
     title: 'The state of A/R automation for small businesses in 2026',
     date: '2026-07-10', read: '8 min',

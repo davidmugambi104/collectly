@@ -87,6 +87,29 @@ export default function VsQuickbooksPage() {
         <ComparisonTable only="qb" />
       </section>
 
+      {/* What QuickBooks users say about its own reminders. Attributed to
+          "users report", not quoted at anyone by name, and worded as reports
+          because we have not reproduced each one. */}
+      <section className="container-page pb-16 max-w-3xl">
+        <h2 className="h2">What QuickBooks users report about its reminders</h2>
+        <p className="mt-3 text-ink-600 leading-relaxed">
+          These come from posts in QuickBooks user forums over the past year. We have not reproduced each
+          one, and QuickBooks changes its settings often, so treat them as reports.
+        </p>
+        <ul className="mt-5 space-y-3 text-sm text-ink-700 leading-relaxed list-disc pl-5">
+          <li>Reminders go to every customer or none. Users say there is no way to hold one customer, or to send a different tone to a long-standing client.</li>
+          <li>Reminders can go out for an invoice that was paid but not yet recorded, or over a payment arrangement made by phone.</li>
+          <li>After reminders moved into Workflows, some firms reported that turning them off on one invoice did not always stop them.</li>
+          <li>Some owners report emails to their customers that they did not write or approve, such as a "finish your payment" nudge.</li>
+        </ul>
+        <p className="mt-5 text-ink-600 leading-relaxed">
+          Mugavi holds each reminder for your approval by default, lets you pause any customer, and stops
+          reminders for an invoice while a customer&apos;s reply is waiting for you. One thing it does not do
+          yet: reminders are sent from Mugavi&apos;s address with your business name on them, not from your own
+          email address.
+        </p>
+      </section>
+
       <section className="bg-ink-50 border-y border-ink-200">
         <div className="container-page py-16 max-w-3xl">
           <h2 className="h2 text-center">How QuickBooks built its clientele</h2>

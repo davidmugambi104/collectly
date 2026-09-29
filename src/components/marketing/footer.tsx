@@ -54,6 +54,7 @@ export function MarketingFooter() {
               <p className="text-sm font-semibold text-ink-900">Compare</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/vs-chaser" className="inline-block py-1.5 hover:text-ink-900">vs Chaser</Link></li>
+                <li><Link href="/vs-paidnice" className="inline-block py-1.5 hover:text-ink-900">vs Paidnice</Link></li>
                 <li><Link href="/vs-bill" className="inline-block py-1.5 hover:text-ink-900">vs BILL</Link></li>
                 <li><Link href="/vs-melio" className="inline-block py-1.5 hover:text-ink-900">vs Melio</Link></li>
                 <li><Link href="/vs-quickbooks" className="inline-block py-1.5 hover:text-ink-900">vs QuickBooks</Link></li>

@@ -5,6 +5,7 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { DunningDemo } from '@/components/marketing/dunning-demo';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import { ProductShowcase } from '@/components/marketing/product-showcase';
+import { ControlSection } from '@/components/marketing/control-section';
 import { StickyCta } from '@/components/marketing/sticky-cta';
 import {
   ArrowRight, Sparkles, ShieldCheck, Clock, MessageSquare, 
@@ -33,7 +34,7 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'How is Mugavi different from Chaser?',
-      a: `Chaser is built around templated reminder sequences and its entry tier starts around $259/mo for one organization. Mugavi uses tone-aware AI to write each reminder in context, pauses on reply-or-pay automatically, classifies disputes, and tracks promised payment dates. A practice pays $${PLAN_PRICING.growth.monthly}/mo for up to ${PRACTICE_INCLUDED_ORGS} client books, about $${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)} a book, with no per-invoice fees.`,
+      a: `Both automate overdue-invoice reminders. Chaser's published entry plan is about £199 a month billed monthly (roughly $259), priced by company revenue, as of September 2026. Mugavi is $${PLAN_PRICING.starter.monthly}/mo for one organization, with no per-invoice fees. On the product itself: Mugavi holds every reminder for your approval by default, pauses when a customer replies, pays or promises a date, lets you pause any customer, and tracks promised payment dates and disputes. A practice pays $${PLAN_PRICING.growth.monthly}/mo for up to ${PRACTICE_INCLUDED_ORGS} client books, about $${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)} a book. Check Chaser's own pricing page for its current plans.`,
     },
     {
       q: 'How much does Mugavi cost?',
@@ -41,21 +42,21 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'Will Mugavi send messages without my approval?',
-      a: 'By default, no. Every founding customer runs in approval mode. Nothing goes out until you review and send. Autopilot unlocks after 25 reviewed messages with no unedited-send rate over a 14-day window, and can be turned off any time.',
+      a: 'Not by default. Mugavi drafts each reminder and holds it in an approval queue. You can edit the wording, approve it, or skip it, and you get an email when drafts are waiting. If you would rather reminders go out on their own, you can switch that on from the dunning page and switch it off again at any time. Either way you can pause any single customer.',
     },
     {
       q: 'What happens when a customer replies "we\'ll pay next Friday"?',
-      a: 'Mugavi detects the reply, pauses the reminder sequence, extracts the promised date, and asks a human to confirm before logging it. The promised date shows up in your work queue. After that Friday passes without payment, the next reminder is queued, not auto-sent.',
+      a: 'Mugavi detects the reply and pauses reminders for that invoice until you have read it and marked it handled. It suggests the promised date, and once you confirm it, reminders stay paused until that date. If Friday passes without payment, the next reminder is drafted for your approval, not sent on its own.',
     },
 ];
 
 export const metadata = pageMetadata({
-  title: 'Stop chasing late invoices: AR automation for small agencies',
+  title: 'Invoice reminders you approve first: AR automation for Xero and QuickBooks',
   description:
-    'Connect Mugavi to Xero or QuickBooks. It drafts client-safe invoice ' +
-    'reminders, pauses when customers reply or pay, tracks promised-payment ' +
-    'dates, and separates disputes from ordinary late payment. Built for ' +
-    `5-30 person agencies, consultancies and bookkeeping practices. From $${PLAN_PRICING.starter.monthly}/mo.`,
+    'Mugavi drafts overdue-invoice reminders from Xero or QuickBooks Online and ' +
+    'waits for your approval. It pauses when a customer replies, pays or ' +
+    'promises a date, and you can pause any customer. For small service ' +
+    `businesses, agencies and bookkeeping practices. From $${PLAN_PRICING.starter.monthly}/mo.`,
   path: '/',
   keywords: [
     'Xero invoice reminder',
@@ -102,7 +103,7 @@ export default function HomePage() {
                     of this 30px deck was spaced 60px apart and read as two
                     disconnected sentences. A block box establishes its own
                     line boxes from its own leading. */}
-                <span className="mt-3 block text-2xl sm:text-3xl font-normal leading-snug text-ink-700">AI follow-ups for 5–30 person agencies and consultancies on Xero.</span>
+                <span className="mt-3 block text-2xl sm:text-3xl font-normal leading-snug text-ink-700">Reminders you approve first, that stop when a customer replies, pays or promises a date.</span>
               </h1>
 
               {/* One sentence, not five. The hero used to carry the whole
@@ -114,8 +115,9 @@ export default function HomePage() {
                   lives in the three-step section directly below, where someone
                   who wants it goes looking. */}
               <p className="mt-5 lead max-w-lg">
-                Connects to Xero, spots what is overdue, and follows up in your
-                tone until they pay or reply.
+                Connects to Xero or QuickBooks Online (beta), drafts a follow-up in your
+                tone for each overdue invoice, and waits for your go-ahead. Pause any
+                customer you have already spoken to.
               </p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
@@ -145,8 +147,7 @@ export default function HomePage() {
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-500">
                 <span>Integrates with</span>
                 <LogoMark label="Xero" />
-                <LogoMark label="QuickBooks" />
-                <LogoMark label="Plaid" />
+                <LogoMark label="QuickBooks (beta)" />
                 <LogoMark label="Paystack" />
               </div>
             </div>
@@ -179,12 +180,14 @@ export default function HomePage() {
                   positioned at -bottom-4, so it hangs a full rem below the
                   panel it is pinned to. At mt-3 this caption ran straight
                   underneath it and the two collided on every desktop width. */}
-              <p className="mt-10 text-xs text-ink-500 text-center">Your own numbers appear the moment Xero is connected.</p>
+              <p className="mt-10 text-xs text-ink-500 text-center">Your own numbers appear the moment your books are connected.</p>
             </div>
           </div>
 
         </div>
       </section>
+
+      <ControlSection />
 
       {/* LIVE PRODUCT STATUS */}
       <section className="bg-brand-600 text-white">
@@ -200,10 +203,10 @@ export default function HomePage() {
                   buyer on QuickBooks needs to know that before they sign. What
                   is gone is the running commentary on our own setup. */}
               <div className="text-xs font-semibold uppercase tracking-wider text-brand-200">Working today</div>
-              <h2 className="mt-1 text-xl font-display font-bold">Connected to the books, the bank, and the money.</h2>
+              <h2 className="mt-1 text-xl font-display font-bold">Connected to your books and to the money.</h2>
               <p className="mt-1 text-sm text-brand-100 max-w-xl">
-                Xero sync, AI dunning over email and SMS, AR aging, customer risk scoring, DSO tracking,
-                Plaid bank feeds, Paystack payments and a 4-week cash forecast. QuickBooks is in beta.
+                Xero sync, AI dunning over email and SMS with approval before sending, AR aging, customer
+                risk scoring, DSO tracking, Paystack payments and a 4-week cash forecast. QuickBooks is in beta.
               </p>
             </div>
             <Link href="/integrations" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white text-brand-700 px-5 py-3 text-sm font-semibold hover:bg-brand-50 transition-colors shrink-0">
@@ -251,7 +254,7 @@ export default function HomePage() {
             n={1}
             icon={<Zap className="h-4 w-4" />}
             title="Connect your books"
-            body="Connect Xero in a couple of clicks and Mugavi reads your invoices, customers and payment history. Plaid bank feeds match cash as it lands. Paystack covers NG/GH/KE/ZA; QuickBooks is in beta."
+            body="Connect Xero in a couple of clicks and Mugavi reads your invoices, customers and payment history. Paystack covers NG/GH/KE/ZA; QuickBooks is in beta."
           />
           <TimelineStep
             n={2}
@@ -282,11 +285,11 @@ export default function HomePage() {
                 framer-motion installed and completely unused -- every
                 section simply appeared, which is most of why a page with
                 a corrected palette and font still read as static. */}
-            <Reveal delay={0 * 0.06}><FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="Reminders that don't sound like a robot" body="AI writes tone-aware email and SMS reminders in your voice, pauses on reply or payment automatically, and stays fully editable before anything sends." /></Reveal>
+            <Reveal delay={0 * 0.06}><FeatureCard icon={<MessageSquare className="h-5 w-5 text-brand-600" />} title="Reminders that don't sound like a robot" body="AI drafts tone-aware email and SMS reminders in your voice. You edit, approve or skip each one before it goes out, and reminders pause on a reply, a payment or a promised date." /></Reveal>
             <Reveal delay={1 * 0.06}><FeatureCard icon={<FileText className="h-5 w-5 text-brand-600" />} title="A single branded link to get paid" body="Customers see every outstanding invoice in one portal and settle with their preferred method: ACH, card, wire, or local rails." /></Reveal>
             <Reveal delay={2 * 0.06}><FeatureCard icon={<BarChart3 className="h-5 w-5 text-brand-600" />} title="Know if you can make payroll" body="Four-week cash forecast based on invoice age, customer payment history, and promised pay dates. See exactly when dollars are expected to land." /></Reveal>
             <Reveal delay={3 * 0.06}><FeatureCard icon={<Clock className="h-5 w-5 text-brand-600" />} title="See who owes what, right now" body="Live buckets: current, 1-30, 31-60, 61-90, 90+. Drill into any customer without opening QuickBooks or Xero." /></Reveal>
-            <Reveal delay={4 * 0.06}><FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Cash lands in the right invoice automatically" body="Incoming payments are matched the moment they arrive. No reconciling 200 uncategorized transactions at month-end." /></Reveal>
+            <Reveal delay={4 * 0.06}><FeatureCard icon={<ShieldCheck className="h-5 w-5 text-brand-600" />} title="Paid means the reminders stop" body="When an invoice is paid in Xero or QuickBooks, Mugavi sees it on the next sync and stops chasing it. Payments made through Paystack are recorded against the invoice automatically." /></Reveal>
             <Reveal delay={5 * 0.06}><FeatureCard icon={<Globe2 className="h-5 w-5 text-brand-600" />} title="Every major currency, one dashboard" body="USD, GBP, AUD, CAD, EUR, KES, NGN and more, with local payment methods per region." /></Reveal>
           </div>
         </div>
@@ -322,6 +325,9 @@ export default function HomePage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/vs-chaser" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               Mugavi vs Chaser <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link href="/vs-paidnice" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
+              Mugavi vs Paidnice <ArrowRight className="h-3 w-3" />
             </Link>
             <Link href="/vs-bill" className="py-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800 inline-flex items-center gap-1">
               Mugavi vs BILL <ArrowRight className="h-3 w-3" />
@@ -447,12 +453,12 @@ export default function HomePage() {
             <DifferentiatorCard
               icon={<SlidersHorizontal className="h-5 w-5" />}
               title="Relationship-aware dunning"
-              body="Set tone, channel, account-manager sender, and sensitivity per customer. A strategic account gets gentle handling. A high-risk account gets firm follow-up. Mugavi never treats every overdue invoice as ordinary debt."
+              body="Pause reminders for any customer you have spoken to, until a date or until you resume. Set the tone at each step of the sequence, from friendly to final. A strategic account can be handled by you instead of by a schedule."
             />
             <DifferentiatorCard
               icon={<ShieldCheck className="h-5 w-5" />}
-              title="Approval-before-send"
-              body="Nervous about automated emails? Turn on approval mode. Mugavi drafts every reminder, you review and approve. Build confidence, then graduate to autopilot when ready."
+              title="Approval before sending"
+              body="On by default. Mugavi drafts every reminder and waits, you edit, approve or skip, and it emails you when drafts are waiting. Switch to automatic sending when you trust it, and back again whenever you like."
             />
           </div>
         </div>

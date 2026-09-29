@@ -138,11 +138,12 @@ export default function ForAgenciesPage() {
           </div>
           <div className="card">
             <ShieldCheck className="h-6 w-6 text-brand-600" />
-            <h2 className="mt-3 text-lg font-semibold text-ink-900">Sends you dangerous invoices for review.</h2>
+            <h2 className="mt-3 text-lg font-semibold text-ink-900">Leaves your important accounts to you.</h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              Some invoices should never go on autopilot. Strategic accounts,
-              disputed accounts, accounts over a year old, accounts above a value
-              threshold: Mugavi surfaces them for human review every time.
+              Some customers should never get an automatic reminder. Pause a
+              strategic account until a date you choose, or until you resume,
+              and handle it yourself. Disputed invoices, and any invoice with an
+              unread customer reply, stay out of the schedule too.
             </p>
           </div>
         </div>
@@ -161,7 +162,7 @@ export default function ForAgenciesPage() {
           </p>
           <ul className="mt-6 space-y-3 text-sm text-ink-700">
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organization, unlimited invoices, ${PLAN_PRICING.starter.monthly}/mo.</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Approval mode is the default. Autopilot unlocks only after 25 reviewed messages.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Approval mode is the default. You choose when, or whether, to switch to automatic sending.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Tone-aware AI writes each reminder; you edit before sending.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Reply-or-pay pause: the sequence stops the moment a customer responds.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Disputes auto-classified; the customer never sees another embarrassing generic chase.</li>

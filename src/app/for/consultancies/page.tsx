@@ -117,9 +117,9 @@ export default function ForConsultanciesPage() {
               Conservative by default.
             </h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              Approval mode is on for every founding customer. Nothing goes out
-              until a human reviews it. Autopilot unlocks only after 25 reviewed
-              messages with no unedited-send rate over a 14-day window.
+              Approval mode is on by default. Mugavi drafts each reminder and
+              nothing goes out until a person approves it. You can switch an
+              account to automatic sending yourself, and back again, any time.
             </p>
           </div>
           <div className="card">

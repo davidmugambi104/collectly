@@ -19,15 +19,15 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
   ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees', 'ACH fees'],
-  ['Time to set up', '< 10 min', 'Hours–days', 'Days', '< 10 min', '< 10 min', '< 10 min'],
+  ['Time to set up', '< 10 min', 'A few hours (reviewer-reported)', 'Days', '< 10 min', '< 10 min', '< 10 min'],
   ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
   ['Multi-currency', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '✓', '—', '✓'],
   ['Multi-entity', `${PLAN_PRICING.growth.name}+`, 'Core+', 'Corporate+', '—', '—', '—'],
   ['Cash-flow forecast', `${PLAN_PRICING.growth.name}+`, 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
   ['Customer risk scoring', '✓', '✓', '—', '—', '—', '—'],
   ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓', '✓'],
-  ['Free trial / self-serve', '14-day free', 'Demo-first', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
-  ['Time-to-value', '< 1 day', '1–2 weeks', '1–2 weeks', '< 1 day', '< 1 day', '< 1 day'],
+  ['Free trial / self-serve', '14-day free', 'Free trial offered', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
+  ['Time-to-value', '< 1 day', 'Not published', '1–2 weeks', '< 1 day', '< 1 day', '< 1 day'],
   ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
   ['Payment plans / subscriptions', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '—', '✓', '—'],
   ['Support model', 'Email + founder', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
@@ -187,7 +187,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
           the <a href="/compare" className="underline underline-offset-2 transition-colors hover:text-ink-900">full comparison list</a> for the others.
         </p>
         <p className="mt-2">
-          <b>Last verified:</b> 2026-07-31 against public pricing pages
+          <b>Last verified:</b> Chaser on 2026-09-30 (£199 a month billed monthly on its UK page, priced by revenue band, shown converted to dollars); the others on 2026-07-31, against public pricing pages
           (<a href="https://www.chaserhq.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">Chaser</a>,
           {' '}<a href="https://www.bill.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">BILL</a>,
           {' '}<a href="https://www.melio.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">Melio</a>,

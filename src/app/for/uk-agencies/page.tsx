@@ -173,7 +173,7 @@ export default function ForUkAgenciesPage() {
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organisation, unlimited invoices.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Tone-aware AI reminders with approval mode by default.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Reply-or-pay pause, promise-to-pay tracking, dispute classification.</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Branded payment portal with BACS, Faster Payments, GoCardless.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Branded payment portal. Payment methods depend on your region and provider approval.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> 4-week cash-flow forecast based on payment history.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Founder-assisted setup with domain authentication setup.</li>
           </ul>

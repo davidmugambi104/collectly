@@ -11,41 +11,41 @@ import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 const FAQS: FaqItem[] = [
     {
       q: 'Does Mugavi stop sending reminders when a customer replies?',
-      a: 'Yes. Mugavi detects replies via inbound email parsing, pauses the ' +
-         'sequence immediately, and asks you (or a human on the team) to confirm ' +
-         'what the customer said before resuming. Reply pause typically completes ' +
-         'in under 5 minutes from when the reply hits your inbox.',
+      a: 'Yes. When a customer replies to a reminder, Mugavi records the reply, ' +
+         'classifies it, and pauses further reminders for that invoice until ' +
+         'you have read it and marked it handled or dismissed. This is on by ' +
+         'default and is a setting on the sequence. Replies are matched by the ' +
+         'email thread, so it depends on your reply inbox being connected.',
     },
     {
-      q: 'Does Mugavi track promises to pay automatically?',
-      a: 'Yes. When a customer says "we will pay next Friday" or "net 30 from ' +
-         'the invoice date," Mugavi extracts the date and pauses future ' +
-         'reminders until that date. If payment arrives, the sequence is ' +
-         'cancelled. If it does not, the next reminder is queued (not auto-sent) ' +
-         'on the day after, for your review.',
+      q: 'Does Mugavi track promises to pay?',
+      a: 'Yes. When a customer says they will pay on a given date, Mugavi ' +
+         'suggests the date from their reply and you confirm it. Once a promise ' +
+         'is logged, reminders for that invoice stay paused until the promised ' +
+         'date. If the invoice is paid, reminders stop for good. If the date ' +
+         'passes unpaid, the next reminder is drafted for your approval.',
     },
     {
       q: 'Can I approve every message before it goes out?',
-      a: 'Yes, in approval mode. Approval mode is on by default for every new ' +
-         'Mugavi account. Autopilot unlocks only after 25 reviewed messages ' +
-         'with no unedited-send rate over a 14-day window. You can switch back ' +
-         'to approval mode at any time from the dashboard.',
+      a: 'Yes, and it is the default. Mugavi drafts each reminder and holds it ' +
+         'in an approval queue. You can edit the subject and message, approve ' +
+         'it, or skip it, and you get an email when drafts are waiting. You can ' +
+         'switch an account to automatic sending from the dunning page and back ' +
+         'again at any time. You can also pause any single customer.',
     },
     {
       q: 'How does Mugavi classify disputes?',
-      a: 'When a customer replies with phrases like "missing PO," "wrong ' +
-         'amount," "invoice not received," or "pricing dispute," Mugavi ' +
-         'classifies the reply as a blocker and pauses reminders on that ' +
-         'specific invoice. The blocker shows up in your disputes worklist for ' +
-         'human follow-up. The customer does not receive another embarrassing ' +
-         'generic chase.',
+      a: 'Replies are classified as a promise to pay, already paid, a dispute, ' +
+         'a missing PO, the wrong contact and so on, with a short summary and a ' +
+         'suggested next step. Any reply pauses reminders for that invoice ' +
+         'until you handle it, and an invoice you mark as disputed stays out ' +
+         'of the reminder schedule until the dispute is resolved.',
     },
     {
       q: 'Does Mugavi integrate with QuickBooks as well as Xero?',
-      a: 'Both are supported. Xero is in production today. QuickBooks Online ' +
-         'OAuth is wired and tested in sandbox; production credentials pending ' +
-         'the Intuit App Assessment Questionnaire review. Same workflow, same ' +
-         'feature surface on both platforms.',
+      a: 'Xero is in production today. QuickBooks Online is in beta while we ' +
+         'complete Intuit\'s production review, and is available on request ' +
+         'for founding customers. The reminder workflow is the same on both.',
     },
     {
       q: 'Does Mugavi send SMS as well as email?',
@@ -58,10 +58,10 @@ const FAQS: FaqItem[] = [
 export const metadata = pageMetadata({
   title: 'Features: tone-aware AR automation for small agencies',
   description:
-    'All of Mugavi\'s features: tone-aware AI reminders, reply-or-pay ' +
-    'pause, promise-to-pay tracking, dispute classification, approval ' +
-    'workflow, audit trail, Xero + QuickBooks sync, SMS in beta, and the ' +
-    'AR worklist. Built for 5-30 person agencies and consultancies.',
+    'All of Mugavi\'s features: AI-drafted reminders you approve before ' +
+    'they send, pause on reply, payment or promise, pause any customer, ' +
+    'promise-to-pay tracking, dispute handling, Xero sync (QuickBooks in ' +
+    'beta), a 4-week cash forecast and an AR aging dashboard.',
   path: '/features',
   image: '/og-features.png',
   keywords: [
@@ -89,12 +89,12 @@ const featuresJsonLd = JSON.stringify(
 // coherent product in one tone; the icon shape and the copy differentiate
 // them now, not the hue.
 const FEATURES = [
-  { icon: Bot, color: 'text-brand-600', bg: 'bg-brand-50', title: 'AI dunning engine', body: 'Tone-aware email and SMS reminders, written by Gemini, optimized for probability of payment. Pause on reply. Pause on payment. Fully editable before send.', bullets: ['Friendly → Firm → Final tones', 'Per-customer timing rules', 'Gemini-written, regex-customizable', 'Auto-pause on reply or payment', 'A/B test subject lines'] },
-  { icon: FileText, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Branded payment portal', body: 'A clean, fast payment page branded with your business. ACH, card, wire, and local payment methods (GoCardless, SEPA, BACS, Apple Pay, Google Pay) supported out of the box.', bullets: ['Card, ACH, wire, BNPL', 'Apple Pay \u0026 Google Pay', 'Local rails (SEPA, BACS, AU Direct Debit)', 'Auto-receipts and confirmation emails', 'Mobile-optimized', 'Subdomain or path routing'] },
-  { icon: BarChart3, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Cash-flow forecast', body: 'Four-week projection of incoming cash, based on payment history, age of invoice, and customer risk score. Tells you when you can make payroll.', bullets: ['4-week rolling forecast', 'Confidence intervals', 'Payroll and bill sync (QBO, Xero)', 'Weekly email digest', 'Slack alerts for big swings'] },
-  { icon: Clock, color: 'text-brand-600', bg: 'bg-brand-50', title: 'AR aging dashboard', body: 'Real-time buckets: Current, 1–30, 31–60, 61–90, 90+. Drill into a customer, see exactly who owes what and how overdue.', bullets: ['Standard aging buckets', 'Customer-level drill-down', 'Invoice-level history', 'Export to CSV/PDF', 'Custom bucket definitions (Scale+)'] },
-  { icon: ShieldCheck, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Cash application AI', body: 'Auto-matches incoming payments to the right invoices, even with reference numbers, partial payments, and overpayments. Kills the month-end reconciliation grind.', bullets: ['Auto-match by amount, ref, customer', 'Handles partial payments', 'Overpayment and underpayment rules', 'Confidence scoring per match', 'Manual override UI'] },
-  { icon: Globe2, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Multi-currency + multi-entity', body: 'USD, GBP, AUD, CAD, EUR on day one. Local payment integrations for UK, EU, AU, CA, US, KE, NG, ZA. Growth supports multiple entities with consolidated reporting; Scale adds per-entity workflows.', bullets: ['USD, GBP, AUD, CAD, EUR (Growth)', 'KES, NGN, ZAR, INR (Scale)', 'Multi-entity support (Growth+)', 'Real-time FX', 'Multi-currency reporting', 'Local payment rails'] },
+  { icon: Bot, color: 'text-brand-600', bg: 'bg-brand-50', title: 'AI dunning engine', body: 'Tone-aware email and SMS reminders, drafted by Gemini. You approve each one before it goes out, unless you switch that off. Reminders pause on a reply, a payment, a promised date or a dispute.', bullets: ['Friendly, firm and final tones, set at each step', 'Approve, edit or skip every draft', 'Pause any customer until a date, or until you resume', 'Stops on a reply, payment, promise or dispute', 'Every send logged and emailed to you', 'Unsubscribes and bounces are never overridden'] },
+  { icon: FileText, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Branded payment portal', body: 'A payment page for each invoice with your business name on it. Paystack payments are recorded against the invoice automatically. Which payment methods you can offer depends on your region and provider approval.', bullets: ['Paystack (NG, GH, KE, ZA)', 'Card and bank payment where your provider supports it', 'Payment link included in reminders'] },
+  { icon: BarChart3, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Cash-flow forecast', body: 'A four-week projection of incoming cash, built from due dates, promised payment dates and how each customer has paid you before. It shows which weeks are solid and which are hope.', bullets: ['4-week rolling view', 'Separates promised, likely and uncertain money', 'Uses promised dates you have confirmed'] },
+  { icon: Clock, color: 'text-brand-600', bg: 'bg-brand-50', title: 'AR aging dashboard', body: 'Buckets for current, 1-30, 31-60, 61-90 and 90+ days. Drill into a customer and see exactly who owes what and how overdue it is.', bullets: ['Standard aging buckets', 'Customer-level drill-down', 'Invoice-level history'] },
+  { icon: ShieldCheck, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Promises and disputes', body: 'Log what a customer says they will pay and when, or open a dispute when they push back. Either one takes the invoice out of the reminder schedule, so nobody gets chased over a settled arrangement.', bullets: ['Promised amount and date per invoice', 'Reminders resume only if the date passes unpaid', 'Dispute reasons: already paid, missing PO, wrong amount and more', 'Replies classified with a suggested next step'] },
+  { icon: Globe2, color: 'text-brand-600', bg: 'bg-brand-50', title: 'Multiple currencies', body: 'Each invoice keeps its own currency, and reminders show the right amount in it.', bullets: ['Invoices in their own currency', 'Reminders show currency and amount'] },
 ];
 
 export default function FeaturesPage() {

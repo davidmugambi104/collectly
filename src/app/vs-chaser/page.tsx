@@ -22,8 +22,8 @@ export const metadata = pageMetadata({
 });
 
 const DIFFS = [
-  { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-invoice fees`, chaser: '~$259/mo entry plan' },
-  { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', chaser: 'Hours to days' },
+  { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-invoice fees`, chaser: '~$259/mo entry plan (£199, by revenue band)' },
+  { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', chaser: 'A few hours, per G2 reviewers' },
   { icon: Zap, label: 'AI dunning', collectly: 'Tone-aware email + SMS out of the box', chaser: 'Email/SMS/call, AI email generator' },
   { icon: Users, label: 'Best for', collectly: '5-30 person agencies and consultancies', chaser: 'SMB to mid-market ($5M–$120M revenue)' },
 ];
