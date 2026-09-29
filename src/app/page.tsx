@@ -115,9 +115,8 @@ export default function HomePage() {
                   lives in the three-step section directly below, where someone
                   who wants it goes looking. */}
               <p className="mt-5 lead max-w-lg">
-                Connects to Xero or QuickBooks Online (beta), drafts a follow-up in your
-                tone for each overdue invoice, and waits for your go-ahead. Pause any
-                customer you have already spoken to.
+                Connects to Xero or QuickBooks Online (beta), drafts each follow-up
+                in your tone, and waits for your approval.
               </p>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
