@@ -487,6 +487,25 @@ export const dunningHolds = pgTable('dunning_holds', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Per-org switches for automatic reminders. A missing row means approval is required. */
+export const dunningSettings = pgTable('dunning_settings', {
+  orgId: text('org_id').primaryKey().references(() => organizations.id, { onDelete: 'cascade' }),
+  approvalRequired: boolean('approval_required').notNull().default(true),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * Reminders the scheduler drafted but did not send, because the org requires
+ * approval. The run itself stays in dunning_runs with status 'scheduled'; this
+ * row is what marks it as waiting for a person. Approving or skipping deletes
+ * it, atomically, so two clicks can never send twice.
+ */
+export const dunningApprovals = pgTable('dunning_approvals', {
+  runId: text('run_id').primaryKey().references(() => dunningRuns.id, { onDelete: 'cascade' }),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const disputes = pgTable('disputes', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),

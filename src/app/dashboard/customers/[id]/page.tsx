@@ -8,7 +8,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { getCustomerInsights } from '@/lib/analytics';
 import { PromisePanel } from '@/components/customers/promise-panel';
 import { HoldPanel } from '@/components/customers/hold-panel';
-import { ensureDunningHoldSchema } from '@/lib/dunning-hold-schema';
+import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isHoldActive } from '@/lib/dunning/hold';
 import { DisputePanel } from '@/components/customers/dispute-panel';
 import { AddNoteForm } from '@/components/customers/add-note-form';
@@ -71,7 +71,7 @@ export default async function CustomerStatementPage({
   // the table could not be created) costs this one panel, not the whole page.
   let hold: { heldUntil: string | null; reason: string | null } | null = null;
   try {
-    await ensureDunningHoldSchema();
+    await ensureDunningControlSchema();
     const [row] = await db.select().from(dunningHolds).where(eq(dunningHolds.customerId, cust.id)).limit(1);
     if (row && isHoldActive({ heldUntil: row.heldUntil })) {
       hold = { heldUntil: row.heldUntil ? row.heldUntil.toISOString() : null, reason: row.reason };

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
 import { db } from '@/db';
-import { customers, dunningHolds, timelineEvents } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { customers, dunningHolds, dunningApprovals, dunningRuns, invoices, timelineEvents } from '@/db/schema';
+import { and, eq, inArray } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
-import { ensureDunningHoldSchema } from '@/lib/dunning-hold-schema';
+import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { cleanHoldReason, parseHoldUntil } from '@/lib/dunning/hold';
 
 /**
@@ -29,7 +29,7 @@ async function ownedCustomer(orgId: string, id: string) {
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   await ensureBootstrapped();
-  await ensureDunningHoldSchema();
+  await ensureDunningControlSchema();
   const { orgId, userId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
@@ -54,6 +54,22 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       set: { heldUntil: until.value, reason, updatedAt: now },
     });
 
+  // Drafts already waiting for this customer would otherwise still be one click
+  // from going out. Discard them; the hold says leave it with the owner.
+  const custInvoices = await db.select({ id: invoices.id }).from(invoices).where(eq(invoices.customerId, customer.id));
+  if (custInvoices.length > 0) {
+    const cleared = await db
+      .delete(dunningApprovals)
+      .where(and(eq(dunningApprovals.orgId, orgId), inArray(dunningApprovals.runId, db.select({ id: dunningRuns.id }).from(dunningRuns).where(inArray(dunningRuns.invoiceId, custInvoices.map((i: { id: string }) => i.id))))))
+      .returning({ runId: dunningApprovals.runId });
+    if (cleared.length > 0) {
+      await db
+        .update(dunningRuns)
+        .set({ status: 'cancelled', error: 'customer put on hold' })
+        .where(inArray(dunningRuns.id, cleared.map((c: { runId: string }) => c.runId)));
+    }
+  }
+
   const endText = until.value ? `until ${until.value.toISOString().slice(0, 10)}` : 'until you resume';
   await db.insert(timelineEvents).values({
     id: nanoid(),
@@ -76,7 +92,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   await ensureBootstrapped();
-  await ensureDunningHoldSchema();
+  await ensureDunningControlSchema();
   const { orgId, userId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 

@@ -3,12 +3,13 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, type Invoice } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, type Invoice } from '@/db/schema';
 import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
 import { formatDunningFrom } from '@/lib/email-from';
-import { ensureDunningHoldSchema } from '@/lib/dunning-hold-schema';
+import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
+import { isApprovalRequired } from '@/lib/dunning/approval';
 import { recordEvent } from '@/lib/events';
 import { maySendSms } from '@/lib/sms-consent';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
@@ -94,6 +95,36 @@ async function notifyOwnerOfSends(orgId: string, entries: DigestEntry[]) {
   }
 }
 
+// In approval mode nothing goes out on its own, so the owner has to hear that
+// drafts are waiting, or reminders silently stop. Best-effort, like the digest
+// above.
+async function notifyOwnerOfPending(orgId: string, entries: DigestEntry[]) {
+  if (!entries.length) return;
+  try {
+    const [ownerEmail, businessName] = await Promise.all([getOwnerEmail(orgId), getOrgName(orgId)]);
+    if (!ownerEmail) return;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
+    const rows = entries
+      .map((e) => `<li style="margin:4px 0;">${e.customerName}: invoice ${e.invoiceNumber}, ${e.currency} ${e.amount} (${e.channel})</li>`)
+      .join('');
+    await sendEmail({
+      to: ownerEmail,
+      subject: `${entries.length} reminder${entries.length === 1 ? '' : 's'} waiting for your approval`,
+      html: `
+        <!doctype html>
+        <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 600px; margin: 0 auto; padding: 24px;">
+          <p style="font-size: 15px; line-height: 1.6;">Mugavi drafted ${entries.length} reminder${entries.length === 1 ? '' : 's'} for ${businessName}. Nothing has been sent. Review, edit, approve or skip each one:</p>
+          <ul style="font-size:13px;padding-left:18px;">${rows}</ul>
+          <p style="margin-top:20px;"><a href="${appUrl}/dashboard/dunning#approvals" style="color:#2f4bd1;">Open the approval queue</a></p>
+          <p style="font-size:12px;color:#6c6e76;margin-top:20px;">You can turn approval off in the dunning settings if you would rather reminders go out automatically.</p>
+        </body></html>
+      `,
+    });
+  } catch (e: unknown) {
+    console.error('[dunning] owner pending notification failed:', errorMessage(e));
+  }
+}
+
 export async function processDunning() {
   // Before any customers query: the model now includes sms_consent_status,
   // and Drizzle's select-all would throw undefined_column against a database
@@ -101,11 +132,23 @@ export async function processDunning() {
   // dunning too, not just SMS.
   await ensureSmsConsentSchema();
   // The overdue query below asks about holds, so the table must exist first.
-  await ensureDunningHoldSchema();
+  await ensureDunningControlSchema();
   const now = new Date();
   const sequences = await db.select().from(dunningSequences).where(eq(dunningSequences.isActive, true));
-  let scheduled = 0, sent = 0, errors = 0;
+  let scheduled = 0, sent = 0, errors = 0, awaitingApproval = 0;
   const orgDigest = new Map<string, DigestEntry[]>();
+  const pendingDigest = new Map<string, DigestEntry[]>();
+  // Read once per org per run, not cached across runs: the owner can flip it
+  // between crons and the next run has to see that.
+  const approvalByOrg = new Map<string, boolean>();
+  async function approvalRequiredFor(orgId: string): Promise<boolean> {
+    const known = approvalByOrg.get(orgId);
+    if (known !== undefined) return known;
+    const [row] = await db.select({ approvalRequired: dunningSettings.approvalRequired }).from(dunningSettings).where(eq(dunningSettings.orgId, orgId)).limit(1);
+    const required = isApprovalRequired(row);
+    approvalByOrg.set(orgId, required);
+    return required;
+  }
 
   for (const seq of sequences) {
     const businessName = await getOrgName(seq.orgId);
@@ -281,6 +324,24 @@ export async function processDunning() {
 
       const run = { id: insertedRunId } as { id: string };
 
+        // Approval mode (the default): the draft is saved and queued for the
+        // owner instead of being sent. Approving from the dashboard sends it
+        // through src/lib/dunning/deliver.ts, which re-checks everything.
+        if (await approvalRequiredFor(seq.orgId)) {
+          await db.insert(dunningApprovals).values({ runId: run.id, orgId: seq.orgId }).onConflictDoNothing();
+          awaitingApproval += 1;
+          scheduled += 1;
+          await recordEvent({
+            orgId: seq.orgId,
+            type: 'dunning.run.awaiting_approval',
+            payload: { runId: run.id, invoiceId: invoice.id, stepId: lastStep.id, days },
+          });
+          const pending = pendingDigest.get(seq.orgId) ?? [];
+          pending.push({ customerName: customer.name, channel: lastStep.channel, invoiceNumber: invoice.number, amount: invoice.amount, currency: invoice.currency });
+          pendingDigest.set(seq.orgId, pending);
+          continue;
+        }
+
         // Send immediately (in production: queue with retries)
         try {
           if (lastStep.channel === 'email' && customer.email) {
@@ -412,11 +473,14 @@ export async function processDunning() {
   for (const [orgId, entries] of orgDigest) {
     await notifyOwnerOfSends(orgId, entries);
   }
+  for (const [orgId, entries] of pendingDigest) {
+    await notifyOwnerOfPending(orgId, entries);
+  }
 
-  return { scheduled, sent, errors };
+  return { scheduled, sent, errors, awaitingApproval };
 }
 
-function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: Invoice; businessName: string }) {
+export function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: Invoice; businessName: string }) {
   return `
     <!doctype html>
     <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 560px; margin: 0 auto; padding: 24px;">

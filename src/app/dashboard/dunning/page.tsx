@@ -4,7 +4,7 @@ import { AppShell } from '@/components/app/shell';
 import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, dunningApprovals, dunningSettings } from '@/db/schema';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { nanoid, daysOverdue, formatCurrency } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
@@ -13,6 +13,9 @@ import { AlertCircle, ArrowLeft, BarChart3, CheckCircle2, ChevronRight, Mail, Me
 import { DunningPreview } from '@/components/dunning/preview';
 import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor';
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
+import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approval-queue';
+import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
+import { isApprovalRequired } from '@/lib/dunning/approval';
 
 const DEFAULT_STEPS: Step[] = [
   { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
@@ -115,6 +118,41 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     .limit(20);
 
   const active = seq?.isActive ?? true;
+
+  // Approval queue. Wrapped so a failure here costs this one panel, not the
+  // whole dunning page. If it fails we say so rather than show an empty queue,
+  // which would look like "nothing is waiting".
+  let approvalRequired = true;
+  let queue: QueuedReminder[] = [];
+  let queueError = false;
+  try {
+    await ensureDunningControlSchema();
+    const [settingsRow] = await db.select({ approvalRequired: dunningSettings.approvalRequired }).from(dunningSettings).where(eq(dunningSettings.orgId, orgId)).limit(1);
+    approvalRequired = isApprovalRequired(settingsRow);
+    const pending = await db
+      .select({ run: dunningRuns, customerName: customers.name, invoiceNumber: invoices.number, amount: invoices.amount, amountPaid: invoices.amountPaid, currency: invoices.currency, dueDate: invoices.dueDate })
+      .from(dunningApprovals)
+      .innerJoin(dunningRuns, eq(dunningRuns.id, dunningApprovals.runId))
+      .innerJoin(invoices, eq(invoices.id, dunningRuns.invoiceId))
+      .innerJoin(customers, eq(customers.id, invoices.customerId))
+      .where(eq(dunningApprovals.orgId, orgId))
+      .orderBy(desc(dunningRuns.createdAt))
+      .limit(50);
+    queue = pending.map((p: (typeof pending)[number]) => ({
+      runId: p.run.id,
+      customerName: p.customerName,
+      invoiceNumber: p.invoiceNumber,
+      amount: (parseFloat(p.amount.toString()) - parseFloat((p.amountPaid ?? 0).toString())).toFixed(2),
+      currency: p.currency ?? 'USD',
+      daysOverdue: Math.max(0, daysOverdue(p.dueDate)),
+      channel: p.run.channel === 'sms' ? 'sms' : 'email',
+      subject: p.run.subject,
+      body: p.run.body,
+    }));
+  } catch (e) {
+    queueError = true;
+    console.error('[dunning page] approval queue failed:', e instanceof Error ? e.message : e);
+  }
 
   async function toggleSequence() {
     'use server';
@@ -271,6 +309,14 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       {/* Impact strip — leads with what's at stake (loss aversion) and what
           automation has already recovered (progress), before asking the
           operator to configure anything. */}
+      {queueError ? (
+        <div role="alert" className="alert-danger mb-6">
+          The approval queue could not be loaded, so you can&apos;t see or approve waiting reminders right now. Refresh, and contact support if this keeps happening.
+        </div>
+      ) : (
+        <ApprovalQueue approvalRequired={approvalRequired} items={queue} />
+      )}
+
       <div data-tour="impact" className="mb-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <ImpactTile
           delay={0}
