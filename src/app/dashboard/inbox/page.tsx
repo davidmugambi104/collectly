@@ -49,7 +49,7 @@ export default async function InboxPage() {
   }
 
   const items = rows.map((r: typeof rows[number]) => {
-    const target = r.message.channel === 'email'
+    const target = (r.message.channel === 'email' || r.message.channel === 'portal')
       ? replyTarget({ fromAddress: r.message.fromAddress, customerEmail: r.customerEmail, unsubscribedAt: r.customerDndAt })
       : { ok: false as const, reason: 'Only email replies can be answered from here.' };
     return {

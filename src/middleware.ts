@@ -33,7 +33,7 @@ const isPublicRoute = createRouteMatcher([
   // Without these entries, Clerk's auth check returns 404 on /pay/... and the
   // dunning-email pay link silently breaks (the conversion funnel dead-ends).
   // /api/webhooks/* must remain public (webhooks can't carry Clerk tokens).
-  '/pay/(.*)', '/api/payment/(.*)', '/api/paystack/(.*)',
+  '/pay/(.*)', '/api/pay/(.*)', '/api/payment/(.*)', '/api/paystack/(.*)',
   // Public marketing APIs
   // Every endpoint a public marketing form posts to. /api/qualify was missing
   // for the same reason /qualify itself was: the page got fixed, the endpoint

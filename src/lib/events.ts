@@ -27,6 +27,8 @@ export type EventType =
   | 'dunning.run.awaiting_approval'
   | 'dunning.first_run'
   | 'inbox.reply.sent'
+  | 'portal.promise.created'
+  | 'portal.dispute.opened'
   | 'dunning.run.approved'
   | 'dunning.run.skipped'
   | 'dunning.settings.updated'

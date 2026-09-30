@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const [message] = await db.select().from(inboxMessages).where(and(eq(inboxMessages.id, id), eq(inboxMessages.orgId, orgId))).limit(1);
   if (!message) return NextResponse.json({ error: 'not found' }, { status: 404 });
-  if (message.channel !== 'email') return NextResponse.json({ error: 'Only email replies can be answered from here.' }, { status: 400 });
+  if (message.channel !== 'email' && message.channel !== 'portal') return NextResponse.json({ error: 'Only email replies can be answered from here.' }, { status: 400 });
 
   const [customer] = message.customerId
     ? await db.select({ email: customers.email, dndAt: customers.dndAt }).from(customers).where(and(eq(customers.id, message.customerId), eq(customers.orgId, orgId))).limit(1)

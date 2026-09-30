@@ -3,6 +3,8 @@ import { invoices, customers, organizations, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { formatCurrency, formatDate, daysOverdue } from '@/lib/utils';
 import { PaymentForm } from '@/components/payment/payment-form';
+import { PortalHelp } from '@/components/payment/portal-help';
+import { canSelfServe } from '@/lib/portal-self-service';
 import { Logo } from '@/components/brand/logo';
 import { ShieldCheck, Clock, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
@@ -189,6 +191,8 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
             </dl>
             {invoice.description && <p className="mt-3 text-sm text-ink-600">{invoice.description}</p>}
           </div>
+
+          {balance > 0 && canSelfServe(invoice.status) && <PortalHelp invoiceId={invoice.id} orgName={org.name} />}
 
           <div className="card">
             <h2 className="font-semibold text-ink-900">Questions?</h2>
