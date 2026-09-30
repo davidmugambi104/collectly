@@ -42,6 +42,7 @@ export const DUNNING_CONTROL_DDL = [
   `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS send_timezone text`,
   `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS min_gap_days smallint NOT NULL DEFAULT 7`,
   `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS min_balance numeric(14,2) NOT NULL DEFAULT 0`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS list_other_invoices boolean NOT NULL DEFAULT true`,
   `CREATE TABLE IF NOT EXISTS dunning_sender_domains (
      org_id text PRIMARY KEY REFERENCES organizations(id) ON DELETE CASCADE,
      domain text NOT NULL UNIQUE,

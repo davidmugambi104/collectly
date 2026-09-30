@@ -20,10 +20,11 @@ function dailyRunLocal(tz: string): string {
   } catch { return '14:00'; }
 }
 
-export function SendSettings({ window: initial, domain, emailConfigured, rules: initialRules }: { window: Win; domain: Domain; emailConfigured: boolean; rules: Rules }) {
+export function SendSettings({ window: initial, domain, emailConfigured, rules: initialRules, listOthers: initialListOthers }: { window: Win; domain: Domain; emailConfigured: boolean; rules: Rules; listOthers: boolean }) {
   const router = useRouter();
   const [w, setW] = useState<Win>(initial);
   const [rules, setRules] = useState<{ minGapDays: string; minBalance: string }>({ minGapDays: String(initialRules.minGapDays), minBalance: String(initialRules.minBalance) });
+  const [listOthers, setListOthers] = useState(initialListOthers);
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const [domainInput, setDomainInput] = useState('');
@@ -124,6 +125,21 @@ export function SendSettings({ window: initial, domain, emailConfigured, rules: 
             {busy === 'rules' && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Save chasing rules
           </button>
         </div>
+      </div>
+
+      {/* ---- One reminder, every overdue invoice ---- */}
+      <div className="mt-8 border-t border-ink-200 pt-6">
+        <h3 className="app-label">List the customer&apos;s other overdue invoices</h3>
+        <p className="app-meta mt-0.5 font-normal">Since a customer gets one reminder, not one per invoice, that reminder can show everything they owe: a short table and a total, added under the message. We write the table from your invoices, not the AI. Invoices in another currency, with a promise to pay, disputed, or waiting on a reply are left out. You see what will be added before you approve a reminder.</p>
+        <label className="mt-3 inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={listOthers} disabled={busy === 'others'} onChange={async (e) => {
+            const next = e.target.checked;
+            setListOthers(next);
+            const ok = await call('others', '/api/dunning/settings', 'PUT', { listOtherInvoices: next }, next ? 'Reminders will list other overdue invoices.' : 'Reminders will only mention the one invoice.');
+            if (!ok) setListOthers(!next);
+          }} />
+          List other overdue invoices in each reminder
+        </label>
       </div>
 
       {/* ---- Own domain ---- */}

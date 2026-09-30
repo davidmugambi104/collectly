@@ -17,6 +17,8 @@ import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approva
 import { SendSettings } from '@/components/dunning/send-settings';
 import { loadSendWindow, isDefaultSequence, loadChaseRules, loadSenderContext, resolveFrom, type SenderContext } from '@/lib/dunning/org-settings';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
+import { loadListOthers, loadOthersSummary } from '@/lib/dunning/multi-invoice-load';
+import { describeOthers } from '@/lib/dunning/multi-invoice';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 import { STANDARD_STEPS, PRESETS } from '@/lib/dunning/presets';
@@ -128,6 +130,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   let queue: QueuedReminder[] = [];
   let queueError = false;
   let chaseRules = { minGapDays: 7, minBalance: 0 };
+  let listOthers = true;
   let sendWindow = { enabled: false, startHour: 9, endHour: 17, days: 31, timezone: 'UTC' };
   let senderContext: SenderContext = { businessName: '', ownDomain: null };
   let senderDomain: { domain: string; localPart: string; status: string; records: Array<{ kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string }> } | null = null;
@@ -137,11 +140,12 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     approvalRequired = isApprovalRequired(settingsRow);
     sendWindow = await loadSendWindow(orgId);
     chaseRules = await loadChaseRules(orgId);
+    listOthers = await loadListOthers(orgId);
     const [dom] = await db.select().from(dunningSenderDomains).where(eq(dunningSenderDomains.orgId, orgId)).limit(1);
     senderContext = await loadSenderContext(orgId);
     if (dom) senderDomain = { domain: dom.domain, localPart: dom.localPart, status: dom.status, records: dom.records ?? [] };
     const pending = await db
-      .select({ run: dunningRuns, customerName: customers.name, invoiceNumber: invoices.number, amount: invoices.amount, amountPaid: invoices.amountPaid, currency: invoices.currency, dueDate: invoices.dueDate })
+      .select({ run: dunningRuns, customerId: customers.id, customerName: customers.name, invoiceNumber: invoices.number, amount: invoices.amount, amountPaid: invoices.amountPaid, currency: invoices.currency, dueDate: invoices.dueDate })
       .from(dunningApprovals)
       .innerJoin(dunningRuns, eq(dunningRuns.id, dunningApprovals.runId))
       .innerJoin(invoices, eq(invoices.id, dunningRuns.invoiceId))
@@ -162,6 +166,17 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       if (!fromCache.has(key)) fromCache.set(key, await resolveFrom(orgId, senderContext.businessName, sender));
       fromLines.set(p.run.id, fromCache.get(key)!);
     }
+    // What will be added under each email, worked out now so the owner sees it before approving.
+    const othersLines = new Map<string, string>();
+    if (listOthers) {
+      for (const p of pending as Array<(typeof pending)[number]>) {
+        if (p.run.channel === 'sms') continue;
+        const cid = (p as { customerId?: string }).customerId;
+        if (!cid) continue;
+        const summary = await loadOthersSummary({ orgId, customerId: cid, invoiceId: p.run.invoiceId, thisBalance: parseFloat(p.amount.toString()) - parseFloat((p.amountPaid ?? 0).toString()), currency: p.currency ?? 'USD' });
+        if (summary) othersLines.set(p.run.id, describeOthers(summary));
+      }
+    }
     queue = pending.map((p: (typeof pending)[number]) => ({
       runId: p.run.id,
       customerName: p.customerName,
@@ -174,6 +189,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       subject: p.run.subject,
       body: p.run.body,
       from: fromLines.get(p.run.id) ?? null,
+      alsoLists: othersLines.get(p.run.id) ?? null,
     }));
   } catch (e) {
     queueError = true;
@@ -341,7 +357,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         </>
       )}
 
-      {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} rules={chaseRules} />}
+      {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} rules={chaseRules} listOthers={listOthers} />}
 
       <div data-tour="impact" className="mb-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <ImpactTile

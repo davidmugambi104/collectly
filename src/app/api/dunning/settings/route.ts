@@ -16,6 +16,7 @@ import { parseRulesInput } from '@/lib/dunning/chase-rules';
  *                                            only act during business hours
  *   { chasing: { minGapDays, minBalance } }  at most one reminder per customer per N days;
  *                                            skip invoices with a balance under X
+ *   { listOtherInvoices: boolean }           a reminder also lists the customer's other overdue invoices
  * Anything omitted is left as it was.
  */
 export async function PUT(req: NextRequest) {
@@ -52,6 +53,12 @@ export async function PUT(req: NextRequest) {
     if (!r.ok) return NextResponse.json({ error: r.error }, { status: 400 });
     set.minGapDays = r.value.minGapDays;
     set.minBalance = r.value.minBalance.toFixed(2);
+  }
+  if ('listOtherInvoices' in input) {
+    if (typeof input.listOtherInvoices !== 'boolean') {
+      return NextResponse.json({ error: 'listOtherInvoices must be true or false' }, { status: 400 });
+    }
+    set.listOtherInvoices = input.listOtherInvoices;
   }
   if (Object.keys(set).length === 0) {
     return NextResponse.json({ error: 'nothing to update' }, { status: 400 });

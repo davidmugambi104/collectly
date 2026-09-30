@@ -18,6 +18,8 @@ export type QueuedReminder = {
   body: string;
   /** The From line an email will go out with. */
   from?: string | null;
+  /** What will be listed under the message, e.g. "Also lists 2 other overdue invoices ...". */
+  alsoLists?: string | null;
 };
 
 /**
@@ -119,6 +121,7 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
                   </div>
                 </div>
                 {it.channel === 'email' && it.from && <div className="app-meta mt-1 font-normal">Will be sent as {it.from.replace(/\\(.)/g, '$1')}</div>}
+                {it.channel === 'email' && it.alsoLists && <div className="app-meta font-normal">{it.alsoLists}</div>}
                 {it.channel === 'email' && (
                   <>
                     <label htmlFor={`subj-${it.runId}`} className="label mt-3">Subject</label>

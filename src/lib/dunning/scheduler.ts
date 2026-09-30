@@ -10,6 +10,7 @@ import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeader
 import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-settings';
 import { leadDays } from '@/lib/dunning/step-timing';
 import { callTaskNote, callTaskTitle } from '@/lib/dunning/call-task';
+import { loadListOthers, othersHtmlFor } from '@/lib/dunning/multi-invoice-load';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
@@ -180,6 +181,12 @@ export async function processDunning(opts: ProcessOptions = {}) {
     const key = `${orgId}|${senderKey(sender)}`;
     let v = fromCache.get(key);
     if (v === undefined) { v = await resolveFrom(orgId, businessName, sender); fromCache.set(key, v); }
+    return v;
+  };
+  const listOthersByOrg = new Map<string, boolean>();
+  const listOthersFor = async (orgId: string): Promise<boolean> => {
+    let v = listOthersByOrg.get(orgId);
+    if (v === undefined) { v = await loadListOthers(orgId); listOthersByOrg.set(orgId, v); }
     return v;
   };
   const windowOpenByOrg = new Map<string, boolean>();
@@ -497,7 +504,14 @@ export async function processDunning(opts: ProcessOptions = {}) {
             const sendResult = await sendEmail({
               to: customer.email,
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
-              html: withUnsubscribeFooter(renderEmailHtml({ body: result.body, invoice, businessName }), customer.email),
+              html: withUnsubscribeFooter(renderEmailHtml({
+                body: result.body, invoice, businessName,
+                // The customer's other overdue invoices, listed by us from the database (never the AI).
+                extraHtml: await othersHtmlFor({
+                  enabled: await listOthersFor(seq.orgId), orgId: seq.orgId, customerId: customer.id, invoiceId: invoice.id,
+                  thisBalance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), currency: invoice.currency ?? 'USD', now,
+                }),
+              }), customer.email),
               headers: dunningListUnsubscribeHeaders(customer.email),
               // "Acme Studio via Mugavi", so the recipient sees who they owe
               // rather than an unexplained platform address.
@@ -631,11 +645,12 @@ export async function processDunning(opts: ProcessOptions = {}) {
   return { scheduled, sent, errors, awaitingApproval, outsideWindow };
 }
 
-export function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: Invoice; businessName: string }) {
+/** `extraHtml` is already-escaped markup from multi-invoice.ts, placed under the message. */
+export function renderEmailHtml({ body, invoice, businessName, extraHtml = '' }: { body: string; invoice: Invoice; businessName: string; extraHtml?: string }) {
   return `
     <!doctype html>
     <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 560px; margin: 0 auto; padding: 24px;">
-      <p style="font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${body}</p>
+      <p style="font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${body}</p>${extraHtml}
       <hr style="border: 0; border-top: 1px solid #eeeef0; margin: 24px 0;" />
       <p style="font-size: 12px; color: #6c6e76;">${businessName} · Invoice #${invoice.number} for ${invoice.currency} ${invoice.amount}</p>
     </body></html>

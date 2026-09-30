@@ -507,6 +507,8 @@ export const dunningSettings = pgTable('dunning_settings', {
   // Chasing rules, see src/lib/dunning/chase-rules.ts. A gap of 0 or a minimum of 0 turns the rule off.
   minGapDays: smallint('min_gap_days').notNull().default(7),
   minBalance: decimal('min_balance', { precision: 14, scale: 2 }).notNull().default('0'),
+  // A reminder also lists the customer's other overdue invoices. See src/lib/dunning/multi-invoice.ts.
+  listOtherInvoices: boolean('list_other_invoices').notNull().default(true),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
