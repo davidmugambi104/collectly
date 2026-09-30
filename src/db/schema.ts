@@ -558,6 +558,17 @@ export const groupSequences = pgTable('group_sequences', {
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
 });
 
+/** Named filters on list pages, shared by the organisation. See src/lib/saved-views.ts. */
+export const savedViews = pgTable('saved_views', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  page: text('page').notNull(),
+  name: text('name').notNull(),
+  query: text('query').notNull().default(''),
+  createdBy: text('created_by'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({ orgPageNameUniq: uniqueIndex('saved_views_org_page_name_uniq').on(t.orgId, t.page, t.name) }));
+
 export const disputes = pgTable('disputes', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),

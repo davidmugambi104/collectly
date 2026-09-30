@@ -5,8 +5,9 @@ import { dunningRuns, invoices, customers } from '@/db/schema';
 import { and, eq, desc } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { toCsv } from '@/lib/csv';
+import { HISTORY_STATUSES } from '@/lib/saved-views';
 
-const STATUSES = ['scheduled', 'sent', 'delivered', 'opened', 'clicked', 'replied', 'paid', 'failed', 'cancelled'] as const;
+const STATUSES = HISTORY_STATUSES;
 
 /** GET ?status=... downloads the org's reminder history as CSV (newest first, up to 5,000 rows). */
 export async function GET(req: NextRequest) {

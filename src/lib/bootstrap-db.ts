@@ -57,6 +57,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS customer_groups_org_name_uniq ON customer_grou
 CREATE TABLE IF NOT EXISTS customer_group_members (customer_id text PRIMARY KEY REFERENCES customers(id) ON DELETE CASCADE, group_id text NOT NULL REFERENCES customer_groups(id) ON DELETE CASCADE, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE);
 CREATE INDEX IF NOT EXISTS customer_group_members_group_idx ON customer_group_members(group_id);
 CREATE TABLE IF NOT EXISTS group_sequences (group_id text PRIMARY KEY REFERENCES customer_groups(id) ON DELETE CASCADE, sequence_id text NOT NULL REFERENCES dunning_sequences(id) ON DELETE CASCADE, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE);
+CREATE TABLE IF NOT EXISTS saved_views (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, page text NOT NULL, name text NOT NULL, query text NOT NULL DEFAULT '', created_by text, created_at timestamptz NOT NULL DEFAULT now());
+CREATE UNIQUE INDEX IF NOT EXISTS saved_views_org_page_name_uniq ON saved_views(org_id, page, name);
 CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);
 CREATE INDEX IF NOT EXISTS disputes_cust_idx ON disputes(customer_id);
 CREATE INDEX IF NOT EXISTS inbox_org_status_idx ON inbox_messages(org_id, status);

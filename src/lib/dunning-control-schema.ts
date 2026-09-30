@@ -69,6 +69,16 @@ export const DUNNING_CONTROL_DDL = [
      sequence_id text NOT NULL REFERENCES dunning_sequences(id) ON DELETE CASCADE,
      org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE
    )`,
+  `CREATE TABLE IF NOT EXISTS saved_views (
+     id text PRIMARY KEY,
+     org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+     page text NOT NULL,
+     name text NOT NULL,
+     query text NOT NULL DEFAULT '',
+     created_by text,
+     created_at timestamptz NOT NULL DEFAULT now()
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS saved_views_org_page_name_uniq ON saved_views (org_id, page, name)`,
   `CREATE TABLE IF NOT EXISTS dunning_approvals (
      run_id text PRIMARY KEY REFERENCES dunning_runs(id) ON DELETE CASCADE,
      org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,

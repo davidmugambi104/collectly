@@ -8,8 +8,11 @@ import { db } from '@/db';
 import { dunningRuns, invoices, customers } from '@/db/schema';
 import { and, eq, desc } from 'drizzle-orm';
 import { formatDate } from '@/lib/utils';
+import { SavedViews } from '@/components/app/saved-views';
+import { loadViews } from '@/lib/saved-views-load';
+import { HISTORY_STATUSES } from '@/lib/saved-views';
 
-const STATUSES = ['scheduled', 'sent', 'delivered', 'opened', 'clicked', 'replied', 'paid', 'failed', 'cancelled'] as const;
+const STATUSES = HISTORY_STATUSES;
 
 export default async function HistoryPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
   const { userId, orgId } = await auth();
@@ -26,9 +29,11 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
     .orderBy(desc(dunningRuns.createdAt))
     .limit(200);
 
+  const views = await loadViews(orgId, 'history');
   const exportHref = `/api/dunning/runs/export${active ? `?status=${active}` : ''}`;
   return (
     <AppShell title="Reminder history" subtitle="Every reminder Mugavi has drafted, sent or skipped.">
+      <SavedViews page="history" current={active ? `status=${active}` : ''} views={views} />
       <div className="mb-4 flex flex-wrap items-center gap-2" role="group" aria-label="Filter by status">
         <Link href="/dashboard/dunning/history" className={`badge ${!active ? 'ring-1 ring-brand-500' : ''}`}>All</Link>
         {STATUSES.map((s) => <Link key={s} href={`/dashboard/dunning/history?status=${s}`} className={`badge capitalize ${active === s ? 'ring-1 ring-brand-500' : ''}`}>{s}</Link>)}

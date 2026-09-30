@@ -10,6 +10,10 @@ import { eq, sql, and, or, ilike } from 'drizzle-orm';
 import Link from 'next/link';
 import { Search, SearchX, Plus, FileText } from 'lucide-react';
 
+import { SavedViews } from '@/components/app/saved-views';
+import { loadViews } from '@/lib/saved-views-load';
+import { cleanViewQuery } from '@/lib/saved-views';
+
 export default async function InvoicesPage({ searchParams }: { searchParams: Promise<{ filter?: string; q?: string; bucket?: string }> }) {
   const { userId, orgId } = await auth();
   if (!userId) redirect('/sign-in');
@@ -90,6 +94,9 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   // No more post-fetch JS filter — the SQL already handled it.
   const filtered = rows;
 
+  const views = await loadViews(orgId, 'invoices');
+  const currentView = cleanViewQuery('invoices', { filter: sp.filter, bucket: sp.bucket, q: sp.q });
+
   const FILTERS = [
     { key: 'all', label: 'All', href: q ? `/dashboard/invoices?q=${encodeURIComponent(q)}` : '/dashboard/invoices' },
     { key: 'overdue', label: 'Overdue', href: `/dashboard/invoices?filter=overdue${q ? `&q=${encodeURIComponent(q)}` : ''}` },
@@ -109,6 +116,8 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
           the two actions beside them. The filters are one control now (a
           segmented switch: mutually exclusive, one visibly selected), which
           leaves search on the left and the only real action on the right. */}
+      <SavedViews page="invoices" current={currentView} views={views} />
+
       <form action="/dashboard/invoices" method="get" className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {filter !== 'all' && <input type="hidden" name="filter" value={filter} />}
         <div className="flex items-center gap-2">
