@@ -10,6 +10,7 @@ import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeader
 import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-settings';
 import { leadDays } from '@/lib/dunning/step-timing';
 import { callTaskNote, callTaskTitle } from '@/lib/dunning/call-task';
+import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
@@ -30,6 +31,9 @@ type DunningStep = {
   tone: 'friendly' | 'firm' | 'final';
   subject?: string;
   template: string;
+  /** "Send as": see step-sender.ts. */
+  senderName?: string;
+  senderLocalPart?: string;
 };
 
 // Cache org names per process to avoid re-querying on every invoice
@@ -169,7 +173,15 @@ export async function processDunning(opts: ProcessOptions = {}) {
     return required;
   }
 
-  const fromByOrg = new Map<string, string>();
+  const fromCache = new Map<string, string>();
+  // One lookup per org and sender, not one per invoice. A step that sends "as" someone else gets its own line.
+  const fromFor = async (orgId: string, businessName: string, step: DunningStep): Promise<string> => {
+    const sender = senderFromStep(step);
+    const key = `${orgId}|${senderKey(sender)}`;
+    let v = fromCache.get(key);
+    if (v === undefined) { v = await resolveFrom(orgId, businessName, sender); fromCache.set(key, v); }
+    return v;
+  };
   const windowOpenByOrg = new Map<string, boolean>();
 
   // Chasing rules, read once per org per run, and the reminders each customer
@@ -489,7 +501,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
               headers: dunningListUnsubscribeHeaders(customer.email),
               // "Acme Studio via Mugavi", so the recipient sees who they owe
               // rather than an unexplained platform address.
-              from: fromByOrg.get(seq.orgId) ?? (fromByOrg.set(seq.orgId, await resolveFrom(seq.orgId, businessName)), fromByOrg.get(seq.orgId)!),
+              from: await fromFor(seq.orgId, businessName, lastStep),
               replyTo: getDunningReplyToAddress(),
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns

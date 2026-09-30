@@ -176,6 +176,10 @@ export const dunningSequences = pgTable('dunning_sequences', {
     tone: 'friendly' | 'firm' | 'final';
     subject?: string;
     template: string;
+    // "Send as": a different display name, and on a verified own domain a
+    // different local part, for this step. See src/lib/dunning/step-sender.ts.
+    senderName?: string;
+    senderLocalPart?: string;
   }>>().notNull(),
   pauseOnReply: boolean('pause_on_reply').notNull().default(true),
   pauseOnPayment: boolean('pause_on_payment').notNull().default(true),

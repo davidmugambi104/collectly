@@ -7,6 +7,7 @@ import { dunningSettings, dunningSenderDomains, organizations, dunningSequences,
 import { eq, sql } from 'drizzle-orm';
 import { getDefaultFrom } from '@/lib/infra';
 import { formatDunningFrom, formatOwnDomainFrom } from '@/lib/email-from';
+import type { StepSender } from '@/lib/dunning/step-sender';
 import { canSendFrom } from '@/lib/email-domain';
 import { DEFAULT_WINDOW, isValidTimezone, type SendWindow } from '@/lib/dunning/send-window';
 import { DEFAULT_RULES, type ChaseRules } from '@/lib/dunning/chase-rules';
@@ -34,6 +35,8 @@ export async function loadSendWindow(orgId: string): Promise<SendWindow> {
   return { enabled: row.enabled, startHour: row.start, endHour: row.end, days: row.days, timezone: tz as string };
 }
 
+export type SenderContext = { businessName: string; ownDomain: { domain: string; localPart: string } | null };
+
 /** The org's chasing rules. No settings row means the defaults. */
 export async function loadChaseRules(orgId: string): Promise<ChaseRules> {
   const [row] = await db
@@ -50,14 +53,30 @@ export async function loadChaseRules(orgId: string): Promise<ChaseRules> {
  * it is verified with the mail provider, otherwise from Mugavi's address with the
  * business name on it. Never from a domain that has not verified.
  */
-export async function resolveFrom(orgId: string, businessName: string | null | undefined): Promise<string> {
+export async function resolveFrom(orgId: string, businessName: string | null | undefined, sender?: StepSender | null): Promise<string> {
   const [row] = await db
     .select({ status: dunningSenderDomains.status, domain: dunningSenderDomains.domain, localPart: dunningSenderDomains.localPart })
     .from(dunningSenderDomains)
     .where(eq(dunningSenderDomains.orgId, orgId))
     .limit(1);
-  if (canSendFrom(row)) return formatOwnDomainFrom(businessName, row!.localPart, row!.domain);
-  return formatDunningFrom(businessName, getDefaultFrom());
+  // A step's own address only applies on a verified domain of the org's own. On
+  // Mugavi's address only the display name can change: we never make up a
+  // local part on a domain we do not hold for them.
+  if (canSendFrom(row)) return formatOwnDomainFrom(businessName, sender?.localPart || row!.localPart, row!.domain, sender?.name);
+  return formatDunningFrom(businessName, getDefaultFrom(), 'Mugavi', sender?.name);
+}
+
+/** What the step editor needs to show how a "send as" will look: the business name and the verified own domain, if any. */
+export async function loadSenderContext(orgId: string): Promise<SenderContext> {
+  const [[org], [row]] = await Promise.all([
+    db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1),
+    db
+      .select({ status: dunningSenderDomains.status, domain: dunningSenderDomains.domain, localPart: dunningSenderDomains.localPart })
+      .from(dunningSenderDomains)
+      .where(eq(dunningSenderDomains.orgId, orgId))
+      .limit(1),
+  ]);
+  return { businessName: org?.name ?? '', ownDomain: canSendFrom(row) ? { domain: row!.domain, localPart: row!.localPart } : null };
 }
 
 /**

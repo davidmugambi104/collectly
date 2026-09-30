@@ -30,15 +30,37 @@ function cleanName(name: string): string {
     .trim();
 }
 
-export function formatDunningFrom(businessName: string | null | undefined, baseFrom: string, platform = 'Mugavi'): string {
+export const MAX_SENDER_NAME = 40;
+
+/**
+ * A person or role a later reminder is sent "as", e.g. "Amina Otieno" or
+ * "Accounts". Empty means none. Only the display name changes with it; see
+ * the note at the top of this file.
+ */
+export function cleanSenderName(name: string | null | undefined): string {
+  return cleanName(name ?? '').slice(0, MAX_SENDER_NAME).trim();
+}
+
+/** The words a recipient sees as the sender name, before quoting. Shared with the step editor's preview. */
+export function fromLabel(businessName: string | null | undefined, senderName: string | null | undefined, opts: { ownDomain: boolean; domain?: string; platform?: string }): string {
+  const platform = opts.platform ?? 'Mugavi';
+  const biz = cleanName(businessName ?? '').slice(0, MAX_NAME).trim();
+  const who = cleanSenderName(senderName);
+  const org = opts.ownDomain
+    ? biz || opts.domain || ''
+    : biz && biz.toLowerCase() !== platform.toLowerCase() ? `${biz} via ${platform}` : platform;
+  return who ? `${who} at ${org}` : org;
+}
+
+function quote(label: string): string {
+  return label.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+export function formatDunningFrom(businessName: string | null | undefined, baseFrom: string, platform = 'Mugavi', senderName?: string | null): string {
   const address = extractAddress(baseFrom);
   // If the base is unusable, hand it back untouched rather than invent an address.
   if (!address) return baseFrom;
-
-  const biz = cleanName(businessName ?? '').slice(0, MAX_NAME).trim();
-  const label = biz && biz.toLowerCase() !== platform.toLowerCase() ? `${biz} via ${platform}` : platform;
-  const quoted = label.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-  return `"${quoted}" <${address}>`;
+  return `"${quote(fromLabel(businessName, senderName, { ownDomain: false, platform }))}" <${address}>`;
 }
 
 /**
@@ -46,8 +68,6 @@ export function formatDunningFrom(businessName: string | null | undefined, baseF
  * No "via Mugavi", because the domain is the customer's own. Only ever called
  * once the domain's DNS records have been verified with the mail provider.
  */
-export function formatOwnDomainFrom(businessName: string | null | undefined, localPart: string, domain: string): string {
-  const biz = cleanName(businessName ?? '').slice(0, MAX_NAME).trim() || domain;
-  const quoted = biz.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-  return `"${quoted}" <${localPart}@${domain}>`;
+export function formatOwnDomainFrom(businessName: string | null | undefined, localPart: string, domain: string, senderName?: string | null): string {
+  return `"${quote(fromLabel(businessName, senderName, { ownDomain: true, domain }))}" <${localPart}@${domain}>`;
 }

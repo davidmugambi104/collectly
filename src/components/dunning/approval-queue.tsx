@@ -16,6 +16,8 @@ export type QueuedReminder = {
   channel: 'email' | 'sms';
   subject: string | null;
   body: string;
+  /** The From line an email will go out with. */
+  from?: string | null;
 };
 
 /**
@@ -116,6 +118,7 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
                     {it.currency} {it.amount} · {it.dueInDays ? `due in ${it.dueInDays}d` : `${it.daysOverdue}d overdue`} · {it.channel === 'sms' ? 'text message' : 'email'}
                   </div>
                 </div>
+                {it.channel === 'email' && it.from && <div className="app-meta mt-1 font-normal">Will be sent as {it.from.replace(/\\(.)/g, '$1')}</div>}
                 {it.channel === 'email' && (
                   <>
                     <label htmlFor={`subj-${it.runId}`} className="label mt-3">Subject</label>

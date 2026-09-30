@@ -20,6 +20,7 @@ import { dunningApprovals, dunningRuns, dunningSequences, inboxMessages, invoice
 import { and, eq } from 'drizzle-orm';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { resolveFrom } from '@/lib/dunning/org-settings';
+import { senderFromStep } from '@/lib/dunning/step-sender';
 import { maySendSms } from '@/lib/sms-consent';
 import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
@@ -76,7 +77,7 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
 
   // A reply that nobody has handled yet blocks the send, unless this sequence
   // has reply-pause switched off. Same rule the scheduler applies.
-  const [seq] = await db.select({ pauseOnReply: dunningSequences.pauseOnReply }).from(dunningSequences).where(eq(dunningSequences.id, run.sequenceId)).limit(1);
+  const [seq] = await db.select({ pauseOnReply: dunningSequences.pauseOnReply, steps: dunningSequences.steps }).from(dunningSequences).where(eq(dunningSequences.id, run.sequenceId)).limit(1);
   const [reply] = await db
     .select({ id: inboxMessages.id })
     .from(inboxMessages)
@@ -111,7 +112,8 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
         subject: final.subject ?? `Invoice ${invoice.number} is overdue`,
         html: withUnsubscribeFooter(renderEmailHtml({ body: final.body, invoice, businessName }), to),
         headers: dunningListUnsubscribeHeaders(to),
-        from: await resolveFrom(orgId, businessName),
+        // A later step can be sent as a different name or address: see step-sender.ts.
+        from: await resolveFrom(orgId, businessName, senderFromStep(seq?.steps?.find((st: { id: string }) => st.id === run.stepId))),
         replyTo: getDunningReplyToAddress(),
       });
       if (sendResult.status === 'skipped') throw new Error('email is not configured (no API key)');

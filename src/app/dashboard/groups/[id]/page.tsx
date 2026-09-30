@@ -8,6 +8,7 @@ import { db } from '@/db';
 import { customerGroups, customerGroupMembers, groupSequences, dunningSequences, customers } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
+import { loadSenderContext } from '@/lib/dunning/org-settings';
 import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor';
 
 export default async function GroupPage({ params }: { params: Promise<{ id: string }> }) {
@@ -32,7 +33,7 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
           : <ul className="mt-2 flex flex-wrap gap-2">{members.map((m: { id: string; name: string }) => <li key={m.id}><Link href={`/dashboard/customers/${m.id}`} className="badge">{m.name}</Link></li>)}</ul>}
       </section>
       {seq
-        ? <SequenceEditor initialSteps={seq.steps as Step[]} sequenceId={seq.id} />
+        ? <SequenceEditor initialSteps={seq.steps as Step[]} sequenceId={seq.id} sender={await loadSenderContext(orgId)} />
         : <div role="alert" className="alert-danger">This group has no schedule. Delete it and create it again.</div>}
     </AppShell>
   );

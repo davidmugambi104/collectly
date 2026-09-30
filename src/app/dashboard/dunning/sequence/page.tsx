@@ -5,7 +5,7 @@ import { db } from '@/db';
 import { dunningSequences } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
-import { isDefaultSequence } from '@/lib/dunning/org-settings';
+import { isDefaultSequence, loadSenderContext } from '@/lib/dunning/org-settings';
 import { SequenceEditor } from '@/components/dunning/sequence-editor';
 
 export const dynamic = 'force-dynamic';
@@ -28,7 +28,7 @@ export default async function DunningSequencesPage() {
   return (
     <AppShell title="Dunning sequence" subtitle="Edit each step's timing, channel, and tone.">
       {seq ? (
-        <SequenceEditor initialSteps={seq.steps ?? []} sequenceId={seq.id} />
+        <SequenceEditor initialSteps={seq.steps ?? []} sequenceId={seq.id} sender={await loadSenderContext(orgId)} />
       ) : (
         <div className="card text-center py-10">No active sequence. The default sequence is created automatically when you turn on dunning.</div>
       )}

@@ -15,7 +15,8 @@ import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor'
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
 import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approval-queue';
 import { SendSettings } from '@/components/dunning/send-settings';
-import { loadSendWindow, isDefaultSequence, loadChaseRules } from '@/lib/dunning/org-settings';
+import { loadSendWindow, isDefaultSequence, loadChaseRules, loadSenderContext, resolveFrom, type SenderContext } from '@/lib/dunning/org-settings';
+import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 import { STANDARD_STEPS, PRESETS } from '@/lib/dunning/presets';
@@ -128,6 +129,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   let queueError = false;
   let chaseRules = { minGapDays: 7, minBalance: 0 };
   let sendWindow = { enabled: false, startHour: 9, endHour: 17, days: 31, timezone: 'UTC' };
+  let senderContext: SenderContext = { businessName: '', ownDomain: null };
   let senderDomain: { domain: string; localPart: string; status: string; records: Array<{ kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string }> } | null = null;
   try {
     await ensureDunningControlSchema();
@@ -136,6 +138,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     sendWindow = await loadSendWindow(orgId);
     chaseRules = await loadChaseRules(orgId);
     const [dom] = await db.select().from(dunningSenderDomains).where(eq(dunningSenderDomains.orgId, orgId)).limit(1);
+    senderContext = await loadSenderContext(orgId);
     if (dom) senderDomain = { domain: dom.domain, localPart: dom.localPart, status: dom.status, records: dom.records ?? [] };
     const pending = await db
       .select({ run: dunningRuns, customerName: customers.name, invoiceNumber: invoices.number, amount: invoices.amount, amountPaid: invoices.amountPaid, currency: invoices.currency, dueDate: invoices.dueDate })
@@ -146,6 +149,19 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       .where(eq(dunningApprovals.orgId, orgId))
       .orderBy(desc(dunningRuns.createdAt))
       .limit(50);
+    // Who each email will come from, so an approver sees a later step that is
+    // sent as someone else. One lookup per distinct sender.
+    const seqRows = await db.select({ id: dunningSequences.id, steps: dunningSequences.steps }).from(dunningSequences).where(eq(dunningSequences.orgId, orgId));
+    const stepsBySeq = new Map<string, Array<{ id: string; senderName?: string; senderLocalPart?: string }>>(seqRows.map((r: { id: string; steps: Array<{ id: string; senderName?: string; senderLocalPart?: string }> }) => [r.id, r.steps ?? []]));
+    const fromCache = new Map<string, string>();
+    const fromLines = new Map<string, string>();
+    for (const p of pending as Array<(typeof pending)[number]>) {
+      if (p.run.channel === 'sms') continue;
+      const sender = senderFromStep(stepsBySeq.get(p.run.sequenceId)?.find((st) => st.id === p.run.stepId));
+      const key = senderKey(sender);
+      if (!fromCache.has(key)) fromCache.set(key, await resolveFrom(orgId, senderContext.businessName, sender));
+      fromLines.set(p.run.id, fromCache.get(key)!);
+    }
     queue = pending.map((p: (typeof pending)[number]) => ({
       runId: p.run.id,
       customerName: p.customerName,
@@ -157,6 +173,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       channel: p.run.channel === 'sms' ? 'sms' : 'email',
       subject: p.run.subject,
       body: p.run.body,
+      from: fromLines.get(p.run.id) ?? null,
     }));
   } catch (e) {
     queueError = true;
@@ -485,7 +502,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           </div>
 
           <div className="mt-5">
-            <SequenceEditor initialSteps={seq?.steps ?? DEFAULT_STEPS} sequenceId={seq!.id} />
+            <SequenceEditor initialSteps={seq?.steps ?? DEFAULT_STEPS} sequenceId={seq!.id} sender={senderContext} />
           </div>
         </div>
 

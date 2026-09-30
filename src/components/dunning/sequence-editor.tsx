@@ -7,8 +7,10 @@ import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw, 
 import { MessageBubble } from './message-bubble';
 import { RecipientCard } from './recipient-card';
 import { DUNNING_UNSAVED_EVENT, DUNNING_ERROR_EVENT } from '@/lib/dunning/events';
+import { fromLabel, cleanSenderName, MAX_SENDER_NAME } from '@/lib/email-from';
+import type { SenderContext } from '@/lib/dunning/org-settings';
 
-export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' | 'phone'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
+export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' | 'phone'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string; senderName?: string; senderLocalPart?: string };
 type Recipient = { name: string; email: string | null; phone: string | null; invoiceNumber: string; amount?: string; currency?: string; daysOverdue?: number };
 type Preview = { subject?: string; body: string; sample: boolean; recipient: Recipient | null };
 
@@ -35,7 +37,7 @@ const TONE_BADGE: Record<Step['tone'], string> = {
   final: 'badge-danger',
 };
 
-export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { initialSteps: Step[]; sequenceId: string; smsReady?: boolean }) {
+export function SequenceEditor({ initialSteps, sequenceId, smsReady = true, sender }: { initialSteps: Step[]; sequenceId: string; smsReady?: boolean; sender?: SenderContext }) {
   const router = useRouter();
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [activeIdx, setActiveIdx] = useState<number | null>(0);
@@ -257,6 +259,36 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
               <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option><option value="phone">Call (a task for you)</option></select></div>
               <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
             </div>
+            {active.channel === 'email' && (
+              <fieldset className="rounded-[10px] border p-3 [border-color:var(--hair)]">
+                <legend className="label px-1">Send as (optional)</legend>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="label" htmlFor="step-sender-name">Name</label>
+                    <input id="step-sender-name" className="input" maxLength={MAX_SENDER_NAME} value={active.senderName ?? ''} placeholder="e.g. Amina Otieno, or Accounts"
+                      onChange={(e) => updateStep(activeIdx!, { senderName: e.target.value })} />
+                  </div>
+                  {sender?.ownDomain ? (
+                    <div>
+                      <label className="label" htmlFor="step-sender-local">Address on {sender.ownDomain.domain}</label>
+                      <div className="flex items-center gap-1.5">
+                        <input id="step-sender-local" className="input" maxLength={64} value={active.senderLocalPart ?? ''} placeholder={sender.ownDomain.localPart}
+                          onChange={(e) => updateStep(activeIdx!, { senderLocalPart: e.target.value })} />
+                        <span className="app-meta shrink-0 font-normal">@{sender.ownDomain.domain}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="app-meta self-end font-normal">The address stays Mugavi&apos;s. To send from a different address, verify your own domain in Send settings on the Dunning page.</p>
+                  )}
+                </div>
+                <p className="app-meta mt-2 font-normal">
+                  {cleanSenderName(active.senderName) || active.senderLocalPart?.trim()
+                    ? <>Your customer sees: <strong>{fromLabel(sender?.businessName, active.senderName, { ownDomain: !!sender?.ownDomain, domain: sender?.ownDomain?.domain })}</strong>{sender?.ownDomain && <> &lt;{active.senderLocalPart?.trim().toLowerCase().replace(/@.*$/, '') || sender.ownDomain.localPart}@{sender.ownDomain.domain}&gt;</>}. </>
+                    : <>Blank uses your usual sender. </>}
+                  Use it to send a later reminder from a person or role. Replies still come to your Inbox.
+                </p>
+              </fieldset>
+            )}
             <p className="app-meta font-normal">This step goes out {stepDayPhrase(active.daysFromDue)}.{active.daysFromDue < 0 && ' A step before the due date is a heads-up, and never calls the invoice overdue.'}</p>
             <div>
               <label className="label">{active.channel === 'phone' ? 'Notes for the call (optional)' : 'Style hint (optional)'}</label>

@@ -10,7 +10,7 @@ export function normalizeGroupName(input: unknown): string | null {
   return n.slice(0, MAX_GROUP_NAME);
 }
 
-export type StarterStep = { id: string; daysFromDue: number; channel: 'email' | 'sms' | 'phone'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
+export type StarterStep = { id: string; daysFromDue: number; channel: 'email' | 'sms' | 'phone'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string; senderName?: string; senderLocalPart?: string };
 
 /**
  * A new group starts as a copy of the organisation's own schedule so it is

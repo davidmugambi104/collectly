@@ -6,6 +6,8 @@ import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { MAX_LEAD_DAYS } from '@/lib/dunning/step-timing';
+import { MAX_SENDER_NAME } from '@/lib/email-from';
+import { normalizeLocalPart } from '@/lib/email-domain';
 
 const schema = z.object({
   steps: z.array(z.object({
@@ -22,6 +24,12 @@ const schema = z.object({
     // blank (the UI's own suggested use) threw an uncaught ZodError here
     // on every save.
     template: z.string().max(2000).optional().default(''),
+    // "Send as". Blank means the organisation's usual sender. A local part must
+    // be one we would accept on a sending domain, so a typo is refused here
+    // rather than silently sent from somewhere else.
+    senderName: z.string().trim().max(MAX_SENDER_NAME).optional(),
+    senderLocalPart: z.string().trim().max(64).optional()
+      .refine((v) => !v || normalizeLocalPart(v) !== null, 'That address name is not allowed. Use letters, numbers, dots or dashes, and not names like admin or noreply.'),
   })),
 });
 
@@ -44,6 +52,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.id, id), eq(dunningSequences.orgId, orgId))).limit(1);
   if (!seq) return NextResponse.json({ error: 'not found' }, { status: 404 });
-  await db.update(dunningSequences).set({ steps: [...data.steps].sort((a, b) => a.daysFromDue - b.daysFromDue), updatedAt: new Date() }).where(eq(dunningSequences.id, id));
+  // Store a "send as" only where it means something: email steps, and only what
+  // was filled in, with the address part in the form we will actually use.
+  const steps = data.steps.map(({ senderName, senderLocalPart, ...step }) => {
+    if (step.channel !== 'email') return step;
+    const localPart = senderLocalPart ? normalizeLocalPart(senderLocalPart) : null;
+    return { ...step, ...(senderName ? { senderName } : {}), ...(localPart ? { senderLocalPart: localPart } : {}) };
+  });
+  await db.update(dunningSequences).set({ steps: steps.sort((a, b) => a.daysFromDue - b.daysFromDue), updatedAt: new Date() }).where(eq(dunningSequences.id, id));
   return NextResponse.json({ ok: true });
 }
