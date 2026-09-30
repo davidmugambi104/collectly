@@ -301,11 +301,6 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
               tone={targetTone}
               email={composer!.email}
               phone={composer!.phone}
-              onSent={() => {
-                // After a successful send, the user still sees the sequence
-                // editor below. No router push needed — the panel collapses
-                // to a "Reminder sent" state on its own.
-              }}
             />
           )}
         </div>

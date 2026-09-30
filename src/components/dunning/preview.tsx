@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw, AlertCircle } from 'lucide-react';
+import { Sparkles, Send, X, Loader2, Mail, MessageSquare, CheckCircle2, RefreshCw, AlertCircle, Undo2 } from 'lucide-react';
+import { useSendHold } from './use-send-hold';
 import { RecipientCard } from './recipient-card';
 
 interface PreviewProps {
@@ -25,6 +26,9 @@ export function DunningPreview(props: PreviewProps) {
   const [content, setContent] = useState<{ subject?: string; body: string } | null>(null);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hold = useSendHold();
+  const holdLeft = hold.secondsLeft('send');
+  const holding = holdLeft !== null;
 
   async function generate() {
     setLoading(true);
@@ -153,6 +157,7 @@ export function DunningPreview(props: PreviewProps) {
               {content.subject && (
                 <input
                   value={content.subject}
+                  readOnly={holding}
                   onChange={(e) => setContent({ ...content, subject: e.target.value })}
                   className="w-full text-sm font-semibold text-ink-900 bg-transparent border-0 border-b border-ink-100 pb-2 focus:outline-none focus:border-brand-400"
                   placeholder="Subject"
@@ -160,6 +165,7 @@ export function DunningPreview(props: PreviewProps) {
               )}
               <textarea
                 value={content.body}
+                readOnly={holding}
                 onChange={(e) => setContent({ ...content, body: e.target.value })}
                 rows={props.channel === 'sms' ? 4 : 8}
                 className="w-full text-sm text-ink-800 bg-transparent border-0 resize-none focus:outline-none leading-relaxed"
@@ -168,12 +174,23 @@ export function DunningPreview(props: PreviewProps) {
           </div>
           <div className="text-xs text-ink-500 text-right">{content.body.length} chars</div>
           <div className="flex gap-2">
-            <button onClick={generate} disabled={loading} className="btn-secondary btn-sm flex-1">
-              {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}Regenerate
-            </button>
-            <button onClick={send} disabled={sending || !(props.channel === 'email' ? props.email : props.phone)} className="btn-primary btn-sm flex-1">
-              {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}Send reminder
-            </button>
+            {holding ? (
+              <>
+                <span role="status" className="flex-1 self-center text-xs text-ink-600">Sending in {holdLeft}s. Close this panel and it won&apos;t send.</span>
+                <button onClick={() => hold.cancel('send')} className="btn-secondary btn-sm">
+                  <Undo2 className="h-3.5 w-3.5" />Undo
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={generate} disabled={loading || sending} className="btn-secondary btn-sm flex-1">
+                  {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}Regenerate
+                </button>
+                <button onClick={() => hold.start('send', send)} disabled={sending || !(props.channel === 'email' ? props.email : props.phone)} className="btn-primary btn-sm flex-1">
+                  {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}Send reminder
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

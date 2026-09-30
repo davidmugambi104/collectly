@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Send, SkipForward, ShieldCheck } from 'lucide-react';
+import { Loader2, Send, SkipForward, ShieldCheck, Undo2 } from 'lucide-react';
+import { useSendHold } from './use-send-hold';
 
 export type QueuedReminder = {
   runId: string;
@@ -17,12 +18,14 @@ export type QueuedReminder = {
 
 /**
  * Reminders the scheduler drafted but did not send. Each one can be edited,
- * approved (sent) or skipped. Nothing here goes out until a person clicks.
+ * approved (sent) or skipped. Nothing here goes out until a person clicks, and
+ * even then it waits 30 seconds so the click can be undone.
  */
 export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: boolean; items: QueuedReminder[] }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const hold = useSendHold();
   const [drafts, setDrafts] = useState<Record<string, { subject: string; body: string }>>({});
 
   const edit = (it: QueuedReminder) => drafts[it.runId] ?? { subject: it.subject ?? '', body: it.body };
@@ -101,6 +104,8 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
             const e = edit(it);
             const sending = busy === `${it.runId}:approve`;
             const skipping = busy === `${it.runId}:skip`;
+            const left = hold.secondsLeft(it.runId);
+            const holding = left !== null;
             return (
               <li key={it.runId} className="rounded-[10px] border bg-white p-3 [border-color:var(--hair)]">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -117,6 +122,7 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
                       className="input"
                       value={e.subject}
                       maxLength={200}
+                      readOnly={holding}
                       onChange={(ev) => setDrafts((d) => ({ ...d, [it.runId]: { ...e, subject: ev.target.value } }))}
                     />
                   </>
@@ -127,17 +133,30 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
                   className="input min-h-[120px]"
                   value={e.body}
                   maxLength={5000}
+                  readOnly={holding}
                   onChange={(ev) => setDrafts((d) => ({ ...d, [it.runId]: { ...e, body: ev.target.value } }))}
                 />
                 <div className="mt-3 flex items-center justify-end gap-1">
-                  <button className="btn-ghost btn-sm" disabled={!!busy} onClick={() => act(it, 'skip')} aria-busy={skipping}>
-                    {skipping ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" /> : <SkipForward aria-hidden="true" className="h-3.5 w-3.5" />}
-                    Skip this one
-                  </button>
-                  <button className="btn-primary btn-sm" disabled={!!busy} onClick={() => act(it, 'approve')} aria-busy={sending}>
-                    {sending ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" /> : <Send aria-hidden="true" className="h-3.5 w-3.5" />}
-                    Approve and send
-                  </button>
+                  {holding ? (
+                    <>
+                      <span role="status" className="app-meta mr-2 font-normal">Sending in {left}s. Close this page and it won&apos;t send.</span>
+                      <button className="btn-secondary btn-sm" onClick={() => hold.cancel(it.runId)}>
+                        <Undo2 aria-hidden="true" className="h-3.5 w-3.5" />
+                        Undo
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn-ghost btn-sm" disabled={!!busy} onClick={() => act(it, 'skip')} aria-busy={skipping}>
+                        {skipping ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" /> : <SkipForward aria-hidden="true" className="h-3.5 w-3.5" />}
+                        Skip this one
+                      </button>
+                      <button className="btn-primary btn-sm" disabled={!!busy} onClick={() => hold.start(it.runId, () => act(it, 'approve'))} aria-busy={sending}>
+                        {sending ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" /> : <Send aria-hidden="true" className="h-3.5 w-3.5" />}
+                        Approve and send
+                      </button>
+                    </>
+                  )}
                 </div>
               </li>
             );
