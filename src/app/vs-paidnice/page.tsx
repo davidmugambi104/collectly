@@ -195,7 +195,7 @@ export default function VsPaidnicePage() {
         competitorName="Paidnice"
         summary="Paidnice grew through the Xero App Store with a low headline price and a broad set of collection levers."
         cards={STRATEGY}
-        takeaway="If you are one business, buy Paidnice. We are not going to pretend $149 beats $69. The case for us starts when client books become the thing you have a lot of, because that is the axis we price on and the one they bill as an add-on."
+        takeaway="If you are one business, buy Paidnice. We are not going to pretend $79 beats $69. The case for us starts when client books become the thing you have a lot of, because that is the axis we price on and the one they bill as an add-on."
       />
       <WhenToChoose competitorName="Paidnice" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

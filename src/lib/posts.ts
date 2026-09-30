@@ -102,7 +102,7 @@ The gap is clear. Nobody is building for the 5-30 person business with:
 - **Multi-currency** (USD, GBP, AUD, CAD, EUR)
 - **Customer risk scoring**
 - **Branded payment portal** with card, ACH, and local rails
-- **$149-$399/mo** pricing
+- **$79-$399/mo** pricing
 
 That's the wedge. That's what we're building at Mugavi.
 
@@ -127,7 +127,7 @@ In the next 90 days, we're launching:
 - **Multi-currency** (USD, GBP, AUD, CAD, EUR on day one)
 - **Self-serve onboarding** (no sales call required)
 
-All of it at **$149-399/mo**. 14-day free trial, no credit card.
+All of it at **$79-399/mo**. 14-day free trial, no credit card.
 
 ## Who we serve (and who we don't)
 
@@ -409,7 +409,7 @@ Total recovery: **70-90%** of invoices paid within 30 days. Industry baseline wi
 
 **That's the difference between a healthy business and a constant cash-flow crisis.**
 
-If you want to test these templates without building the system: mugavi.com automates all 7 in 10 minutes, from $149/mo. 14-day free trial.
+If you want to test these templates without building the system: mugavi.com automates all 7 in 10 minutes, from $79/mo. 14-day free trial.
 
 — Davie
 `,

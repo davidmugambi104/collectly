@@ -269,7 +269,7 @@ export function articleJsonLd(input: {
   };
 }
 
-// Pricing-page Product + Offer. Surfaces a "from $149/mo" rich result
+// Pricing-page Product + Offer. Surfaces a "from $79/mo" rich result
 // for queries like "Mugavi pricing" and "small-business AR pricing".
 // Every number here is read from PLAN_PRICING rather than restated: the
 // offers, the page body and the FAQ answers used to disagree with each

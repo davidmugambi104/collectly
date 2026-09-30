@@ -138,7 +138,7 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
   features: string[];
 }> = {
   starter: {
-    monthly: 149,
+    monthly: 79,
     name: 'Single business',
     audience: 'One business chasing its own invoices',
     orgs: '1 organization',
