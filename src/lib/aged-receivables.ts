@@ -11,7 +11,7 @@ export const AGED_BUCKETS = ['current', '1-30', '31-60', '61-90', '90+'] as cons
 export type AgedBucket = (typeof AGED_BUCKETS)[number];
 
 /** Owed and still chasable or at least owed. Drafts are not owed yet; paid and written-off are closed. */
-const NOT_OWED = new Set(['draft', 'paid', 'written_off']);
+export const NOT_OWED = new Set(['draft', 'paid', 'written_off']);
 
 export type AgedInvoice = {
   customerId: string;

@@ -605,6 +605,7 @@ function FollowUpPanel({ insight }: { insight: import('@/lib/analytics').Custome
             Draft a {insight.riskLevel === 'critical' ? 'final' : insight.riskLevel === 'high' ? 'firm' : 'friendly'} message
           </a>
         )}
+        <a href={`/dashboard/customers/${insight.customerId}/statement`} className="btn-secondary">Statement</a>
         <a href={`/dashboard/dunning/sequence`} className="btn-ghost">View dunning sequence</a>
       </div>
     </div>

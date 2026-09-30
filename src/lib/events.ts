@@ -32,6 +32,7 @@ export type EventType =
   | 'dunning.task.assigned'
   | 'dunning.task.unassigned'
   | 'inbox.reply.sent'
+  | 'statement.sent'
   | 'portal.promise.created'
   | 'portal.dispute.opened'
   | 'dunning.run.approved'

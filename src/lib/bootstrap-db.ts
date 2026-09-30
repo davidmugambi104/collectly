@@ -61,6 +61,8 @@ CREATE TABLE IF NOT EXISTS inbox_replies (id text PRIMARY KEY, org_id text NOT N
 CREATE INDEX IF NOT EXISTS inbox_replies_message_idx ON inbox_replies(message_id);
 CREATE TABLE IF NOT EXISTS task_assignments (run_id text PRIMARY KEY REFERENCES dunning_runs(id) ON DELETE CASCADE, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, assignee_id text NOT NULL, assignee_name text NOT NULL, assigned_by text, assigned_at timestamptz NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS task_assignments_assignee_idx ON task_assignments(org_id, assignee_id);
+CREATE TABLE IF NOT EXISTS statement_log (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, to_address text NOT NULL, subject text NOT NULL, totals jsonb NOT NULL, sent_by text, external_id text, sent_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS statement_log_customer_idx ON statement_log(org_id, customer_id);
 CREATE TABLE IF NOT EXISTS saved_views (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, page text NOT NULL, name text NOT NULL, query text NOT NULL DEFAULT '', created_by text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE UNIQUE INDEX IF NOT EXISTS saved_views_org_page_name_uniq ON saved_views(org_id, page, name);
 CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);

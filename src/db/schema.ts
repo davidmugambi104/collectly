@@ -596,6 +596,23 @@ export const inboxReplies = pgTable('inbox_replies', {
   sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => ({ messageIdx: index('inbox_replies_message_idx').on(t.messageId) }));
 
+/**
+ * A statement emailed to a customer. The statement itself is rebuilt from the
+ * invoices every time, so this keeps only what was true when it went: who, when,
+ * and the totals per currency.
+ */
+export const statementLog = pgTable('statement_log', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  customerId: text('customer_id').notNull().references(() => customers.id, { onDelete: 'cascade' }),
+  toAddress: text('to_address').notNull(),
+  subject: text('subject').notNull(),
+  totals: jsonb('totals').$type<Array<{ currency: string; totalCents: number; overdueCents: number }>>().notNull(),
+  sentBy: text('sent_by'),
+  externalId: text('external_id'),
+  sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({ customerIdx: index('statement_log_customer_idx').on(t.orgId, t.customerId) }));
+
 /** Named filters on list pages, shared by the organisation. See src/lib/saved-views.ts. */
 export const savedViews = pgTable('saved_views', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),

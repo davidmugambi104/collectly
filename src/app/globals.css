@@ -563,6 +563,12 @@
     @apply rounded-lg border border-danger-200 bg-danger-50 p-2.5 text-[13px] text-danger-700;
   }
 
+  /* Inline confirmation, the quiet counterpart of .alert-danger. Used with
+     role="status". It was referenced in several places without being defined. */
+  .alert-success {
+    @apply rounded-lg border border-emerald-200 bg-emerald-50 p-2.5 text-[13px] text-emerald-800;
+  }
+
   /* A form nested inside a card (log a promise, open a dispute). Three inline
      copies of `border border-ink-200 rounded-lg p-3`; the tinted ground
      separates it from the card it sits in without another border weight. */
