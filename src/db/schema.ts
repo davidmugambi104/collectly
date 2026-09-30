@@ -613,6 +613,44 @@ export const statementLog = pgTable('statement_log', {
   sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => ({ customerIdx: index('statement_log_customer_idx').on(t.orgId, t.customerId) }));
 
+/**
+ * The organisation's late fee policy. One row per org; no row means off. See
+ * src/lib/late-fees.ts for what each field means.
+ */
+export const lateFeePolicy = pgTable('late_fee_policy', {
+  orgId: text('org_id').primaryKey().references(() => organizations.id, { onDelete: 'cascade' }),
+  enabled: boolean('enabled').notNull().default(false),
+  kind: text('kind').notNull().default('percent'),
+  value: decimal('value', { precision: 14, scale: 2 }).notNull().default('0'),
+  currency: varchar('currency', { length: 3 }).notNull().default('USD'),
+  graceDays: smallint('grace_days').notNull().default(14),
+  repeatMonthly: boolean('repeat_monthly').notNull().default(false),
+  capPercent: decimal('cap_percent', { precision: 5, scale: 2 }),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * A late fee the owner decided on. The ledger is separate from invoices on
+ * purpose: it never changes an invoice's amount. One row per invoice and period,
+ * so applying the same fee twice is impossible. 'applied' is owed, 'paid' has
+ * been settled outside this app, 'waived' was decided against.
+ */
+export const lateFees = pgTable('late_fees', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  invoiceId: text('invoice_id').notNull().references(() => invoices.id, { onDelete: 'cascade' }),
+  period: smallint('period').notNull(),
+  amount: decimal('amount', { precision: 14, scale: 2 }).notNull(),
+  currency: varchar('currency', { length: 3 }).notNull(),
+  status: text('status').notNull(),
+  decidedBy: text('decided_by'),
+  decidedAt: timestamp('decided_at', { withTimezone: true }).notNull().defaultNow(),
+  resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+}, (t) => ({
+  invoicePeriodUniq: uniqueIndex('late_fees_invoice_period_uniq').on(t.invoiceId, t.period),
+  orgIdx: index('late_fees_org_idx').on(t.orgId, t.status),
+}));
+
 /** Named filters on list pages, shared by the organisation. See src/lib/saved-views.ts. */
 export const savedViews = pgTable('saved_views', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),

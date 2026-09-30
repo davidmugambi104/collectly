@@ -23,6 +23,9 @@ export type OthersSummary = {
   othersTotal: string;
   /** This invoice and all the others. */
   grandTotal: string;
+  /** The same two totals in whole cents, for adding late fees on top. */
+  othersCents: number;
+  grandCents: number;
 };
 
 export const MAX_LISTED = 10;
@@ -64,6 +67,8 @@ export function summariseOthers(others: OtherInvoice[], thisBalance: number, cur
     currency,
     othersTotal: money(othersCents, currency),
     grandTotal: money(toCents(thisBalance) + othersCents, currency),
+    othersCents,
+    grandCents: toCents(thisBalance) + othersCents,
   };
 }
 

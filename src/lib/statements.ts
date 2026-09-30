@@ -33,11 +33,18 @@ export type StatementRow = {
   disputed: boolean;
 };
 
+/** A late fee the owner applied and that is still owed. Its own line: it never changes an invoice's amount. */
+export type StatementFee = { invoiceNumber: string; amountCents: number; currency: string; period: number };
+
 export type StatementSection = {
   currency: string;
   rows: StatementRow[];
-  /** Cents per bucket, in AGED_BUCKETS order. */
+  fees: StatementFee[];
+  /** Sum of `fees`. Included in totalCents and overdueCents. */
+  feesCents: number;
+  /** Cents per bucket, in AGED_BUCKETS order. Invoices only; fees are counted in feesCents. */
   bucketsCents: number[];
+  /** Invoice balances plus late fees. */
   totalCents: number;
   overdueCents: number;
 };
@@ -47,8 +54,9 @@ export type Statement = { asOf: Date; sections: StatementSection[] };
 const cents = (v: string | number | null | undefined) => Math.round(Number(v ?? 0) * 100);
 
 /** Invoices the customer still owes on, grouped by currency. No sections means nothing is owed. */
-export function buildStatement(invoices: StatementInvoice[], asOf: Date): Statement {
+export function buildStatement(invoices: StatementInvoice[], asOf: Date, fees: StatementFee[] = []): Statement {
   const by = new Map<string, StatementSection>();
+  const blank = (currency: string): StatementSection => ({ currency, rows: [], fees: [], feesCents: 0, bucketsCents: [0, 0, 0, 0, 0], totalCents: 0, overdueCents: 0 });
   for (const inv of invoices) {
     if (NOT_OWED.has(inv.status)) continue;
     const amountCents = cents(inv.amount);
@@ -57,7 +65,7 @@ export function buildStatement(invoices: StatementInvoice[], asOf: Date): Statem
     if (balanceCents <= 0) continue;
     const days = daysPastDue(inv.dueDate, asOf);
     const i = agedBucketIndex(days);
-    const sec = by.get(inv.currency) ?? { currency: inv.currency, rows: [], bucketsCents: [0, 0, 0, 0, 0], totalCents: 0, overdueCents: 0 };
+    const sec = by.get(inv.currency) ?? blank(inv.currency);
     sec.rows.push({
       number: inv.number, issued: new Date(inv.issueDate), due: new Date(inv.dueDate),
       amountCents, paidCents, balanceCents, daysOverdue: days, bucket: AGED_BUCKETS[i], disputed: inv.status === 'disputed',
@@ -67,7 +75,17 @@ export function buildStatement(invoices: StatementInvoice[], asOf: Date): Statem
     if (i > 0) sec.overdueCents += balanceCents;
     by.set(inv.currency, sec);
   }
+  for (const f of fees) {
+    if (f.amountCents <= 0) continue;
+    const sec = by.get(f.currency) ?? blank(f.currency);
+    sec.fees.push(f);
+    sec.feesCents += f.amountCents;
+    sec.totalCents += f.amountCents;
+    sec.overdueCents += f.amountCents; // a fee exists only because something was late
+    by.set(f.currency, sec);
+  }
   const sections = [...by.values()].sort((a, b) => a.currency.localeCompare(b.currency));
+  for (const s of sections) { s.fees.sort((a, b) => a.invoiceNumber.localeCompare(b.invoiceNumber) || a.period - b.period); }
   for (const s of sections) s.rows.sort((a, b) => a.due.getTime() - b.due.getTime() || a.number.localeCompare(b.number));
   return { asOf, sections };
 }
@@ -96,7 +114,7 @@ export const BUCKET_LABELS: Record<AgedBucket, string> = { current: 'Not yet due
 /** One line for screens: "$1,550.50 owed, $350.00 of it overdue". Empty string when nothing is owed. */
 export function describeStatement(s: Statement): string {
   return s.sections
-    .map((x) => `${formatMoney(x.totalCents, x.currency)} owed${x.overdueCents > 0 ? `, ${formatMoney(x.overdueCents, x.currency)} of it overdue` : ''}`)
+    .map((x) => `${formatMoney(x.totalCents, x.currency)} owed${x.feesCents > 0 ? ` (including ${formatMoney(x.feesCents, x.currency)} in late fees)` : ''}${x.overdueCents > 0 ? `, ${formatMoney(x.overdueCents, x.currency)} of it overdue` : ''}`)
     .join('; ');
 }
 
@@ -122,7 +140,9 @@ export function renderStatementHtml(o: { customerName: string; businessName: str
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
         <tr><th style="${th}">Invoice</th><th style="${th}">Issued</th><th style="${th}">Due</th><th style="${th}text-align:right;">Amount</th><th style="${th}text-align:right;">Paid</th><th style="${th}text-align:right;">Balance</th><th style="${th}text-align:right;">Status</th></tr>
         ${rows}
-        <tr><td colspan="5" style="${td}font-weight:600;">Total owed</td><td style="${td}font-weight:600;text-align:right;">${esc(formatMoney(sec.totalCents, sec.currency))}</td><td style="${td}"></td></tr>
+        ${sec.rows.length > 0 && sec.feesCents > 0 ? `<tr><td colspan="5" style="${td}">Invoices</td><td style="${td}text-align:right;">${esc(formatMoney(sec.totalCents - sec.feesCents, sec.currency))}</td><td style="${td}"></td></tr>` : ''}
+        ${sec.fees.map((f) => `<tr><td colspan="5" style="${td}">Late fee on ${esc(f.invoiceNumber)}${f.period > 0 ? ` (month ${f.period + 1})` : ''}</td><td style="${td}text-align:right;">${esc(formatMoney(f.amountCents, sec.currency))}</td><td style="${td}"></td></tr>`).join('')}
+        <tr><td colspan="5" style="${td}font-weight:600;">${sec.feesCents > 0 ? 'Total owed, including late fees' : 'Total owed'}</td><td style="${td}font-weight:600;text-align:right;">${esc(formatMoney(sec.totalCents, sec.currency))}</td><td style="${td}"></td></tr>
       </table>
       <p style="font-size:13px;margin:8px 0 0;color:#6c6e76;">${aging}</p>`;
   }).join('');
@@ -151,6 +171,9 @@ export function statementCsv(s: Statement): string {
   const lines = [['Invoice', 'Currency', 'Issued', 'Due', 'Amount', 'Paid', 'Balance', 'Days overdue', 'Age bucket', 'In dispute'].join(',')];
   const iso = (d: Date) => d.toISOString().slice(0, 10);
   for (const sec of s.sections) {
+    for (const f of sec.fees) {
+      lines.push([`Late fee on ${f.invoiceNumber}`, sec.currency, '', '', (f.amountCents / 100).toFixed(2), '0.00', (f.amountCents / 100).toFixed(2), '', 'late fee', 'no'].map(csvCell).join(','));
+    }
     for (const r of sec.rows) {
       lines.push([r.number, sec.currency, iso(r.issued), iso(r.due), (r.amountCents / 100).toFixed(2), (r.paidCents / 100).toFixed(2), (r.balanceCents / 100).toFixed(2), Math.max(0, r.daysOverdue), r.bucket, r.disputed ? 'yes' : 'no'].map(csvCell).join(','));
     }

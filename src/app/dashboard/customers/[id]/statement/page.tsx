@@ -58,8 +58,19 @@ export default async function CustomerStatementScreen({ params }: { params: Prom
                     <td className="py-1.5 text-right">{r.daysOverdue > 0 ? `${r.daysOverdue} days late` : 'Not yet due'}</td>
                   </tr>
                 ))}
+                {sec.feesCents > 0 && sec.rows.length > 0 && (
+                  <tr className="border-t [border-color:var(--hair)]">
+                    <td className="py-1.5 pr-3" colSpan={5}>Invoices</td><td className="py-1.5 pr-3 text-right tabular-nums">{formatMoney(sec.totalCents - sec.feesCents, sec.currency)}</td><td />
+                  </tr>
+                )}
+                {sec.fees.map((f) => (
+                  <tr key={`${f.invoiceNumber}:${f.period}`} className="border-t [border-color:var(--hair)]">
+                    <td className="py-1.5 pr-3" colSpan={5}>Late fee on <span className="font-mono">{f.invoiceNumber}</span>{f.period > 0 ? ` (month ${f.period + 1})` : ''}</td>
+                    <td className="py-1.5 pr-3 text-right tabular-nums">{formatMoney(f.amountCents, sec.currency)}</td><td />
+                  </tr>
+                ))}
                 <tr className="border-t-2 [border-color:var(--hair)] font-semibold">
-                  <td className="py-2 pr-3" colSpan={5}>Total owed</td><td className="py-2 pr-3 text-right tabular-nums">{formatMoney(sec.totalCents, sec.currency)}</td><td />
+                  <td className="py-2 pr-3" colSpan={5}>{sec.feesCents > 0 ? 'Total owed, including late fees' : 'Total owed'}</td><td className="py-2 pr-3 text-right tabular-nums">{formatMoney(sec.totalCents, sec.currency)}</td><td />
                 </tr>
               </tbody>
             </table>

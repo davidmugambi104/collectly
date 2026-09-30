@@ -6,7 +6,9 @@
 import { and, eq, lt, ne, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { dunningSettings, inboxMessages, invoices, promisesToPay } from '@/db/schema';
-import { renderOthersHtml, summariseOthers, type OthersSummary } from '@/lib/dunning/multi-invoice';
+import { describeOthers, renderOthersHtml, summariseOthers, type OthersSummary } from '@/lib/dunning/multi-invoice';
+import { describeFees, renderFeesHtml, summariseFees } from '@/lib/late-fees-render';
+import { loadOwedFees } from '@/lib/late-fees-load';
 
 /** Whether this org's reminders list the customer's other overdue invoices. On unless switched off. */
 export async function loadListOthers(orgId: string): Promise<boolean> {
@@ -59,9 +61,33 @@ export async function loadOthersSummary(opts: {
   );
 }
 
-/** The HTML block for a reminder, or an empty string when there is nothing to add or the org turned it off. */
-export async function othersHtmlFor(opts: Parameters<typeof loadOthersSummary>[0] & { enabled: boolean }): Promise<string> {
-  if (!opts.enabled) return '';
-  const s = await loadOthersSummary(opts);
-  return s ? renderOthersHtml(s) : '';
+type ExtrasOpts = Parameters<typeof loadOthersSummary>[0] & { listOthers: boolean };
+
+/**
+ * Everything we add under a reminder, worked out at the moment it is sent:
+ * the customer's other overdue invoices (if the org lists them), then any late
+ * fees that are owed, each as its own lines. Fees on the invoice being chased
+ * always appear; fees on the customer's other invoices appear only when the
+ * others are listed too, so the total always matches what is on screen.
+ */
+async function loadExtras(opts: ExtrasOpts) {
+  const others = opts.listOthers ? await loadOthersSummary(opts) : null;
+  const owed = await loadOwedFees(opts.orgId, opts.customerId);
+  const relevant = others ? owed : owed.filter((f) => f.invoiceId === opts.invoiceId);
+  const base = Math.round(opts.thisBalance * 100) + (others?.othersCents ?? 0);
+  const fees = summariseFees(relevant.map((f) => ({ invoiceNumber: f.invoiceNumber, amountCents: f.amountCents, currency: f.currency, period: f.period })), opts.currency, base);
+  return { others, fees };
+}
+
+/** The HTML to put under a reminder. Empty when there is nothing to add. */
+export async function extrasHtmlFor(opts: ExtrasOpts): Promise<string> {
+  const { others, fees } = await loadExtras(opts);
+  return (others ? renderOthersHtml(others) : '') + (fees ? renderFeesHtml(fees) : '');
+}
+
+/** One or two plain lines for the approval queue, so the owner sees what will be added before approving. */
+export async function describeExtrasFor(opts: ExtrasOpts): Promise<string | null> {
+  const { others, fees } = await loadExtras(opts);
+  const lines = [others ? describeOthers(others) : null, fees ? describeFees(fees) : null].filter(Boolean);
+  return lines.length ? lines.join(' ') : null;
 }

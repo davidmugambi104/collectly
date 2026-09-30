@@ -17,8 +17,7 @@ import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approva
 import { SendSettings } from '@/components/dunning/send-settings';
 import { loadSendWindow, isDefaultSequence, loadChaseRules, loadSenderContext, resolveFrom, type SenderContext } from '@/lib/dunning/org-settings';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
-import { loadListOthers, loadOthersSummary } from '@/lib/dunning/multi-invoice-load';
-import { describeOthers } from '@/lib/dunning/multi-invoice';
+import { loadListOthers, describeExtrasFor } from '@/lib/dunning/multi-invoice-load';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 import { STANDARD_STEPS, PRESETS } from '@/lib/dunning/presets';
@@ -166,16 +165,12 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       if (!fromCache.has(key)) fromCache.set(key, await resolveFrom(orgId, senderContext.businessName, sender));
       fromLines.set(p.run.id, fromCache.get(key)!);
     }
-    // What will be added under each email, worked out now so the owner sees it before approving.
+    // What will be added under each email (other overdue invoices, late fees), worked out now so the owner sees it before approving.
     const othersLines = new Map<string, string>();
-    if (listOthers) {
-      for (const p of pending as Array<(typeof pending)[number]>) {
-        if (p.run.channel === 'sms') continue;
-        const cid = (p as { customerId?: string }).customerId;
-        if (!cid) continue;
-        const summary = await loadOthersSummary({ orgId, customerId: cid, invoiceId: p.run.invoiceId, thisBalance: parseFloat(p.amount.toString()) - parseFloat((p.amountPaid ?? 0).toString()), currency: p.currency ?? 'USD' });
-        if (summary) othersLines.set(p.run.id, describeOthers(summary));
-      }
+    for (const p of pending as Array<(typeof pending)[number]>) {
+      if (p.run.channel === 'sms') continue;
+      const line = await describeExtrasFor({ orgId, customerId: p.customerId, invoiceId: p.run.invoiceId, thisBalance: parseFloat(p.amount.toString()) - parseFloat((p.amountPaid ?? 0).toString()), currency: p.currency ?? 'USD', listOthers });
+      if (line) othersLines.set(p.run.id, line);
     }
     queue = pending.map((p: (typeof pending)[number]) => ({
       runId: p.run.id,

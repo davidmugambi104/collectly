@@ -10,7 +10,7 @@ import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeader
 import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-settings';
 import { leadDays } from '@/lib/dunning/step-timing';
 import { callTaskNote, callTaskTitle } from '@/lib/dunning/call-task';
-import { loadListOthers, othersHtmlFor } from '@/lib/dunning/multi-invoice-load';
+import { loadListOthers, extrasHtmlFor } from '@/lib/dunning/multi-invoice-load';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
@@ -506,9 +506,9 @@ export async function processDunning(opts: ProcessOptions = {}) {
               subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
               html: withUnsubscribeFooter(renderEmailHtml({
                 body: result.body, invoice, businessName,
-                // The customer's other overdue invoices, listed by us from the database (never the AI).
-                extraHtml: await othersHtmlFor({
-                  enabled: await listOthersFor(seq.orgId), orgId: seq.orgId, customerId: customer.id, invoiceId: invoice.id,
+                // The customer's other overdue invoices and any late fees, listed by us from the database (never the AI).
+                extraHtml: await extrasHtmlFor({
+                  listOthers: await listOthersFor(seq.orgId), orgId: seq.orgId, customerId: customer.id, invoiceId: invoice.id,
                   thisBalance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), currency: invoice.currency ?? 'USD', now,
                 }),
               }), customer.email),

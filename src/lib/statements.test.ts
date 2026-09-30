@@ -90,3 +90,41 @@ test('subject and money', () => {
   assert.equal(formatMoney(123456, 'USD'), '$1,234.56');
   assert.equal(formatMoney(5, 'XXXX'), 'XXXX 0.05');
 });
+
+const fee = (invoiceNumber: string, amountCents: number, currency = 'USD', period = 0) => ({ invoiceNumber, amountCents, currency, period });
+
+test('late fees are their own lines, counted in the total and as overdue, never in the invoice buckets', () => {
+  const s = buildStatement([inv('A', '2026-09-20', 200)], asOf, [fee('A', 1500), fee('A', 1500, 'USD', 1)]);
+  const sec = s.sections[0];
+  assert.equal(sec.feesCents, 3000);
+  assert.equal(sec.totalCents, 20000 + 3000);
+  assert.equal(sec.overdueCents, 20000 + 3000);
+  assert.deepEqual(sec.bucketsCents, [0, 20000, 0, 0, 0]);
+  assert.equal(describeStatement(s), '$230.00 owed (including $30.00 in late fees), $230.00 of it overdue');
+  const html = renderStatementHtml({ customerName: 'C', businessName: 'B', statement: s });
+  assert.match(html, /Late fee on A<\/td>/);
+  assert.match(html, /Late fee on A \(month 2\)/);
+  assert.match(html, /Total owed, including late fees/);
+  assert.match(html, /\$230\.00/);
+});
+
+test('a fee on an invoice that is now paid still shows, in its currency, until it is settled', () => {
+  const s = buildStatement([], asOf, [fee('GONE-1', 500, 'EUR')]);
+  assert.equal(s.sections.length, 1);
+  assert.deepEqual([s.sections[0].currency, s.sections[0].totalCents, s.sections[0].rows.length], ['EUR', 500, 0]);
+});
+
+test('no fees: nothing changes in the wording', () => {
+  const s = buildStatement([inv('A', '2026-09-20', 200)], asOf);
+  assert.equal(s.sections[0].feesCents, 0);
+  assert.match(renderStatementHtml({ customerName: 'C', businessName: 'B', statement: s }), />Total owed</);
+  assert.ok(!/late fee/i.test(renderStatementHtml({ customerName: 'C', businessName: 'B', statement: s })));
+});
+
+test('fees of zero are ignored; a fee number cannot inject markup; CSV carries the fee line', () => {
+  assert.equal(buildStatement([], asOf, [fee('A', 0)]).sections.length, 0);
+  const s = buildStatement([], asOf, [fee('<img src=x>', 1000)]);
+  assert.ok(!renderStatementHtml({ customerName: 'C', businessName: 'B', statement: s }).includes('<img'));
+  const csv = statementCsv(buildStatement([inv('A', '2026-09-20', 200)], asOf, [fee('A', 1500)]));
+  assert.match(csv, /^Late fee on A,USD,,,15\.00,0\.00,15\.00,,late fee,no$/m);
+});

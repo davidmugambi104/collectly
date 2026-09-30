@@ -21,7 +21,7 @@ import { and, eq } from 'drizzle-orm';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { resolveFrom } from '@/lib/dunning/org-settings';
 import { senderFromStep } from '@/lib/dunning/step-sender';
-import { loadListOthers, othersHtmlFor } from '@/lib/dunning/multi-invoice-load';
+import { loadListOthers, extrasHtmlFor } from '@/lib/dunning/multi-invoice-load';
 import { maySendSms } from '@/lib/sms-consent';
 import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
@@ -114,8 +114,8 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
         html: withUnsubscribeFooter(renderEmailHtml({
           body: final.body, invoice, businessName,
           // Worked out now, not at drafting time, so a balance paid in between is right.
-          extraHtml: await othersHtmlFor({
-            enabled: await loadListOthers(orgId), orgId, customerId: customer.id, invoiceId: invoice.id,
+          extraHtml: await extrasHtmlFor({
+            listOthers: await loadListOthers(orgId), orgId, customerId: customer.id, invoiceId: invoice.id,
             thisBalance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), currency: invoice.currency ?? 'USD',
           }),
         }), to),
