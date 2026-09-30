@@ -5,7 +5,7 @@ import { dunningSequences, dunningRuns, invoices, customers, organizations } fro
 import { eq, and } from 'drizzle-orm';
 import { maySendSms } from '@/lib/sms-consent';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
-import { resolveFrom } from '@/lib/dunning/org-settings';
+import { resolveFrom, isDefaultSequence } from '@/lib/dunning/org-settings';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'customer has opted out of dunning emails' }, { status: 403 });
   }
 
-  const [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), eq(dunningSequences.isActive, true))).limit(1);
+  const [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), eq(dunningSequences.isActive, true), isDefaultSequence)).limit(1);
 
   // FK requires a real dunning_sequences row. If the org has no active sequence
   // (e.g. they're sending a one-off manual dunning), ensure a "Manual" sequence

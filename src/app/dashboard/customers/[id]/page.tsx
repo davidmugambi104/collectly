@@ -1,6 +1,6 @@
 import { AppShell } from '@/components/app/shell';
 import { db } from '@/db';
-import { customers, invoices, payments, timelineEvents, promisesToPay, disputes, dunningHolds } from '@/db/schema';
+import { customers, invoices, payments, timelineEvents, promisesToPay, disputes, dunningHolds, customerGroups, customerGroupMembers } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
@@ -8,6 +8,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { getCustomerInsights } from '@/lib/analytics';
 import { PromisePanel } from '@/components/customers/promise-panel';
 import { HoldPanel } from '@/components/customers/hold-panel';
+import { GroupSelect } from '@/components/customers/group-select';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isHoldActive } from '@/lib/dunning/hold';
 import { DisputePanel } from '@/components/customers/dispute-panel';
@@ -70,9 +71,14 @@ export default async function CustomerStatementPage({
   // An owner-set pause on automatic reminders. Wrapped so a failure here (say
   // the table could not be created) costs this one panel, not the whole page.
   let hold: { heldUntil: string | null; reason: string | null } | null = null;
+  let groupOptions: { id: string; name: string }[] = [];
+  let currentGroup: string | null = null;
   try {
     await ensureDunningControlSchema();
     const [row] = await db.select().from(dunningHolds).where(eq(dunningHolds.customerId, cust.id)).limit(1);
+    groupOptions = await db.select({ id: customerGroups.id, name: customerGroups.name }).from(customerGroups).where(eq(customerGroups.orgId, orgId)).orderBy(customerGroups.name);
+    const [mem] = await db.select({ groupId: customerGroupMembers.groupId }).from(customerGroupMembers).where(eq(customerGroupMembers.customerId, cust.id)).limit(1);
+    currentGroup = mem?.groupId ?? null;
     if (row && isHoldActive({ heldUntil: row.heldUntil })) {
       hold = { heldUntil: row.heldUntil ? row.heldUntil.toISOString() : null, reason: row.reason };
     }
@@ -147,6 +153,8 @@ export default async function CustomerStatementPage({
               </div>
             </div>
           ) : null}
+
+          <GroupSelect customerId={cust.id} groups={groupOptions} current={currentGroup} />
 
           {/* Automatic reminders. A customer who unsubscribed (dndAt) is off
               regardless, and that is not something the owner can flip here. */}

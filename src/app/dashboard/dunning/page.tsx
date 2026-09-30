@@ -15,7 +15,7 @@ import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor'
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
 import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approval-queue';
 import { SendSettings } from '@/components/dunning/send-settings';
-import { loadSendWindow } from '@/lib/dunning/org-settings';
+import { loadSendWindow, isDefaultSequence } from '@/lib/dunning/org-settings';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 
@@ -93,7 +93,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     }
   }
 
-  let [seq] = await db.select().from(dunningSequences).where(eq(dunningSequences.orgId, orgId)).limit(1);
+  await ensureDunningControlSchema(); // the default-schedule filter reads the group tables
+  let [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), isDefaultSequence)).limit(1);
   if (!seq) {
     // First-time setup: create the default sequence and use the returned row
     // directly. Previously this didn't capture the insert, leaving `seq`

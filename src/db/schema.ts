@@ -531,6 +531,33 @@ export const dunningApprovals = pgTable('dunning_approvals', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+/**
+ * Customer groups, each optionally carrying its own reminder schedule. A group's
+ * schedule is an ordinary dunning_sequences row linked through group_sequences,
+ * so nothing about sequences changed. A customer is in at most one group; a
+ * customer in no group (or in a group without an active schedule) follows the
+ * organisation's default schedule. Membership is its own table, not a column on
+ * customers, for the same reason as dunning_holds.
+ */
+export const customerGroups = pgTable('customer_groups', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({ orgNameUniq: uniqueIndex('customer_groups_org_name_uniq').on(t.orgId, t.name) }));
+
+export const customerGroupMembers = pgTable('customer_group_members', {
+  customerId: text('customer_id').primaryKey().references(() => customers.id, { onDelete: 'cascade' }),
+  groupId: text('group_id').notNull().references(() => customerGroups.id, { onDelete: 'cascade' }),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+}, (t) => ({ groupIdx: index('customer_group_members_group_idx').on(t.groupId) }));
+
+export const groupSequences = pgTable('group_sequences', {
+  groupId: text('group_id').primaryKey().references(() => customerGroups.id, { onDelete: 'cascade' }),
+  sequenceId: text('sequence_id').notNull().references(() => dunningSequences.id, { onDelete: 'cascade' }),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+});
+
 export const disputes = pgTable('disputes', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),

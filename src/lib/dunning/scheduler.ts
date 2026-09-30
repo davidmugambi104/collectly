@@ -3,7 +3,7 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, type Invoice } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, customerGroupMembers, groupSequences, type Invoice } from '@/db/schema';
 import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
@@ -167,6 +167,25 @@ export async function processDunning() {
 
     const businessName = await getOrgName(seq.orgId);
 
+    // Which customers this schedule applies to. A group's own schedule covers
+    // that group's members. The organisation's default schedule covers everyone
+    // who is not in a group that has an active schedule of its own, so a
+    // customer is never chased by two schedules at once.
+    const [groupLink] = await db.select({ groupId: groupSequences.groupId }).from(groupSequences).where(eq(groupSequences.sequenceId, seq.id)).limit(1);
+    const appliesTo = groupLink
+      ? sql`EXISTS (
+          SELECT 1 FROM ${customerGroupMembers}
+          WHERE ${customerGroupMembers.customerId} = ${customers.id}
+            AND ${customerGroupMembers.groupId} = ${groupLink.groupId}
+        )`
+      : sql`NOT EXISTS (
+          SELECT 1 FROM ${customerGroupMembers}
+          INNER JOIN ${groupSequences} ON ${groupSequences.groupId} = ${customerGroupMembers.groupId}
+          INNER JOIN ${dunningSequences} ON ${dunningSequences.id} = ${groupSequences.sequenceId}
+          WHERE ${customerGroupMembers.customerId} = ${customers.id}
+            AND ${dunningSequences.isActive} = true
+        )`;
+
     const overdueInvoices = await db
       .select({
         invoice: invoices,
@@ -176,6 +195,7 @@ export async function processDunning() {
       .innerJoin(customers, eq(customers.id, invoices.customerId))
       .where(and(
         eq(invoices.orgId, seq.orgId),
+        appliesTo,
         sql`${invoices.status} IN ('sent', 'viewed', 'overdue', 'partial')`,
         lte(invoices.dueDate, now),
         // A customer who just promised to pay by a future date shouldn't

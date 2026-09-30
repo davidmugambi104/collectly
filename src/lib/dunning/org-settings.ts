@@ -3,8 +3,8 @@
  * send window, and the From line to use for its reminders.
  */
 import { db } from '@/db';
-import { dunningSettings, dunningSenderDomains, organizations } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { dunningSettings, dunningSenderDomains, organizations, dunningSequences, groupSequences } from '@/db/schema';
+import { eq, sql } from 'drizzle-orm';
 import { getDefaultFrom } from '@/lib/infra';
 import { formatDunningFrom, formatOwnDomainFrom } from '@/lib/email-from';
 import { canSendFrom } from '@/lib/email-domain';
@@ -47,3 +47,10 @@ export async function resolveFrom(orgId: string, businessName: string | null | u
   if (canSendFrom(row)) return formatOwnDomainFrom(businessName, row!.localPart, row!.domain);
   return formatDunningFrom(businessName, getDefaultFrom());
 }
+
+/**
+ * True for the organisation's own default schedule, false for a schedule that
+ * belongs to a customer group. Use it wherever code means "the org's sequence".
+ * The group tables must exist, so callers run ensureDunningControlSchema first.
+ */
+export const isDefaultSequence = sql`NOT EXISTS (SELECT 1 FROM ${groupSequences} WHERE ${groupSequences.sequenceId} = ${dunningSequences.id})`;

@@ -52,6 +52,7 @@ export const NAV_GROUPS: NavGroup[] = [
         // across an inline link on the Dunning page.
         children: [
           { href: '/dashboard/dunning/sequence', label: 'Sequence' },
+          { href: '/dashboard/groups', label: 'Groups' },
           { href: '/dashboard/dunning/performance', label: 'Performance' },
         ],
       },
