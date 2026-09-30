@@ -9,6 +9,8 @@ export type NavItem = {
   icon: LucideIcon;
   /** Render the live unread-inbox count as a trailing pill. */
   showUnread?: boolean;
+  /** Render the count of drafted reminders waiting for approval as a trailing pill. */
+  showPending?: boolean;
   /** Sub-destinations, revealed only while this section is active. */
   children?: { href: string; label: string }[];
 };
@@ -48,6 +50,7 @@ export const NAV_GROUPS: NavGroup[] = [
         href: '/dashboard/dunning',
         label: 'Dunning',
         icon: Send,
+        showPending: true,
         // Both already exist as routes but were reachable only by stumbling
         // across an inline link on the Dunning page.
         children: [

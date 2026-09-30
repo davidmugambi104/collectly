@@ -30,6 +30,7 @@ function NavLink({
 }) {
   const active = isActive(pathname, item.href);
   const Icon = item.icon;
+  const { pendingCount } = useWorkspace();
   return (
     <>
       <Link
@@ -70,6 +71,15 @@ function NavLink({
           }`}
         />
         <span className="flex-1 truncate">{item.label}</span>
+        {item.showPending && pendingCount > 0 && (
+          <span
+            className="shrink-0 min-w-[18px] rounded-full bg-warn-500 px-1.5 text-center text-2xs font-medium leading-[17px] tabular-nums text-white"
+            title={`${pendingCount} reminder${pendingCount === 1 ? '' : 's'} waiting for your approval`}
+          >
+            <span className="sr-only">{pendingCount} waiting for approval</span>
+            <span aria-hidden="true">{pendingCount > 99 ? '99+' : pendingCount}</span>
+          </span>
+        )}
         {item.showUnread && unreadCount > 0 && (
           <span
             className="shrink-0 min-w-[18px] rounded-full bg-brand-600 px-1.5 text-center text-2xs font-medium leading-[17px] tabular-nums text-white"
