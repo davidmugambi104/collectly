@@ -39,7 +39,7 @@ export function ExplainPanel({ invoiceId }: { invoiceId: string }) {
         <div className="mt-2" role="status">
           <p className="text-sm font-medium text-ink-900">{result.headline}</p>
           <ul className="mt-2 space-y-1.5">
-            {result.findings.map((f, i) => {
+            {result.findings.filter((f) => f.text !== result.headline).map((f, i) => {
               const Icon = ICON[f.level];
               return <li key={i} className="flex items-start gap-2 text-sm text-ink-700"><Icon aria-hidden="true" className={`mt-0.5 h-4 w-4 shrink-0 ${f.level === 'blocked' ? 'text-danger-600' : f.level === 'waiting' ? 'text-warn-600' : f.level === 'ok' ? 'text-success-600' : 'text-ink-500'}`} />{f.text}</li>;
             })}
