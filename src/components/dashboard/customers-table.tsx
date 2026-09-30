@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { MessageSquare, Mail, ChevronRight } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import { GAP_LABEL, type ReminderGap } from '@/lib/reminder-gaps';
 
 type Row = {
   customerId: string;
@@ -51,7 +52,12 @@ function ChannelBadge({ channel }: { channel: string }) {
   );
 }
 
-export function CustomersTable({ insights, noDebt }: { insights: Row[]; noDebt: { name: string }[] }) {
+function GapBadges({ gaps }: { gaps?: ReminderGap[] }) {
+  if (!gaps?.length) return null;
+  return <>{gaps.map((g) => <span key={g} className="badge-warn mr-1" title="This customer cannot be reminded until this is fixed">{GAP_LABEL[g]}</span>)}</>;
+}
+
+export function CustomersTable({ insights, noDebt, gaps = {} }: { insights: Row[]; noDebt: { name: string }[]; gaps?: Record<string, ReminderGap[]> }) {
   const paidUpNote = (
     <>
       <b className="num-strong">
@@ -75,6 +81,7 @@ export function CustomersTable({ insights, noDebt }: { insights: Row[]; noDebt: 
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="app-label truncate">{row.name}</div>
+                {gaps[row.customerId] && <div className="mt-0.5"><GapBadges gaps={gaps[row.customerId]} /></div>}
                 {row.email && <div className="truncate text-2xs text-ink-500">{row.email}</div>}
               </div>
               <div className="shrink-0 text-right">
@@ -148,6 +155,7 @@ export function CustomersTable({ insights, noDebt }: { insights: Row[]; noDebt: 
                             <span className="block truncate text-[13px] font-medium leading-[18px] text-ink-950 transition-colors group-hover:text-brand-700">
                               {row.name}
                             </span>
+                            {gaps[row.customerId] && <span className="mt-0.5 block"><GapBadges gaps={gaps[row.customerId]} /></span>}
                             {row.email && (
                               <span className="block truncate text-2xs leading-4 text-ink-400">{row.email}</span>
                             )}
