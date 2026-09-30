@@ -4,7 +4,7 @@ import { AppShell } from '@/components/app/shell';
 import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, dunningApprovals, dunningSettings } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, dunningApprovals, dunningSettings, dunningSenderDomains } from '@/db/schema';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { nanoid, daysOverdue, formatCurrency } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
@@ -14,6 +14,8 @@ import { DunningPreview } from '@/components/dunning/preview';
 import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor';
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
 import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approval-queue';
+import { SendSettings } from '@/components/dunning/send-settings';
+import { loadSendWindow } from '@/lib/dunning/org-settings';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 
@@ -125,10 +127,15 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   let approvalRequired = true;
   let queue: QueuedReminder[] = [];
   let queueError = false;
+  let sendWindow = { enabled: false, startHour: 9, endHour: 17, days: 31, timezone: 'UTC' };
+  let senderDomain: { domain: string; localPart: string; status: string; records: Array<{ kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string }> } | null = null;
   try {
     await ensureDunningControlSchema();
     const [settingsRow] = await db.select({ approvalRequired: dunningSettings.approvalRequired }).from(dunningSettings).where(eq(dunningSettings.orgId, orgId)).limit(1);
     approvalRequired = isApprovalRequired(settingsRow);
+    sendWindow = await loadSendWindow(orgId);
+    const [dom] = await db.select().from(dunningSenderDomains).where(eq(dunningSenderDomains.orgId, orgId)).limit(1);
+    if (dom) senderDomain = { domain: dom.domain, localPart: dom.localPart, status: dom.status, records: dom.records ?? [] };
     const pending = await db
       .select({ run: dunningRuns, customerName: customers.name, invoiceNumber: invoices.number, amount: invoices.amount, amountPaid: invoices.amountPaid, currency: invoices.currency, dueDate: invoices.dueDate })
       .from(dunningApprovals)
@@ -316,6 +323,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       ) : (
         <ApprovalQueue approvalRequired={approvalRequired} items={queue} />
       )}
+
+      {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} />}
 
       <div data-tour="impact" className="mb-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <ImpactTile

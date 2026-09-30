@@ -6,8 +6,9 @@ import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, type Invoice } from '@/db/schema';
 import { eq, and, sql, lte, inArray } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
-import { formatDunningFrom } from '@/lib/email-from';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
+import { loadSendWindow, resolveFrom } from '@/lib/dunning/org-settings';
+import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 import { recordEvent } from '@/lib/events';
@@ -135,7 +136,7 @@ export async function processDunning() {
   await ensureDunningControlSchema();
   const now = new Date();
   const sequences = await db.select().from(dunningSequences).where(eq(dunningSequences.isActive, true));
-  let scheduled = 0, sent = 0, errors = 0, awaitingApproval = 0;
+  let scheduled = 0, sent = 0, errors = 0, awaitingApproval = 0, outsideWindow = 0;
   const orgDigest = new Map<string, DigestEntry[]>();
   const pendingDigest = new Map<string, DigestEntry[]>();
   // Read once per org per run, not cached across runs: the owner can flip it
@@ -150,7 +151,20 @@ export async function processDunning() {
     return required;
   }
 
+  const fromByOrg = new Map<string, string>();
+  const windowOpenByOrg = new Map<string, boolean>();
+
   for (const seq of sequences) {
+    // Send window: only act during the owner's business hours. Nothing is
+    // recorded for a skipped org, so the next run that lands inside the window
+    // picks the same invoices up. Read once per org per run.
+    let open = windowOpenByOrg.get(seq.orgId);
+    if (open === undefined) {
+      open = isWithinWindow(now, await loadSendWindow(seq.orgId));
+      windowOpenByOrg.set(seq.orgId, open);
+    }
+    if (!open) { outsideWindow += 1; continue; }
+
     const businessName = await getOrgName(seq.orgId);
 
     const overdueInvoices = await db
@@ -365,7 +379,7 @@ export async function processDunning() {
               headers: dunningListUnsubscribeHeaders(customer.email),
               // "Acme Studio via Mugavi", so the recipient sees who they owe
               // rather than an unexplained platform address.
-              from: formatDunningFrom(businessName, getDefaultFrom()),
+              from: fromByOrg.get(seq.orgId) ?? (fromByOrg.set(seq.orgId, await resolveFrom(seq.orgId, businessName)), fromByOrg.get(seq.orgId)!),
               replyTo: getDunningReplyToAddress(),
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns
@@ -490,7 +504,7 @@ export async function processDunning() {
     await notifyOwnerOfPending(orgId, entries);
   }
 
-  return { scheduled, sent, errors, awaitingApproval };
+  return { scheduled, sent, errors, awaitingApproval, outsideWindow };
 }
 
 export function renderEmailHtml({ body, invoice, businessName }: { body: string; invoice: Invoice; businessName: string }) {

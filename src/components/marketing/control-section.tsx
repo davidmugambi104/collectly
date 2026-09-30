@@ -73,8 +73,8 @@ export function ControlSection() {
               <BadgeCheck aria-hidden="true" className="h-6 w-6 text-brand-600" />
               <h3 className="mt-4 font-display text-lg font-bold text-ink-950">Sent under your business name</h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-600">
-                Reminders arrive as &quot;Your Business via Mugavi&quot;, with an unsubscribe link. Every send is
-                logged, and you get an email after each batch.
+                Reminders arrive as &quot;Your Business via Mugavi&quot;, or from your own address once you verify
+                your domain. Every send is logged, and you can limit sending to your business hours.
               </p>
             </div>
           </Reveal>
@@ -92,8 +92,8 @@ export function ControlSection() {
         </div>
 
         <p className="mt-6 max-w-2xl text-sm text-ink-500">
-          One thing not built yet: reminders are sent from Mugavi&apos;s address with your business name on
-          them, not from your own email address or domain.
+          Replies to a reminder come back through Mugavi, so they can be read and can pause the reminders
+          for that invoice. Sending from your own domain needs you to add a few DNS records first.
         </p>
       </div>
     </section>

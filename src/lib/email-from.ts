@@ -40,3 +40,14 @@ export function formatDunningFrom(businessName: string | null | undefined, baseF
   const quoted = label.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   return `"${quoted}" <${address}>`;
 }
+
+/**
+ * From header for a verified customer domain: "Acme Studio" <billing@acme.com>.
+ * No "via Mugavi", because the domain is the customer's own. Only ever called
+ * once the domain's DNS records have been verified with the mail provider.
+ */
+export function formatOwnDomainFrom(businessName: string | null | undefined, localPart: string, domain: string): string {
+  const biz = cleanName(businessName ?? '').slice(0, MAX_NAME).trim() || domain;
+  const quoted = biz.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return `"${quoted}" <${localPart}@${domain}>`;
+}

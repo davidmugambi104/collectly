@@ -18,8 +18,8 @@
 import { db } from '@/db';
 import { dunningApprovals, dunningRuns, dunningSequences, inboxMessages, invoices, customers, organizations } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
-import { formatDunningFrom } from '@/lib/email-from';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
+import { resolveFrom } from '@/lib/dunning/org-settings';
 import { maySendSms } from '@/lib/sms-consent';
 import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
@@ -111,7 +111,7 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
         subject: final.subject ?? `Invoice ${invoice.number} is overdue`,
         html: withUnsubscribeFooter(renderEmailHtml({ body: final.body, invoice, businessName }), to),
         headers: dunningListUnsubscribeHeaders(to),
-        from: formatDunningFrom(businessName, getDefaultFrom()),
+        from: await resolveFrom(orgId, businessName),
         replyTo: getDunningReplyToAddress(),
       });
       if (sendResult.status === 'skipped') throw new Error('email is not configured (no API key)');

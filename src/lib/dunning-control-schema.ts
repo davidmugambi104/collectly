@@ -2,7 +2,8 @@
  * Create the owner-control tables at runtime, idempotently:
  *
  *   dunning_holds      per-customer pause on automatic reminders
- *   dunning_settings   per-org switches (approval before send)
+ *   dunning_settings   per-org switches (approval before send, send window)
+ *   dunning_sender_domains  a customer's own verified sending domain
  *   dunning_approvals  drafted reminders waiting for the owner
  *
  * Same reason as sms-consent-schema.ts: production has no reliable way to run a
@@ -32,6 +33,22 @@ export const DUNNING_CONTROL_DDL = [
   `CREATE TABLE IF NOT EXISTS dunning_settings (
      org_id text PRIMARY KEY REFERENCES organizations(id) ON DELETE CASCADE,
      approval_required boolean NOT NULL DEFAULT true,
+     updated_at timestamptz NOT NULL DEFAULT now()
+   )`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS send_window_enabled boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS send_window_start smallint NOT NULL DEFAULT 9`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS send_window_end smallint NOT NULL DEFAULT 17`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS send_days smallint NOT NULL DEFAULT 31`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS send_timezone text`,
+  `CREATE TABLE IF NOT EXISTS dunning_sender_domains (
+     org_id text PRIMARY KEY REFERENCES organizations(id) ON DELETE CASCADE,
+     domain text NOT NULL UNIQUE,
+     local_part text NOT NULL DEFAULT 'billing',
+     provider_domain_id text NOT NULL,
+     status text NOT NULL DEFAULT 'pending',
+     records jsonb NOT NULL DEFAULT '[]'::jsonb,
+     verified_at timestamptz,
+     created_at timestamptz NOT NULL DEFAULT now(),
      updated_at timestamptz NOT NULL DEFAULT now()
    )`,
   `CREATE TABLE IF NOT EXISTS dunning_approvals (

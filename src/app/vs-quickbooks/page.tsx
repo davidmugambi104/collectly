@@ -104,9 +104,8 @@ export default function VsQuickbooksPage() {
         </ul>
         <p className="mt-5 text-ink-600 leading-relaxed">
           Mugavi holds each reminder for your approval by default, lets you pause any customer, and stops
-          reminders for an invoice while a customer&apos;s reply is waiting for you. One thing it does not do
-          yet: reminders are sent from Mugavi&apos;s address with your business name on them, not from your own
-          email address.
+          reminders for an invoice while a customer&apos;s reply is waiting for you. You can limit sending to
+          your business hours, and send from your own domain once you have verified it with a few DNS records.
         </p>
       </section>
 

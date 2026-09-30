@@ -1,5 +1,5 @@
 import {
-  pgTable, text, varchar, timestamp, integer, boolean, decimal, jsonb, index, uniqueIndex, pgEnum,
+  pgTable, text, varchar, timestamp, integer, smallint, boolean, decimal, jsonb, index, uniqueIndex, pgEnum,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
@@ -491,6 +491,31 @@ export const dunningHolds = pgTable('dunning_holds', {
 export const dunningSettings = pgTable('dunning_settings', {
   orgId: text('org_id').primaryKey().references(() => organizations.id, { onDelete: 'cascade' }),
   approvalRequired: boolean('approval_required').notNull().default(true),
+  // Send window: only act during the owner's business hours. See
+  // src/lib/dunning/send-window.ts. Off by default. send_days is a bitmask
+  // (Mon = 1 ... Sun = 64); a null timezone falls back to organizations.timezone.
+  sendWindowEnabled: boolean('send_window_enabled').notNull().default(false),
+  sendWindowStart: smallint('send_window_start').notNull().default(9),
+  sendWindowEnd: smallint('send_window_end').notNull().default(17),
+  sendDays: smallint('send_days').notNull().default(31),
+  sendTimezone: text('send_timezone'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * A customer's own sending domain. One per org, and each domain belongs to one
+ * org. The mail provider issues the DNS records and reports when they verify;
+ * reminders are sent from this domain only once status is 'verified'.
+ */
+export const dunningSenderDomains = pgTable('dunning_sender_domains', {
+  orgId: text('org_id').primaryKey().references(() => organizations.id, { onDelete: 'cascade' }),
+  domain: text('domain').notNull().unique(),
+  localPart: text('local_part').notNull().default('billing'),
+  providerDomainId: text('provider_domain_id').notNull(),
+  status: text('status').notNull().default('pending'),
+  records: jsonb('records').$type<Array<{ kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string }>>().notNull().default([]),
+  verifiedAt: timestamp('verified_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

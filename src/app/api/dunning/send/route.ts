@@ -4,8 +4,9 @@ import { db } from "@/db";
 import { dunningSequences, dunningRuns, invoices, customers, organizations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { maySendSms } from '@/lib/sms-consent';
-import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId, getDefaultFrom } from '@/lib/infra';
-import { formatDunningFrom } from '@/lib/email-from';
+import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
+import { resolveFrom } from '@/lib/dunning/org-settings';
+import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
@@ -22,6 +23,7 @@ const bodySchema = z.object({
 
 export async function POST(req: NextRequest) {
   await ensureSmsConsentSchema();
+  await ensureDunningControlSchema(); // resolveFrom reads the sender-domain table
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -84,7 +86,7 @@ export async function POST(req: NextRequest) {
         subject: data.subject ?? `Invoice ${inv.number}`,
         html: withUnsubscribeFooter(`<p style="white-space:pre-wrap;font-family:system-ui;">${data.body}</p>`, cust.email),
         headers: dunningListUnsubscribeHeaders(cust.email),
-        from: formatDunningFrom(org?.name, getDefaultFrom()),
+        from: await resolveFrom(orgId, org?.name),
         replyTo: getDunningReplyToAddress(),
       });
       try {
