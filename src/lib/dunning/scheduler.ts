@@ -126,7 +126,21 @@ async function notifyOwnerOfPending(orgId: string, entries: DigestEntry[]) {
   }
 }
 
-export async function processDunning() {
+export type ProcessOptions = {
+  /** Only this organisation's schedules. Omit for the cron's all-orgs run. */
+  orgId?: string;
+  /**
+   * Write drafts into the approval queue and stop. Nothing is sent, the send
+   * window is ignored (there is nothing to time), and the owner gets no digest
+   * email, whatever the org's approval setting says. Used by the first-run
+   * button, which must be safe to press.
+   */
+  draftOnly?: boolean;
+  /** Stop after this many drafts, so one click cannot fan out into hundreds of AI calls. */
+  maxDrafts?: number;
+};
+
+export async function processDunning(opts: ProcessOptions = {}) {
   // Before any customers query: the model now includes sms_consent_status,
   // and Drizzle's select-all would throw undefined_column against a database
   // that has not had drizzle/0005 applied -- which would take down email
@@ -135,7 +149,7 @@ export async function processDunning() {
   // The overdue query below asks about holds, so the table must exist first.
   await ensureDunningControlSchema();
   const now = new Date();
-  const sequences = await db.select().from(dunningSequences).where(eq(dunningSequences.isActive, true));
+  const sequences = await db.select().from(dunningSequences).where(opts.orgId ? and(eq(dunningSequences.isActive, true), eq(dunningSequences.orgId, opts.orgId)) : eq(dunningSequences.isActive, true));
   let scheduled = 0, sent = 0, errors = 0, awaitingApproval = 0, outsideWindow = 0;
   const orgDigest = new Map<string, DigestEntry[]>();
   const pendingDigest = new Map<string, DigestEntry[]>();
@@ -143,6 +157,7 @@ export async function processDunning() {
   // between crons and the next run has to see that.
   const approvalByOrg = new Map<string, boolean>();
   async function approvalRequiredFor(orgId: string): Promise<boolean> {
+    if (opts.draftOnly) return true;
     const known = approvalByOrg.get(orgId);
     if (known !== undefined) return known;
     const [row] = await db.select({ approvalRequired: dunningSettings.approvalRequired }).from(dunningSettings).where(eq(dunningSettings.orgId, orgId)).limit(1);
@@ -158,7 +173,7 @@ export async function processDunning() {
     // Send window: only act during the owner's business hours. Nothing is
     // recorded for a skipped org, so the next run that lands inside the window
     // picks the same invoices up. Read once per org per run.
-    let open = windowOpenByOrg.get(seq.orgId);
+    let open = opts.draftOnly ? true : windowOpenByOrg.get(seq.orgId);
     if (open === undefined) {
       open = isWithinWindow(now, await loadSendWindow(seq.orgId));
       windowOpenByOrg.set(seq.orgId, open);
@@ -277,6 +292,7 @@ export async function processDunning() {
     }
 
     for (const { invoice, customer } of overdueInvoices) {
+      if (opts.maxDrafts !== undefined && scheduled >= opts.maxDrafts) break;
       // Respect customer's do-not-disturb preference (set via /api/unsubscribe
       // with includeDnd=1). Skips email + SMS for this customer entirely.
       if (customer.dndAt) {
@@ -517,11 +533,13 @@ export async function processDunning() {
     }
   }
 
-  for (const [orgId, entries] of orgDigest) {
-    await notifyOwnerOfSends(orgId, entries);
-  }
-  for (const [orgId, entries] of pendingDigest) {
-    await notifyOwnerOfPending(orgId, entries);
+  if (!opts.draftOnly) {
+    for (const [orgId, entries] of orgDigest) {
+      await notifyOwnerOfSends(orgId, entries);
+    }
+    for (const [orgId, entries] of pendingDigest) {
+      await notifyOwnerOfPending(orgId, entries);
+    }
   }
 
   return { scheduled, sent, errors, awaitingApproval, outsideWindow };

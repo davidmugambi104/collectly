@@ -18,13 +18,10 @@ import { SendSettings } from '@/components/dunning/send-settings';
 import { loadSendWindow, isDefaultSequence } from '@/lib/dunning/org-settings';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
+import { STANDARD_STEPS, PRESETS } from '@/lib/dunning/presets';
+import { StarterSetup } from '@/components/dunning/starter-setup';
 
-const DEFAULT_STEPS: Step[] = [
-  { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
-  { id: 's2', daysFromDue: 7, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is now 7 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 7 days past due. Please review and settle at your earliest convenience: {{payment_link}}' },
-  { id: 's3', daysFromDue: 14, channel: 'email', tone: 'firm', subject: 'Action required: Invoice {{number}}', template: 'Hi {{contact_name}}, our records show Invoice {{number}} for {{amount}} is 14 days overdue. Please confirm payment status or settle the balance: {{payment_link}}' },
-  { id: 's4', daysFromDue: 30, channel: 'sms', tone: 'final', template: 'Final notice: Invoice {{number}} for {{amount}} is 30+ days overdue. Please reply or settle: {{payment_link}}' },
-];
+const DEFAULT_STEPS: Step[] = STANDARD_STEPS;
 
 type Tone = 'friendly' | 'firm' | 'final';
 type Channel = 'email' | 'sms';
@@ -322,7 +319,10 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           The approval queue could not be loaded, so you can&apos;t see or approve waiting reminders right now. Refresh, and contact support if this keeps happening.
         </div>
       ) : (
+        <>
+        {recentRuns.length === 0 && queue.length === 0 && <StarterSetup presets={PRESETS.map(({ id, name, blurb }) => ({ id, name, blurb }))} approvalRequired={approvalRequired} />}
         <ApprovalQueue approvalRequired={approvalRequired} items={queue} />
+        </>
       )}
 
       {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} />}
@@ -456,8 +456,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           <div className="flex items-start gap-2">
             <AlertCircle aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0 text-warn-600" />
             <p className="app-meta font-normal leading-4">
-              <span className="text-ink-800">A reply does not stop it.</span> Replies land in
-              the Inbox but the sequence keeps going — pause it yourself.
+              <span className="text-ink-800">A reply pauses that invoice.</span> Reminders for it
+              wait until you mark the reply handled in the Inbox.
             </p>
           </div>
         </div>

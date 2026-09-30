@@ -25,6 +25,7 @@ export type EventType =
   | 'dunning.hold.set'
   | 'dunning.hold.cleared'
   | 'dunning.run.awaiting_approval'
+  | 'dunning.first_run'
   | 'dunning.run.approved'
   | 'dunning.run.skipped'
   | 'dunning.settings.updated'
