@@ -57,37 +57,21 @@ export default function PricingPage() {
     <div className="min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: pricingJsonLd }} />
       <MarketingHeader />
-      {/* Left-aligned, not centred. A centred eyebrow over a centred two-line
-          headline over a centred three-line subhead is the most dated thing on
-          the site: it gives the eye no edge to return to, so each line has to
-          be re-found. The hard <br/> is gone with it — the headline now breaks
-          on its own measure at whatever width the viewport is. */}
-      <section className="container-page pt-16 pb-12">
-        <p className="eyebrow">Pricing</p>
-        <h1 className="mt-3 h1 max-w-3xl text-balance">Honest pricing. Built for the long tail.</h1>
-        <p className="mt-5 lead max-w-xl">Priced per client book, not per invoice. 14-day trial, founder-assisted setup. Cancel anytime. No per-invoice fees, no setup costs.</p>
+      {/* Laid out the way Paidnice, Chaser and Upflow lay theirs out, on purpose:
+          a centred headline, one plain line saying what the plans are based on
+          and that there is no lock-in, then the plans in a row. A comparison
+          against a named competitor used to sit above the plans and push them
+          below the fold; the comparison pages already do that job, and a rival's
+          price quoted here goes stale. */}
+      <section className="container-page pt-16 pb-10 text-center">
+        <h1 className="h1 mx-auto max-w-3xl text-balance">Simple pricing. No per-invoice fees.</h1>
+        <p className="mt-5 lead mx-auto max-w-2xl">Priced per client book, not per invoice. 14-day trial with no credit card, founder-assisted setup, and no contracts. Cancel anytime.</p>
         <p className="mt-3 text-sm text-brand-700 font-medium">Founding cohort: {FOUNDING.discountPct}% off for {FOUNDING.months} months, first {FOUNDING.seats} customers.</p>
-
-        <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-3xl">
-          {[
-            { label: 'Mugavi Practice', price: `$${Math.round(PLAN_PRICING.growth.monthly / PRACTICE_INCLUDED_ORGS)}/mo per client book`, note: `$${PLAN_PRICING.growth.monthly}/mo covering ${PRACTICE_INCLUDED_ORGS} organizations`, highlight: true },
-            { label: 'Chaser', price: '~$259/mo', note: 'entry tier, one organization · source: chaser.com' },
-          ].map((c) => (
-            // Was emerald (the success/paid token) marking the Mugavi card --
-            // the same brand-vs-semantic mixup fixed in comparison-section.tsx,
-            // here inline instead of shared. Brand identity gets the brand accent.
-            <div key={c.label} className={`rounded-xl border px-4 py-3 text-left ${c.highlight ? 'border-brand-300 bg-brand-50/40' : 'border-ink-200 bg-white'}`}>
-              <div className="text-xs font-semibold uppercase tracking-wider text-ink-500">{c.label}</div>
-              <div className={`mt-1 text-lg font-display font-bold ${c.highlight ? 'text-brand-800' : 'text-ink-900'}`}>{c.price}</div>
-              <div className="text-xs text-ink-600">{c.note}</div>
-            </div>
-          ))}
-        </div>
       </section>
 
       <section className="container-page pb-20">
-        <div className="grid md:grid-cols-2 gap-5 max-w-4xl">
-          {(['starter','growth'] as const).map((k, i) => {
+        <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
+          {(['starter','growth','scale'] as const).map((k, i) => {
             const p = PLAN_PRICING[k];
             if (!p) return null;
             return (
@@ -99,21 +83,25 @@ export default function PricingPage() {
                 {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><span className="badge-success"><Sparkles className="h-3 w-3 mr-1" />Most popular</span></div>}
                 <div className="text-sm text-ink-500">{p.name}</div>
                 <div className="mt-1 text-5xl font-display font-bold text-ink-950">${p.monthly}<span className="text-base font-normal text-ink-500">/mo</span></div>
-                <div className="mt-1 text-sm font-medium text-brand-700">${FOUNDING.monthly(k)}/mo for your first {FOUNDING.months} months as a founding customer</div>
+                {k !== 'scale' && <div className="mt-1 text-sm font-medium text-brand-700">${FOUNDING.monthly(k)}/mo for your first {FOUNDING.months} months as a founding customer</div>}
                 <div className="mt-2 text-sm text-ink-600">{p.audience}</div>
                 <div className="mt-1 text-sm text-ink-500">{p.orgs}</div>
                 <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
-                  {p.features.map((f) => (
+                  {/* The Scale tier is sold by conversation, so only the parts that
+                      are plain fact are listed as ticks. API access, SSO and custom
+                      workflows are scoped with the founder before anyone signs. */}
+                  {(k === 'scale' ? p.features.filter((f) => f === 'Everything in Practice' || f === 'Priority support') : p.features).map((f) => (
                     <li key={f} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />{f}</li>
                   ))}
                 </ul>
+                {k === 'scale' && <p className="mt-4 text-sm text-ink-600">API access, SSO and custom workflows are scoped with you before you sign.</p>}
                 <TrackedLink
-                  href="/sign-up"
+                  href={k === 'scale' ? '/contact' : '/sign-up'}
                   event="pricing_tier_click"
                   eventProps={{ tier: k, plan_name: p.name, monthly: p.monthly }}
                   className={`mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${p.popular ? 'bg-brand-600 text-white hover:bg-brand-700' : 'bg-ink-900 text-white hover:bg-ink-800'}`}
                 >
-                  Start free trial <ArrowRight className="h-4 w-4" />
+                  {k === 'scale' ? 'Talk to sales' : 'Start free trial'} <ArrowRight className="h-4 w-4" />
                 </TrackedLink>
               </div>
               </Reveal>
@@ -122,7 +110,8 @@ export default function PricingPage() {
         </div>
 
         <div className="mt-10 max-w-2xl mx-auto text-center">
-          <p className="text-sm text-ink-600">{PLAN_PRICING.growth.name} keeps going past {PRACTICE_INCLUDED_ORGS} books at ${PRACTICE_EXTRA_ORG_MONTHLY} each, and stays the cheaper option until {PRACTICE_SCALE_CROSSOVER_ORGS}. Past that, {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo flat for up to {PRACTICE_SCALE_INCLUDED_ORGS} books, and adds API access and SSO. <Link href="/contact" className="link">Talk to sales</Link>.</p>
+          <p className="text-sm text-ink-600">Comparing tools? See <Link href="/vs-paidnice" className="link">Mugavi vs Paidnice</Link>, <Link href="/vs-chaser" className="link">vs Chaser</Link>, <Link href="/vs-quickbooks" className="link">vs QuickBooks</Link>, or <Link href="/compare" className="link">all comparisons</Link>.</p>
+          <p className="mt-3 text-sm text-ink-600">{PLAN_PRICING.growth.name} keeps going past {PRACTICE_INCLUDED_ORGS} books at ${PRACTICE_EXTRA_ORG_MONTHLY} each, and stays the cheaper option until {PRACTICE_SCALE_CROSSOVER_ORGS}. Past that, {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo flat for up to {PRACTICE_SCALE_INCLUDED_ORGS} books, and adds API access and SSO. <Link href="/contact" className="link">Talk to sales</Link>.</p>
         </div>
       </section>
 
