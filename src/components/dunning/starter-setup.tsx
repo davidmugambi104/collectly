@@ -47,7 +47,7 @@ export function StarterSetup({ presets, approvalRequired }: { presets: PresetVie
               ? 'You read and approve each one before it goes out.'
               : 'These first drafts wait for you to approve them. Approval is off in your settings, so later reminders will go out on their own.'}
           </p>
-          <fieldset className="mt-3 grid gap-2 sm:grid-cols-3" disabled={busy || done}>
+          <fieldset className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4" disabled={busy || done}>
             <legend className="sr-only">Starter schedule</legend>
             {presets.map((p) => (
               <label key={p.id} className={`cursor-pointer rounded-lg border p-3 text-sm ${choice === p.id ? 'border-brand-500 ring-1 ring-brand-500' : 'border-ink-200'}`}>

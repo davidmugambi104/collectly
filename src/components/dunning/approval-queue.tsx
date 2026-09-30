@@ -11,6 +11,8 @@ export type QueuedReminder = {
   amount: string;
   currency: string;
   daysOverdue: number;
+  /** Days until the due date, for a heads-up drafted before it. 0 once it is due. */
+  dueInDays?: number;
   channel: 'email' | 'sms';
   subject: string | null;
   body: string;
@@ -111,7 +113,7 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <div className="app-label">{it.customerName} · invoice {it.invoiceNumber}</div>
                   <div className="app-meta font-normal">
-                    {it.currency} {it.amount} · {it.daysOverdue}d overdue · {it.channel === 'sms' ? 'text message' : 'email'}
+                    {it.currency} {it.amount} · {it.dueInDays ? `due in ${it.dueInDays}d` : `${it.daysOverdue}d overdue`} · {it.channel === 'sms' ? 'text message' : 'email'}
                   </div>
                 </div>
                 {it.channel === 'email' && (

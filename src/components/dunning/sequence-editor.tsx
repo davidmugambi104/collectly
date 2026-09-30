@@ -1,4 +1,5 @@
 'use client';
+import { stepDayLabel, stepDayPhrase, MAX_LEAD_DAYS } from '@/lib/dunning/step-timing';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -142,7 +143,7 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
             row of steps with no start or end. */}
         <div className="shrink-0 flex flex-col items-center justify-center gap-1 w-[104px] rounded-full border border-dashed border-ink-300 bg-ink-50 text-ink-500 px-2 py-2">
           <AlertTriangle className="h-3.5 w-3.5" />
-          <span className="text-[10px] font-medium text-center leading-tight">Invoice overdue</span>
+          <span className="text-[10px] font-medium text-center leading-tight">{steps.some((s) => s.daysFromDue < 0) ? 'Invoice sent' : 'Invoice overdue'}</span>
         </div>
         <FlowConnector delay={0} />
         {steps.map((s, i) => {
@@ -179,7 +180,7 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
                     <Mail aria-hidden="true" className="h-3.5 w-3.5 text-ink-400" />
                   )}
                 </div>
-                <div className="app-label mt-2">Day {s.daysFromDue}</div>
+                <div className="app-label mt-2">{stepDayLabel(s.daysFromDue)}</div>
                 {/* The node said "Day 7 / firm" and never named the channel in
                     words — the only cue was a 14px glyph. */}
                 <div className="app-meta font-normal">{s.channel === 'sms' ? 'SMS' : 'Email'}</div>
@@ -222,10 +223,39 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
               <button onClick={() => removeStep(activeIdx!)} className="btn-ghost text-xs text-red-600"><Trash2 className="h-3.5 w-3.5" />Delete</button>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              <div><label className="label">Days from due</label><input type="number" min="0" value={active.daysFromDue} onChange={(e) => updateStep(activeIdx!, { daysFromDue: Number(e.target.value) })} className="input" /></div>
+              <div>
+                <label className="label" htmlFor="step-day">When</label>
+                <div className="flex gap-2">
+                  <input
+                    id="step-day"
+                    type="number"
+                    min={0}
+                    max={active.daysFromDue < 0 ? MAX_LEAD_DAYS : 365}
+                    value={Math.abs(active.daysFromDue)}
+                    onChange={(e) => {
+                      const n = Math.max(0, Math.min(active.daysFromDue < 0 ? MAX_LEAD_DAYS : 365, Math.round(Number(e.target.value)) || 0));
+                      updateStep(activeIdx!, { daysFromDue: active.daysFromDue < 0 ? -n : n });
+                    }}
+                    className="input w-20"
+                  />
+                  <select
+                    aria-label="Before or after the due date"
+                    value={active.daysFromDue < 0 ? 'before' : 'after'}
+                    onChange={(e) => {
+                      const n = Math.abs(active.daysFromDue);
+                      updateStep(activeIdx!, { daysFromDue: e.target.value === 'before' ? -Math.min(MAX_LEAD_DAYS, Math.max(1, n)) : n });
+                    }}
+                    className="input"
+                  >
+                    <option value="after">days after due</option>
+                    <option value="before">days before due</option>
+                  </select>
+                </div>
+              </div>
               <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
               <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
             </div>
+            <p className="app-meta font-normal">This step goes out {stepDayPhrase(active.daysFromDue)}.{active.daysFromDue < 0 && ' A step before the due date is a heads-up, and never calls the invoice overdue.'}</p>
             <div>
               <label className="label">Style hint (optional)</label>
               <textarea

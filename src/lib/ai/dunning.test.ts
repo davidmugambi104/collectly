@@ -109,3 +109,32 @@ describe('fallbackDunningMessage — tone content', () => {
     assert.ok(body.includes('23 days past due'));
   });
 });
+
+describe('fallbackDunningMessage — heads-up before the due date', () => {
+  const pre = (o: Partial<DunningContext> = {}) => ctx({ daysOverdue: -7, dueDate: '2026-10-08', ...o });
+
+  test('never calls a not-yet-due invoice late', () => {
+    for (const tone of ['friendly', 'firm'] as const) {
+      const { subject, body } = fallbackDunningMessage(pre({ tone }));
+      assert.doesNotMatch(`${subject}\n${body}`, /overdue|past due|final notice|collections|-7/i, tone);
+      assert.match(subject ?? '', /due in 7 days/);
+      assert.match(body, /due on 2026-10-08, in 7 days/);
+    }
+  });
+
+  test('still carries the payment link, by email and by text', () => {
+    assert.match(fallbackDunningMessage(pre()).body, /\/pay\/inv_nanoid_abc123/);
+    const sms = fallbackDunningMessage(pre({ channel: 'sms' }));
+    assert.match(sms.body, /due in 7 days/);
+    assert.match(sms.body, /\/pay\/inv_nanoid_abc123/);
+    assert.ok(sms.body.length <= 320);
+  });
+
+  test('one day out is singular', () => {
+    assert.match(fallbackDunningMessage(pre({ daysOverdue: -1 })).subject ?? '', /due in 1 day$/);
+  });
+
+  test('an overdue invoice is unchanged', () => {
+    assert.match(fallbackDunningMessage(ctx({ daysOverdue: 14, tone: 'firm' })).body, /14 days past due/);
+  });
+});

@@ -59,7 +59,7 @@ test('before the first step is due it counts the days', () => {
 test('a step already handled points at the next one', () => {
   const e = explain({ ...base, daysOverdue: 8, ranStepIds: ['s1', 's2'] });
   assert.equal(e.willAct, false);
-  assert.match(e.headline, /next one is at 30 days/);
+  assert.match(e.headline, /next one is set for 30 days past due/);
   assert.match(explain({ ...base, daysOverdue: 40, ranStepIds: ['s1', 's2', 's3'] }).headline, /Every step/);
 });
 
@@ -120,4 +120,32 @@ test('every outcome carries a short label for a table cell', () => {
   assert.equal(explain({ ...base, daysOverdue: 3 }).short, 'In 4 days');
   assert.equal(explain({ ...base, invoiceStatus: 'paid' }).short, 'Not chased');
   assert.equal(explain({ ...base, invoiceStatus: 'disputed' }).short, 'Disputed');
+});
+
+test('a schedule that starts before the due date explains an invoice that is not late yet', () => {
+  const early = { ...base, daysOverdue: -5, ranStepIds: [], steps: [{ id: 'p0', daysFromDue: -7, channel: 'email' as const }, { id: 's1', daysFromDue: 1, channel: 'email' as const }] };
+  const e = explain(early);
+  assert.equal(e.willAct, true);
+  assert.equal(e.short, 'Draft next run');
+  assert.match(e.findings.map((x) => x.text).join(' '), /not overdue yet \(due in 5 days\)/);
+  assert.match(e.findings.map((x) => x.text).join(' '), /step set for 7 days before the due date is now due/);
+});
+
+test('a heads-up that has already gone out says when the next one is', () => {
+  const e = explain({ ...base, daysOverdue: -5, ranStepIds: ['p0'], steps: [{ id: 'p0', daysFromDue: -7, channel: 'email' }, { id: 's1', daysFromDue: 1, channel: 'email' }] });
+  assert.equal(e.willAct, false);
+  assert.equal(e.short, 'In 6 days');
+  assert.match(e.headline, /next one is set for 1 day past due/);
+});
+
+test('before the first pre-due step, it says how long until then', () => {
+  const e = explain({ ...base, daysOverdue: -20, ranStepIds: [], steps: [{ id: 'p0', daysFromDue: -7, channel: 'email' }] });
+  assert.equal(e.willAct, false);
+  assert.equal(e.short, 'In 13 days');
+  assert.match(e.headline, /first reminder is set for 7 days before the due date/);
+});
+
+test('a schedule with no pre-due step still ignores an invoice that is not late', () => {
+  const e = explain({ ...base, daysOverdue: -3 });
+  assert.equal(e.short, 'Not due yet');
 });

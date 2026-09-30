@@ -8,6 +8,7 @@ import { eq, and, sql, lte, inArray, gte } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-settings';
+import { leadDays } from '@/lib/dunning/step-timing';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
@@ -246,7 +247,11 @@ export async function processDunning(opts: ProcessOptions = {}) {
         eq(invoices.orgId, seq.orgId),
         appliesTo,
         sql`${invoices.status} IN ('sent', 'viewed', 'overdue', 'partial')`,
-        lte(invoices.dueDate, now),
+        // Not just overdue invoices: a step set before the due date ("a heads-up a
+        // week ahead") needs invoices that are not late yet. The horizon is only as
+        // far ahead as this schedule's earliest step reaches, so a schedule with no
+        // such step sees exactly the invoices it always did.
+        lte(invoices.dueDate, new Date(now.getTime() + leadDays(seq.steps) * 86_400_000)),
         // A customer who just promised to pay by a future date shouldn't
         // keep getting dunned in the meantime — disputes exclude via
         // invoices.status flipping to 'disputed', but creating a promise
@@ -338,7 +343,8 @@ export async function processDunning(opts: ProcessOptions = {}) {
       // Owner rule: not worth chasing below this balance.
       if (belowMinBalance(Number(invoice.amount) - Number(invoice.amountPaid ?? 0), rules.minBalance)) continue;
       const days = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
-      const dueSteps = (seq.steps ?? []).filter((s: DunningStep) => s.daysFromDue <= days);
+      // Sorted by day, so the last one really is the latest step that is due, whatever order they were saved in.
+      const dueSteps = (seq.steps ?? []).filter((s: DunningStep) => s.daysFromDue <= days).sort((a: DunningStep, b: DunningStep) => a.daysFromDue - b.daysFromDue);
       if (!dueSteps.length) continue;
 
       const lastStep = dueSteps[dueSteps.length - 1];

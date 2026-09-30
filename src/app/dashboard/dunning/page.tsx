@@ -19,6 +19,7 @@ import { loadSendWindow, isDefaultSequence, loadChaseRules } from '@/lib/dunning
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 import { STANDARD_STEPS, PRESETS } from '@/lib/dunning/presets';
+import { daysUntilDue, stepDayPhrase } from '@/lib/dunning/step-timing';
 import { StarterSetup } from '@/components/dunning/starter-setup';
 
 const DEFAULT_STEPS: Step[] = STANDARD_STEPS;
@@ -152,6 +153,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       amount: (parseFloat(p.amount.toString()) - parseFloat((p.amountPaid ?? 0).toString())).toFixed(2),
       currency: p.currency ?? 'USD',
       daysOverdue: Math.max(0, daysOverdue(p.dueDate)),
+      dueInDays: daysUntilDue(p.dueDate, new Date()),
       channel: p.run.channel === 'sms' ? 'sms' : 'email',
       subject: p.run.subject,
       body: p.run.body,
@@ -464,7 +466,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         <div className="card-primary lg:col-span-2">
           <div>
             <h2 className="app-heading">Default sequence</h2>
-            <p className="app-body mt-1">Customers are sent reminders in this order, starting 1 day after the invoice is due.</p>
+            <p className="app-body mt-1">Customers are sent reminders in this order, starting {stepDayPhrase(Math.min(...((seq?.steps ?? DEFAULT_STEPS) as Array<{ daysFromDue: number }>).map((s) => s.daysFromDue)))}.</p>
             {/* The scheduler filters steps to `daysFromDue <= daysOverdue` and
                 then fires only the LAST match — not each step in turn. So an
                 invoice that is already months overdue when it first enters the
@@ -476,8 +478,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
               <AlertCircle aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0 text-warn-600" />
               <span>
                 An invoice only ever gets the <span className="text-ink-800">latest step it qualifies for</span>,
-                not every step before it. Something already 40 days overdue starts at
-                Day 30 — it never receives the Day 1 note.
+                not every step before it. An invoice that is already well past due when it
+                enters the schedule starts at the latest step that fits, and never receives the earlier ones.
               </span>
             </p>
           </div>

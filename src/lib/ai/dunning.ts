@@ -157,7 +157,9 @@ export async function generateDunningMessage(ctx: DunningContext): Promise<{ sub
   const paymentLink = buildPaymentLink(ctx.invoiceId);
   const invoiceLabel = resolveInvoiceLabel(ctx);
 
-  const systemPrompt = `You are the collections copywriter for ${ctx.businessName}. Write a ${ctx.tone} ${ctx.channel === 'email' ? 'email' : 'SMS'} reminder about an unpaid invoice. Tone: ${toneGuide}
+  // A negative daysOverdue is a heads-up before the due date. It must never say "overdue".
+  const preDue = ctx.daysOverdue < 0;
+  const systemPrompt = `You are the collections copywriter for ${ctx.businessName}. Write a ${ctx.tone} ${ctx.channel === 'email' ? 'email' : 'SMS'} ${preDue ? 'heads-up that an invoice will be due soon. It is NOT overdue: never say or imply it is late' : 'reminder about an unpaid invoice'}. Tone: ${toneGuide}
 Output rules:
 - ${ctx.channel === 'email' ? 'Email: subject line (max 60 chars), then body. Body max 600 chars.' : 'SMS only: max 320 characters. No subject.'}
 - Never invent details not given in the context. Use only the invoice number, amount, currency, due date, and contact name provided.
@@ -174,7 +176,7 @@ Output rules:
 - Invoice #${invoiceLabel}
 - Amount: ${formattedAmount}
 - Due date: ${ctx.dueDate}
-- Days overdue: ${ctx.daysOverdue}
+- ${preDue ? `Days until due: ${-ctx.daysOverdue} (not yet overdue)` : `Days overdue: ${ctx.daysOverdue}`}
 - Prior messages sent: ${ctx.priorMessages}
 - Customer history: avg ${ctx.customerPaymentHistory.avgDaysToPay} days to pay, ${Math.round(ctx.customerPaymentHistory.paidRate * 100)}% paid rate
 - Channel: ${ctx.channel}
@@ -219,6 +221,17 @@ export function fallbackDunningMessage(ctx: DunningContext): { subject?: string;
   const collectionsThreshold = ctx.daysOverdue >= 60
     ? 'This is now significantly overdue and will be referred to collections.'
     : 'After 60 days unpaid, we will need to refer this to collections.';
+  if (ctx.daysOverdue < 0) {
+    const inDays = -ctx.daysOverdue;
+    const when = `${inDays} day${inDays === 1 ? '' : 's'}`;
+    if (ctx.channel === 'sms') {
+      return { body: `${ctx.contactName ?? 'Hi'} — invoice ${num} for ${amount} is due in ${when} (${ctx.dueDate}).${linkFragment} — ${ctx.businessName}`.slice(0, 320) };
+    }
+    return {
+      subject: `Invoice ${num} is due in ${when}`,
+      body: `Hi ${ctx.contactName ?? 'there'},\n\nA friendly heads-up that invoice ${num} for ${amount} is due on ${ctx.dueDate}, in ${when}. If it is already on its way, thank you.${linkFragment}\n\n${ctx.businessName}`,
+    };
+  }
   let body: string;
   if (ctx.tone === 'friendly') {
     body = `Hi ${ctx.contactName ?? 'there'},\n\nJust a quick nudge — invoice ${num} for ${amount} was due on ${ctx.dueDate}. No rush, but if you can settle it today, that'd help us out.${linkFragment}\n\nThanks for being a great customer.\n\n${ctx.businessName}`;

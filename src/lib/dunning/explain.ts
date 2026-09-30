@@ -10,6 +10,7 @@
  */
 import { isWithinWindow, nextWindowOpen, type SendWindow } from './send-window.ts';
 import { belowMinBalance } from './chase-rules.ts';
+import { stepDayPhrase } from './step-timing.ts';
 
 export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' };
 
@@ -59,8 +60,11 @@ export function explain(f: Facts): Explanation {
     const why = f.invoiceStatus === 'paid' ? 'It is paid.' : f.invoiceStatus === 'disputed' ? 'It is marked as disputed, and stays out of the schedule until the dispute is resolved.' : f.invoiceStatus === 'written_off' ? 'It is written off.' : `Its status is "${f.invoiceStatus}", which is not chased.`;
     return block(`Not chased. ${why}`, f.invoiceStatus === 'disputed' ? 'Disputed' : 'Not chased');
   }
-  findings.push({ level: 'ok', text: `The invoice is open and ${f.daysOverdue > 0 ? `${f.daysOverdue} day${f.daysOverdue === 1 ? '' : 's'} overdue` : 'not overdue yet'}.` });
-  if (f.daysOverdue <= 0) return { willAct: false, short: 'Not due yet', headline: 'Nothing is due yet. Reminders start once the invoice is past its due date.', findings };
+  findings.push({ level: 'ok', text: `The invoice is open and ${f.daysOverdue > 0 ? `${f.daysOverdue} day${f.daysOverdue === 1 ? '' : 's'} overdue` : f.daysOverdue < 0 ? `not overdue yet (due in ${-f.daysOverdue} day${f.daysOverdue === -1 ? '' : 's'})` : 'not overdue yet'}.` });
+  // A schedule can start before the due date. Only when it does not, an invoice
+  // that is not late yet has nothing to explain.
+  const startsBeforeOrOnDue = f.steps.some((s) => s.daysFromDue <= 0);
+  if (f.daysOverdue <= 0 && !startsBeforeOrOnDue) return { willAct: false, short: 'Not due yet', headline: 'Nothing is due yet. Reminders start once the invoice is past its due date.', findings };
 
   if (f.customerUnsubscribed) return block(`${f.customerName} has unsubscribed, or their address bounced. Reminders are off for good and cannot be switched back on from here.`, 'Unsubscribed');
   if (f.hold && (f.hold.heldUntil === null || f.hold.heldUntil.getTime() > f.now.getTime())) {
@@ -78,19 +82,19 @@ export function explain(f: Facts): Explanation {
   if (!f.scheduleActive) return block(`The schedule "${f.scheduleName}" is switched off.`, 'Schedule off');
   findings.push({ level: 'ok', text: `Following the schedule "${f.scheduleName}".` });
 
-  const due = f.steps.filter((s) => s.daysFromDue <= f.daysOverdue);
+  const due = f.steps.filter((s) => s.daysFromDue <= f.daysOverdue).sort((a, b) => a.daysFromDue - b.daysFromDue);
   if (due.length === 0) {
     const next = [...f.steps].sort((a, b) => a.daysFromDue - b.daysFromDue)[0];
     const inDays = next ? next.daysFromDue - f.daysOverdue : 0;
-    return { willAct: false, short: next ? `In ${inDays} day${inDays === 1 ? '' : 's'}` : 'No steps', headline: next ? `The first reminder is set for ${next.daysFromDue} days past due, so nothing is due yet. That is in ${next.daysFromDue - f.daysOverdue} day${next.daysFromDue - f.daysOverdue === 1 ? '' : 's'}.` : 'This schedule has no steps.', findings };
+    return { willAct: false, short: next ? `In ${inDays} day${inDays === 1 ? '' : 's'}` : 'No steps', headline: next ? `The first reminder is set for ${stepDayPhrase(next.daysFromDue)}, so nothing is due yet. That is in ${next.daysFromDue - f.daysOverdue} day${next.daysFromDue - f.daysOverdue === 1 ? '' : 's'}.` : 'This schedule has no steps.', findings };
   }
   const step = due[due.length - 1];
   if (f.ranStepIds.includes(step.id)) {
     const later = f.steps.filter((s) => s.daysFromDue > f.daysOverdue).sort((a, b) => a.daysFromDue - b.daysFromDue)[0];
     const laterIn = later ? later.daysFromDue - f.daysOverdue : 0;
-    return { willAct: false, short: later ? `In ${laterIn} day${laterIn === 1 ? '' : 's'}` : 'All sent', headline: later ? `The step due now has already been handled. The next one is at ${later.daysFromDue} days past due.` : 'Every step of the schedule has already been handled for this invoice.', findings };
+    return { willAct: false, short: later ? `In ${laterIn} day${laterIn === 1 ? '' : 's'}` : 'All sent', headline: later ? `The step due now has already been handled. The next one is set for ${stepDayPhrase(later.daysFromDue)}.` : 'Every step of the schedule has already been handled for this invoice.', findings };
   }
-  findings.push({ level: 'ok', text: `${step.channel === 'sms' ? 'A text message' : 'An email'} step at ${step.daysFromDue} days past due is now due.` });
+  findings.push({ level: 'ok', text: `${step.channel === 'sms' ? 'A text message' : 'An email'} step set for ${stepDayPhrase(step.daysFromDue)} is now due.` });
   if (f.failedStepIds.includes(step.id)) findings.push({ level: 'note', text: 'This step failed before. It will be tried again on the next run.' });
 
   if (f.gapBlockedUntil && f.gapBlockedUntil.getTime() > f.now.getTime()) {

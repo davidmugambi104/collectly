@@ -5,11 +5,13 @@ import { dunningSequences } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
+import { MAX_LEAD_DAYS } from '@/lib/dunning/step-timing';
 
 const schema = z.object({
   steps: z.array(z.object({
     id: z.string(),
-    daysFromDue: z.number().int().min(0),
+    // Negative = before the due date (a heads-up), up to MAX_LEAD_DAYS ahead.
+    daysFromDue: z.number().int().min(-MAX_LEAD_DAYS).max(365),
     channel: z.enum(['email', 'sms']),
     tone: z.enum(['friendly', 'firm', 'final']),
     subject: z.string().optional(),
@@ -42,6 +44,6 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const [seq] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.id, id), eq(dunningSequences.orgId, orgId))).limit(1);
   if (!seq) return NextResponse.json({ error: 'not found' }, { status: 404 });
-  await db.update(dunningSequences).set({ steps: data.steps, updatedAt: new Date() }).where(eq(dunningSequences.id, id));
+  await db.update(dunningSequences).set({ steps: [...data.steps].sort((a, b) => a.daysFromDue - b.daysFromDue), updatedAt: new Date() }).where(eq(dunningSequences.id, id));
   return NextResponse.json({ ok: true });
 }

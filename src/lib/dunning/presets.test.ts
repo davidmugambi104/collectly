@@ -7,7 +7,7 @@ test('every preset has unique step ids and days that only go up', () => {
     assert.equal(new Set(p.steps.map((s) => s.id)).size, p.steps.length, p.id);
     const days = p.steps.map((s) => s.daysFromDue);
     assert.deepEqual(days, [...days].sort((a, b) => a - b), p.id);
-    assert.ok(days[0] >= 1, p.id);
+    assert.ok(days[0] >= -30 && days[0] !== 0, p.id);
   }
 });
 
@@ -24,7 +24,7 @@ test('the blurbs agree with the steps', () => {
     assert.equal(/\btext\b/i.test(p.blurb) && !/No texts/.test(p.blurb), hasSms, p.id);
     const emails = p.steps.filter((s) => s.channel === 'email').length;
     assert.ok(p.blurb.startsWith(emails === 3 ? 'Three emails' : 'Four emails'), p.id);
-    for (const d of p.steps.map((s) => s.daysFromDue)) assert.ok(p.blurb.includes(String(d)), `${p.id} day ${d}`);
+    for (const d of p.steps.map((s) => Math.abs(s.daysFromDue))) assert.ok(p.blurb.includes(String(d)), `${p.id} day ${d}`);
   }
 });
 
