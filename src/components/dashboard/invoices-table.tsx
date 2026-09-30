@@ -65,7 +65,9 @@ function DaysPastDue({ days }: { days: number }) {
   );
 }
 
-export function InvoicesTable({ rows }: { rows: Row[] }) {
+export type NextReminder = { short: string; headline: string; willAct: boolean };
+
+export function InvoicesTable({ rows, next = {} }: { rows: Row[]; next?: Record<string, NextReminder> }) {
   if (rows.length === 0) return null;
 
   return (
@@ -129,6 +131,7 @@ export function InvoicesTable({ rows }: { rows: Row[] }) {
                   <th scope="col" className="w-[124px]">Invoice</th>
                   <th scope="col" className="w-[116px]">Status</th>
                   <th scope="col" className="w-[152px]">Due</th>
+                  <th scope="col" className="w-[132px]">Next reminder</th>
                   <th scope="col" className="col-num w-[128px]">Amount</th>
                   <th scope="col" className="col-num w-[140px]">Balance</th>
                 </tr>
@@ -185,6 +188,11 @@ export function InvoicesTable({ rows }: { rows: Row[] }) {
                           the balance is the number a bookkeeper is here for.
                           A settled row has nothing left to collect, so its zero
                           recedes instead of competing with live balances. */}
+                      <td className="whitespace-nowrap text-2xs">
+                        {next[invoice.id]
+                          ? <span title={next[invoice.id].headline} className={next[invoice.id].willAct ? 'font-medium text-brand-700' : 'text-ink-600'}>{next[invoice.id].short}</span>
+                          : <span className="text-ink-300">–</span>}
+                      </td>
                       <td className="col-num text-ink-500">{formatCurrency(invoice.amount, invoice.currency)}</td>
                       <td className={`col-num ${settled ? 'text-ink-400' : 'num-strong'}`}>
                         {formatCurrency(balance, invoice.currency)}

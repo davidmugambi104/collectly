@@ -1,61 +1,90 @@
-/** Gathers the facts explain() needs for one invoice. Every read is scoped to the org. */
+/**
+ * Gathers the facts explain() needs. One query per kind of fact for a whole set
+ * of invoices, not one per invoice, so the invoice list can show a "next
+ * reminder" for every row. Every read is scoped to the org.
+ */
 import { db } from '@/db';
 import { invoices, customers, dunningHolds, promisesToPay, inboxMessages, dunningSequences, dunningRuns, dunningSettings, customerGroupMembers, groupSequences } from '@/db/schema';
-import { and, eq, gte, desc, sql, inArray, ne } from 'drizzle-orm';
+import { and, eq, gte, sql, inArray } from 'drizzle-orm';
 import { maySendSms } from '@/lib/sms-consent';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 import { loadSendWindow, isDefaultSequence, loadChaseRules } from '@/lib/dunning/org-settings';
-import { gapBlockedUntil, CONTACTING_STATUSES } from '@/lib/dunning/chase-rules';
+import { gapBlockedUntil, CONTACTING_STATUSES, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { explain, type Explanation, type Step } from '@/lib/dunning/explain';
 
-export async function explainInvoice(orgId: string, invoiceId: string, now = new Date()): Promise<Explanation | null> {
-  const [row] = await db.select({ invoice: invoices, customer: customers }).from(invoices)
-    .innerJoin(customers, eq(customers.id, invoices.customerId))
-    .where(and(eq(invoices.id, invoiceId), eq(invoices.orgId, orgId))).limit(1);
-  if (!row) return null;
-  const { invoice, customer } = row;
+type Seq = typeof dunningSequences.$inferSelect;
 
-  const [hold] = await db.select({ heldUntil: dunningHolds.heldUntil }).from(dunningHolds).where(eq(dunningHolds.customerId, customer.id)).limit(1);
-  const [promise] = await db.select({ d: promisesToPay.promisedDate }).from(promisesToPay)
-    .where(and(eq(promisesToPay.invoiceId, invoice.id), eq(promisesToPay.status, 'active'), gte(promisesToPay.promisedDate, now)))
-    .orderBy(desc(promisesToPay.promisedDate)).limit(1);
-  const [reply] = await db.select({ id: inboxMessages.id }).from(inboxMessages).where(and(eq(inboxMessages.invoiceId, invoice.id), eq(inboxMessages.status, 'new'))).limit(1);
+export async function explainInvoices(orgId: string, invoiceIds: string[], now = new Date()): Promise<Map<string, Explanation>> {
+  const out = new Map<string, Explanation>();
+  if (invoiceIds.length === 0) return out;
+
+  const rows = await db.select({ invoice: invoices, customer: customers }).from(invoices)
+    .innerJoin(customers, eq(customers.id, invoices.customerId))
+    .where(and(inArray(invoices.id, invoiceIds), eq(invoices.orgId, orgId)));
+  if (rows.length === 0) return out;
+  const ids: string[] = rows.map((r: { invoice: { id: string } }) => r.invoice.id);
+  const customerIds: string[] = [...new Set<string>(rows.map((r: { customer: { id: string } }) => r.customer.id))];
+
+  const holdRows: Array<{ customerId: string; heldUntil: Date | null }> = await db.select({ customerId: dunningHolds.customerId, heldUntil: dunningHolds.heldUntil }).from(dunningHolds).where(inArray(dunningHolds.customerId, customerIds));
+  const holdBy = new Map(holdRows.map((h) => [h.customerId, h]));
+
+  const promiseRows: Array<{ invoiceId: string; d: Date }> = await db.select({ invoiceId: promisesToPay.invoiceId, d: promisesToPay.promisedDate }).from(promisesToPay)
+    .where(and(inArray(promisesToPay.invoiceId, ids), eq(promisesToPay.status, 'active'), gte(promisesToPay.promisedDate, now)));
+  const promiseBy = new Map<string, Date>();
+  for (const p of promiseRows) { const cur = promiseBy.get(p.invoiceId); if (!cur || p.d > cur) promiseBy.set(p.invoiceId, p.d); }
+
+  const replyRows: Array<{ invoiceId: string | null }> = await db.select({ invoiceId: inboxMessages.invoiceId }).from(inboxMessages).where(and(inArray(inboxMessages.invoiceId, ids), eq(inboxMessages.status, 'new')));
+  const hasReply = new Set(replyRows.map((r) => r.invoiceId));
 
   // The schedule that applies: the customer's group's, if it has an active one, else the default.
-  const [grouped] = await db.select({ seq: dunningSequences }).from(customerGroupMembers)
+  const groupedRows: Array<{ customerId: string; seq: Seq }> = await db.select({ customerId: customerGroupMembers.customerId, seq: dunningSequences }).from(customerGroupMembers)
     .innerJoin(groupSequences, eq(groupSequences.groupId, customerGroupMembers.groupId))
     .innerJoin(dunningSequences, eq(dunningSequences.id, groupSequences.sequenceId))
-    .where(and(eq(customerGroupMembers.customerId, customer.id), eq(dunningSequences.isActive, true))).limit(1);
-  const [fallback] = grouped ? [] : await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), isDefaultSequence, sql`${dunningSequences.name} <> 'Manual'`)).limit(1);
-  const seq = grouped?.seq ?? fallback;
+    .where(and(inArray(customerGroupMembers.customerId, customerIds), eq(dunningSequences.isActive, true)));
+  const groupedBy = new Map(groupedRows.map((g) => [g.customerId, g.seq]));
+  const [fallback]: Seq[] = await db.select().from(dunningSequences).where(and(eq(dunningSequences.orgId, orgId), isDefaultSequence, sql`${dunningSequences.name} <> 'Manual'`)).limit(1);
 
   const [settings] = await db.select({ approvalRequired: dunningSettings.approvalRequired }).from(dunningSettings).where(eq(dunningSettings.orgId, orgId)).limit(1);
-  const runs = seq ? await db.select({ stepId: dunningRuns.stepId, status: dunningRuns.status }).from(dunningRuns).where(and(eq(dunningRuns.invoiceId, invoice.id), eq(dunningRuns.sequenceId, seq.id))) : [];
-
-  // Chasing rules: what this customer has been sent about other invoices lately.
+  const window = await loadSendWindow(orgId);
   const rules = await loadChaseRules(orgId);
-  const recent = rules.minGapDays > 0
-    ? await db.select({ invoiceId: dunningRuns.invoiceId, at: dunningRuns.createdAt }).from(dunningRuns)
-        .innerJoin(invoices, eq(invoices.id, dunningRuns.invoiceId))
-        .where(and(eq(dunningRuns.orgId, orgId), eq(invoices.customerId, customer.id), ne(dunningRuns.invoiceId, invoice.id),
-          gte(dunningRuns.createdAt, new Date(now.getTime() - rules.minGapDays * 86_400_000)), inArray(dunningRuns.status, [...CONTACTING_STATUSES])))
-    : [];
 
-  const daysOverdue = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
-  return explain({
-    now, invoiceStatus: invoice.status, daysOverdue, customerName: customer.name,
-    customerUnsubscribed: !!customer.dndAt,
-    hold: hold ? { heldUntil: hold.heldUntil } : null,
-    promiseUntil: promise?.d ?? null,
-    unhandledReply: !!reply, pauseOnReply: seq?.pauseOnReply ?? true,
-    scheduleName: seq?.name ?? 'none', scheduleActive: !!seq?.isActive,
-    steps: ((seq?.steps ?? []) as Step[]).map((s) => ({ id: s.id, daysFromDue: s.daysFromDue, channel: s.channel })),
-    ranStepIds: runs.filter((r: { status: string }) => r.status !== 'failed').map((r: { stepId: string }) => r.stepId),
-    failedStepIds: runs.filter((r: { status: string }) => r.status === 'failed').map((r: { stepId: string }) => r.stepId),
-    approvalRequired: isApprovalRequired(settings),
-    window: await loadSendWindow(orgId),
-    hasEmail: !!customer.email, hasPhone: !!customer.phone, smsAllowed: maySendSms(customer),
-    balance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), minBalance: rules.minBalance,
-    gapDays: rules.minGapDays, gapBlockedUntil: gapBlockedUntil(recent as Array<{ invoiceId: string; at: Date }>, invoice.id, rules.minGapDays),
-  });
+  const runRows: Array<{ invoiceId: string; sequenceId: string; stepId: string; status: string }> = await db.select({ invoiceId: dunningRuns.invoiceId, sequenceId: dunningRuns.sequenceId, stepId: dunningRuns.stepId, status: dunningRuns.status }).from(dunningRuns).where(inArray(dunningRuns.invoiceId, ids));
+
+  // Chasing rules: what each customer has been sent lately, about any invoice.
+  const recentBy = new Map<string, RecentReminder[]>();
+  if (rules.minGapDays > 0) {
+    const recentRows: Array<{ customerId: string; invoiceId: string; at: Date }> = await db.select({ customerId: invoices.customerId, invoiceId: dunningRuns.invoiceId, at: dunningRuns.createdAt }).from(dunningRuns)
+      .innerJoin(invoices, eq(invoices.id, dunningRuns.invoiceId))
+      .where(and(eq(dunningRuns.orgId, orgId), inArray(invoices.customerId, customerIds),
+        gte(dunningRuns.createdAt, new Date(now.getTime() - rules.minGapDays * 86_400_000)), inArray(dunningRuns.status, [...CONTACTING_STATUSES])));
+    for (const r of recentRows) { const l = recentBy.get(r.customerId) ?? []; l.push({ invoiceId: r.invoiceId, at: r.at }); recentBy.set(r.customerId, l); }
+  }
+
+  for (const { invoice, customer } of rows as Array<{ invoice: typeof invoices.$inferSelect; customer: typeof customers.$inferSelect }>) {
+    const seq = groupedBy.get(customer.id) ?? fallback;
+    const hold = holdBy.get(customer.id);
+    const runs = seq ? runRows.filter((r) => r.invoiceId === invoice.id && r.sequenceId === seq.id) : [];
+    const daysOverdue = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
+    out.set(invoice.id, explain({
+      now, invoiceStatus: invoice.status, daysOverdue, customerName: customer.name,
+      customerUnsubscribed: !!customer.dndAt,
+      hold: hold ? { heldUntil: hold.heldUntil } : null,
+      promiseUntil: promiseBy.get(invoice.id) ?? null,
+      unhandledReply: hasReply.has(invoice.id), pauseOnReply: seq?.pauseOnReply ?? true,
+      scheduleName: seq?.name ?? 'none', scheduleActive: !!seq?.isActive,
+      steps: ((seq?.steps ?? []) as Step[]).map((s) => ({ id: s.id, daysFromDue: s.daysFromDue, channel: s.channel })),
+      ranStepIds: runs.filter((r) => r.status !== 'failed').map((r) => r.stepId),
+      failedStepIds: runs.filter((r) => r.status === 'failed').map((r) => r.stepId),
+      approvalRequired: isApprovalRequired(settings),
+      window,
+      hasEmail: !!customer.email, hasPhone: !!customer.phone, smsAllowed: maySendSms(customer),
+      balance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), minBalance: rules.minBalance,
+      gapDays: rules.minGapDays, gapBlockedUntil: gapBlockedUntil(recentBy.get(customer.id) ?? [], invoice.id, rules.minGapDays),
+    }));
+  }
+  return out;
+}
+
+export async function explainInvoice(orgId: string, invoiceId: string, now = new Date()): Promise<Explanation | null> {
+  return (await explainInvoices(orgId, [invoiceId], now)).get(invoiceId) ?? null;
 }

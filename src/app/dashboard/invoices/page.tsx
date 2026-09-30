@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { Search, SearchX, Plus, FileText } from 'lucide-react';
 
 import { SavedViews } from '@/components/app/saved-views';
+import { explainInvoices } from '@/lib/dunning/explain-load';
 import { loadViews } from '@/lib/saved-views-load';
 import { cleanViewQuery } from '@/lib/saved-views';
 
@@ -93,6 +94,17 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
 
   // No more post-fetch JS filter — the SQL already handled it.
   const filtered = rows;
+
+  // "Next reminder" for every open invoice on screen, from the same rules the
+  // scheduler and the 'why hasn't it gone out' panel use. If this fails the
+  // list still renders, just without the column filled in.
+  const next: Record<string, { short: string; headline: string; willAct: boolean }> = {};
+  try {
+    const open = filtered.filter((r: { invoice: { id: string; status: string } }) => !['paid', 'written_off', 'draft'].includes(r.invoice.status)).map((r: { invoice: { id: string } }) => r.invoice.id);
+    for (const [id, e] of await explainInvoices(orgId, open)) next[id] = { short: e.short, headline: e.headline, willAct: e.willAct };
+  } catch (e) {
+    console.error('[invoices] next reminder failed:', e instanceof Error ? e.message : e);
+  }
 
   const views = await loadViews(orgId, 'invoices');
   const currentView = cleanViewQuery('invoices', { filter: sp.filter, bucket: sp.bucket, q: sp.q });
@@ -216,7 +228,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
           )}
         </div>
       ) : (
-        <InvoicesTable rows={filtered} />
+        <InvoicesTable rows={filtered} next={next} />
       )}
     </AppShell>
   );

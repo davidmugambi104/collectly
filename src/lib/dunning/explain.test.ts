@@ -106,3 +106,18 @@ test('the gap only matters once a new step is actually due', () => {
   const e = explain({ ...base, daysOverdue: 3, gapBlockedUntil: new Date('2026-10-05T14:00:00Z') });
   assert.doesNotMatch(e.headline, /another invoice/);
 });
+
+test('every outcome carries a short label for a table cell', () => {
+  assert.equal(explain(base).short, 'Draft next run');
+  assert.equal(explain({ ...base, approvalRequired: false }).short, 'Sends next run');
+  assert.equal(explain({ ...base, daysOverdue: 0 }).short, 'Not due yet');
+  assert.equal(explain({ ...base, customerUnsubscribed: true }).short, 'Unsubscribed');
+  assert.equal(explain({ ...base, hold: { heldUntil: null } }).short, 'Paused by you');
+  assert.equal(explain({ ...base, unhandledReply: true }).short, 'Read their reply');
+  assert.equal(explain({ ...base, balance: 1, minBalance: 5 }).short, 'Below minimum');
+  assert.equal(explain({ ...base, hasEmail: false, steps: [{ id: 's1', daysFromDue: 1, channel: 'email' }], ranStepIds: [] }).short, 'No email');
+  assert.equal(explain({ ...base, gapBlockedUntil: new Date('2026-10-05T14:00:00Z') }).short, 'After Oct 5');
+  assert.equal(explain({ ...base, daysOverdue: 3 }).short, 'In 4 days');
+  assert.equal(explain({ ...base, invoiceStatus: 'paid' }).short, 'Not chased');
+  assert.equal(explain({ ...base, invoiceStatus: 'disputed' }).short, 'Disputed');
+});
