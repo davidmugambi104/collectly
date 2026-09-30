@@ -4,7 +4,7 @@ import { WaitlistForm } from '@/components/marketing/waitlist';
 import { Button } from '@/components/ui/button';
 import { ComparisonTable } from '@/components/marketing/comparison-table';
 import Link from 'next/link';
-import { Check, ArrowRight, DollarSign, Clock, Zap, Users } from 'lucide-react';
+import { Check, ArrowRight, DollarSign, Clock, Zap, Users, Layers } from 'lucide-react';
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
@@ -25,6 +25,7 @@ const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-invoice fees`, chaser: '~$259/mo entry plan (£199, by revenue band)' },
   { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', chaser: 'A few hours, per G2 reviewers' },
   { icon: Zap, label: 'AI dunning', collectly: 'Tone-aware email + SMS out of the box', chaser: 'Email/SMS/call, AI email generator' },
+  { icon: Layers, label: 'Schedules', collectly: 'Customer groups, each with its own schedule. No cap on how many', chaser: '4 schedules on the $259 plan; unlimited from $779 (their subscription page, read 2026-09-30)' },
   { icon: Users, label: 'Best for', collectly: '5-30 person agencies and consultancies', chaser: 'SMB to mid-market ($5M–$120M revenue)' },
 ];
 

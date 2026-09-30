@@ -9,6 +9,7 @@
  * the order.
  */
 import { isWithinWindow, nextWindowOpen, type SendWindow } from './send-window.ts';
+import { belowMinBalance } from './chase-rules.ts';
 
 export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' };
 
@@ -32,6 +33,12 @@ export type Facts = {
   hasEmail: boolean;
   hasPhone: boolean;
   smsAllowed: boolean;
+  /** What is still owed on this invoice, and the owner's minimum. */
+  balance: number;
+  minBalance: number;
+  /** The owner's per-customer gap in days, and when it ends if another invoice's reminder started it. */
+  gapDays: number;
+  gapBlockedUntil: Date | null;
 };
 
 export type Finding = { level: 'blocked' | 'waiting' | 'note' | 'ok'; text: string };
@@ -61,6 +68,9 @@ export function explain(f: Facts): Explanation {
   if (f.unhandledReply && f.pauseOnReply) {
     return block(`${f.customerName} replied and the reply is still waiting in your inbox. Mark it handled and reminders can continue.`);
   }
+  if (belowMinBalance(f.balance, f.minBalance)) {
+    return block(`The balance, ${f.balance.toFixed(2)}, is below your minimum of ${f.minBalance.toFixed(2)}, so this invoice is not chased.`);
+  }
   if (!f.scheduleActive) return block(`The schedule "${f.scheduleName}" is switched off.`);
   findings.push({ level: 'ok', text: `Following the schedule "${f.scheduleName}".` });
 
@@ -74,8 +84,13 @@ export function explain(f: Facts): Explanation {
     const later = f.steps.filter((s) => s.daysFromDue > f.daysOverdue).sort((a, b) => a.daysFromDue - b.daysFromDue)[0];
     return { willAct: false, headline: later ? `The step due now has already been handled. The next one is at ${later.daysFromDue} days past due.` : 'Every step of the schedule has already been handled for this invoice.', findings };
   }
-  findings.push({ level: 'ok', text: `A ${step.channel === 'sms' ? 'text message' : 'email'} step at ${step.daysFromDue} days past due is now due.` });
+  findings.push({ level: 'ok', text: `${step.channel === 'sms' ? 'A text message' : 'An email'} step at ${step.daysFromDue} days past due is now due.` });
   if (f.failedStepIds.includes(step.id)) findings.push({ level: 'note', text: 'This step failed before. It will be tried again on the next run.' });
+
+  if (f.gapBlockedUntil && f.gapBlockedUntil.getTime() > f.now.getTime()) {
+    const text = `${f.customerName} was sent a reminder about another invoice lately, and your rule allows one per ${f.gapDays} day${f.gapDays === 1 ? '' : 's'}. This one waits until ${fmt(f.gapBlockedUntil)}.`;
+    return { willAct: false, headline: text, findings: [...findings, { level: 'waiting', text }] };
+  }
 
   if (step.channel === 'email' && !f.hasEmail) return block(`${f.customerName} has no email address, so this step will be cancelled.`);
   if (step.channel === 'sms') {

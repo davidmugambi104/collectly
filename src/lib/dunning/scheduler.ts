@@ -4,10 +4,11 @@
  */
 import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, customerGroupMembers, groupSequences, type Invoice } from '@/db/schema';
-import { eq, and, sql, lte, inArray } from 'drizzle-orm';
+import { eq, and, sql, lte, inArray, gte } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
-import { loadSendWindow, resolveFrom } from '@/lib/dunning/org-settings';
+import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-settings';
+import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
@@ -169,6 +170,39 @@ export async function processDunning(opts: ProcessOptions = {}) {
   const fromByOrg = new Map<string, string>();
   const windowOpenByOrg = new Map<string, boolean>();
 
+  // Chasing rules, read once per org per run, and the reminders each customer
+  // has had lately. The second is added to as drafts are made, so two invoices
+  // of one customer in the same run cannot both get one.
+  const rulesByOrg = new Map<string, ChaseRules>();
+  async function rulesFor(orgId: string): Promise<ChaseRules> {
+    const known = rulesByOrg.get(orgId);
+    if (known) return known;
+    const rules = await loadChaseRules(orgId);
+    rulesByOrg.set(orgId, rules);
+    return rules;
+  }
+  const recentByOrg = new Map<string, Map<string, RecentReminder[]>>();
+  async function recentFor(orgId: string, gapDays: number): Promise<Map<string, RecentReminder[]>> {
+    const known = recentByOrg.get(orgId);
+    if (known) return known;
+    const byCustomer = new Map<string, RecentReminder[]>();
+    if (gapDays > 0) {
+      const since = new Date(now.getTime() - gapDays * 86_400_000);
+      const rows = await db
+        .select({ customerId: invoices.customerId, invoiceId: dunningRuns.invoiceId, at: dunningRuns.createdAt })
+        .from(dunningRuns)
+        .innerJoin(invoices, eq(invoices.id, dunningRuns.invoiceId))
+        .where(and(eq(dunningRuns.orgId, orgId), gte(dunningRuns.createdAt, since), inArray(dunningRuns.status, [...CONTACTING_STATUSES])));
+      for (const r of rows as Array<{ customerId: string; invoiceId: string; at: Date }>) {
+        const list = byCustomer.get(r.customerId) ?? [];
+        list.push({ invoiceId: r.invoiceId, at: r.at });
+        byCustomer.set(r.customerId, list);
+      }
+    }
+    recentByOrg.set(orgId, byCustomer);
+    return byCustomer;
+  }
+
   for (const seq of sequences) {
     // Send window: only act during the owner's business hours. Nothing is
     // recorded for a skipped org, so the next run that lands inside the window
@@ -291,6 +325,9 @@ export async function processDunning(opts: ProcessOptions = {}) {
       }
     }
 
+    const rules = await rulesFor(seq.orgId);
+    const recentByCustomer = await recentFor(seq.orgId, rules.minGapDays);
+
     for (const { invoice, customer } of overdueInvoices) {
       if (opts.maxDrafts !== undefined && scheduled >= opts.maxDrafts) break;
       // Respect customer's do-not-disturb preference (set via /api/unsubscribe
@@ -298,6 +335,8 @@ export async function processDunning(opts: ProcessOptions = {}) {
       if (customer.dndAt) {
         continue;
       }
+      // Owner rule: not worth chasing below this balance.
+      if (belowMinBalance(Number(invoice.amount) - Number(invoice.amountPaid ?? 0), rules.minBalance)) continue;
       const days = Math.floor((now.getTime() - new Date(invoice.dueDate).getTime()) / 86400000);
       const dueSteps = (seq.steps ?? []).filter((s: DunningStep) => s.daysFromDue <= days);
       if (!dueSteps.length) continue;
@@ -307,6 +346,10 @@ export async function processDunning(opts: ProcessOptions = {}) {
       // Check if this exact step was already executed for this invoice
       // (batched lookup computed once above, not a per-invoice query).
       if (existingRunKeys.has(`${invoice.id}:${lastStep.id}`)) continue;
+
+      // Owner rule: at most one new reminder per customer in N days. Checked
+      // before the AI call so a held-back invoice costs nothing.
+      if (isGapBlocked(recentByCustomer.get(customer.id) ?? [], invoice.id, rules.minGapDays, now)) continue;
 
       try {
         const result = await generateDunningMessage({
@@ -384,6 +427,9 @@ export async function processDunning(opts: ProcessOptions = {}) {
         continue;
       }
       if (!insertedRunId) continue; // another concurrent run won the race
+      const recentList = recentByCustomer.get(customer.id) ?? [];
+      recentList.push({ invoiceId: invoice.id, at: now });
+      recentByCustomer.set(customer.id, recentList);
 
       const run = { id: insertedRunId } as { id: string };
 

@@ -7,12 +7,15 @@ import { recordEvent } from '@/lib/events';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { parseWindowInput } from '@/lib/dunning/send-window';
+import { parseRulesInput } from '@/lib/dunning/chase-rules';
 
 /**
  * PUT accepts either or both of:
  *   { approvalRequired: boolean }            whether reminders wait for the owner
  *   { sendWindow: { enabled, startHour, endHour, days, timezone } }
  *                                            only act during business hours
+ *   { chasing: { minGapDays, minBalance } }  at most one reminder per customer per N days;
+ *                                            skip invoices with a balance under X
  * Anything omitted is left as it was.
  */
 export async function PUT(req: NextRequest) {
@@ -43,6 +46,12 @@ export async function PUT(req: NextRequest) {
     set.sendWindowEnd = w.value.endHour;
     set.sendDays = w.value.days;
     set.sendTimezone = w.value.timezone;
+  }
+  if ('chasing' in input) {
+    const r = parseRulesInput(input.chasing);
+    if (!r.ok) return NextResponse.json({ error: r.error }, { status: 400 });
+    set.minGapDays = r.value.minGapDays;
+    set.minBalance = r.value.minBalance.toFixed(2);
   }
   if (Object.keys(set).length === 0) {
     return NextResponse.json({ error: 'nothing to update' }, { status: 400 });

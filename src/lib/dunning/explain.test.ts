@@ -11,6 +11,7 @@ const base: Facts = {
   steps: [{ id: 's1', daysFromDue: 1, channel: 'email' }, { id: 's2', daysFromDue: 7, channel: 'email' }, { id: 's3', daysFromDue: 30, channel: 'sms' }],
   ranStepIds: ['s1'], failedStepIds: [], approvalRequired: true, window: DEFAULT_WINDOW,
   hasEmail: true, hasPhone: true, smsAllowed: false,
+  balance: 100, minBalance: 0, gapDays: 7, gapBlockedUntil: null,
 };
 
 test('the happy path says what will happen next, in approval mode and in automatic mode', () => {
@@ -80,4 +81,28 @@ test('outside the send window it says when the window opens', () => {
   const e = explain({ ...base, window: win });
   assert.equal(e.willAct, false);
   assert.match(e.headline, /Outside your send window.*2026-10-01 23:00 UTC/);
+});
+
+test('a balance under the owner minimum is not chased, and says why', () => {
+  const e = explain({ ...base, balance: 4.5, minBalance: 10 });
+  assert.equal(e.willAct, false);
+  assert.match(e.headline, /below your minimum of 10\.00/);
+  assert.equal(explain({ ...base, balance: 10, minBalance: 10 }).willAct, true);
+});
+
+test('another invoice\'s recent reminder holds this one back until the gap ends', () => {
+  const until = new Date('2026-10-05T14:00:00Z');
+  const e = explain({ ...base, gapBlockedUntil: until });
+  assert.equal(e.willAct, false);
+  assert.match(e.headline, /another invoice/);
+  assert.match(e.headline, /one per 7 days/);
+  assert.match(e.headline, /2026-10-05/);
+  assert.equal(e.findings.at(-1)?.level, 'waiting');
+  assert.equal(explain({ ...base, gapBlockedUntil: new Date('2026-09-30T00:00:00Z') }).willAct, true, 'a gap that already ended does not block');
+});
+
+test('the gap only matters once a new step is actually due', () => {
+  // s1 already ran and nothing newer is due: the gap must not be what the owner is told.
+  const e = explain({ ...base, daysOverdue: 3, gapBlockedUntil: new Date('2026-10-05T14:00:00Z') });
+  assert.doesNotMatch(e.headline, /another invoice/);
 });

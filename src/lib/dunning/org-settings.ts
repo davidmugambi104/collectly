@@ -9,6 +9,7 @@ import { getDefaultFrom } from '@/lib/infra';
 import { formatDunningFrom, formatOwnDomainFrom } from '@/lib/email-from';
 import { canSendFrom } from '@/lib/email-domain';
 import { DEFAULT_WINDOW, isValidTimezone, type SendWindow } from '@/lib/dunning/send-window';
+import { DEFAULT_RULES, type ChaseRules } from '@/lib/dunning/chase-rules';
 
 /** The org's send window, in the owner's timezone. Off unless they turned it on. */
 export async function loadSendWindow(orgId: string): Promise<SendWindow> {
@@ -31,6 +32,17 @@ export async function loadSendWindow(orgId: string): Promise<SendWindow> {
     tz = isValidTimezone(org?.tz) ? org!.tz : 'UTC';
   }
   return { enabled: row.enabled, startHour: row.start, endHour: row.end, days: row.days, timezone: tz as string };
+}
+
+/** The org's chasing rules. No settings row means the defaults. */
+export async function loadChaseRules(orgId: string): Promise<ChaseRules> {
+  const [row] = await db
+    .select({ gap: dunningSettings.minGapDays, min: dunningSettings.minBalance })
+    .from(dunningSettings)
+    .where(eq(dunningSettings.orgId, orgId))
+    .limit(1);
+  if (!row) return DEFAULT_RULES;
+  return { minGapDays: Number(row.gap), minBalance: Number(row.min) };
 }
 
 /**

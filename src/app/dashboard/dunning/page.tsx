@@ -15,7 +15,7 @@ import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor'
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
 import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approval-queue';
 import { SendSettings } from '@/components/dunning/send-settings';
-import { loadSendWindow, isDefaultSequence } from '@/lib/dunning/org-settings';
+import { loadSendWindow, isDefaultSequence, loadChaseRules } from '@/lib/dunning/org-settings';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
 import { STANDARD_STEPS, PRESETS } from '@/lib/dunning/presets';
@@ -125,6 +125,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   let approvalRequired = true;
   let queue: QueuedReminder[] = [];
   let queueError = false;
+  let chaseRules = { minGapDays: 7, minBalance: 0 };
   let sendWindow = { enabled: false, startHour: 9, endHour: 17, days: 31, timezone: 'UTC' };
   let senderDomain: { domain: string; localPart: string; status: string; records: Array<{ kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string }> } | null = null;
   try {
@@ -132,6 +133,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     const [settingsRow] = await db.select({ approvalRequired: dunningSettings.approvalRequired }).from(dunningSettings).where(eq(dunningSettings.orgId, orgId)).limit(1);
     approvalRequired = isApprovalRequired(settingsRow);
     sendWindow = await loadSendWindow(orgId);
+    chaseRules = await loadChaseRules(orgId);
     const [dom] = await db.select().from(dunningSenderDomains).where(eq(dunningSenderDomains.orgId, orgId)).limit(1);
     if (dom) senderDomain = { domain: dom.domain, localPart: dom.localPart, status: dom.status, records: dom.records ?? [] };
     const pending = await db
@@ -320,7 +322,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         </>
       )}
 
-      {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} />}
+      {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} rules={chaseRules} />}
 
       <div data-tour="impact" className="mb-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <ImpactTile

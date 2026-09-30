@@ -499,6 +499,9 @@ export const dunningSettings = pgTable('dunning_settings', {
   sendWindowEnd: smallint('send_window_end').notNull().default(17),
   sendDays: smallint('send_days').notNull().default(31),
   sendTimezone: text('send_timezone'),
+  // Chasing rules, see src/lib/dunning/chase-rules.ts. A gap of 0 or a minimum of 0 turns the rule off.
+  minGapDays: smallint('min_gap_days').notNull().default(7),
+  minBalance: decimal('min_balance', { precision: 14, scale: 2 }).notNull().default('0'),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

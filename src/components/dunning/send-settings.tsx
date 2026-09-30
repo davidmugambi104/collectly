@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Clock, Globe2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Loader2, Clock, Globe2, CheckCircle2, AlertCircle, Scale } from 'lucide-react';
 
+type Rules = { minGapDays: number; minBalance: number };
 type Win = { enabled: boolean; startHour: number; endHour: number; days: number; timezone: string };
 type DnsRecord = { kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string };
 type Domain = { domain: string; localPart: string; status: string; records: DnsRecord[] } | null;
@@ -19,9 +20,10 @@ function dailyRunLocal(tz: string): string {
   } catch { return '14:00'; }
 }
 
-export function SendSettings({ window: initial, domain, emailConfigured }: { window: Win; domain: Domain; emailConfigured: boolean }) {
+export function SendSettings({ window: initial, domain, emailConfigured, rules: initialRules }: { window: Win; domain: Domain; emailConfigured: boolean; rules: Rules }) {
   const router = useRouter();
   const [w, setW] = useState<Win>(initial);
+  const [rules, setRules] = useState<{ minGapDays: string; minBalance: string }>({ minGapDays: String(initialRules.minGapDays), minBalance: String(initialRules.minBalance) });
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const [domainInput, setDomainInput] = useState('');
@@ -97,6 +99,29 @@ export function SendSettings({ window: initial, domain, emailConfigured }: { win
         <div className="mt-3">
           <button className="btn-secondary btn-sm" disabled={busy === 'window'} aria-busy={busy === 'window'} onClick={() => call('window', '/api/dunning/settings', 'PUT', { sendWindow: w }, 'Send window saved.')}>
             {busy === 'window' && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Save send window
+          </button>
+        </div>
+      </div>
+
+      {/* ---- Chasing rules ---- */}
+      <div className="mt-8 border-t border-ink-200 pt-6">
+        <h3 className="app-label flex items-center gap-2"><Scale aria-hidden="true" className="h-4 w-4 text-brand-600" />Chasing rules</h3>
+        <p className="app-meta mt-0.5 font-normal">Two limits that keep reminders sensible. A customer who owes on three invoices gets one reminder, not three on the same day. Each invoice still follows its own schedule.</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div>
+            <label htmlFor="rule-gap" className="label">Days between reminders to the same customer</label>
+            <input id="rule-gap" className="input" type="number" min={0} max={60} step={1} inputMode="numeric" value={rules.minGapDays} onChange={(e) => setRules({ ...rules, minGapDays: e.target.value })} />
+            <p className="app-meta mt-1 font-normal">0 turns this off.</p>
+          </div>
+          <div>
+            <label htmlFor="rule-min" className="label">Skip invoices with a balance below</label>
+            <input id="rule-min" className="input" type="number" min={0} step="0.01" inputMode="decimal" value={rules.minBalance} onChange={(e) => setRules({ ...rules, minBalance: e.target.value })} />
+            <p className="app-meta mt-1 font-normal">0 turns this off. Uses the invoice&apos;s own currency.</p>
+          </div>
+        </div>
+        <div className="mt-3">
+          <button className="btn-secondary btn-sm" disabled={busy === 'rules'} aria-busy={busy === 'rules'} onClick={() => call('rules', '/api/dunning/settings', 'PUT', { chasing: { minGapDays: Number(rules.minGapDays), minBalance: Number(rules.minBalance) } }, 'Chasing rules saved.')}>
+            {busy === 'rules' && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Save chasing rules
           </button>
         </div>
       </div>
