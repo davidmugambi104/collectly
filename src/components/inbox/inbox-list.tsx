@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, CheckCircle2, X, Mail, AlertTriangle, Sparkles, CalendarClock } from 'lucide-react';
+import { Loader2, CheckCircle2, X, Mail, AlertTriangle, Sparkles, CalendarClock, Reply, Undo2, Send } from 'lucide-react';
+import { useSendHold } from '@/components/dunning/use-send-hold';
 import { formatDate } from '@/lib/utils';
 
 type InboxItem = {
@@ -20,6 +21,10 @@ type InboxItem = {
   customerId: string | null;
   customerName: string | null;
   invoiceNumber: string | null;
+  /** Where a reply would go, or why it cannot. */
+  replyTo: string | null;
+  replyBlocked: string | null;
+  replies: Array<{ id: string; sentAt: string | Date; body: string }>;
 };
 
 // Nine bespoke coloured pills (`bg-*-100 text-*-700 border-*-200`, two of them
@@ -38,11 +43,30 @@ const CLASSIFICATION_STYLE: Record<string, { label: string; className: string }>
   unclassified: { label: 'Unclassified', className: 'badge-neutral' },
 };
 
-export function InboxList({ items, configured }: { items: InboxItem[]; configured: boolean }) {
+export function InboxList({ items, configured, emailConfigured = true }: { items: InboxItem[]; configured: boolean; emailConfigured?: boolean }) {
   const router = useRouter();
   const [filter, setFilter] = useState<'new' | 'handled' | 'dismissed' | 'all'>('new');
   const [actingId, setActingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Replying: one open composer at a time. A reply is held for 30 seconds so it can be undone.
+  const hold = useSendHold();
+  const [replyingId, setReplyingId] = useState<string | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [replyError, setReplyError] = useState<string | null>(null);
+
+  async function sendReply(id: string, body: string) {
+    setReplyError(null);
+    try {
+      const res = await fetch(`/api/inbox/${id}/reply`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ body }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? 'Could not send the reply');
+      setDrafts((d) => { const n = { ...d }; delete n[id]; return n; });
+      setReplyingId(null);
+      router.refresh();
+    } catch (e: unknown) {
+      setReplyError(e instanceof Error ? e.message : String(e));
+    }
+  }
 
   const filtered = filter === 'all' ? items : items.filter((m) => m.status === filter);
 
@@ -185,6 +209,16 @@ export function InboxList({ items, configured }: { items: InboxItem[]; configure
                         >
                           {formatDate(m.receivedAt)}
                         </time>
+                        {m.replyTo && replyingId !== m.id && (
+                          <button
+                            type="button"
+                            onClick={() => { setReplyingId(m.id); setReplyError(null); }}
+                            className="btn-secondary btn-sm h-7 text-2xs"
+                            title={`Reply to ${m.replyTo}`}
+                          >
+                            <Reply aria-hidden="true" className="h-3.5 w-3.5" /> Reply
+                          </button>
+                        )}
                         {isNew ? (
                           <div className="flex items-center gap-1.5 opacity-70 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
                             <button
@@ -260,6 +294,65 @@ export function InboxList({ items, configured }: { items: InboxItem[]; configure
                           )}
                         </div>
                       </div>
+                    )}
+
+                    {m.replies.length > 0 && (
+                      <ul aria-label="Your replies" className="mt-2 space-y-1.5">
+                        {m.replies.map((r) => (
+                          <li key={r.id} className="rounded-lg border bg-white px-2.5 py-1.5 text-2xs leading-4 text-ink-700">
+                            <span className="font-medium text-ink-500">You replied {formatDate(r.sentAt)}:</span>{' '}
+                            <span className="line-clamp-3 whitespace-pre-line">{r.body}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {replyingId === m.id && (() => {
+                      const left = hold.secondsLeft(m.id);
+                      const holding = left !== null;
+                      const text = drafts[m.id] ?? '';
+                      return (
+                        <div className="mt-3 rounded-lg border bg-ink-50 p-3">
+                          <label htmlFor={`reply-${m.id}`} className="label">Reply to {m.replyTo}</label>
+                          <textarea
+                            id={`reply-${m.id}`}
+                            className="input min-h-[110px]"
+                            value={text}
+                            maxLength={5000}
+                            readOnly={holding}
+                            placeholder="Write your reply"
+                            onChange={(e) => setDrafts((d) => ({ ...d, [m.id]: e.target.value }))}
+                          />
+                          <p className="app-meta mt-1 font-normal">Sent from your business address, with their message quoted underneath. Their answer comes back to this Inbox.</p>
+                          {!emailConfigured && <div role="note" className="alert-danger mt-2">Email is not set up on this server, so a reply cannot be sent yet.</div>}
+                          {replyError && <div role="alert" className="alert-danger mt-2">{replyError}</div>}
+                          <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                            {holding ? (
+                              <>
+                                <span role="status" className="app-meta mr-1 font-normal">Sending in {left}s. Close this page and it won&apos;t send.</span>
+                                <button type="button" className="btn-secondary btn-sm" onClick={() => hold.cancel(m.id)}>
+                                  <Undo2 aria-hidden="true" className="h-3.5 w-3.5" /> Undo
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button type="button" className="btn-ghost btn-sm" onClick={() => { setReplyingId(null); setReplyError(null); }}>Cancel</button>
+                                <button
+                                  type="button"
+                                  className="btn-primary btn-sm"
+                                  disabled={!text.trim() || !emailConfigured}
+                                  onClick={() => { setReplyError(null); hold.start(m.id, () => sendReply(m.id, text)); }}
+                                >
+                                  <Send aria-hidden="true" className="h-3.5 w-3.5" /> Send reply
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    {!m.replyTo && m.replyBlocked && replyingId !== m.id && m.status === 'new' && (
+                      <p className="app-meta mt-1.5 font-normal">{m.replyBlocked}</p>
                     )}
                   </div>
                 </li>

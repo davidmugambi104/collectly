@@ -71,6 +71,18 @@ export const DUNNING_CONTROL_DDL = [
      sequence_id text NOT NULL REFERENCES dunning_sequences(id) ON DELETE CASCADE,
      org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE
    )`,
+  `CREATE TABLE IF NOT EXISTS inbox_replies (
+     id text PRIMARY KEY,
+     org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+     message_id text NOT NULL REFERENCES inbox_messages(id) ON DELETE CASCADE,
+     to_address text NOT NULL,
+     subject text NOT NULL,
+     body text NOT NULL,
+     sent_by text,
+     external_id text,
+     sent_at timestamptz NOT NULL DEFAULT now()
+   )`,
+  `CREATE INDEX IF NOT EXISTS inbox_replies_message_idx ON inbox_replies (message_id)`,
   `CREATE TABLE IF NOT EXISTS saved_views (
      id text PRIMARY KEY,
      org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,

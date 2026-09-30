@@ -561,6 +561,19 @@ export const groupSequences = pgTable('group_sequences', {
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
 });
 
+/** What the organisation has written back to a customer from the Inbox. Inbound messages stay in inbox_messages. */
+export const inboxReplies = pgTable('inbox_replies', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  messageId: text('message_id').notNull().references(() => inboxMessages.id, { onDelete: 'cascade' }),
+  toAddress: text('to_address').notNull(),
+  subject: text('subject').notNull(),
+  body: text('body').notNull(),
+  sentBy: text('sent_by'),
+  externalId: text('external_id'),
+  sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({ messageIdx: index('inbox_replies_message_idx').on(t.messageId) }));
+
 /** Named filters on list pages, shared by the organisation. See src/lib/saved-views.ts. */
 export const savedViews = pgTable('saved_views', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
