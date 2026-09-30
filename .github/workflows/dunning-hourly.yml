@@ -7,7 +7,9 @@
 # It does nothing until two repository secrets exist, so it is safe to merge
 # before they are set:
 #   APP_URL      e.g. https://getcollectly.app  (the host that serves /api)
-#   CRON_SECRET  the same value as the CRON_SECRET environment variable on Vercel
+#   DUNNING_TRIGGER_SECRET  the same value as the DUNNING_TRIGGER_SECRET environment
+#                variable on Vercel. A separate secret from CRON_SECRET on purpose:
+#                CRON_SECRET is also used for OAuth state signing and stays in Vercel.
 #
 # Running it more often than the daily cron is safe: each step of a sequence is
 # recorded once per invoice, so a repeat run finds nothing new to do.
@@ -24,12 +26,12 @@ jobs:
       - name: Call the scheduler
         env:
           APP_URL: ${{ secrets.APP_URL }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          TRIGGER_SECRET: ${{ secrets.DUNNING_TRIGGER_SECRET }}
         run: |
-          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then
-            echo "APP_URL or CRON_SECRET is not set; skipping."
+          if [ -z "$APP_URL" ] || [ -z "$TRIGGER_SECRET" ]; then
+            echo "APP_URL or DUNNING_TRIGGER_SECRET is not set; skipping."
             exit 0
           fi
           curl --fail --silent --show-error --max-time 120 \
-            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Authorization: Bearer $TRIGGER_SECRET" \
             "$APP_URL/api/cron/dunning"
