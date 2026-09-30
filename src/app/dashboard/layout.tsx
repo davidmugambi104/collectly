@@ -3,7 +3,7 @@ import { ClerkProvider } from '@/components/clerk-provider';
 import { IdentifyUser } from '@/components/app/identify-user';
 import { WorkspaceProvider, type WorkspaceChrome } from '@/components/app/workspace-context';
 import { db } from '@/db';
-import { organizations, subscriptions, inboxMessages, dunningApprovals } from '@/db/schema';
+import { organizations, subscriptions, inboxMessages, dunningApprovals, dunningRuns } from '@/db/schema';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { and, eq, sql } from 'drizzle-orm';
 
@@ -23,6 +23,7 @@ async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceCh
     trialTotalDays: 14,
     unreadCount: 0,
     pendingCount: 0,
+    taskCount: 0,
   };
   if (!orgId) return base;
 
@@ -56,10 +57,13 @@ async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceCh
     // Reminders drafted and waiting for approval. Its own guard: the table is
     // created lazily, and a failure here must not cost the rest of the sidebar.
     let pendingCount = 0;
+    let taskCount = 0;
     try {
       await ensureDunningControlSchema();
       const [pending] = await db.select({ n: sql<number>`count(*)` }).from(dunningApprovals).where(eq(dunningApprovals.orgId, orgId));
       pendingCount = Number(pending?.n ?? 0);
+      const [tasks] = await db.select({ n: sql<number>`count(*)` }).from(dunningRuns).where(and(eq(dunningRuns.orgId, orgId), eq(dunningRuns.channel, 'phone'), eq(dunningRuns.status, 'scheduled')));
+      taskCount = Number(tasks?.n ?? 0);
     } catch { /* leave it at 0 */ }
 
     return {
@@ -70,6 +74,7 @@ async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceCh
       trialTotalDays,
       unreadCount: Number(unread?.n ?? 0),
       pendingCount,
+      taskCount,
     };
   } catch {
     return base;

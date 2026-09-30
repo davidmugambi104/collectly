@@ -30,7 +30,7 @@ function NavLink({
 }) {
   const active = isActive(pathname, item.href);
   const Icon = item.icon;
-  const { pendingCount } = useWorkspace();
+  const { pendingCount, taskCount } = useWorkspace();
   return (
     <>
       <Link
@@ -71,6 +71,12 @@ function NavLink({
           }`}
         />
         <span className="flex-1 truncate">{item.label}</span>
+        {item.showTasks && taskCount > 0 && (
+          <span className="shrink-0 min-w-[18px] rounded-full bg-warn-500 px-1.5 text-center text-2xs font-medium leading-[17px] tabular-nums text-white" title={`${taskCount} call${taskCount === 1 ? '' : 's'} to make`}>
+            <span className="sr-only">{taskCount} to do</span>
+            <span aria-hidden="true">{taskCount > 99 ? '99+' : taskCount}</span>
+          </span>
+        )}
         {item.showPending && pendingCount > 0 && (
           <span
             className="shrink-0 min-w-[18px] rounded-full bg-warn-500 px-1.5 text-center text-2xs font-medium leading-[17px] tabular-nums text-white"

@@ -12,7 +12,7 @@ const schema = z.object({
     id: z.string(),
     // Negative = before the due date (a heads-up), up to MAX_LEAD_DAYS ahead.
     daysFromDue: z.number().int().min(-MAX_LEAD_DAYS).max(365),
-    channel: z.enum(['email', 'sms']),
+    channel: z.enum(['email', 'sms', 'phone']),
     tone: z.enum(['friendly', 'firm', 'final']),
     subject: z.string().optional(),
     // The editor's "Style hint" field is explicitly labeled optional

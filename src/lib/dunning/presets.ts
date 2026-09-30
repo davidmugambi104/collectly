@@ -8,7 +8,7 @@
 export type PresetStep = {
   id: string;
   daysFromDue: number;
-  channel: 'email' | 'sms';
+  channel: 'email' | 'sms' | 'phone';
   tone: 'friendly' | 'firm' | 'final';
   subject?: string;
   template: string;

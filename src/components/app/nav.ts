@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Inbox, FileText, Building2, ArrowDownToLine,
-  Send, TrendingUp, History, BarChart3, Plug, Settings, MessageSquareText, type LucideIcon,
+  Send, TrendingUp, History, BarChart3, PhoneCall, Plug, Settings, MessageSquareText, type LucideIcon,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -11,6 +11,8 @@ export type NavItem = {
   showUnread?: boolean;
   /** Render the count of drafted reminders waiting for approval as a trailing pill. */
   showPending?: boolean;
+  /** Render the count of open call tasks as a trailing pill. */
+  showTasks?: boolean;
   /** Sub-destinations, revealed only while this section is active. */
   children?: { href: string; label: string }[];
 };
@@ -60,6 +62,7 @@ export const NAV_GROUPS: NavGroup[] = [
           { href: '/dashboard/dunning/performance', label: 'Performance' },
         ],
       },
+      { href: '/dashboard/tasks', label: 'Tasks', icon: PhoneCall, showTasks: true },
     ],
   },
   {

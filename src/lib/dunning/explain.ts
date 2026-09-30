@@ -12,7 +12,7 @@ import { isWithinWindow, nextWindowOpen, type SendWindow } from './send-window.t
 import { belowMinBalance } from './chase-rules.ts';
 import { stepDayPhrase } from './step-timing.ts';
 
-export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' };
+export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' | 'phone' };
 
 export type Facts = {
   now: Date;
@@ -94,8 +94,15 @@ export function explain(f: Facts): Explanation {
     const laterIn = later ? later.daysFromDue - f.daysOverdue : 0;
     return { willAct: false, short: later ? `In ${laterIn} day${laterIn === 1 ? '' : 's'}` : 'All sent', headline: later ? `The step due now has already been handled. The next one is set for ${stepDayPhrase(later.daysFromDue)}.` : 'Every step of the schedule has already been handled for this invoice.', findings };
   }
-  findings.push({ level: 'ok', text: `${step.channel === 'sms' ? 'A text message' : 'An email'} step set for ${stepDayPhrase(step.daysFromDue)} is now due.` });
+  findings.push({ level: 'ok', text: `${step.channel === 'sms' ? 'A text message' : step.channel === 'phone' ? 'A call task' : 'An email'} step set for ${stepDayPhrase(step.daysFromDue)} is now due.` });
   if (f.failedStepIds.includes(step.id)) findings.push({ level: 'note', text: 'This step failed before. It will be tried again on the next run.' });
+
+  // A call step is a task for the owner. Nothing is sent, so the customer's
+  // email, phone, consent and the per-customer gap do not apply to it.
+  if (step.channel === 'phone') {
+    const text = 'A call task will be added to your Tasks list on the next run. Nothing is sent to the customer.';
+    return { willAct: true, short: 'Call task next run', headline: text, findings: [...findings, { level: 'ok', text }] };
+  }
 
   if (f.gapBlockedUntil && f.gapBlockedUntil.getTime() > f.now.getTime()) {
     const text = `${f.customerName} was sent a reminder about another invoice lately, and your rule allows one per ${f.gapDays} day${f.gapDays === 1 ? '' : 's'}. This one waits until ${fmt(f.gapBlockedUntil)}.`;

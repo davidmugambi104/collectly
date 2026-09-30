@@ -149,3 +149,12 @@ test('a schedule with no pre-due step still ignores an invoice that is not late'
   const e = explain({ ...base, daysOverdue: -3 });
   assert.equal(e.short, 'Not due yet');
 });
+
+test('a call step makes a task, and is not blocked by a missing email, a missing phone or the gap rule', () => {
+  const call = { ...base, hasEmail: false, hasPhone: false, smsAllowed: false, ranStepIds: [], gapBlockedUntil: new Date('2026-10-09T00:00:00Z'), steps: [{ id: 'c1', daysFromDue: 5, channel: 'phone' as const }] };
+  const e = explain(call);
+  assert.equal(e.willAct, true);
+  assert.equal(e.short, 'Call task next run');
+  assert.match(e.headline, /Tasks list/);
+  assert.match(e.headline, /Nothing is sent to the customer/);
+});

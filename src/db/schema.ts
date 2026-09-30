@@ -171,7 +171,8 @@ export const dunningSequences = pgTable('dunning_sequences', {
   steps: jsonb('steps').$type<Array<{
     id: string;
     daysFromDue: number;
-    channel: 'email' | 'sms';
+    // 'phone' is a call task for the owner: nothing is sent to the customer.
+    channel: 'email' | 'sms' | 'phone';
     tone: 'friendly' | 'firm' | 'final';
     subject?: string;
     template: string;

@@ -30,6 +30,8 @@ export type WorkspaceChrome = {
   unreadCount: number;
   /** Drafted reminders waiting for the owner's approval — drives the Dunning nav count. */
   pendingCount: number;
+  /** Open call tasks — drives the Tasks nav count. */
+  taskCount: number;
 };
 
 const FALLBACK: WorkspaceChrome = {
@@ -40,6 +42,7 @@ const FALLBACK: WorkspaceChrome = {
   trialTotalDays: 14,
   unreadCount: 0,
   pendingCount: 0,
+  taskCount: 0,
 };
 
 const WorkspaceContext = createContext<WorkspaceChrome>(FALLBACK);

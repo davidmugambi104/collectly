@@ -3,12 +3,12 @@ import { stepDayLabel, stepDayPhrase, MAX_LEAD_DAYS } from '@/lib/dunning/step-t
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw, ChevronRight, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Mail, MessageSquare, Save, Loader2, Sparkles, RefreshCw, ChevronRight, CheckCircle2, AlertTriangle, Phone } from 'lucide-react';
 import { MessageBubble } from './message-bubble';
 import { RecipientCard } from './recipient-card';
 import { DUNNING_UNSAVED_EVENT, DUNNING_ERROR_EVENT } from '@/lib/dunning/events';
 
-export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
+export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' | 'phone'; tone: 'friendly' | 'firm' | 'final'; subject?: string; template: string };
 type Recipient = { name: string; email: string | null; phone: string | null; invoiceNumber: string; amount?: string; currency?: string; daysOverdue?: number };
 type Preview = { subject?: string; body: string; sample: boolean; recipient: Recipient | null };
 
@@ -174,6 +174,8 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
                       <AlertTriangle className="h-3.5 w-3.5" />
                       <span className="sr-only">SMS not configured, this step will fail</span>
                     </span>
+                  ) : s.channel === 'phone' ? (
+                    <Phone aria-hidden="true" className="h-3.5 w-3.5 text-ink-400" />
                   ) : s.channel === 'sms' ? (
                     <MessageSquare aria-hidden="true" className="h-3.5 w-3.5 text-ink-400" />
                   ) : (
@@ -183,7 +185,7 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
                 <div className="app-label mt-2">{stepDayLabel(s.daysFromDue)}</div>
                 {/* The node said "Day 7 / firm" and never named the channel in
                     words — the only cue was a 14px glyph. */}
-                <div className="app-meta font-normal">{s.channel === 'sms' ? 'SMS' : 'Email'}</div>
+                <div className="app-meta font-normal">{s.channel === 'sms' ? 'SMS' : s.channel === 'phone' ? 'Call task' : 'Email'}</div>
                 <span className={`${TONE_BADGE[s.tone]} mt-1 capitalize`}>{s.tone}</span>
               </motion.button>
               <FlowConnector delay={(i + 1) * 0.25} />
@@ -252,12 +254,12 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
                   </select>
                 </div>
               </div>
-              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option></select></div>
+              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option><option value="phone">Call (a task for you)</option></select></div>
               <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
             </div>
             <p className="app-meta font-normal">This step goes out {stepDayPhrase(active.daysFromDue)}.{active.daysFromDue < 0 && ' A step before the due date is a heads-up, and never calls the invoice overdue.'}</p>
             <div>
-              <label className="label">Style hint (optional)</label>
+              <label className="label">{active.channel === 'phone' ? 'Notes for the call (optional)' : 'Style hint (optional)'}</label>
               <textarea
                 value={active.template}
                 onChange={(e) => updateStep(activeIdx!, { template: e.target.value })}
@@ -286,7 +288,7 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
                   {preview.recipient && (
                     <RecipientCard
                       name={preview.recipient.name}
-                      channel={active.channel}
+                      channel={active.channel === 'sms' ? 'sms' : 'email'}
                       contact={active.channel === 'email' ? preview.recipient.email : preview.recipient.phone}
                       invoiceNumber={preview.recipient.invoiceNumber}
                       amount={preview.recipient.amount}
@@ -294,7 +296,7 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true }: { 
                       daysOverdue={preview.recipient.daysOverdue}
                     />
                   )}
-                  <MessageBubble channel={active.channel} subject={preview.subject} body={preview.body} />
+                  <MessageBubble channel={active.channel === 'sms' ? 'sms' : 'email'} subject={preview.subject} body={preview.body} />
                   <div className="flex items-center gap-2 text-xs text-ink-500">
                     {preview.sample
                       ? <span>Sample data — connect your books and sync invoices to preview against a real overdue invoice.</span>

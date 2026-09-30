@@ -9,6 +9,7 @@ import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-settings';
 import { leadDays } from '@/lib/dunning/step-timing';
+import { callTaskNote, callTaskTitle } from '@/lib/dunning/call-task';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
@@ -16,7 +17,7 @@ import { isApprovalRequired } from '@/lib/dunning/approval';
 import { recordEvent } from '@/lib/events';
 import { maySendSms } from '@/lib/sms-consent';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
-import { nanoid, errorMessage } from '@/lib/utils';
+import { nanoid, errorMessage, formatCurrency } from '@/lib/utils';
 
 // Mirrors the inline element type of dunningSequences.steps's jsonb
 // $type<Array<{...}>>() in schema.ts. That inline type has no exported name
@@ -25,7 +26,7 @@ import { nanoid, errorMessage } from '@/lib/utils';
 type DunningStep = {
   id: string;
   daysFromDue: number;
-  channel: 'email' | 'sms';
+  channel: 'email' | 'sms' | 'phone';
   tone: 'friendly' | 'firm' | 'final';
   subject?: string;
   template: string;
@@ -352,6 +353,27 @@ export async function processDunning(opts: ProcessOptions = {}) {
       // Check if this exact step was already executed for this invoice
       // (batched lookup computed once above, not a per-invoice query).
       if (existingRunKeys.has(`${invoice.id}:${lastStep.id}`)) continue;
+
+      // A call step is a task for the owner, not a message: nothing is sent, so
+      // it skips the per-customer gap rule (which limits what customers receive),
+      // the AI, approval and every email or SMS path below.
+      if (lastStep.channel === 'phone') {
+        const made = await db.insert(dunningRuns).values({
+          id: nanoid(), orgId: seq.orgId, invoiceId: invoice.id, sequenceId: seq.id, stepId: lastStep.id,
+          channel: 'phone', status: 'scheduled', scheduledFor: now,
+          subject: callTaskTitle(customer.name, invoice.number),
+          body: callTaskNote({
+            customerName: customer.name, invoiceNumber: invoice.number, daysOverdue: days,
+            amount: formatCurrency(Number(invoice.amount) - Number(invoice.amountPaid ?? 0), invoice.currency),
+            phone: customer.phone, notes: lastStep.template || null,
+          }),
+        }).onConflictDoNothing({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId] }).returning({ id: dunningRuns.id });
+        if (made.length) {
+          scheduled += 1;
+          await recordEvent({ orgId: seq.orgId, type: 'dunning.task.created', payload: { runId: made[0].id, invoiceId: invoice.id, stepId: lastStep.id, days } });
+        }
+        continue;
+      }
 
       // Owner rule: at most one new reminder per customer in N days. Checked
       // before the AI call so a held-back invoice costs nothing.

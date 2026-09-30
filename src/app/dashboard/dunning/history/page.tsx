@@ -55,7 +55,7 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
                   <td className="px-3 py-2 whitespace-nowrap">{formatDate(r.run.sentAt ?? r.run.createdAt)}</td>
                   <td className="px-3 py-2"><Link href={`/dashboard/customers/${r.customerId}`} className="link">{r.customer}</Link></td>
                   <td className="px-3 py-2 font-mono text-xs">{r.number}</td>
-                  <td className="px-3 py-2 capitalize">{r.run.channel === 'sms' ? 'SMS' : r.run.channel}</td>
+                  <td className="px-3 py-2 capitalize">{r.run.channel === 'sms' ? 'SMS' : r.run.channel === 'phone' ? 'Call task' : r.run.channel}</td>
                   <td className="px-3 py-2 capitalize">{r.run.status}</td>
                   <td className="px-3 py-2 text-ink-600">{r.run.error ?? r.run.subject ?? ''}</td>
                 </tr>
