@@ -1,4 +1,5 @@
 import { AppShell } from '@/components/app/shell';
+import { ExplainPanel } from '@/components/dunning/explain-panel';
 import { getAuth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
 import { db } from '@/db';
@@ -79,6 +80,8 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
         <span aria-hidden="true" className="text-ink-300">/</span>
         <span className="font-mono text-[13px] text-ink-500">{invoice.number}</span>
       </nav>
+
+      {invoice.status !== 'paid' && invoice.status !== 'written_off' && <div className="mb-5"><ExplainPanel invoiceId={invoice.id} /></div>}
 
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">

@@ -1,0 +1,93 @@
+/**
+ * "Why hasn't a reminder gone out for this invoice?"
+ *
+ * Walks the same checks the scheduler makes, in the same order, and says which
+ * one stops it. Pure: give it the facts, get a plain-English answer. The
+ * database side is in explain-load.ts.
+ *
+ * If the scheduler's rules change, change this with them. The test file pins
+ * the order.
+ */
+import { isWithinWindow, nextWindowOpen, type SendWindow } from './send-window.ts';
+
+export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' };
+
+export type Facts = {
+  now: Date;
+  invoiceStatus: string;
+  daysOverdue: number;
+  customerName: string;
+  customerUnsubscribed: boolean;
+  hold: { heldUntil: Date | null } | null;
+  promiseUntil: Date | null;
+  unhandledReply: boolean;
+  pauseOnReply: boolean;
+  scheduleName: string;
+  scheduleActive: boolean;
+  steps: Step[];
+  ranStepIds: string[];
+  failedStepIds: string[];
+  approvalRequired: boolean;
+  window: SendWindow;
+  hasEmail: boolean;
+  hasPhone: boolean;
+  smsAllowed: boolean;
+};
+
+export type Finding = { level: 'blocked' | 'waiting' | 'note' | 'ok'; text: string };
+export type Explanation = { willAct: boolean; headline: string; findings: Finding[] };
+
+const OPEN = new Set(['sent', 'viewed', 'overdue', 'partial']);
+const fmt = (d: Date) => d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+
+export function explain(f: Facts): Explanation {
+  const findings: Finding[] = [];
+  const block = (text: string): Explanation => ({ willAct: false, headline: text, findings: [...findings, { level: 'blocked', text }] });
+
+  if (!OPEN.has(f.invoiceStatus)) {
+    const why = f.invoiceStatus === 'paid' ? 'It is paid.' : f.invoiceStatus === 'disputed' ? 'It is marked as disputed, and stays out of the schedule until the dispute is resolved.' : f.invoiceStatus === 'written_off' ? 'It is written off.' : `Its status is "${f.invoiceStatus}", which is not chased.`;
+    return block(`Not chased. ${why}`);
+  }
+  findings.push({ level: 'ok', text: `The invoice is open and ${f.daysOverdue > 0 ? `${f.daysOverdue} day${f.daysOverdue === 1 ? '' : 's'} overdue` : 'not overdue yet'}.` });
+  if (f.daysOverdue <= 0) return { willAct: false, headline: 'Nothing is due yet. Reminders start once the invoice is past its due date.', findings };
+
+  if (f.customerUnsubscribed) return block(`${f.customerName} has unsubscribed, or their address bounced. Reminders are off for good and cannot be switched back on from here.`);
+  if (f.hold && (f.hold.heldUntil === null || f.hold.heldUntil.getTime() > f.now.getTime())) {
+    return block(f.hold.heldUntil ? `You paused reminders for ${f.customerName} until ${fmt(f.hold.heldUntil)}.` : `You paused reminders for ${f.customerName} until you resume them.`);
+  }
+  if (f.promiseUntil && f.promiseUntil.getTime() >= f.now.getTime()) {
+    return block(`${f.customerName} promised to pay by ${fmt(f.promiseUntil)}. Reminders wait until then.`);
+  }
+  if (f.unhandledReply && f.pauseOnReply) {
+    return block(`${f.customerName} replied and the reply is still waiting in your inbox. Mark it handled and reminders can continue.`);
+  }
+  if (!f.scheduleActive) return block(`The schedule "${f.scheduleName}" is switched off.`);
+  findings.push({ level: 'ok', text: `Following the schedule "${f.scheduleName}".` });
+
+  const due = f.steps.filter((s) => s.daysFromDue <= f.daysOverdue);
+  if (due.length === 0) {
+    const next = [...f.steps].sort((a, b) => a.daysFromDue - b.daysFromDue)[0];
+    return { willAct: false, headline: next ? `The first reminder is set for ${next.daysFromDue} days past due, so nothing is due yet. That is in ${next.daysFromDue - f.daysOverdue} day${next.daysFromDue - f.daysOverdue === 1 ? '' : 's'}.` : 'This schedule has no steps.', findings };
+  }
+  const step = due[due.length - 1];
+  if (f.ranStepIds.includes(step.id)) {
+    const later = f.steps.filter((s) => s.daysFromDue > f.daysOverdue).sort((a, b) => a.daysFromDue - b.daysFromDue)[0];
+    return { willAct: false, headline: later ? `The step due now has already been handled. The next one is at ${later.daysFromDue} days past due.` : 'Every step of the schedule has already been handled for this invoice.', findings };
+  }
+  findings.push({ level: 'ok', text: `A ${step.channel === 'sms' ? 'text message' : 'email'} step at ${step.daysFromDue} days past due is now due.` });
+  if (f.failedStepIds.includes(step.id)) findings.push({ level: 'note', text: 'This step failed before. It will be tried again on the next run.' });
+
+  if (step.channel === 'email' && !f.hasEmail) return block(`${f.customerName} has no email address, so this step will be cancelled.`);
+  if (step.channel === 'sms') {
+    if (!f.hasPhone) return block(`${f.customerName} has no phone number, so this step will be cancelled.`);
+    if (!f.smsAllowed) return block(`${f.customerName} has not opted in to texts, so this step will be cancelled.`);
+  }
+
+  if (!isWithinWindow(f.now, f.window)) {
+    const open = nextWindowOpen(f.now, f.window);
+    return { willAct: false, headline: open ? `Outside your send window. The next run inside it is after ${fmt(open)}.` : 'Outside your send window, and the window never opens.', findings: [...findings, { level: 'waiting', text: 'Your send window is closed right now.' }] };
+  }
+
+  const what = f.approvalRequired ? 'It will be drafted and held for your approval on the next run.' : 'It will be sent automatically on the next run.';
+  return { willAct: true, headline: what, findings: [...findings, { level: 'ok', text: what }] };
+}

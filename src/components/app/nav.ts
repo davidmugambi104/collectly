@@ -53,6 +53,7 @@ export const NAV_GROUPS: NavGroup[] = [
         children: [
           { href: '/dashboard/dunning/sequence', label: 'Sequence' },
           { href: '/dashboard/groups', label: 'Groups' },
+          { href: '/dashboard/dunning/history', label: 'History' },
           { href: '/dashboard/dunning/performance', label: 'Performance' },
         ],
       },
