@@ -29,6 +29,8 @@ export type EventType =
   | 'dunning.task.created'
   | 'dunning.task.done'
   | 'dunning.task.skipped'
+  | 'dunning.task.assigned'
+  | 'dunning.task.unassigned'
   | 'inbox.reply.sent'
   | 'portal.promise.created'
   | 'portal.dispute.opened'

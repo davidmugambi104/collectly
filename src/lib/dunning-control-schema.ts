@@ -99,6 +99,15 @@ export const DUNNING_CONTROL_DDL = [
      created_at timestamptz NOT NULL DEFAULT now()
    )`,
   `CREATE INDEX IF NOT EXISTS dunning_approvals_org_idx ON dunning_approvals (org_id)`,
+  `CREATE TABLE IF NOT EXISTS task_assignments (
+     run_id text PRIMARY KEY REFERENCES dunning_runs(id) ON DELETE CASCADE,
+     org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+     assignee_id text NOT NULL,
+     assignee_name text NOT NULL,
+     assigned_by text,
+     assigned_at timestamptz NOT NULL DEFAULT now()
+   )`,
+  `CREATE INDEX IF NOT EXISTS task_assignments_assignee_idx ON task_assignments (org_id, assignee_id)`,
 ];
 
 let applied: Promise<void> | null = null;

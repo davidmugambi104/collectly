@@ -562,6 +562,21 @@ export const groupSequences = pgTable('group_sequences', {
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
 });
 
+/**
+ * Who a call task is assigned to. A task is a dunning_runs row on the phone
+ * channel; assignment is its own table, not a column, for the same reason as
+ * dunning_approvals. The name is copied at assign time so the Tasks list does
+ * not need a lookup against the sign-in provider to draw a label.
+ */
+export const taskAssignments = pgTable('task_assignments', {
+  runId: text('run_id').primaryKey().references(() => dunningRuns.id, { onDelete: 'cascade' }),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  assigneeId: text('assignee_id').notNull(),
+  assigneeName: text('assignee_name').notNull(),
+  assignedBy: text('assigned_by'),
+  assignedAt: timestamp('assigned_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({ assigneeIdx: index('task_assignments_assignee_idx').on(t.orgId, t.assigneeId) }));
+
 /** What the organisation has written back to a customer from the Inbox. Inbound messages stay in inbox_messages. */
 export const inboxReplies = pgTable('inbox_replies', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),

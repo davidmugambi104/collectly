@@ -2,23 +2,25 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Check, SkipForward, Loader2, Phone } from 'lucide-react';
+import { Check, SkipForward, Loader2, Phone, User } from 'lucide-react';
+import type { OrgMember } from '@/lib/dunning/task-assignment';
 
 export type TaskItem = {
   id: string; title: string | null; note: string; status: string;
+  assigneeId: string | null; assigneeName: string | null;
   customerId: string; customerName: string; phone: string | null;
   invoiceId: string; invoiceNumber: string; dueLabel: string; createdLabel: string;
 };
 
-export function TasksList({ items, open }: { items: TaskItem[]; open: boolean }) {
+export function TasksList({ items, open, members, membersError, viewerId }: { items: TaskItem[]; open: boolean; members: OrgMember[]; membersError: boolean; viewerId: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function act(id: string, action: 'done' | 'skip') {
+  async function act(id: string, action: 'done' | 'skip' | 'assign', assigneeId?: string | null) {
     setBusy(`${id}:${action}`); setError(null);
     try {
-      const res = await fetch(`/api/tasks/${id}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action }) });
+      const res = await fetch(`/api/tasks/${id}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(action === 'assign' ? { action, assigneeId } : { action }) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? 'Something went wrong');
       router.refresh();
@@ -54,6 +56,26 @@ export function TasksList({ items, open }: { items: TaskItem[]; open: boolean })
               ) : <span className="badge-neutral">{t.status === 'sent' ? 'Done' : 'Skipped'}</span>}
             </div>
             <p className="mt-2 whitespace-pre-line text-sm text-ink-700">{t.note}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+              <User aria-hidden="true" className="h-3.5 w-3.5 text-ink-500" />
+              {open && !membersError ? (
+                <>
+                  <label htmlFor={`assign-${t.id}`} className="app-meta font-normal">Assigned to</label>
+                  <select id={`assign-${t.id}`} className="input !w-auto h-8 py-0 text-sm" disabled={!!busy} value={t.assigneeId ?? ''}
+                    onChange={(e) => act(t.id, 'assign', e.target.value || null)}>
+                    <option value="">Nobody</option>
+                    {t.assigneeId && !members.some((m) => m.id === t.assigneeId) && <option value={t.assigneeId}>{t.assigneeName} (no longer on the team)</option>}
+                    {members.map((m) => <option key={m.id} value={m.id}>{m.id === viewerId ? `${m.name} (you)` : m.name}</option>)}
+                  </select>
+                  {t.assigneeId !== viewerId && members.some((m) => m.id === viewerId) && (
+                    <button className="btn-ghost btn-sm" disabled={!!busy} onClick={() => act(t.id, 'assign', viewerId)}>Take it</button>
+                  )}
+                  {busy === `${t.id}:assign` && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}
+                </>
+              ) : (
+                <span className="app-meta font-normal">{t.assigneeName ? `Assigned to ${t.assigneeId === viewerId ? 'you' : t.assigneeName}` : 'Not assigned'}{open && membersError ? ' (could not load your team to change this)' : ''}</span>
+              )}
+            </div>
           </li>
         ))}
       </ul>
