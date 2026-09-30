@@ -103,7 +103,7 @@ export default function HomePage() {
                     of this 30px deck was spaced 60px apart and read as two
                     disconnected sentences. A block box establishes its own
                     line boxes from its own leading. */}
-                <span className="mt-3 block text-2xl sm:text-3xl font-normal leading-snug text-ink-700">Reminders you approve first, that stop when a customer replies, pays or promises a date.</span>
+                <span className="mt-3 block text-2xl sm:text-3xl font-semibold leading-snug text-brand-700">Reminders you approve first.</span>
               </h1>
 
               {/* One sentence, not five. The hero used to carry the whole
@@ -114,10 +114,19 @@ export default function HomePage() {
                   anything it could act on. The detail all still exists; it now
                   lives in the three-step section directly below, where someone
                   who wants it goes looking. */}
-              <p className="mt-5 lead max-w-lg">
-                Connects to Xero or QuickBooks Online (beta), drafts each follow-up
-                in your tone, and waits for your approval.
-              </p>
+              <ul className="mt-6 max-w-lg space-y-2.5 text-base text-ink-700">
+                {[
+                  'Drafts each follow-up in your tone, and waits for your approval.',
+                  'Stops when a customer replies, pays or promises a date.',
+                  'Pause any customer you have already spoken to.',
+                  'Works with Xero and QuickBooks Online (beta).',
+                ].map((t) => (
+                  <li key={t} className="flex items-start gap-2.5">
+                    <CheckCircle2 aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
 
               <div className="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg">
                 <TrackedLink
@@ -129,7 +138,7 @@ export default function HomePage() {
                   Start free trial <ArrowRight className="h-4 w-4" />
                 </TrackedLink>
                 <Link href="/tour" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-ink-200 bg-white px-5 py-3 text-sm font-semibold text-ink-900 hover:bg-ink-50 transition-colors">
-                  See the dashboard demo
+                  See the demo
                 </Link>
               </div>
 
@@ -143,12 +152,6 @@ export default function HomePage() {
                 First {FOUNDING.seats} founding customers take {FOUNDING.discountPct}% off for {FOUNDING.months} months, with founder-assisted setup.
               </p>
 
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-500">
-                <span>Integrates with</span>
-                <LogoMark label="Xero" />
-                <LogoMark label="QuickBooks (beta)" />
-                <LogoMark label="Paystack" />
-              </div>
             </div>
 
             <div className="lg:col-span-5 relative">
@@ -186,7 +189,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ControlSection />
+      {/* WORKS WITH — where every competitor puts its logo strip: straight
+          under the hero. It carries only integrations that exist. */}
+      <section className="border-b border-ink-200 bg-white" aria-label="Works with">
+        <div className="container-page flex flex-wrap items-center justify-center gap-x-8 gap-y-3 py-5 text-xs text-ink-500">
+          <span>Works with</span>
+          <LogoMark label="Xero" />
+          <LogoMark label="QuickBooks Online (beta)" />
+          <LogoMark label="Paystack" />
+        </div>
+      </section>
 
       {/* LIVE PRODUCT STATUS */}
       <section className="bg-brand-600 text-white">
@@ -269,6 +281,8 @@ export default function HomePage() {
           />
         </ol>
       </section>
+
+      <ControlSection />
 
       {/* FEATURE GRID */}
       <section className="bg-white border-y border-ink-200">
