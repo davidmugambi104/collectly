@@ -103,6 +103,23 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
     { key: 'paid', label: 'Paid', href: `/dashboard/invoices?filter=paid${q ? `&q=${encodeURIComponent(q)}` : ''}` },
   ];
 
+  // Aging quick filters, in the order every A/R tool and Xero itself use. They
+  // drive the same `bucket` filter the Overview chart links to. Pressing the
+  // active one again clears it.
+  const AGING_CHIPS = [
+    { key: 'current', label: 'Current' },
+    { key: '1-30', label: '1-30 days' },
+    { key: '31-60', label: '31-60 days' },
+    { key: '61-90', label: '61-90 days' },
+    { key: '90+', label: '90+ days' },
+  ].map((c) => {
+    const params = new URLSearchParams();
+    if (c.key !== bucket) params.set('bucket', c.key);
+    if (q) params.set('q', q);
+    const qs = params.toString();
+    return { ...c, active: c.key === bucket, href: qs ? `/dashboard/invoices?${qs}` : '/dashboard/invoices' };
+  });
+
   return (
     <AppShell
       title="Invoices"
@@ -154,6 +171,13 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
           <Link href="/dashboard/invoices/new" className="btn-brand btn-sm h-8"><Plus aria-hidden="true" className="h-3.5 w-3.5" />New invoice</Link>
         </div>
       </form>
+
+      <div className="-mt-2 mb-5 flex flex-wrap items-center gap-2" role="group" aria-label="Filter by how late">
+        <span className="text-2xs font-semibold uppercase tracking-wide text-ink-500">How late</span>
+        {AGING_CHIPS.map((c) => (
+          <Link key={c.key} href={c.href} aria-current={c.active ? 'page' : undefined} className={`badge ${c.active ? 'ring-1 ring-brand-500' : ''}`}>{c.label}</Link>
+        ))}
+      </div>
 
       {filtered.length === 0 ? (
         /* Two different empty states, because they are two different problems:

@@ -29,7 +29,8 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Free trial / self-serve', '14-day free', 'Free trial offered', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
   ['Time-to-value', '< 1 day', 'Not published', '1-2 weeks', '< 1 day', '< 1 day', '< 1 day'],
   ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
-  ['Payment plans / subscriptions', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '—', '✓', '—'],
+  // Ours is '—' on purpose: the app records promises to pay and spots a customer asking for a plan, but it does not run instalment plans.
+  ['Payment plans / subscriptions', '—', '✓', '✓', '—', '✓', '—'],
   ['Support model', 'Email + founder', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
 ];
 

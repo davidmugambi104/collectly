@@ -29,6 +29,8 @@ import {
  * page that loses that check loses the reader with it.
  */
 const PAIDNICE_ENTITY_MONTHLY = 29;
+const PAIDNICE_ESSENTIALS_MONTHLY = 69;
+const PAIDNICE_ESSENTIALS_INVOICES = 150;
 const PAIDNICE_PRO_TIERS: Array<[invoices: number, monthly: number]> = [
   [300, 99],
   [600, 179],
@@ -41,6 +43,9 @@ const PAIDNICE_PRO_TIERS: Array<[invoices: number, monthly: number]> = [
 /** Paidnice monthly cost for a practice of `books`, at ~30 invoices per book. */
 function paidniceMonthly(books: number, invoicesPerBook = 30): number | null {
   const totalInvoices = books * invoicesPerBook;
+  // One business under 150 invoices a month buys Essentials, $69. Essentials has
+  // no multiple-entity support, so it only applies to a single book.
+  if (books === 1 && totalInvoices <= PAIDNICE_ESSENTIALS_INVOICES) return PAIDNICE_ESSENTIALS_MONTHLY;
   const tier = PAIDNICE_PRO_TIERS.find(([cap]) => totalInvoices <= cap);
   if (!tier) return null;
   return tier[1] + PAIDNICE_ENTITY_MONTHLY * (books - 1);
@@ -126,7 +131,7 @@ const CHOOSE_US = [
 const CHOOSE_THEM = [
   { label: 'You are one business chasing your own invoices, they are cheaper, straightforwardly' },
   { label: 'You run a handful of books and your invoice volume is low and steady' },
-  { label: 'You want late fees, prompt-payment discounts and payment plans as well as chasing' },
+  { label: 'You want late fees, prompt-payment discounts, payment plans and customer statements as well as chasing' },
   { label: 'You would rather buy the tool the Xero App Store ranks first' },
 ];
 
@@ -155,7 +160,7 @@ export default function VsPaidnicePage() {
       <section className="container-page py-14 max-w-3xl">
         <h2 className="h2">The arithmetic, both ways</h2>
         <p className="mt-3 app-body text-ink-600">
-          Paidnice&apos;s published Pro rate for the invoice volume, plus ${PAIDNICE_ENTITY_MONTHLY}/mo for each entity
+          Paidnice&apos;s published Pro rate for the invoice volume (Essentials, $69, for one business under 150 invoices), plus ${PAIDNICE_ENTITY_MONTHLY}/mo for each entity
           after the first. Ours is ${PLAN_PRICING.growth.monthly}/mo for {PRACTICE_INCLUDED_ORGS} books, then $
           {PRACTICE_EXTRA_ORG_MONTHLY} each, capped at ${PLAN_PRICING.scale.monthly}/mo for up to{' '}
           {PRACTICE_SCALE_INCLUDED_ORGS}. Assumes 30 invoices per book per month.
