@@ -82,6 +82,23 @@ export type PageMetaInput = {
   modifiedTime?: string;
 };
 
+/** Search results cut descriptions near 155-160 characters. Keep whole
+ *  sentences while they fit; otherwise cut at a word and add an ellipsis. */
+export function fitMetaDescription(text: string, max = 158): string {
+  const t = text.replace(/\s+/g, ' ').trim();
+  if (t.length <= max) return t;
+  const sentences = t.match(/[^.!?]+[.!?]+(?:\s|$)/g) ?? [];
+  let out = '';
+  for (const sentence of sentences) {
+    if ((out + sentence).trim().length > max) break;
+    out += sentence;
+  }
+  out = out.trim();
+  if (out.length >= 60) return out;
+  const cut = t.slice(0, max - 1).replace(/\s+\S*$/, '').replace(/[,;:\s-]+$/, '');
+  return `${cut}…`;
+}
+
 export function pageMetadata(input: PageMetaInput): Metadata {
   const url = input.path ? `${SITE.url}${input.path}` : SITE.url;
   const image = input.image ?? `${SITE.url}/og.png`;
@@ -91,7 +108,7 @@ export function pageMetadata(input: PageMetaInput): Metadata {
     // explicitly in OG/Twitter cards below and keep the page title
     // standalone so long page titles are not duplicated in the SERP.
     title: { absolute: input.title },
-    description: input.description,
+    description: fitMetaDescription(input.description),
     keywords: input.keywords,
     alternates: { canonical: url },
     openGraph: {
