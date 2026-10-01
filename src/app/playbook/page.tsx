@@ -25,15 +25,15 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'What is DSO and why does it matter?',
-      a: 'Days Sales Outstanding (DSO) is the average number of days between sending an invoice and receiving payment. Lower DSO means less working capital locked up in unpaid invoices. For a 5-30 person agency on a 30-day payment cycle, cutting DSO from 45 to 18 frees up roughly $90K of working capital on $1M annual revenue.',
+      a: 'Days Sales Outstanding (DSO) is the average number of days between sending an invoice and receiving payment. Lower DSO means less working capital locked up in unpaid invoices. On $1M annual revenue, each day taken off DSO frees roughly $2,700 of working capital, so cutting it by 27 days frees about $74K.',
     },
   ];
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Free guide: 5-step method to cut DSO from 45 days to 18',
+  title: 'Free guide: a 5-step method to cut DSO',
   description:
     'A free 7-page PDF with a 5-step method to help 5-30 person agencies ' +
-    'and consultancies cut DSO from 45 days to 18 in 90 days. Built for ' +
+    'and consultancies cut DSO. Built for ' +
     'Xero and QuickBooks businesses with no full-time credit controller. ' +
     'No fluff, no upsell.',
   path: '/playbook',
@@ -47,17 +47,17 @@ export const metadata: Metadata = pageMetadata({
 // magnet before they sign up.
 const playbookJsonLd = JSON.stringify([
   howToJsonLd({
-    name: 'How to cut DSO from 45 days to 18',
+    name: 'How to cut DSO',
     description:
       'A 5-step method for 5-30 person agencies and consultancies on Xero to ' +
-      'cut DSO from 45 days to 18 days in 90 days. Audit, automate, portal, ' +
+      'cut DSO. Audit, automate, portal, ' +
       'risk-score, measure.',
     steps: [
-      { name: 'Audit your A/R aging every Monday morning', text: 'A 10-minute Monday ritual that recovers an average of $4,200 in forgotten invoices in the first week alone.' },
+      { name: 'Audit your A/R aging every Monday morning', text: 'A 10-minute Monday ritual that surfaces invoices nobody has followed up.' },
       { name: 'Set up a 3-step dunning sequence that auto-fires', text: 'Friendly email at day 1. Firmer email at day 7. SMS or phone at day 30. Auto-pause on payment or reply. Most teams save 5+ hours/week within the first month.' },
       { name: 'Give every customer a frictionless pay link', text: 'One-click pay portals cut DSO by an average of 12 days. ACH for US, BACS for UK, SEPA for EU, Direct Debit for AU. Card as fallback.' },
       { name: 'Risk-score your customers and focus on the top 5', text: 'Score every customer on paid rate, average days to pay, and oldest unpaid invoice. Spend your collection time on the high-balance × high-risk ones. Ignore the rest.' },
-      { name: 'Measure DSO weekly, not monthly', text: 'Track DSO every Monday. Catch trends early. A typical 5-person services business takes DSO from 45 to 18 days in 90 days. That\'s $90K+ freed up for the same revenue.' },
+      { name: 'Measure DSO weekly, not monthly', text: 'Track DSO every Monday. Catch trends early. Every day you take off DSO frees about a day of billing as cash. On $1 million a year of revenue, that is roughly $2,700 a day.' },
     ],
   }),
   faqJsonLd(FAQS),
@@ -67,7 +67,7 @@ const STEPS = [
   {
     n: '01',
     title: 'Audit your A/R aging every Monday morning',
-    body: 'A 10-minute Monday ritual that recovers an average of $4,200 in forgotten invoices in the first week alone.',
+    body: 'A 10-minute Monday ritual that surfaces invoices nobody has followed up.',
   },
   {
     n: '02',
@@ -87,7 +87,7 @@ const STEPS = [
   {
     n: '05',
     title: 'Measure DSO weekly, not monthly',
-    body: 'Track DSO every Monday. Catch trends early. A typical 5-person services business takes DSO from 45 to 18 days in 90 days. That\'s $90K+ freed up for the same revenue.',
+    body: 'Track DSO every Monday. Catch trends early. Every day you take off DSO frees about a day of billing as cash. On $1 million a year of revenue, that is roughly $2,700 a day.',
   },
 ];
 
@@ -106,7 +106,7 @@ export default function PlaybookPage() {
                 Free 7-page PDF · No signup
               </div>
               <h1 className="mt-4 text-4xl sm:text-5xl font-display font-bold text-ink-950 tracking-tight leading-tight">
-                Cut your DSO from <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">45 days to 18</span> in 90 days.
+                Cut your DSO with <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">five steps</span> you can start this week.
               </h1>
               <p className="mt-5 text-lg text-ink-600 max-w-xl">
                 A 5-step method to help 5–30 person agencies and consultancies stop chasing invoices and start collecting them. No fluff, no upsell, no &quot;book a call.&quot;

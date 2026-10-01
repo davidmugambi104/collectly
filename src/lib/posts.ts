@@ -232,18 +232,18 @@ For a 5-30 person business, the working capital locked up in unpaid invoices isn
 We spent the first 6 weeks of building Mugavi auditing every A/R tool we could find. The market splits into four buckets, and only one of them actually fits the 5-30 person segment.
 
 ### 1. Enterprise (HighRadius, YayPay, Rimilia)
-- Price: $3,000-$30,000/month
-- Implementation: 6-12 weeks
-- Requires a finance ops team to run
-- Built for the Fortune 500
+- Price: usually thousands of dollars a month, often by quote
+- Implementation: weeks to months
+- Needs a finance operations team to run
+- Built for large companies
 
 **Not for the 5-30 person segment. Period.**
 
 ### 2. Mid-market (Gaviti, Growfin, Chaser, Tesorio, Kolleno)
-- Price: $500-$2,000/month
+- Price: from a few hundred dollars a month (Chaser's entry plan was about $259 when we looked) up to around $2,000, and often by quote
 - Implementation: 1-2 weeks
 - Built for 50-200 person teams
-- Real products, but the floor is way above what a 5-30 person business can pay
+- Real products, but built for bigger teams, and the entry price is more than many very small businesses want to pay
 
 **The closest to viable for some, but still too expensive for most.**
 
@@ -355,7 +355,7 @@ But that's not how it actually works. Here's the real distribution of when invoi
 
 If you have 12 open invoices totaling $184K, a straight-line forecast assumes they'll all pay evenly. They won't. A $42K invoice from a 14-day net customer will probably pay next week. A $24K invoice that's already 60 days past due from a 90-day-paying customer probably won't pay for another 30-60 days.
 
-If you treat them the same, your forecast is wrong by 30-50%.
+If you treat them the same, your forecast can be badly wrong.
 
 ## Weighted aging: a better model
 
@@ -410,7 +410,7 @@ The order matters. Aggressive chasing comes first because the cost is just your 
 
 Your bookkeeper's spreadsheet almost certainly uses straight-line aging. That's why their forecast is always wrong.
 
-The fix isn't complicated — it's just not the default. The math above is what every modern AR tool computes. We built it into Mugavi because we couldn't find it anywhere else at this price.
+The fix isn't complicated, it's just not the default in a spreadsheet. Some AR tools do it. Mugavi's cash-flow forecast weights your open invoices by each customer's payment history, which is the same idea.
 
 If you want to try it: https://mugavi.com — 14-day free trial, no credit card, 10-minute setup.
 
@@ -583,7 +583,7 @@ If you want to test these templates without building the system: mugavi.com auto
   },
   {
     slug: 'cut-dso-5-step-playbook-2026',
-    title: 'Cut your DSO from 45 to 18 days — the 5-step playbook (free)',
+    title: 'How to cut your DSO: the 5-step playbook (free)',
     date: '2026-07-14', read: '7 min',
     excerpt: 'A field-tested playbook for cutting days-sales-outstanding. No enterprise software, no consultants. Just 5 things you can do this quarter to get paid faster.',
     tags: ['DSO', 'cash flow', 'playbook', 'small business'],
@@ -619,7 +619,7 @@ Friendly reminder at day +1. Firm reminder at day +7. Final notice at day +14. T
 
 ### Step 3 — Give every customer a frictionless pay link
 
-Card. ACH. Wire. Whatever. The friction to pay is the biggest predictor of *when* they pay. If they have to log into a portal they forgot the password to, they pay in 21 days. If they can click a link in the email and pay in 30 seconds, they pay in 4 days. We've measured this on our own customer base: frictionless pay link cuts time-to-pay by **6-9 days on average**.
+Card. ACH. Wire. Whatever. The friction to pay is the biggest predictor of *when* they pay. If they have to log into a portal they forgot the password to, they will put it off. If they can click a link in the email and pay in 30 seconds, many will do it while they are reading it. We have no numbers of our own on how much faster, so test it on your own invoices.
 
 ### Step 4 — Risk-score your customers and focus on the top 5
 
@@ -629,23 +629,11 @@ Not all invoices are equal. A $5,000 invoice from a customer who's paid every in
 
 Monthly DSO reports tell you what already happened. Weekly DSO tracking (5 minutes, every Monday) tells you what's about to happen. The trend is more important than the absolute number. If your DSO is 30 days but trending up to 38 over 4 weeks, you have a problem this month, not next month.
 
-## What 18-day DSO actually looks like
+## What a lower DSO is worth
 
-A 12-person creative agency we work with had a 58-day DSO when they started using Mugavi. After 3 months:
+This is arithmetic, not a case study. A business that bills $3 million a year bills about $8,200 a day. Every day taken off DSO frees roughly one day of billing as cash, so cutting DSO by 27 days frees about $222,000 of working capital. That is the cost of one or two senior hires, and you get it back without finding a single new customer.
 
-| Metric | Before | After |
-|---|---|---|
-| DSO | 58 days | 22 days |
-| Outstanding A/R | $284k | $108k |
-| Hours/week chasing | 4-5 hrs | 20 min |
-| Bad-debt write-off | $18k/yr | $0 |
-| Cash buffer | 6 weeks | 14 weeks |
-
-The 14-week cash buffer is the one that actually changes the business. They can take a slow month. They can hire ahead of revenue. They can take a big client that pays in 60 days. They couldn't do any of that at 58-day DSO.
-
-## The math, in one line
-
-> Reducing DSO by 27 days freed up **$176k of working capital** for a $3M ARR agency. That's roughly the cost of 2 senior hires.
+The number that changes the business is the cash buffer. With more cash in the bank you can take a slow month, hire ahead of revenue, or accept a big client that pays in 60 days. At a high DSO you cannot do any of that.
 
 ## Get the full playbook (free)
 

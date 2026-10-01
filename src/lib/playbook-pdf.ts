@@ -19,7 +19,7 @@ export function generatePlaybookPdf(): Buffer {
 
 The fix: a 10-minute Monday morning ritual. Open your A/R aging report every Monday. Bucket invoices by age: current, 1-30, 31-60, 61-90, 90+. For each invoice in the 31-60+ bucket, ask: who owes us, how long, and what's the next step? Write it down.
 
-A first Monday audit typically turns up 5-10 forgotten invoices, averaging $4,200 in value.`,
+A first Monday audit usually turns up a few invoices nobody has followed up. Start there.`,
     },
     {
       heading: 'Step 2 — Set up a 3-step dunning sequence that auto-fires',
@@ -47,7 +47,7 @@ Typical improvement in time-to-pay after adding a one-click pay portal: 12 days.
 
 Score every customer on: paid rate, average days to pay, oldest unpaid invoice, total balance. Then sort. Spend your collection time on the top 5 by (balance × risk). Ignore the rest — they'll either pay on their own or write off.
 
-A typical 20-customer portfolio has 3-4 customers driving 80% of your A/R pain. Focus there.`,
+Often a few customers account for most of what is overdue. Find yours and focus there.`,
     },
     {
       heading: 'Step 5 — Measure DSO weekly, not monthly',
@@ -55,7 +55,7 @@ A typical 20-customer portfolio has 3-4 customers driving 80% of your A/R pain. 
 
 Measure it every Monday. Track it in a spreadsheet or in a tool. The trend is more important than the absolute number. If DSO is going up over 4 consecutive weeks, something is wrong — likely a customer who can't pay, a broken process, or a sales team overpromising on terms.
 
-A 5-person services business can typically take DSO from 45 to 18 days in 90 days. That's $90K+ freed up for the same revenue.`,
+Every day you take off DSO frees about a day of billing as cash. On $1 million a year of revenue, that is roughly $2,700 a day.`,
     },
   ];
 
@@ -143,7 +143,7 @@ function makePage1(): string {
 (What you'll learn:) Tj
 0 -28 Td
 /F2 12 Tf
-(\\226 The Monday morning AR ritual that recovers $4,200) Tj
+(\\226 The Monday morning AR ritual that finds forgotten invoices) Tj
 0 -18 Td
 (\\226 The 3-step dunning sequence that does the chasing for you) Tj
 0 -18 Td
