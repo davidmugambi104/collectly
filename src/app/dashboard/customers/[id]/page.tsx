@@ -1,6 +1,6 @@
 import { AppShell } from '@/components/app/shell';
 import { db } from '@/db';
-import { customers, invoices, payments, timelineEvents, promisesToPay, disputes, dunningHolds, customerGroups, customerGroupMembers } from '@/db/schema';
+import { customers, invoices, payments, timelineEvents, promisesToPay, disputes, dunningHolds, customerGroups, customerGroupMembers, customerRecipients } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect, notFound } from 'next/navigation';
@@ -9,6 +9,8 @@ import { getCustomerInsights } from '@/lib/analytics';
 import { PromisePanel } from '@/components/customers/promise-panel';
 import { HoldPanel } from '@/components/customers/hold-panel';
 import { GroupSelect } from '@/components/customers/group-select';
+import { RecipientsPanel } from '@/components/customers/recipients-panel';
+import { MAX_RECIPIENTS } from '@/lib/recipients';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isHoldActive } from '@/lib/dunning/hold';
 import { DisputePanel } from '@/components/customers/dispute-panel';
@@ -73,12 +75,15 @@ export default async function CustomerStatementPage({
   let hold: { heldUntil: string | null; reason: string | null } | null = null;
   let groupOptions: { id: string; name: string }[] = [];
   let currentGroup: string | null = null;
+  let extraRecipients: { id: string; email: string; name: string | null; unsubscribed: boolean }[] = [];
   try {
     await ensureDunningControlSchema();
     const [row] = await db.select().from(dunningHolds).where(eq(dunningHolds.customerId, cust.id)).limit(1);
     groupOptions = await db.select({ id: customerGroups.id, name: customerGroups.name }).from(customerGroups).where(eq(customerGroups.orgId, orgId)).orderBy(customerGroups.name);
     const [mem] = await db.select({ groupId: customerGroupMembers.groupId }).from(customerGroupMembers).where(eq(customerGroupMembers.customerId, cust.id)).limit(1);
     currentGroup = mem?.groupId ?? null;
+    const recs = await db.select().from(customerRecipients).where(and(eq(customerRecipients.customerId, cust.id), eq(customerRecipients.orgId, orgId))).orderBy(customerRecipients.createdAt);
+    extraRecipients = recs.map((r: (typeof recs)[number]) => ({ id: r.id, email: r.email, name: r.name, unsubscribed: !!r.unsubscribedAt }));
     if (row && isHoldActive({ heldUntil: row.heldUntil })) {
       hold = { heldUntil: row.heldUntil ? row.heldUntil.toISOString() : null, reason: row.reason };
     }
@@ -155,6 +160,8 @@ export default async function CustomerStatementPage({
           ) : null}
 
           <GroupSelect customerId={cust.id} groups={groupOptions} current={currentGroup} />
+
+          <RecipientsPanel customerId={cust.id} customerName={cust.name} max={MAX_RECIPIENTS} recipients={extraRecipients} />
 
           {/* Automatic reminders. A customer who unsubscribed (dndAt) is off
               regardless, and that is not something the owner can flip here. */}

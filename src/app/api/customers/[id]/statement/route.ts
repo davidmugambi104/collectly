@@ -13,6 +13,7 @@ import { errorMessage } from '@/lib/utils';
 import { loadStatement, loadStatementFooter } from '@/lib/statements-load';
 import { renderStatementHtml, statementCsv, statementSubject } from '@/lib/statements';
 import { statementTarget } from '@/lib/statement-target';
+import { sendCopies } from '@/lib/recipients-send';
 
 /** GET ?format=csv downloads this customer's open invoices as a CSV. */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -61,7 +62,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
   const businessName = org?.name ?? 'Your team';
   const subject = statementSubject(businessName, statement.asOf);
-  const html = withUnsubscribeFooter(renderStatementHtml({ customerName: customer.name, businessName, statement, note, footer: await loadStatementFooter(orgId) }), target.to);
+  const baseHtml = renderStatementHtml({ customerName: customer.name, businessName, statement, note, footer: await loadStatementFooter(orgId) });
+  const html = withUnsubscribeFooter(baseHtml, target.to);
+  const fromLine = await resolveFrom(orgId, businessName);
 
   let externalId: string | null = null;
   try {
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       subject,
       html,
       headers: dunningListUnsubscribeHeaders(target.to),
-      from: await resolveFrom(orgId, businessName),
+      from: fromLine,
       replyTo: getDunningReplyToAddress(),
     });
     if (sent.status === 'skipped') return NextResponse.json({ error: 'Email is not set up on this server, so nothing was sent.' }, { status: 502 });
@@ -79,6 +82,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: `Could not send: ${errorMessage(e)}` }, { status: 502 });
   }
 
+  // Extra recipients get their own copy. The statement is already sent; a copy that fails never undoes it.
+  try { await sendCopies({ orgId, customerId: id, primaryEmail: target.to, subject, baseHtml, from: fromLine, replyTo: getDunningReplyToAddress() }); } catch (e) { console.error('[statement] copies failed:', errorMessage(e)); }
   const totals = statement.sections.map((s) => ({ currency: s.currency, totalCents: s.totalCents, overdueCents: s.overdueCents }));
   await db.insert(statementLog).values({ orgId, customerId: id, toAddress: target.to, subject, totals, sentBy: userId ?? null, externalId });
   await recordEvent({ orgId, type: 'statement.sent', actorId: userId ?? undefined, payload: { customerId: id, totals } });

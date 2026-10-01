@@ -1,7 +1,7 @@
 import { ImapFlow } from 'imapflow';
 import { simpleParser, type ParsedMail } from 'mailparser';
 import { db } from '@/db';
-import { dunningRuns, inboxPollState } from '@/db/schema';
+import { dunningRuns, inboxPollState, reminderCopies } from '@/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { handleArCustomerReply } from '@/lib/inbox-inbound';
 
@@ -94,11 +94,18 @@ export async function pollInboxReplies(): Promise<{ scanned: number; matched: nu
         const candidateIds = extractCandidateMessageIds(parsed);
         if (candidateIds.length === 0) continue;
 
-        const [run] = await db
+        let [run] = await db
           .select()
           .from(dunningRuns)
           .where(inArray(dunningRuns.externalMessageId, candidateIds))
           .limit(1);
+        if (!run) {
+          // A reply from someone who was copied on the reminder points at their own copy's message id.
+          try {
+            const [copy] = await db.select({ runId: reminderCopies.runId }).from(reminderCopies).where(inArray(reminderCopies.externalMessageId, candidateIds)).limit(1);
+            if (copy) [run] = await db.select().from(dunningRuns).where(eq(dunningRuns.id, copy.runId)).limit(1);
+          } catch { /* the copies table may not exist yet: no copies were ever sent */ }
+        }
         if (!run) continue;
 
         const fromEntry = parsed.from?.value?.[0];

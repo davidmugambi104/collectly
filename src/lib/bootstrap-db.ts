@@ -67,6 +67,12 @@ CREATE TABLE IF NOT EXISTS late_fee_policy (org_id text PRIMARY KEY REFERENCES o
 CREATE TABLE IF NOT EXISTS late_fees (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, invoice_id text NOT NULL REFERENCES invoices(id) ON DELETE CASCADE, period smallint NOT NULL, amount numeric(14,2) NOT NULL, currency varchar(3) NOT NULL, status text NOT NULL, decided_by text, decided_at timestamptz NOT NULL DEFAULT now(), resolved_at timestamptz);
 CREATE UNIQUE INDEX IF NOT EXISTS late_fees_invoice_period_uniq ON late_fees(invoice_id, period);
 CREATE INDEX IF NOT EXISTS late_fees_org_idx ON late_fees(org_id, status);
+CREATE TABLE IF NOT EXISTS customer_recipients (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE, email text NOT NULL, name text, unsubscribed_at timestamptz, created_at timestamptz NOT NULL DEFAULT now());
+CREATE UNIQUE INDEX IF NOT EXISTS customer_recipients_customer_email_uniq ON customer_recipients(customer_id, email);
+CREATE INDEX IF NOT EXISTS customer_recipients_email_idx ON customer_recipients(email);
+CREATE TABLE IF NOT EXISTS reminder_copies (id text PRIMARY KEY, run_id text NOT NULL REFERENCES dunning_runs(id) ON DELETE CASCADE, email text NOT NULL, external_message_id text, sent_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS reminder_copies_msg_idx ON reminder_copies(external_message_id);
+CREATE INDEX IF NOT EXISTS reminder_copies_run_idx ON reminder_copies(run_id);
 CREATE TABLE IF NOT EXISTS saved_views (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, page text NOT NULL, name text NOT NULL, query text NOT NULL DEFAULT '', created_by text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE UNIQUE INDEX IF NOT EXISTS saved_views_org_page_name_uniq ON saved_views(org_id, page, name);
 CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);

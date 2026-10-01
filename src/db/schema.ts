@@ -653,6 +653,37 @@ export const lateFees = pgTable('late_fees', {
   orgIdx: index('late_fees_org_idx').on(t.orgId, t.status),
 }));
 
+/**
+ * Extra people who also receive a customer's reminders and statements, each as
+ * their own email with their own unsubscribe. The customer's main email stays on
+ * customers.email. See src/lib/recipients.ts.
+ */
+export const customerRecipients = pgTable('customer_recipients', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  customerId: text('customer_id').notNull().references(() => customers.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  name: text('name'),
+  unsubscribedAt: timestamp('unsubscribed_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  customerEmailUniq: uniqueIndex('customer_recipients_customer_email_uniq').on(t.customerId, t.email),
+  emailIdx: index('customer_recipients_email_idx').on(t.email),
+}));
+
+/**
+ * The provider message id of each copy of a reminder, so a reply from a copied
+ * person is matched back to the reminder (and pauses it) like a reply from the
+ * main contact. See src/lib/inbox-imap-poll.ts.
+ */
+export const reminderCopies = pgTable('reminder_copies', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  runId: text('run_id').notNull().references(() => dunningRuns.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  externalMessageId: text('external_message_id'),
+  sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({ msgIdx: index('reminder_copies_msg_idx').on(t.externalMessageId), runIdx: index('reminder_copies_run_idx').on(t.runId) }));
+
 /** Named filters on list pages, shared by the organisation. See src/lib/saved-views.ts. */
 export const savedViews = pgTable('saved_views', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),

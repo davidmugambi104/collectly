@@ -171,6 +171,13 @@ export async function POST(req: NextRequest) {
         [now, email]
       );
       dndCount = r.rowCount ?? 0;
+      // An extra recipient on a customer (see src/lib/recipients.ts) opts out by address too.
+      // The table may not exist yet if no customer has ever had one added.
+      try {
+        await client.query(`UPDATE customer_recipients SET unsubscribed_at = $1 WHERE email = $2 AND unsubscribed_at IS NULL`, [now, email]);
+      } catch (e: unknown) {
+        if ((e as { code?: string })?.code !== '42P01') throw e;
+      }
     }
     return new NextResponse(
       `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Unsubscribed</title>

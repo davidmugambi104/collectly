@@ -11,6 +11,7 @@ import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-s
 import { leadDays } from '@/lib/dunning/step-timing';
 import { callTaskNote, callTaskTitle } from '@/lib/dunning/call-task';
 import { loadListOthers, extrasHtmlFor } from '@/lib/dunning/multi-invoice-load';
+import { sendCopies } from '@/lib/recipients-send';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
@@ -501,21 +502,24 @@ export async function processDunning(opts: ProcessOptions = {}) {
         // Send immediately (in production: queue with retries)
         try {
           if (lastStep.channel === 'email' && customer.email) {
+            const subject = result.subject ?? `Invoice ${invoice.number} is overdue`;
+            const baseHtml = renderEmailHtml({
+              body: result.body, invoice, businessName,
+              // The customer's other overdue invoices and any late fees, listed by us from the database (never the AI).
+              extraHtml: await extrasHtmlFor({
+                listOthers: await listOthersFor(seq.orgId), orgId: seq.orgId, customerId: customer.id, invoiceId: invoice.id,
+                thisBalance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), currency: invoice.currency ?? 'USD', now,
+              }),
+            });
+            // "Acme Studio via Mugavi", so the recipient sees who they owe
+            // rather than an unexplained platform address.
+            const fromLine = await fromFor(seq.orgId, businessName, lastStep);
             const sendResult = await sendEmail({
               to: customer.email,
-              subject: result.subject ?? `Invoice ${invoice.number} is overdue`,
-              html: withUnsubscribeFooter(renderEmailHtml({
-                body: result.body, invoice, businessName,
-                // The customer's other overdue invoices and any late fees, listed by us from the database (never the AI).
-                extraHtml: await extrasHtmlFor({
-                  listOthers: await listOthersFor(seq.orgId), orgId: seq.orgId, customerId: customer.id, invoiceId: invoice.id,
-                  thisBalance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), currency: invoice.currency ?? 'USD', now,
-                }),
-              }), customer.email),
+              subject,
+              html: withUnsubscribeFooter(baseHtml, customer.email),
               headers: dunningListUnsubscribeHeaders(customer.email),
-              // "Acme Studio via Mugavi", so the recipient sees who they owe
-              // rather than an unexplained platform address.
-              from: await fromFor(seq.orgId, businessName, lastStep),
+              from: fromLine,
               replyTo: getDunningReplyToAddress(),
             });
             // sendEmail throws on real failures (Resend 403, etc.) and returns
@@ -538,6 +542,8 @@ export async function processDunning(opts: ProcessOptions = {}) {
               } catch (e: unknown) {
                 console.error('[dunning] fetchResendMessageId failed:', e instanceof Error ? e.message : e);
               }
+              // Extra recipients get their own copy, each with their own unsubscribe. Never fails the send above.
+              await sendCopies({ orgId: seq.orgId, customerId: customer.id, primaryEmail: customer.email, subject, baseHtml, from: fromLine, replyTo: getDunningReplyToAddress(), runId: run.id });
               await recordEvent({
                 orgId: seq.orgId,
                 type: 'dunning.run.sent',

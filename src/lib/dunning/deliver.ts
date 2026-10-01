@@ -22,6 +22,7 @@ import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeader
 import { resolveFrom } from '@/lib/dunning/org-settings';
 import { senderFromStep } from '@/lib/dunning/step-sender';
 import { loadListOthers, extrasHtmlFor } from '@/lib/dunning/multi-invoice-load';
+import { sendCopies } from '@/lib/recipients-send';
 import { maySendSms } from '@/lib/sms-consent';
 import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
@@ -108,20 +109,23 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
       const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
       const businessName = org?.name ?? 'Your team';
       const to = customer.email as string; // approvalBlocker guarantees it
+      const subject = final.subject ?? `Invoice ${invoice.number} is overdue`;
+      const baseHtml = renderEmailHtml({
+        body: final.body, invoice, businessName,
+        // Worked out now, not at drafting time, so a balance paid in between is right.
+        extraHtml: await extrasHtmlFor({
+          listOthers: await loadListOthers(orgId), orgId, customerId: customer.id, invoiceId: invoice.id,
+          thisBalance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), currency: invoice.currency ?? 'USD',
+        }),
+      });
+      // A later step can be sent as a different name or address: see step-sender.ts.
+      const fromLine = await resolveFrom(orgId, businessName, senderFromStep(seq?.steps?.find((st: { id: string }) => st.id === run.stepId)));
       const sendResult = await sendEmail({
         to,
-        subject: final.subject ?? `Invoice ${invoice.number} is overdue`,
-        html: withUnsubscribeFooter(renderEmailHtml({
-          body: final.body, invoice, businessName,
-          // Worked out now, not at drafting time, so a balance paid in between is right.
-          extraHtml: await extrasHtmlFor({
-            listOthers: await loadListOthers(orgId), orgId, customerId: customer.id, invoiceId: invoice.id,
-            thisBalance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), currency: invoice.currency ?? 'USD',
-          }),
-        }), to),
+        subject,
+        html: withUnsubscribeFooter(baseHtml, to),
         headers: dunningListUnsubscribeHeaders(to),
-        // A later step can be sent as a different name or address: see step-sender.ts.
-        from: await resolveFrom(orgId, businessName, senderFromStep(seq?.steps?.find((st: { id: string }) => st.id === run.stepId))),
+        from: fromLine,
         replyTo: getDunningReplyToAddress(),
       });
       if (sendResult.status === 'skipped') throw new Error('email is not configured (no API key)');
@@ -131,6 +135,12 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
         if (msgId) await db.update(dunningRuns).set({ externalMessageId: msgId }).where(eq(dunningRuns.id, runId));
       } catch (e) {
         console.error('[dunning] fetchResendMessageId failed:', errorMessage(e));
+      }
+      // Copies to extra recipients. The reminder is already sent, so nothing here may requeue it.
+      try {
+        await sendCopies({ orgId, customerId: customer.id, primaryEmail: to, subject, baseHtml, from: fromLine, replyTo: getDunningReplyToAddress(), runId });
+      } catch (e) {
+        console.error('[dunning] copies failed:', errorMessage(e));
       }
     } else {
       const sms = await sendSms({ to: customer.phone as string, body: final.body });
