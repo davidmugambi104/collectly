@@ -167,6 +167,14 @@ export const DUNNING_CONTROL_DDL = [
    )`,
   `CREATE INDEX IF NOT EXISTS reminder_copies_msg_idx ON reminder_copies (external_message_id)`,
   `CREATE INDEX IF NOT EXISTS reminder_copies_run_idx ON reminder_copies (run_id)`,
+  `CREATE TABLE IF NOT EXISTS task_outcomes (
+     run_id text PRIMARY KEY REFERENCES dunning_runs(id) ON DELETE CASCADE,
+     org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+     outcome text,
+     note text,
+     created_by text,
+     created_at timestamptz NOT NULL DEFAULT now()
+   )`,
 ];
 
 let applied: Promise<void> | null = null;

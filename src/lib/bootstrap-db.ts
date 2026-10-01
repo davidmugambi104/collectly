@@ -73,6 +73,7 @@ CREATE INDEX IF NOT EXISTS customer_recipients_email_idx ON customer_recipients(
 CREATE TABLE IF NOT EXISTS reminder_copies (id text PRIMARY KEY, run_id text NOT NULL REFERENCES dunning_runs(id) ON DELETE CASCADE, email text NOT NULL, external_message_id text, sent_at timestamptz NOT NULL DEFAULT now());
 CREATE INDEX IF NOT EXISTS reminder_copies_msg_idx ON reminder_copies(external_message_id);
 CREATE INDEX IF NOT EXISTS reminder_copies_run_idx ON reminder_copies(run_id);
+CREATE TABLE IF NOT EXISTS task_outcomes (run_id text PRIMARY KEY REFERENCES dunning_runs(id) ON DELETE CASCADE, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, outcome text, note text, created_by text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE IF NOT EXISTS saved_views (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, page text NOT NULL, name text NOT NULL, query text NOT NULL DEFAULT '', created_by text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE UNIQUE INDEX IF NOT EXISTS saved_views_org_page_name_uniq ON saved_views(org_id, page, name);
 CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);

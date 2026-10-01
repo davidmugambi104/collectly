@@ -10,7 +10,8 @@ import { AppShell } from '@/components/app/shell';
 import { TasksList, type TaskItem } from '@/components/dunning/tasks-list';
 import { getAuth as auth } from '@/lib/auth-helper';
 import { db } from '@/db';
-import { customers, dunningRuns, invoices, taskAssignments } from '@/db/schema';
+import { customers, dunningRuns, invoices, taskAssignments, taskOutcomes } from '@/db/schema';
+import { CALL_OUTCOME_LABELS, type CallOutcome } from '@/lib/dunning/call-outcome';
 import { formatDate, daysOverdue } from '@/lib/utils';
 
 export default async function TasksPage({ searchParams }: { searchParams: Promise<{ show?: string; who?: string }> }) {
@@ -25,11 +26,12 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   try { members = await listOrgMembers(orgId, userId); } catch { membersError = true; }
 
   const rows = await db
-    .select({ run: dunningRuns, customerId: customers.id, customerName: customers.name, assigneeId: taskAssignments.assigneeId, assigneeName: taskAssignments.assigneeName, phone: customers.phone, invoiceId: invoices.id, invoiceNumber: invoices.number, dueDate: invoices.dueDate })
+    .select({ run: dunningRuns, customerId: customers.id, customerName: customers.name, outcome: taskOutcomes.outcome, outcomeNote: taskOutcomes.note, assigneeId: taskAssignments.assigneeId, assigneeName: taskAssignments.assigneeName, phone: customers.phone, invoiceId: invoices.id, invoiceNumber: invoices.number, dueDate: invoices.dueDate })
     .from(dunningRuns)
     .innerJoin(invoices, eq(invoices.id, dunningRuns.invoiceId))
     .innerJoin(customers, eq(customers.id, invoices.customerId))
     .leftJoin(taskAssignments, eq(taskAssignments.runId, dunningRuns.id))
+    .leftJoin(taskOutcomes, eq(taskOutcomes.runId, dunningRuns.id))
     .where(and(eq(dunningRuns.orgId, orgId), eq(dunningRuns.channel, 'phone'), inArray(dunningRuns.status, open ? ['scheduled'] : ['sent', 'cancelled']), ...(view === 'me' ? [eq(taskAssignments.assigneeId, userId)] : view === 'unassigned' ? [isNull(taskAssignments.assigneeId)] : [])))
     .orderBy(desc(dunningRuns.createdAt))
     .limit(open ? 200 : 50);
@@ -39,6 +41,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
     return {
       id: r.run.id, title: r.run.subject, note: r.run.body, status: r.run.status,
       assigneeId: r.assigneeId, assigneeName: r.assigneeName,
+      outcomeLabel: r.outcome ? CALL_OUTCOME_LABELS[r.outcome as CallOutcome] ?? null : null, outcomeNote: r.outcomeNote ?? null,
       customerId: r.customerId, customerName: r.customerName, phone: r.phone,
       invoiceId: r.invoiceId, invoiceNumber: r.invoiceNumber,
       dueLabel: late > 0 ? `${late}d overdue` : `due ${formatDate(r.dueDate)}`,

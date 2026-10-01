@@ -471,6 +471,7 @@ function TimelineRow({ event }: { event: typeof timelineEvents.$inferSelect }) {
   const iconMap: Record<string, React.ReactNode> = {
     invoice_created: <FileText className="h-3.5 w-3.5" />,
     invoice_sent: <Mail className="h-3.5 w-3.5" />,
+    call: <Phone className="h-3.5 w-3.5" />,
     reminder_scheduled: <Bell className="h-3.5 w-3.5" />,
     reminder_sent: <Mail className="h-3.5 w-3.5" />,
     reminder_opened: <Mail className="h-3.5 w-3.5" />,

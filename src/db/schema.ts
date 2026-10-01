@@ -684,6 +684,19 @@ export const reminderCopies = pgTable('reminder_copies', {
   sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => ({ msgIdx: index('reminder_copies_msg_idx').on(t.externalMessageId), runIdx: index('reminder_copies_run_idx').on(t.runId) }));
 
+/**
+ * What happened on a call, written when a call task is closed. See
+ * src/lib/dunning/call-outcome.ts. Its own table, like task_assignments.
+ */
+export const taskOutcomes = pgTable('task_outcomes', {
+  runId: text('run_id').primaryKey().references(() => dunningRuns.id, { onDelete: 'cascade' }),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  outcome: text('outcome'),
+  note: text('note'),
+  createdBy: text('created_by'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 /** Named filters on list pages, shared by the organisation. See src/lib/saved-views.ts. */
 export const savedViews = pgTable('saved_views', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),
