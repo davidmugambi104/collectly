@@ -33,6 +33,7 @@ export type EventType =
   | 'dunning.task.unassigned'
   | 'inbox.reply.sent'
   | 'statement.sent'
+  | 'statement.draft.skipped'
   | 'recipient.added'
   | 'recipient.removed'
   | 'dunning.copies.sent'

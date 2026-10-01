@@ -12,6 +12,7 @@ import { leadDays } from '@/lib/dunning/step-timing';
 import { callTaskNote, callTaskTitle } from '@/lib/dunning/call-task';
 import { loadListOthers, extrasHtmlFor } from '@/lib/dunning/multi-invoice-load';
 import { sendCopies } from '@/lib/recipients-send';
+import { generateStatementDrafts } from '@/lib/statement-drafts';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
@@ -648,7 +649,10 @@ export async function processDunning(opts: ProcessOptions = {}) {
     }
   }
 
-  return { scheduled, sent, errors, awaitingApproval, outsideWindow };
+  // Monthly statements: drafts only, held for approval. Never fails the reminder run.
+  let statementDrafts = 0;
+  try { statementDrafts = (await generateStatementDrafts(now, opts.orgId)).created; } catch (e: unknown) { console.error('[statements] drafting failed:', errorMessage(e)); }
+  return { scheduled, sent, errors, awaitingApproval, outsideWindow, statementDrafts };
 }
 
 /** `extraHtml` is already-escaped markup from multi-invoice.ts, placed under the message. */

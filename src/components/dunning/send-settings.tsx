@@ -20,11 +20,12 @@ function dailyRunLocal(tz: string): string {
   } catch { return '14:00'; }
 }
 
-export function SendSettings({ window: initial, domain, emailConfigured, rules: initialRules, listOthers: initialListOthers }: { window: Win; domain: Domain; emailConfigured: boolean; rules: Rules; listOthers: boolean }) {
+export function SendSettings({ window: initial, domain, emailConfigured, rules: initialRules, listOthers: initialListOthers, statements: initialStatements }: { window: Win; domain: Domain; emailConfigured: boolean; rules: Rules; listOthers: boolean; statements: { enabled: boolean; day: number } }) {
   const router = useRouter();
   const [w, setW] = useState<Win>(initial);
   const [rules, setRules] = useState<{ minGapDays: string; minBalance: string }>({ minGapDays: String(initialRules.minGapDays), minBalance: String(initialRules.minBalance) });
   const [listOthers, setListOthers] = useState(initialListOthers);
+  const [stmt, setStmt] = useState(initialStatements);
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const [domainInput, setDomainInput] = useState('');
@@ -140,6 +141,26 @@ export function SendSettings({ window: initial, domain, emailConfigured, rules: 
           }} />
           List other overdue invoices in each reminder
         </label>
+      </div>
+
+      {/* ---- Monthly statements ---- */}
+      <div className="mt-8 border-t border-ink-200 pt-6">
+        <h3 className="app-label">Monthly statements</h3>
+        <p className="app-meta mt-0.5 font-normal">Each month, draft a statement for every customer who is overdue and has an email address (not unsubscribed, not paused). Nothing is ever sent on its own: the drafts wait on this page until you approve each one, with a 30-second Undo.</p>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={stmt.enabled} onChange={(e) => setStmt({ ...stmt, enabled: e.target.checked })} />
+            Draft monthly statements
+          </label>
+          <label htmlFor="stmt-day" className="label !mb-0">on day</label>
+          <select id="stmt-day" className="input !w-auto" value={stmt.day} onChange={(e) => setStmt({ ...stmt, day: Number(e.target.value) })}>
+            {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => <option key={d} value={d}>{d}</option>)}
+          </select>
+          <button className="btn-secondary btn-sm" disabled={busy === 'stmt'} aria-busy={busy === 'stmt'} onClick={() => call('stmt', '/api/dunning/settings', 'PUT', { statements: stmt }, stmt.enabled ? `Monthly statement drafts are on, from day ${stmt.day}.` : 'Monthly statement drafts are off.')}>
+            {busy === 'stmt' && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Save
+          </button>
+        </div>
+        <p className="app-meta mt-2 font-normal">The day runs up to the 28th so every month has one. Drafts appear after the next scheduled run on or after that day.</p>
       </div>
 
       {/* ---- Own domain ---- */}

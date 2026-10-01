@@ -9,6 +9,7 @@ import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { parseWindowInput } from '@/lib/dunning/send-window';
 import { parseRulesInput } from '@/lib/dunning/chase-rules';
 import { cleanFooter } from '@/lib/statements';
+import { parseScheduleInput } from '@/lib/statement-schedule';
 
 /**
  * PUT accepts either or both of:
@@ -17,6 +18,7 @@ import { cleanFooter } from '@/lib/statements';
  *                                            only act during business hours
  *   { chasing: { minGapDays, minBalance } }  at most one reminder per customer per N days;
  *                                            skip invoices with a balance under X
+ *   { statements: { enabled, day } }         draft a monthly statement for overdue customers (always held for approval)
  *   { statementFooter: string }              payment details printed at the bottom of statements; empty clears it
  *   { listOtherInvoices: boolean }           a reminder also lists the customer's other overdue invoices
  * Anything omitted is left as it was.
@@ -55,6 +57,12 @@ export async function PUT(req: NextRequest) {
     if (!r.ok) return NextResponse.json({ error: r.error }, { status: 400 });
     set.minGapDays = r.value.minGapDays;
     set.minBalance = r.value.minBalance.toFixed(2);
+  }
+  if ('statements' in input) {
+    const sch = parseScheduleInput(input.statements);
+    if (!sch.ok) return NextResponse.json({ error: sch.error }, { status: 400 });
+    set.statementsEnabled = sch.value.enabled;
+    set.statementsDay = sch.value.day;
   }
   if ('statementFooter' in input) {
     if (typeof input.statementFooter !== 'string') return NextResponse.json({ error: 'statementFooter must be text' }, { status: 400 });

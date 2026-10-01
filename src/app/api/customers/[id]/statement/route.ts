@@ -12,8 +12,7 @@ import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
 import { loadStatement, loadStatementFooter } from '@/lib/statements-load';
 import { renderStatementHtml, statementCsv, statementSubject } from '@/lib/statements';
-import { statementTarget } from '@/lib/statement-target';
-import { sendCopies } from '@/lib/recipients-send';
+import { sendStatementEmail } from '@/lib/statements-send';
 
 /** GET ?format=csv downloads this customer's open invoices as a CSV. */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -51,41 +50,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try { const p = await req.json(); if (p && typeof p === 'object') input = p as Record<string, unknown>; } catch { /* no body is fine */ }
   const note = typeof input.note === 'string' ? input.note.replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').trim().slice(0, 2000) : '';
 
-  const [customer] = await db.select({ name: customers.name, email: customers.email, dndAt: customers.dndAt }).from(customers).where(and(eq(customers.id, id), eq(customers.orgId, orgId))).limit(1);
-  if (!customer) return NextResponse.json({ error: 'not found' }, { status: 404 });
-  const target = statementTarget({ email: customer.email, unsubscribedAt: customer.dndAt });
-  if (!target.ok) return NextResponse.json({ error: target.reason }, { status: 409 });
-
-  const statement = await loadStatement(orgId, id);
-  if (statement.sections.length === 0) return NextResponse.json({ error: 'This customer owes nothing right now, so there is no statement to send.' }, { status: 409 });
-
-  const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
-  const businessName = org?.name ?? 'Your team';
-  const subject = statementSubject(businessName, statement.asOf);
-  const baseHtml = renderStatementHtml({ customerName: customer.name, businessName, statement, note, footer: await loadStatementFooter(orgId) });
-  const html = withUnsubscribeFooter(baseHtml, target.to);
-  const fromLine = await resolveFrom(orgId, businessName);
-
-  let externalId: string | null = null;
-  try {
-    const sent = await sendEmail({
-      to: target.to,
-      subject,
-      html,
-      headers: dunningListUnsubscribeHeaders(target.to),
-      from: fromLine,
-      replyTo: getDunningReplyToAddress(),
-    });
-    if (sent.status === 'skipped') return NextResponse.json({ error: 'Email is not set up on this server, so nothing was sent.' }, { status: 502 });
-    externalId = sent.id ?? null;
-  } catch (e: unknown) {
-    return NextResponse.json({ error: `Could not send: ${errorMessage(e)}` }, { status: 502 });
-  }
-
-  // Extra recipients get their own copy. The statement is already sent; a copy that fails never undoes it.
-  try { await sendCopies({ orgId, customerId: id, primaryEmail: target.to, subject, baseHtml, from: fromLine, replyTo: getDunningReplyToAddress() }); } catch (e) { console.error('[statement] copies failed:', errorMessage(e)); }
-  const totals = statement.sections.map((s) => ({ currency: s.currency, totalCents: s.totalCents, overdueCents: s.overdueCents }));
-  await db.insert(statementLog).values({ orgId, customerId: id, toAddress: target.to, subject, totals, sentBy: userId ?? null, externalId });
-  await recordEvent({ orgId, type: 'statement.sent', actorId: userId ?? undefined, payload: { customerId: id, totals } });
+  const result = await sendStatementEmail({ orgId, userId: userId ?? null, customerId: id, note });
+  if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
   return NextResponse.json({ ok: true });
 }

@@ -4,7 +4,7 @@ import { AppShell } from '@/components/app/shell';
 import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, dunningApprovals, dunningSettings, dunningSenderDomains } from '@/db/schema';
+import { statementDrafts, dunningSequences, dunningRuns, invoices, customers, dunningApprovals, dunningSettings, dunningSenderDomains } from '@/db/schema';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { nanoid, daysOverdue, formatCurrency } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
@@ -14,6 +14,9 @@ import { DunningPreview } from '@/components/dunning/preview';
 import { SequenceEditor, type Step } from '@/components/dunning/sequence-editor';
 import { DunningTour, ReplayTourButton } from '@/components/dunning/tour';
 import { ApprovalQueue, type QueuedReminder } from '@/components/dunning/approval-queue';
+import { StatementDraftsQueue, type StatementDraftItem } from '@/components/dunning/statement-drafts-queue';
+import { loadStatement } from '@/lib/statements-load';
+import { describeStatement } from '@/lib/statements';
 import { SendSettings } from '@/components/dunning/send-settings';
 import { loadSendWindow, isDefaultSequence, loadChaseRules, loadSenderContext, resolveFrom, type SenderContext } from '@/lib/dunning/org-settings';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
@@ -130,6 +133,8 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   let queueError = false;
   let chaseRules = { minGapDays: 7, minBalance: 0 };
   let listOthers = true;
+  let stmtSchedule = { enabled: false, day: 1 };
+  let stmtDrafts: StatementDraftItem[] = [];
   let sendWindow = { enabled: false, startHour: 9, endHour: 17, days: 31, timezone: 'UTC' };
   let senderContext: SenderContext = { businessName: '', ownDomain: null };
   let senderDomain: { domain: string; localPart: string; status: string; records: Array<{ kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string }> } | null = null;
@@ -140,6 +145,14 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     sendWindow = await loadSendWindow(orgId);
     chaseRules = await loadChaseRules(orgId);
     listOthers = await loadListOthers(orgId);
+    const [stmtRow] = await db.select({ on: dunningSettings.statementsEnabled, day: dunningSettings.statementsDay }).from(dunningSettings).where(eq(dunningSettings.orgId, orgId)).limit(1);
+    if (stmtRow) stmtSchedule = { enabled: stmtRow.on, day: Number(stmtRow.day) };
+    const draftRows = await db.select({ id: statementDrafts.id, error: statementDrafts.error, customerId: customers.id, customerName: customers.name, email: customers.email })
+      .from(statementDrafts).innerJoin(customers, eq(customers.id, statementDrafts.customerId))
+      .where(and(eq(statementDrafts.orgId, orgId), eq(statementDrafts.status, 'pending'))).orderBy(desc(statementDrafts.createdAt)).limit(50);
+    for (const d of draftRows as Array<{ id: string; error: string | null; customerId: string; customerName: string; email: string | null }>) {
+      stmtDrafts.push({ id: d.id, customerId: d.customerId, customerName: d.customerName, email: d.email, error: d.error, summary: describeStatement(await loadStatement(orgId, d.customerId)) || 'Nothing owed any more' });
+    }
     const [dom] = await db.select().from(dunningSenderDomains).where(eq(dunningSenderDomains.orgId, orgId)).limit(1);
     senderContext = await loadSenderContext(orgId);
     if (dom) senderDomain = { domain: dom.domain, localPart: dom.localPart, status: dom.status, records: dom.records ?? [] };
@@ -349,10 +362,11 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         <>
         {recentRuns.length === 0 && queue.length === 0 && <StarterSetup presets={PRESETS.map(({ id, name, blurb }) => ({ id, name, blurb }))} approvalRequired={approvalRequired} />}
         <ApprovalQueue approvalRequired={approvalRequired} items={queue} />
+        <StatementDraftsQueue items={stmtDrafts} />
         </>
       )}
 
-      {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} rules={chaseRules} listOthers={listOthers} />}
+      {!queueError && <SendSettings window={sendWindow} domain={senderDomain} emailConfigured={!!process.env.RESEND_API_KEY} rules={chaseRules} listOthers={listOthers} statements={stmtSchedule} />}
 
       <div data-tour="impact" className="mb-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <ImpactTile

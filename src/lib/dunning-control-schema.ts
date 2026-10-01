@@ -44,6 +44,8 @@ export const DUNNING_CONTROL_DDL = [
   `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS min_balance numeric(14,2) NOT NULL DEFAULT 0`,
   `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS list_other_invoices boolean NOT NULL DEFAULT true`,
   `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS statement_footer text`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS statements_enabled boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE dunning_settings ADD COLUMN IF NOT EXISTS statements_day smallint NOT NULL DEFAULT 1`,
   `CREATE TABLE IF NOT EXISTS dunning_sender_domains (
      org_id text PRIMARY KEY REFERENCES organizations(id) ON DELETE CASCADE,
      domain text NOT NULL UNIQUE,
@@ -167,6 +169,18 @@ export const DUNNING_CONTROL_DDL = [
    )`,
   `CREATE INDEX IF NOT EXISTS reminder_copies_msg_idx ON reminder_copies (external_message_id)`,
   `CREATE INDEX IF NOT EXISTS reminder_copies_run_idx ON reminder_copies (run_id)`,
+  `CREATE TABLE IF NOT EXISTS statement_drafts (
+     id text PRIMARY KEY,
+     org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+     customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+     period text NOT NULL,
+     status text NOT NULL DEFAULT 'pending',
+     error text,
+     created_at timestamptz NOT NULL DEFAULT now(),
+     decided_at timestamptz
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS statement_drafts_customer_period_uniq ON statement_drafts (customer_id, period)`,
+  `CREATE INDEX IF NOT EXISTS statement_drafts_org_status_idx ON statement_drafts (org_id, status)`,
   `CREATE TABLE IF NOT EXISTS task_outcomes (
      run_id text PRIMARY KEY REFERENCES dunning_runs(id) ON DELETE CASCADE,
      org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,

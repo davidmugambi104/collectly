@@ -511,6 +511,9 @@ export const dunningSettings = pgTable('dunning_settings', {
   listOtherInvoices: boolean('list_other_invoices').notNull().default(true),
   // Payment details or terms printed at the bottom of every statement (bank account, how to pay).
   statementFooter: text('statement_footer'),
+  // Monthly statement drafts, which always wait for approval. See src/lib/statement-schedule.ts.
+  statementsEnabled: boolean('statements_enabled').notNull().default(false),
+  statementsDay: smallint('statements_day').notNull().default(1),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -696,6 +699,25 @@ export const taskOutcomes = pgTable('task_outcomes', {
   createdBy: text('created_by'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * A monthly statement the scheduler drafted and is holding for the owner. Nothing
+ * is emailed until a person approves it. One per customer per month (unique), so
+ * running the scheduler twice cannot draft twice.
+ */
+export const statementDrafts = pgTable('statement_drafts', {
+  id: text('id').primaryKey().$defaultFn(() => nanoid()),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  customerId: text('customer_id').notNull().references(() => customers.id, { onDelete: 'cascade' }),
+  period: text('period').notNull(),
+  status: text('status').notNull().default('pending'),
+  error: text('error'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  decidedAt: timestamp('decided_at', { withTimezone: true }),
+}, (t) => ({
+  customerPeriodUniq: uniqueIndex('statement_drafts_customer_period_uniq').on(t.customerId, t.period),
+  orgStatusIdx: index('statement_drafts_org_status_idx').on(t.orgId, t.status),
+}));
 
 /** Named filters on list pages, shared by the organisation. See src/lib/saved-views.ts. */
 export const savedViews = pgTable('saved_views', {
