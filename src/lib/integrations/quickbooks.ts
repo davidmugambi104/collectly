@@ -12,7 +12,9 @@
  */
 import { db } from '@/db';
 import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
+import { fetchAllPages, chunk } from '@/lib/integrations/paging';
+import { needsLookup, reconcileStatus, statusFromAmounts } from '@/lib/integrations/sync-status';
 import { nanoid, errorMessage } from '@/lib/utils';
 
 /* Intuit ships no types package for the QBO REST surface. These describe only
@@ -45,9 +47,10 @@ type QboInvoice = {
 type QboQuery<K extends string, T> = { QueryResponse?: Partial<Record<K, T[]>> };
 
 
-const QBO_BASE = process.env.QBO_ENVIRONMENT === 'production'
-  ? 'https://quickbooks.api.intuit.com'
-  : 'https://sandbox-quickbooks.api.intuit.com';
+const QBO_BASE = (process.env.NODE_ENV !== 'production' && process.env.QBO_API_BASE) // tests point this at a local stand-in; never honoured in production
+  || (process.env.QBO_ENVIRONMENT === 'production'
+    ? 'https://quickbooks.api.intuit.com'
+    : 'https://sandbox-quickbooks.api.intuit.com');
 
 const QBO_OAUTH = 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer';
 const QBO_REVOKE = 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke';
@@ -277,16 +280,51 @@ export async function qboFetchAgingReport(orgId: string) {
   return qboFetch(orgId, `/reports/AgedReceivables?${new URLSearchParams({ query: 'SELECT * FROM AgeingReport MAXRESULTS 1000' }).toString()}`);
 }
 
-/** List all open invoices (Balance > 0) from QBO. Returns raw Query response. */
+const QBO_INVOICE_FIELDS = 'Id, DocNumber, CustomerRef, TotalAmount, Balance, DueDate, TxnDate, CurrencyRef, EmailStatus';
+const QBO_PAGE = 1000;
+const QBO_MAX_PAGES = 10;
+
+/** List all open invoices (Balance > 0) from QBO. Returns raw Query response (first page only). */
 export async function qboListOpenInvoices(orgId: string) {
-  const query = `SELECT Id, DocNumber, CustomerRef, TotalAmount, Balance, DueDate, TxnDate, CurrencyRef, EmailStatus FROM Invoice WHERE Balance > '0' MAXRESULTS 1000`;
+  const query = `SELECT ${QBO_INVOICE_FIELDS} FROM Invoice WHERE Balance > '0' MAXRESULTS ${QBO_PAGE}`;
   return qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`);
 }
 
-/** List all customers from QBO. */
+/**
+ * Open invoices past the first 1000. The first page uses exactly the query above, so an
+ * organisation with fewer than 1000 open invoices behaves as it always did; only a full
+ * first page asks for more, with STARTPOSITION (1-based).
+ */
+async function qboListOpenInvoicesFrom(orgId: string, startPosition: number): Promise<QboInvoice[]> {
+  const query = `SELECT ${QBO_INVOICE_FIELDS} FROM Invoice WHERE Balance > '0' STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Invoice', QboInvoice>;
+  return res?.QueryResponse?.Invoice ?? [];
+}
+
+/** The current state of specific invoices by id, including ones with no balance left. */
+async function qboGetInvoicesByIds(orgId: string, ids: string[]): Promise<QboInvoice[]> {
+  const out: QboInvoice[] = [];
+  for (const batch of chunk(ids, 50)) {
+    const query = `SELECT ${QBO_INVOICE_FIELDS} FROM Invoice WHERE Id IN (${batch.map((id) => `'${id.replace(/'/g, '')}'`).join(',')})`;
+    const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Invoice', QboInvoice>;
+    out.push(...(res?.QueryResponse?.Invoice ?? []));
+  }
+  return out;
+}
+
+const QBO_CUSTOMER_FIELDS = 'Id, DisplayName, CompanyName, PrimaryEmailAddr, PrimaryPhone, CurrencyRef';
+
+/** List customers from QBO (first page). */
 export async function qboListCustomers(orgId: string) {
-  const query = `SELECT Id, DisplayName, CompanyName, PrimaryEmailAddr, PrimaryPhone, CurrencyRef FROM Customer MAXRESULTS 1000`;
+  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer MAXRESULTS ${QBO_PAGE}`;
   return qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`);
+}
+
+/** Customers past the first 1000. Same approach as qboListOpenInvoicesFrom. */
+async function qboListCustomersFrom(orgId: string, startPosition: number): Promise<QboCustomer[]> {
+  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Customer', QboCustomer>;
+  return res?.QueryResponse?.Customer ?? [];
 }
 
 /** Fetch a single invoice by id (with line items). */
@@ -367,7 +405,11 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   try {
     const res = (await qboListCustomers(orgId)) as QboQuery<'Customer', QboCustomer>;
     qboCustomers = res?.QueryResponse?.Customer ?? [];
-    if (qboCustomers.length >= QBO_PAGE_SIZE) truncated = true;
+    if (qboCustomers.length >= QBO_PAGE_SIZE) {
+      const rest = await fetchAllPages((page) => qboListCustomersFrom(orgId, 1 + page * QBO_PAGE_SIZE), QBO_PAGE_SIZE, QBO_MAX_PAGES - 1);
+      qboCustomers = [...qboCustomers, ...rest.items];
+      if (rest.truncated) truncated = true;
+    }
   } catch (e: unknown) {
     errors.push(`customers: ${errorMessage(e)}`);
   }
@@ -406,16 +448,21 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   try {
     const res = (await qboListOpenInvoices(orgId)) as QboQuery<'Invoice', QboInvoice>;
     qboInvoices = res?.QueryResponse?.Invoice ?? [];
-    if (qboInvoices.length >= QBO_PAGE_SIZE) truncated = true;
+    if (qboInvoices.length >= QBO_PAGE_SIZE) {
+      // A full first page: read the rest, page by page, up to a limit.
+      const rest = await fetchAllPages((page) => qboListOpenInvoicesFrom(orgId, 1 + page * QBO_PAGE_SIZE), QBO_PAGE_SIZE, QBO_MAX_PAGES - 1);
+      qboInvoices = [...qboInvoices, ...rest.items];
+      if (rest.truncated) truncated = true;
+    }
   } catch (e: unknown) {
     errors.push(`invoices: ${errorMessage(e)}`);
   }
 
-  for (const inv of qboInvoices) {
+  const applyInvoice = async (inv: QboInvoice): Promise<void> => {
     try {
       const externalId = String(inv.Id);
       const customerExternalId = String(inv.CustomerRef?.value ?? '');
-      if (!customerExternalId) continue;
+      if (!customerExternalId) return;
 
       // Find the local customer by external id
       const [localCustomer] = await db
@@ -451,13 +498,7 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
       const issueDate = inv.TxnDate ? new Date(inv.TxnDate) : new Date();
       const dueDate = inv.DueDate ? new Date(inv.DueDate) : issueDate;
       // In QBO, Balance=0 means Paid. Balance < Total means Partial.
-      const status: 'draft' | 'sent' | 'viewed' | 'partial' | 'paid' | 'overdue' = balance === 0
-        ? 'paid'
-        : amountPaid > 0
-          ? 'partial'
-          : new Date() > dueDate
-            ? 'overdue'
-            : 'sent';
+      const syncedStatus = statusFromAmounts({ total, due: balance, dueDate, now: new Date() });
 
       const existing = await db
         .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
@@ -466,6 +507,8 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
         .limit(1);
 
       if (existing[0]) {
+        // An owner's dispute or write-off holds while the invoice is still open in QBO.
+        const status = reconcileStatus(existing[0].status, syncedStatus);
         const wasUnpaid = existing[0].status !== 'paid';
         // IMPORTANT: paidAt records WHEN the invoice was paid, not when we
         // last synced. Overwriting it with new Date() on every sync inflates
@@ -486,6 +529,7 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
         }).where(eq(invoicesTbl.id, existing[0].id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;
       } else {
+        const status = syncedStatus;
         await db.insert(invoicesTbl).values({
           id: nanoid(),
           orgId,
@@ -505,13 +549,33 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
     } catch (e: unknown) {
       errors.push(`invoice ${inv?.Id}: ${errorMessage(e)}`);
     }
+  };
+
+  for (const inv of qboInvoices) await applyInvoice(inv);
+
+  // Invoices we hold as open that QBO did not list as open: paid there. The open
+  // query never returns them, so ask by id and apply what QBO says. Reported but
+  // never undoes what was synced above.
+  try {
+    const seen = new Set(qboInvoices.map((i) => String(i.Id)));
+    const held = await db
+      .select({ externalId: invoicesTbl.externalId, status: invoicesTbl.status })
+      .from(invoicesTbl)
+      .where(and(eq(invoicesTbl.orgId, orgId), inArray(invoicesTbl.status, ['sent', 'viewed', 'partial', 'overdue', 'disputed'])));
+    const missing = held
+      .filter((h: { externalId: string | null; status: string }) => h.externalId && needsLookup(h.status) && !seen.has(h.externalId))
+      .map((h: { externalId: string | null }) => h.externalId as string);
+    if (missing.length > 0) for (const inv of await qboGetInvoicesByIds(orgId, missing)) await applyInvoice(inv);
+  } catch (e: unknown) {
+    errors.push(`reconcile: ${errorMessage(e)}`);
   }
+
 
   // 3. Touch lastSyncAt
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks')));
 
-  if (truncated) errors.push('sync hit the 1000-record page limit — some customers/invoices may not have been imported (pagination not yet implemented)');
+  if (truncated) errors.push('sync stopped at its limit (10,000 customers or open invoices), so some may not have been imported');
   return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }
 

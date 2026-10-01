@@ -13,11 +13,14 @@
  */
 import { db } from '@/db';
 import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
+import { fetchAllPages, chunk } from '@/lib/integrations/paging';
+import { needsLookup, reconcileStatus, xeroSyncedStatus } from '@/lib/integrations/sync-status';
 import { nanoid, errorMessage } from '@/lib/utils';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
-const XERO_API = 'https://api.xero.com/api.xro/2.0';
+// Tests point this at a local stand-in. Never honoured in production.
+const XERO_API = (process.env.NODE_ENV !== 'production' && process.env.XERO_API_BASE) || 'https://api.xero.com/api.xro/2.0';
 
 /**
  * Xero's Accounting API returns date fields (Invoice.Date, Invoice.DueDate,
@@ -128,6 +131,7 @@ type XeroInvoice = {
   InvoiceNumber?: string;
   Date?: string;
   DueDate?: string;
+  Status?: string;
   Total?: number;
   AmountDue?: number;
   CurrencyCode?: string;
@@ -292,27 +296,50 @@ export async function saveXeroConnection(orgId: string, tokens: {
  * detect payments the customer made outside Mugavi.
  */
 const XERO_PAGE_SIZE = 100; // Xero's fixed page size for list endpoints
+/** Bounds on how much one sync reads: 5,000 contacts, 3,000 open invoices. Beyond that it says so instead of guessing. */
+const MAX_CONTACT_PAGES = 50;
+const MAX_INVOICE_PAGES = 30;
 
 export async function xeroListOpenInvoices(orgId: string): Promise<{ invoices: XeroInvoice[]; truncated: boolean }> {
-  // Fetch in two passes — Xero's filter syntax for OR is awkward
-  const auth = (await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=1`)) as XeroList;
+  // Fetch in two passes — Xero's filter syntax for OR is awkward. Open invoices
+  // are read page by page; the paid pass stays at one page, because an invoice
+  // that was paid or voided is found by its id instead (xeroGetInvoicesByIds).
+  const open = await fetchAllPages(
+    async (page) => ((await xeroFetch(orgId, `/Invoices?where=Status=="AUTHORISED"&page=${page}`)) as XeroList)?.Invoices ?? [],
+    XERO_PAGE_SIZE,
+    MAX_INVOICE_PAGES,
+  );
   const paid = (await xeroFetch(orgId, `/Invoices?where=Status=="PAID"&page=1`)) as XeroList;
-  const authInvoices = auth?.Invoices ?? [];
   const paidInvoices = paid?.Invoices ?? [];
   return {
-    invoices: [...authInvoices, ...paidInvoices],
-    // Checked per-call, not on the combined length -- 100 AUTHORISED + 40
-    // PAID is truncated (AUTHORISED hit its cap) even though the combined
-    // 140 isn't itself a round page-size multiple.
-    truncated: authInvoices.length >= XERO_PAGE_SIZE || paidInvoices.length >= XERO_PAGE_SIZE,
+    invoices: [...open.items, ...paidInvoices],
+    // The open list is only truncated if it ran into the page limit. The single paid page being full is normal and is covered by the id lookup.
+    truncated: open.truncated,
   };
 }
 
-/** List all contacts (customers) from Xero. */
+/**
+ * The current state of specific invoices, by id. Used for invoices we hold as
+ * open that no longer appear in the open list: they were paid, voided or deleted.
+ * Xero accepts a comma-separated list of ids; batches stay small to keep the URL short.
+ */
+export async function xeroGetInvoicesByIds(orgId: string, ids: string[]): Promise<XeroInvoice[]> {
+  const out: XeroInvoice[] = [];
+  for (const batch of chunk(ids, 40)) {
+    const res = (await xeroFetch(orgId, `/Invoices?IDs=${batch.map(encodeURIComponent).join(',')}`)) as XeroList;
+    out.push(...(res?.Invoices ?? []));
+  }
+  return out;
+}
+
+/** List all contacts (customers) from Xero, every page. */
 export async function xeroListContacts(orgId: string): Promise<{ contacts: XeroContact[]; truncated: boolean }> {
-  const res = (await xeroFetch(orgId, `/Contacts?page=1`)) as XeroList;
-  const contacts = res?.Contacts ?? [];
-  return { contacts, truncated: contacts.length >= XERO_PAGE_SIZE };
+  const all = await fetchAllPages(
+    async (page) => ((await xeroFetch(orgId, `/Contacts?page=${page}`)) as XeroList)?.Contacts ?? [],
+    XERO_PAGE_SIZE,
+    MAX_CONTACT_PAGES,
+  );
+  return { contacts: all.items, truncated: all.truncated };
 }
 
 // -------------------------------------------------------------------
@@ -370,11 +397,7 @@ interface XeroSyncResult {
   invoicesMarkedPaid: number;
   durationMs: number;
   errors: string[];
-  /** True if a list call hit Xero's fixed 100-per-page size — xeroListOpenInvoices/
-   * xeroListContacts hardcode page=1, so anything past the first page is
-   * silently missing. Real multi-page fetching is a larger follow-up
-   * (needs a Xero sandbox to verify); this at least reports the sync as
-   * known-incomplete instead of claiming a clean, complete one. */
+  /** True if the sync stopped at its page limit (5,000 contacts or 3,000 open invoices), so something may be missing. */
   truncated?: boolean;
 }
 
@@ -384,6 +407,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let reconciledByLookup = 0;
   let truncated = false;
 
   // 1. Contacts → customers
@@ -428,11 +452,11 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
     errors.push(`invoices: ${errorMessage(e)}`);
   }
 
-  for (const inv of xeroInvoices) {
+  const applyInvoice = async (inv: XeroInvoice): Promise<void> => {
     try {
       const externalId = String(inv.InvoiceID);
       const contactExternalId = String(inv.Contact?.ContactID ?? '');
-      if (!contactExternalId) continue;
+      if (!contactExternalId) return;
 
       const [localCustomer] = await db
         .select({ id: customersTbl.id })
@@ -465,13 +489,11 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
       const currency = inv.CurrencyCode ?? 'USD';
       const issueDate = parseXeroDate(inv.Date) ?? new Date();
       const dueDate = parseXeroDate(inv.DueDate) ?? issueDate;
-      const status: 'draft' | 'sent' | 'viewed' | 'partial' | 'paid' | 'overdue' = amountDue === 0
-        ? 'paid'
-        : amountPaid > 0
-          ? 'partial'
-          : new Date() > dueDate
-            ? 'overdue'
-            : 'sent';
+      // Xero's own Status (VOIDED, DELETED, DRAFT) wins over the amounts, and an
+      // owner's dispute or write-off survives while the invoice is still open there.
+      const syncedStatus = xeroSyncedStatus({ xeroStatus: inv.Status, total, due: amountDue, dueDate, now: new Date() });
+      // A voided or draft invoice was never paid: do not let total minus nothing-due read as money received.
+      const effectivePaid = syncedStatus === 'written_off' || syncedStatus === 'draft' ? 0 : amountPaid;
 
       const existing = await db
         .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
@@ -480,6 +502,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         .limit(1);
 
       if (existing[0]) {
+        const status = reconcileStatus(existing[0].status, syncedStatus);
         const wasUnpaid = existing[0].status !== 'paid';
         // See quickbooks.ts — paidAt must not be re-stamped on every sync or
         // DSO inflates by a day per day. Preserve the original payment date.
@@ -487,7 +510,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         await db.update(invoicesTbl).set({
           number,
           amount: String(total),
-          amountPaid: String(amountPaid),
+          amountPaid: String(effectivePaid),
           currency,
           issueDate,
           dueDate,
@@ -497,6 +520,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
         }).where(eq(invoicesTbl.id, existing[0].id));
         if (wasUnpaid && status === 'paid') invoicesMarkedPaid++;
       } else {
+        const status = syncedStatus;
         await db.insert(invoicesTbl).values({
           id: nanoid(),
           orgId,
@@ -504,7 +528,7 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
           externalId,
           number,
           amount: String(total),
-          amountPaid: String(amountPaid),
+          amountPaid: String(effectivePaid),
           currency,
           issueDate,
           dueDate,
@@ -516,11 +540,37 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
     } catch (e: unknown) {
       errors.push(`invoice ${inv?.InvoiceID}: ${errorMessage(e)}`);
     }
+  };
+
+  for (const inv of xeroInvoices) await applyInvoice(inv);
+
+  // 3. Invoices we hold as open that Xero did not list as open: paid, voided or
+  // deleted there. Ask Xero about each by id and apply what it says, so a paid
+  // invoice stops being chased even when it is not on the one paid page we read.
+  // A failure here is reported but never undoes what was synced above.
+  try {
+    const seen = new Set(xeroInvoices.map((i) => String(i.InvoiceID)));
+    const held = await db
+      .select({ externalId: invoicesTbl.externalId, status: invoicesTbl.status })
+      .from(invoicesTbl)
+      .where(and(eq(invoicesTbl.orgId, orgId), inArray(invoicesTbl.status, ['sent', 'viewed', 'partial', 'overdue', 'disputed'])));
+    const missing = held
+      .filter((h: { externalId: string | null; status: string }) => h.externalId && needsLookup(h.status) && !seen.has(h.externalId))
+      .map((h: { externalId: string | null }) => h.externalId as string);
+    if (missing.length > 0) {
+      for (const inv of await xeroGetInvoicesByIds(orgId, missing)) {
+        await applyInvoice(inv);
+        reconciledByLookup++;
+      }
+    }
+  } catch (e: unknown) {
+    errors.push(`reconcile: ${errorMessage(e)}`);
   }
+
 
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'xero')));
 
-  if (truncated) errors.push('sync hit Xero’s 100-per-page limit — some contacts/invoices may not have been imported (pagination not yet implemented)');
+  if (truncated) errors.push(`sync stopped at the limit of ${MAX_CONTACT_PAGES * XERO_PAGE_SIZE} contacts or ${MAX_INVOICE_PAGES * XERO_PAGE_SIZE} open invoices, so some may not have been imported`);
   return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
 }
