@@ -10,12 +10,10 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Chaser: better AR automation for small B2B services',
+  title: 'Mugavi vs Chaser: AR automation for small B2B services',
   description:
-    'Side-by-side of Mugavi and Chaser. Chaser starts around $259/mo ' +
-    `with templated reminders. Mugavi starts at $${PLAN_PRICING.starter.monthly}/mo with tone-aware ` +
-    'AI dunning, no per-invoice fees, self-serve setup, and reply-or-pay ' +
-    'pause, built for 5-30 person agencies and consultancies on Xero.',
+    `Chaser starts around $259/mo. Mugavi starts at $${PLAN_PRICING.starter.monthly}/mo with reminders you ` +
+    'approve first, no per-invoice fees and a pause when a customer replies.',
   path: '/vs-chaser',
   image: '/og-vs-chaser.png',
   keywords: ['Mugavi vs Chaser', 'Chaser alternative', 'Xero invoice reminder', 'Chaser vs Mugavi'],

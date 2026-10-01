@@ -58,10 +58,8 @@ const FAQS: FaqItem[] = [
 export const metadata = pageMetadata({
   title: 'Features: tone-aware AR automation for small agencies',
   description:
-    'All of Mugavi\'s features: AI-drafted reminders you approve before ' +
-    'they send, pause on reply, payment or promise, pause any customer, ' +
-    'promise-to-pay tracking, dispute handling, Xero sync (QuickBooks in ' +
-    'beta), a 4-week cash forecast and an AR aging dashboard.',
+    'Reminders you approve before they send, pause on reply or payment, ' +
+    'promise-to-pay tracking, dispute handling, Xero sync (QuickBooks in beta).',
   path: '/features',
   image: '/og-features.png',
   keywords: [
