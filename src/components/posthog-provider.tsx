@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
@@ -84,7 +84,13 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return <>{children}</>;
   return (
     <PHProvider client={posthog}>
-      <PageviewTracker enabled={enabled && ready} />
+      {/* useSearchParams() opts the nearest Suspense boundary out of server
+          rendering. The layout's boundary wraps {children}, so without this
+          one the whole page shipped as an empty shell whenever the PostHog key
+          was set (production), while local builds without the key looked fine. */}
+      <Suspense fallback={null}>
+        <PageviewTracker enabled={enabled && ready} />
+      </Suspense>
       {children}
     </PHProvider>
   );
