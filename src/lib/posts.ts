@@ -252,7 +252,7 @@ We spent the first 6 weeks of building Mugavi auditing every A/R tool we could f
 - Implementation: 0 minutes (it's already there)
 - Quality: unusable
 
-QuickBooks now covers invoicing, reminders, payment tracking, aging reports, and even a cash-flow planner. What it doesn't do is relationship-aware follow-up — reading a reply, tracking a promise to pay, routing a dispute, or knowing when to pause because a customer already responded. That's a different workflow, not a missing feature list.
+QuickBooks now covers invoicing, reminders, payment tracking, aging reports, and even a cash-flow planner. What it doesn't do is relationship-aware follow-up, reading a reply, tracking a promise to pay, routing a dispute, or knowing when to pause because a customer already responded. That's a different workflow, not a missing feature list.
 
 ### 4. Micro-SaaS attempts (ChaserX, Bloomerang, etc.)
 - Price: $19-$99/month
@@ -318,7 +318,7 @@ We're doing 10 customer interviews in the next 2 weeks. If you run a 5-30 person
 
 Reply to this email or book a 15-min call: https://cal.com/davie-collectly/15min
 
-— Davie
+Davie
 Founder, Mugavi
 https://mugavi.com
 `,
@@ -359,7 +359,7 @@ If you treat them the same, your forecast can be badly wrong.
 
 ## Weighted aging: a better model
 
-The improvement is straightforward: weight each invoice by its probability of having paid by a given point, based on its age and the customer's payment history. This is a simplified heuristic, not a backtested predictive model — treat it as a way to prioritize, not a number to plan payroll around.
+The improvement is straightforward: weight each invoice by its probability of having paid by a given point, based on its age and the customer's payment history. This is a simplified heuristic, not a backtested predictive model, treat it as a way to prioritize, not a number to plan payroll around.
 
 The probability an invoice is *still unpaid* at day N should decay as N grows past the customer's typical payment day:
 
@@ -368,7 +368,7 @@ The probability an invoice is *still unpaid* at day N should decay as N grows pa
 Where:
 - N = days past due (or until due, if not yet due)
 - N0 = the customer's average days-to-pay
-- k = a "decay rate" — typically 0.1 for slow payers, 0.3 for fast
+- k = a "decay rate", typically 0.1 for slow payers, 0.3 for fast
 
 For a customer that pays in 14 days on average, an invoice 30 days past due has a low probability of paying in the next week. For a customer that pays in 45 days, a 30-day-past-due invoice is right on schedule.
 
@@ -412,9 +412,9 @@ Your bookkeeper's spreadsheet almost certainly uses straight-line aging. That's 
 
 The fix isn't complicated, it's just not the default in a spreadsheet. Some AR tools do it. Mugavi's cash-flow forecast weights your open invoices by each customer's payment history, which is the same idea.
 
-If you want to try it: https://mugavi.com — 14-day free trial, no credit card, 10-minute setup.
+If you want to try it: https://mugavi.com, 14-day free trial, no credit card, 10-minute setup.
 
-— Davie
+Davie
 `,
   },
 
@@ -422,9 +422,9 @@ If you want to try it: https://mugavi.com — 14-day free trial, no credit card,
     slug: 'best-dunning-templates-2026',
     title: 'The 7 dunning email templates that actually get invoices paid',
     date: '2026-07-05', read: '5 min',
-    excerpt: 'Patterns from what typically works in dunning emails — and what to avoid. Illustrative benchmarks, not a Mugavi-run study.',
+    excerpt: 'Patterns from what typically works in dunning emails, and what to avoid. Illustrative benchmarks, not a Mugavi-run study.',
     tags: ['dunning', 'templates', 'collections'],
-    body: `These are illustrative benchmarks based on common collections-industry patterns, not a formal Mugavi study — we're a small beta and don't have a dataset that size yet. Here's what tends to work.
+    body: `These are illustrative benchmarks based on common collections-industry patterns, not a formal Mugavi study. We're a small beta and don't have a dataset that size yet. Here's what tends to work.
 
 ## The numbers
 
@@ -438,9 +438,9 @@ The difference between top quartile and bottom quartile isn't tone, length, or b
 
 ## What works
 
-### 1. Day 1 — friendly nudge (best: 28% response)
+### 1. Day 1: friendly nudge (best: 28% response)
 
-**Subject:** Quick reminder — invoice {{number}}
+**Subject:** Quick reminder: invoice {{number}}
 
 **Body:**
 
@@ -453,15 +453,15 @@ Thanks!
 
 **Why it works:** It's short, friendly, and assumes good intent. Most late payments are forgetfulness, not malice. This catches the 30-40% of late payers who just forgot.
 
-### 2. Day 4 — gentle follow-up (best: 24% response)
+### 2. Day 4: gentle follow-up (best: 24% response)
 
-**Subject:** Following up — invoice {{number}}
+**Subject:** Following up: invoice {{number}}
 
 **Body:**
 
 Hi {{contact_name}},
 
-Following up on invoice {{number}} for {{amount}}, which was due {{days_overdue}} days ago. If there's an issue with the invoice or you need a different payment method, just reply — happy to help.
+Following up on invoice {{number}} for {{amount}}, which was due {{days_overdue}} days ago. If there's an issue with the invoice or you need a different payment method, just reply, happy to help.
 
 Pay here: {{payment_link}}
 
@@ -470,7 +470,7 @@ Thanks,
 
 **Why it works:** It opens the door to a conversation. "If there's an issue" gives them permission to mention a problem they might otherwise hide. Many late payments are caused by issues the customer hasn't raised.
 
-### 3. Day 7 — firm reminder (best: 19% response)
+### 3. Day 7: firm reminder (best: 19% response)
 
 **Subject:** Invoice {{number}} is 7 days past due
 
@@ -480,14 +480,14 @@ Hi {{contact_name}},
 
 Invoice {{number}} for {{amount}} is now 7 days past due. Please review and settle at your earliest convenience: {{payment_link}}
 
-If there's a reason for the delay, just reply — we'd rather understand than chase.
+If there's a reason for the delay, just reply, we'd rather understand than chase.
 
 Best,
 {{business_name}}
 
 **Why it works:** It's matter-of-fact. It states the fact, offers a path forward, and shows you're not going away. It doesn't threaten, but it doesn't apologize either.
 
-### 4. Day 14 — clear action required (best: 17% response)
+### 4. Day 14: clear action required (best: 17% response)
 
 **Subject:** Action required: invoice {{number}}
 
@@ -505,7 +505,7 @@ If there's an issue, reply today. Otherwise, payment is required this week.
 
 **Why it works:** The phrase "action required" gets opens. "Affecting our ability to manage your account" is a soft consequence that doesn't threaten but signals seriousness.
 
-### 5. Day 21 — phone call request (best: 22% response)
+### 5. Day 21: phone call request (best: 22% response)
 
 **Subject:** Quick call about invoice {{number}}?
 
@@ -521,7 +521,7 @@ Can you call us at {{phone}} today, or let me know a good time?
 
 **Why it works:** It breaks the email loop. Most late-payment email threads die because nobody picks up the phone. This forces a conversation. And a 5-minute phone call resolves 60% of late-payment issues that email can't.
 
-### 6. Day 30 — final notice (best: 31% response)
+### 6. Day 30: final notice (best: 31% response)
 
 **Subject:** Final notice: invoice {{number}}
 
@@ -535,11 +535,11 @@ To avoid that, please settle here: {{payment_link}} or reply today with a plan.
 
 {{business_name}}
 
-**Why it works:** "Final notice" is one of the most reliable subject lines in collections. "Referred for external collections" is the consequence. Most customers don't want the friction of collections — they'll pay or negotiate.
+**Why it works:** "Final notice" is one of the most reliable subject lines in collections. "Referred for external collections" is the consequence. Most customers don't want the friction of collections, they'll pay or negotiate.
 
-### 7. Day 45 — collections (best: 18% response)
+### 7. Day 45: collections (best: 18% response)
 
-**Subject:** Account being referred for collections — invoice {{number}}
+**Subject:** Account being referred for collections: invoice {{number}}
 
 **Body:**
 
@@ -551,7 +551,7 @@ To avoid this, settle the full balance here within 7 days: {{payment_link}}
 
 {{business_name}}
 
-**Why it works:** It states the consequence plainly. Note: only send this if it's true — collection-referral fees, timing, and reporting rules depend on your contract terms, the collections partner you actually use, and your jurisdiction. Don't send this template unless you have a real collections arrangement behind it.
+**Why it works:** It states the consequence plainly. Note: only send this if it's true, collection-referral fees, timing, and reporting rules depend on your contract terms, the collections partner you actually use, and your jurisdiction. Don't send this template unless you have a real collections arrangement behind it.
 
 ## What doesn't work
 
@@ -578,7 +578,7 @@ Total recovery: **70-90%** of invoices paid within 30 days. Industry baseline wi
 
 If you want to test these templates without building the system: mugavi.com automates all 7 in 10 minutes, from $79/mo. 14-day free trial.
 
-— Davie
+Davie
 `,
   },
   {
@@ -591,7 +591,7 @@ If you want to test these templates without building the system: mugavi.com auto
 
 ## What DSO actually means (and why it matters)
 
-DSO — Days Sales Outstanding — is the average number of days it takes you to collect payment after issuing an invoice. The formula is simple:
+DSO, Days Sales Outstanding, is the average number of days it takes you to collect payment after issuing an invoice. The formula is simple:
 
 **(Total accounts receivable ÷ total credit sales) × number of days**
 
@@ -601,31 +601,31 @@ A 5-30 person service business with $3M ARR and a 45-day DSO has roughly **$370k
 
 It's not because customers are bad. It's not because your invoices are unclear. It's because **you have no system**. Most founders we talk to have one of three patterns:
 
-1. **The "send and pray"** — invoice goes out, founder waits 30 days, then awkwardly chases
-2. **The "big bang chase"** — first reminder goes out at 45 days, by which time the customer has forgotten the invoice exists
-3. **The "manual spreadsheet"** — somebody is supposed to be following up, but they forgot, and the spreadsheet has 47 rows
+1. **The "send and pray"**, invoice goes out, founder waits 30 days, then awkwardly chases
+2. **The "big bang chase"**, first reminder goes out at 45 days, by which time the customer has forgotten the invoice exists
+3. **The "manual spreadsheet"**, somebody is supposed to be following up, but they forgot, and the spreadsheet has 47 rows
 
 All three have the same root cause: **no automated, escalating, tone-aware system**. That's what we're going to fix.
 
 ## The 5 steps (summary; full detail in the playbook)
 
-### Step 1 — Audit your A/R aging every Monday morning
+### Step 1: Audit your A/R aging every Monday morning
 
 Open the aging report. Sort by amount, not by date. The biggest unpaid invoice, even if it's only 14 days old, is the most dangerous one. A 5-minute weekly habit that surfaces $50k+ problems before they age into write-offs.
 
-### Step 2 — Set up a 3-step dunning sequence that auto-fires
+### Step 2: Set up a 3-step dunning sequence that auto-fires
 
 Friendly reminder at day +1. Firm reminder at day +7. Final notice at day +14. That's it. Anything more complicated and you'll never maintain it. The whole thing should take 30 minutes to set up in a tool like Mugavi, or 2 hours in a spreadsheet + email rules.
 
-### Step 3 — Give every customer a frictionless pay link
+### Step 3: Give every customer a frictionless pay link
 
 Card. ACH. Wire. Whatever. The friction to pay is the biggest predictor of *when* they pay. If they have to log into a portal they forgot the password to, they will put it off. If they can click a link in the email and pay in 30 seconds, many will do it while they are reading it. We have no numbers of our own on how much faster, so test it on your own invoices.
 
-### Step 4 — Risk-score your customers and focus on the top 5
+### Step 4: Risk-score your customers and focus on the top 5
 
 Not all invoices are equal. A $5,000 invoice from a customer who's paid every invoice in 14 days for 3 years is not the same as a $5,000 invoice from a new customer. Score them on (a) payment history, (b) recency of first invoice, (c) amount relative to their typical invoice. Spend your time on the top 5 riskiest invoices, not the top 50.
 
-### Step 5 — Measure DSO weekly, not monthly
+### Step 5: Measure DSO weekly, not monthly
 
 Monthly DSO reports tell you what already happened. Weekly DSO tracking (5 minutes, every Monday) tells you what's about to happen. The trend is more important than the absolute number. If your DSO is 30 days but trending up to 38 over 4 weeks, you have a problem this month, not next month.
 
@@ -651,9 +651,9 @@ The full 7-page playbook goes deeper:
 
 Pick one of the 5 steps above and do it this week. Don't try to implement all 5 at once. If you do nothing else, do Step 1 (the Monday morning aging audit). It costs you 5 minutes and surfaces 80% of your problems.
 
-If you want help implementing the rest — that's what Mugavi does. 14-day free trial, no card required. → https://mugavi.com/sign-up
+If you want help implementing the rest, that's what Mugavi does. 14-day free trial, no card required. → https://mugavi.com/sign-up
 
-— Davie
+Davie
 `,
   },
   {
@@ -674,7 +674,7 @@ The most-cited data point is from QuickBooks' 2025 *Small Business Late Payments
 
 The UK picture is similar. The *Late Payment Survey* from the Federation of Small Businesses puts the number at **£26 billion** owed to small businesses at any time, and roughly **14,000 UK businesses shut down each year** specifically because a customer didn't pay on time.
 
-The pattern is global. Australia, Canada, EU, Singapore — all in the same range when you adjust for business population. The 30-60 day net-terms default is the single most consequential business norm in B2B, and almost nobody has measured its real cost.
+The pattern is global. Australia, Canada, EU, Singapore, all in the same range when you adjust for business population. The 30-60 day net-terms default is the single most consequential business norm in B2B, and almost nobody has measured its real cost.
 
 ## The hidden costs nobody counts
 
@@ -686,11 +686,11 @@ If your business has a line of credit, you're paying interest on the working cap
 
 ### 2. The opportunity cost of slow hiring
 
-A 12-person agency with $3M ARR and a 45-day DSO has ~$370k locked up. That same business at 18-day DSO has ~$148k locked up. The difference — **$222k of working capital** — is the size of two senior hires or a full quarter of operating runway. Late payments don't just delay payroll, they delay *growth*.
+A 12-person agency with $3M ARR and a 45-day DSO has ~$370k locked up. That same business at 18-day DSO has ~$148k locked up. The difference, **$222k of working capital**, is the size of two senior hires or a full quarter of operating runway. Late payments don't just delay payroll, they delay *growth*.
 
 ### 3. The founder-time cost
 
-Founders spend an average of **11 hours per week** chasing unpaid invoices (Xero 2024). At a $150k founder salary, that's roughly **$32/hr fully-loaded** in opportunity cost — call it **$18,000/year per founder** in time that could go to selling, building, or hiring. For a 5-person business where the founder does most of the chasing, it's worse.
+Founders spend an average of **11 hours per week** chasing unpaid invoices (Xero 2024). At a $150k founder salary, that's roughly **$32/hr fully-loaded** in opportunity cost, call it **$18,000/year per founder** in time that could go to selling, building, or hiring. For a 5-person business where the founder does most of the chasing, it's worse.
 
 ### 4. The bad-debt write-off
 
@@ -726,9 +726,9 @@ You don't need a $3K/month enterprise AR tool to do any of these. You need 30 mi
 
 The reason late payments are so persistent is that **the cost is distributed and the benefit of fixing it is concentrated.** A single founder bears all the time, interest, and lost growth, but a single customer has no incentive to pay faster. The asymmetry is the entire reason an industry exists to fix it.
 
-If you're a small business owner reading this and the math above feels familiar, that's because it is. The first step is the Monday morning A/R aging audit — 5 minutes, every Monday, sorted by amount, not by date. That single habit surfaces 80% of the problem.
+If you're a small business owner reading this and the math above feels familiar, that's because it is. The first step is the Monday morning A/R aging audit, 5 minutes, every Monday, sorted by amount, not by date. That single habit surfaces 80% of the problem.
 
-— Davie
+Davie
 `,
   },
   {
@@ -745,7 +745,7 @@ Three things make a final notice useless:
 
 1. **Too long.** Customers skim. If your final notice is more than 4 short paragraphs, you've lost them at "Dear Sir/Madam."
 2. **Too legal.** "We hereby demand immediate payment in full, failing which we will initiate proceedings" reads like a chain email from 2003. Modern customers read it and roll their eyes.
-3. **Too late.** If the final notice is the first time you're saying "we really mean it," you've already lost. The "final" needs to land on a customer who has been hearing from you for 30 days — not be the first signal that something is wrong.
+3. **Too late.** If the final notice is the first time you're saying "we really mean it," you've already lost. The "final" needs to land on a customer who has been hearing from you for 30 days, not be the first signal that something is wrong.
 
 The goal of a final notice is not to threaten. It's to **clarify, document, and provide a clean path forward.** Customers who want to pay will pay; customers who can't pay need help; customers who refuse to pay are a separate problem.
 
@@ -779,7 +779,9 @@ The reply path is critical. A surprising number of late-paying customers *want* 
 
 End on a note that signals "I'm a person, not a system."
 
-> Thanks for taking care of this. — Davie
+> Thanks for taking care of this.
+>
+> Davie
 
 That's it. No exclamation points. No emoji. No "URGENT" in the subject. Just facts, dates, a path, and a human signature.
 
@@ -787,7 +789,7 @@ That's it. No exclamation points. No emoji. No "URGENT" in the subject. Just fac
 
 ### Template 1: The standard final notice (email, day 30+)
 
-**Subject:** Invoice 2415 — final notice before action on July 22
+**Subject:** Invoice 2415: final notice before action on July 22
 
 > Hi {{contact_name}},
 >
@@ -797,11 +799,15 @@ That's it. No exclamation points. No emoji. No "URGENT" in the subject. Just fac
 >
 > You can pay the full balance here: [link]. If you'd like to discuss a payment plan, reply to this email and I'll send options today.
 >
-> Thanks for taking care of this. — Davie
+> Thanks for taking care of this.
+>
+> Davie
 
 ### Template 2: The SMS version (under 320 chars)
 
-> Final notice: Invoice 2415 ($11,600) is 65+ days past due. To avoid service suspension on July 25, please pay or reply to discuss options: [link] — Davie, Mugavi
+> Final notice: Invoice 2415 ($11,600) is 65+ days past due. To avoid service suspension on July 25, please pay or reply to discuss options: [link]
+>
+> Davie, Mugavi
 
 SMS final notices work because the customer reads them. Don't use SMS for soft reminders; do use it for the final.
 
@@ -819,13 +825,13 @@ SMS final notices work because the customer reads them. Don't use SMS for soft r
 >
 > [link]
 >
-> — Davie
+> Davie
 
 This version works surprisingly often. A third of the time the customer is having their own cash-flow problem and is relieved to be offered a plan. A third of the time there was an actual issue with the work and you've now saved a relationship. A third of the time they pay within 48 hours.
 
 ### Template 4: The collections-handoff version (after 60+ days, when you've genuinely given up)
 
-**Subject:** Invoice 2415 — referral to collections July 29
+**Subject:** Invoice 2415: referral to collections July 29
 
 > Hi {{contact_name}},
 >
@@ -835,7 +841,7 @@ This version works surprisingly often. A third of the time the customer is havin
 >
 > This is the easiest time to resolve this. The link below settles the original $11,600 with no fees: [link]
 >
-> — Davie
+> Davie
 
 The "before that date" framing is intentional. It tells the customer: *you have one last clean way out, take it.*
 
@@ -849,11 +855,11 @@ The "before that date" framing is intentional. It tells the customer: *you have 
 
 ## The bigger point
 
-The final notice isn't the hard part. The hard part is the **30 days of reminders before it** — the friendly nudge on day 1, the firm reminder on day 7, the action-required on day 14. By the time the final notice lands, the customer should already know exactly where things stand. The final is just the last clean step before a real consequence.
+The final notice isn't the hard part. The hard part is the **30 days of reminders before it**, the friendly nudge on day 1, the firm reminder on day 7, the action-required on day 14. By the time the final notice lands, the customer should already know exactly where things stand. The final is just the last clean step before a real consequence.
 
 If your business sends fewer than 4 touchpoints before a final notice, the final notice isn't the problem. The process is.
 
-— Davie
+Davie
 `,
   },
 ];
