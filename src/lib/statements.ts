@@ -121,7 +121,16 @@ export function describeStatement(s: Statement): string {
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /** The statement as an email body. `note` is the owner's own words, shown above the table. */
-export function renderStatementHtml(o: { customerName: string; businessName: string; statement: Statement; note?: string | null }): string {
+export const MAX_FOOTER_CHARS = 1000;
+
+/** Normalise the owner's payment details: line endings, control characters, length. Empty becomes null. */
+export function cleanFooter(input: unknown): string | null {
+  if (typeof input !== 'string') return null;
+  const t = input.replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').trim().slice(0, MAX_FOOTER_CHARS);
+  return t || null;
+}
+
+export function renderStatementHtml(o: { customerName: string; businessName: string; statement: Statement; note?: string | null; footer?: string | null }): string {
   const td = 'padding:6px 8px;border-bottom:1px solid #eeeef0;';
   const th = `${td}font-weight:600;text-align:left;`;
   const sections = o.statement.sections.map((sec) => {
@@ -156,6 +165,7 @@ export function renderStatementHtml(o: { customerName: string; businessName: str
       <h2 style="font-size:18px;margin:0 0 4px;">Statement of account</h2>
       <p style="font-size:13px;color:#6c6e76;margin:0 0 16px;">${esc(o.businessName)} for ${esc(o.customerName)}, as of ${esc(formatStatementDate(o.statement.asOf))}</p>
       ${note}${body}
+      ${o.footer?.trim() ? `<hr style="border:0;border-top:1px solid #eeeef0;margin:24px 0 12px;" /><p style="font-size:13px;line-height:1.6;white-space:pre-wrap;"><strong>How to pay</strong>\n${esc(o.footer.trim())}</p>` : ''}
     </body></html>
   `;
 }

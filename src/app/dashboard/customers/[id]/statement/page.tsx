@@ -5,11 +5,12 @@ import { notFound, redirect } from 'next/navigation';
 import { and, desc, eq } from 'drizzle-orm';
 import { AppShell } from '@/components/app/shell';
 import { StatementActions } from '@/components/customers/statement-actions';
+import { StatementFooterForm } from '@/components/customers/statement-footer-form';
 import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { db } from '@/db';
 import { customers, statementLog } from '@/db/schema';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
-import { loadStatement } from '@/lib/statements-load';
+import { loadStatement, loadStatementFooter } from '@/lib/statements-load';
 import { BUCKET_LABELS, describeStatement, formatMoney, formatStatementDate } from '@/lib/statements';
 import { AGED_BUCKETS } from '@/lib/aged-receivables';
 import { statementTarget } from '@/lib/statement-target';
@@ -25,6 +26,7 @@ export default async function CustomerStatementScreen({ params }: { params: Prom
 
   await ensureDunningControlSchema();
   const statement = await loadStatement(orgId, id);
+  const footer = await loadStatementFooter(orgId);
   const sent = await db.select().from(statementLog).where(and(eq(statementLog.orgId, orgId), eq(statementLog.customerId, id))).orderBy(desc(statementLog.sentAt)).limit(10);
   const target = statementTarget({ email: customer.email, unsubscribedAt: customer.dndAt });
   const nothingOwed = statement.sections.length === 0;
@@ -79,12 +81,16 @@ export default async function CustomerStatementScreen({ params }: { params: Prom
         </section>
       ))}
 
+      {footer && <p className="mb-4 whitespace-pre-wrap rounded-[10px] border p-3 text-sm [border-color:var(--hair)]"><strong>How to pay</strong>{'\n'}{footer}</p>}
+
       <StatementActions
         customerId={customer.id}
         customerName={customer.name}
         email={target.ok ? target.to : null}
         blockedReason={target.ok ? (nothingOwed ? 'There is nothing to send: this customer owes nothing.' : null) : target.reason}
       />
+
+      <StatementFooterForm initial={footer ?? ''} />
 
       <section className="mt-6 print:hidden" aria-labelledby="sent-heading">
         <h2 id="sent-heading" className="app-heading">Statements sent</h2>

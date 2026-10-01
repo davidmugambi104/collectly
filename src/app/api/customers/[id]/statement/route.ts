@@ -10,7 +10,7 @@ import { resolveFrom } from '@/lib/dunning/org-settings';
 import { rateLimit } from '@/lib/rate-limit';
 import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
-import { loadStatement } from '@/lib/statements-load';
+import { loadStatement, loadStatementFooter } from '@/lib/statements-load';
 import { renderStatementHtml, statementCsv, statementSubject } from '@/lib/statements';
 import { statementTarget } from '@/lib/statement-target';
 
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const [org] = await db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
   const businessName = org?.name ?? 'Your team';
   const subject = statementSubject(businessName, statement.asOf);
-  const html = withUnsubscribeFooter(renderStatementHtml({ customerName: customer.name, businessName, statement, note }), target.to);
+  const html = withUnsubscribeFooter(renderStatementHtml({ customerName: customer.name, businessName, statement, note, footer: await loadStatementFooter(orgId) }), target.to);
 
   let externalId: string | null = null;
   try {

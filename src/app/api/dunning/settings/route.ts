@@ -8,6 +8,7 @@ import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { parseWindowInput } from '@/lib/dunning/send-window';
 import { parseRulesInput } from '@/lib/dunning/chase-rules';
+import { cleanFooter } from '@/lib/statements';
 
 /**
  * PUT accepts either or both of:
@@ -16,6 +17,7 @@ import { parseRulesInput } from '@/lib/dunning/chase-rules';
  *                                            only act during business hours
  *   { chasing: { minGapDays, minBalance } }  at most one reminder per customer per N days;
  *                                            skip invoices with a balance under X
+ *   { statementFooter: string }              payment details printed at the bottom of statements; empty clears it
  *   { listOtherInvoices: boolean }           a reminder also lists the customer's other overdue invoices
  * Anything omitted is left as it was.
  */
@@ -53,6 +55,10 @@ export async function PUT(req: NextRequest) {
     if (!r.ok) return NextResponse.json({ error: r.error }, { status: 400 });
     set.minGapDays = r.value.minGapDays;
     set.minBalance = r.value.minBalance.toFixed(2);
+  }
+  if ('statementFooter' in input) {
+    if (typeof input.statementFooter !== 'string') return NextResponse.json({ error: 'statementFooter must be text' }, { status: 400 });
+    set.statementFooter = cleanFooter(input.statementFooter);
   }
   if ('listOtherInvoices' in input) {
     if (typeof input.listOtherInvoices !== 'boolean') {

@@ -509,6 +509,8 @@ export const dunningSettings = pgTable('dunning_settings', {
   minBalance: decimal('min_balance', { precision: 14, scale: 2 }).notNull().default('0'),
   // A reminder also lists the customer's other overdue invoices. See src/lib/dunning/multi-invoice.ts.
   listOtherInvoices: boolean('list_other_invoices').notNull().default(true),
+  // Payment details or terms printed at the bottom of every statement (bank account, how to pay).
+  statementFooter: text('statement_footer'),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

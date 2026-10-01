@@ -128,3 +128,21 @@ test('fees of zero are ignored; a fee number cannot inject markup; CSV carries t
   const csv = statementCsv(buildStatement([inv('A', '2026-09-20', 200)], asOf, [fee('A', 1500)]));
   assert.match(csv, /^Late fee on A,USD,,,15\.00,0\.00,15\.00,,late fee,no$/m);
 });
+
+test('payment details go at the bottom, escaped; none means no section', () => {
+  const s = buildStatement([inv('A', '2026-09-20', 200)], asOf);
+  const html = renderStatementHtml({ customerName: 'C', businessName: 'B', statement: s, footer: 'Bank: Acme <b>Ltd</b>\nAccount 123' });
+  assert.match(html, /How to pay/);
+  assert.match(html, /Account 123/);
+  assert.ok(!html.includes('<b>Ltd'));
+  assert.ok(!/How to pay/.test(renderStatementHtml({ customerName: 'C', businessName: 'B', statement: s, footer: '   ' })));
+  assert.ok(!/How to pay/.test(renderStatementHtml({ customerName: 'C', businessName: 'B', statement: s })));
+});
+
+test('cleanFooter trims, caps and empties', async () => {
+  const { cleanFooter, MAX_FOOTER_CHARS } = await import('./statements.ts');
+  assert.equal(cleanFooter('  hi\r\nthere \u0000 '), 'hi\nthere');
+  assert.equal(cleanFooter('   '), null);
+  assert.equal(cleanFooter(42), null);
+  assert.equal(cleanFooter('x'.repeat(5000))!.length, MAX_FOOTER_CHARS);
+});
