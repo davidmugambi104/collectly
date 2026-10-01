@@ -7,7 +7,7 @@ export const metadata = pageMetadata({
   title: 'Security: encryption, infrastructure, and access control',
   description:
     'How Mugavi protects your data, your customers, and your money. ' +
-    'Encryption in transit + at rest, audit log, role-based access, and ' +
+    'Encryption in transit + at rest, audit log, org-scoped data access, and ' +
     'the compliance posture we hold today and what we are building toward.',
   path: '/security',
   keywords: ['Mugavi security', 'encryption at rest', 'SOC 2', 'data security', 'GDPR'],

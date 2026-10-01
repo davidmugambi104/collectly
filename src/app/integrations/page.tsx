@@ -72,7 +72,7 @@ const categories = [
         bullets: [
           'OAuth 2.0 callback and token-refresh flow, verified against a real external Xero organization',
           'Sync contacts, invoices, and payments',
-          'Granular API scopes only: read-only on invoices, no access beyond what dunning requires',
+          'Granular API scopes only. Invoices are read-only. Contacts and payments are requested with write access, and nothing beyond what dunning needs',
         ],
       },
     ],
