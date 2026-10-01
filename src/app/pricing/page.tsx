@@ -130,6 +130,28 @@ export default function PricingPage() {
         </div>
       </section>
 
+      <section className="container-page py-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="h2 text-center">What Mugavi does not do yet</h2>
+          <p className="mt-3 text-center text-sm text-ink-600">Other tools do some of these. We would rather you read it here than find out after you sign up.</p>
+          <ul className="mt-8 space-y-3 text-sm text-ink-700">
+            {[
+              'Early-payment discounts.',
+              'Payment plans. We record a promise to pay and pause reminders until that day, but we do not run instalments.',
+              'Scheduled or monthly statements. You can send a customer a statement by hand, with an Undo, but nothing is sent on a schedule.',
+              'Late fees that run on their own. You set a rule and review each fee before it is applied. A fee is not written back to your accounting software or added to the payment page.',
+              'Sending from your own personal mailbox. Reminders go out from Mugavi, or from your own domain once you verify it. Replies come to the Mugavi Inbox.',
+              'Posted letters, or placing the call for you. A call step puts a task on your list.',
+              'Tags on customers or invoices, and a library of ready-made reminder wording.',
+              'A read-only team role. Anyone you add to your workspace has the same access as you.',
+              'An API or webhooks.',
+            ].map((item) => (
+              <li key={item} className="flex gap-2"><X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-400" />{item}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       <section className="container-page py-20">
         <h2 className="h2 text-center">Frequently asked</h2>
         <div className="mt-10 max-w-2xl mx-auto space-y-4">

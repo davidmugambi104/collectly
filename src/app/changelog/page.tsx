@@ -21,6 +21,16 @@ export default function ChangelogPage() {
         <div className="mt-10 space-y-8">
           {[
             {
+              date: '2026-10-01',
+              title: 'Statements, late fees, shared call tasks and more people on a customer',
+              body: 'A customer statement you can view, print, download or email, with a 30-second Undo and your payment details at the bottom (sent by hand: nothing is scheduled). A late fee rule that lists the fees due and applies them only when you confirm; a fee is its own line on reminders and statements, and is not added to the payment page or written back to your accounting software. Call tasks can be given to a teammate and closed with a note on how the call went. A later reminder can be sent under a different name. A reminder to a customer with several overdue invoices now lists them with a total. Add other people at a customer, such as accounts payable, who get their own copy with their own unsubscribe link.',
+            },
+            {
+              date: '2026-09-30',
+              title: 'Control first: you approve, you can undo, and you can see why',
+              body: 'Reminders wait for your approval by default, and a reminder you send by hand has a 30-second Undo. Ask why a reminder has not gone out and get a plain answer. Pause reminders for one customer. A reply pauses that invoice until you have read it, and you can answer from the Inbox. Customer groups with their own schedules, a guided first run, send windows, reminders before the due date, one reminder per customer per 7 days by default, and a minimum balance. An aged receivables report, saved views, and call tasks. On the payment page a customer can say when they will pay or that something is not right. Sending from your own domain is supported, but we have not yet proven it with a live domain.',
+            },
+            {
               date: '2026-07-13',
               title: 'Public launch: A/R ROI calculator + AI cash-flow forecast',
               body: 'New /tools/ar-roi public lead-gen tool. AI cash-flow forecast wired to /api/forecast with weighted fallback. New /api/lead-notify endpoint that emails the founder on every waitlist + interview submission (no more silent form-fills).',

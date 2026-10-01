@@ -113,7 +113,7 @@ const STRATEGY = [
   },
   {
     title: 'Breadth beyond chasing',
-    body: 'Late fees, prompt-payment discounts, payment plans, statements and quote reminders. If you want levers other than reminders, they have more of them than we do.',
+    body: 'Prompt-payment discounts, payment plans and quote reminders, which we do not have. They also run late fees and statements on their own and on a schedule. Ours are reviewed and sent by you, and our late fees are not added to the payment page or written back to your accounting software. If you want levers other than reminders, they have more of them than we do.',
   },
   {
     title: 'Per-entity, not per-practice',
@@ -131,7 +131,7 @@ const CHOOSE_US = [
 const CHOOSE_THEM = [
   { label: 'You are one business chasing your own invoices, they are cheaper, straightforwardly' },
   { label: 'You run a handful of books and your invoice volume is low and steady' },
-  { label: 'You want late fees, prompt-payment discounts, payment plans and customer statements as well as chasing' },
+  { label: 'You want prompt-payment discounts or payment plans, or late fees and statements that run on their own, as well as chasing' },
   { label: 'You would rather buy the tool the Xero App Store ranks first' },
 ];
 

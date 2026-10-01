@@ -16,36 +16,44 @@ const FAQS: FaqItem[] = [
       a: 'Consultancies and boutique advisory firms typically invoice on longer ' +
          'cycles (net 30, net 60, monthly retainers, project milestones) and ' +
          'have a smaller number of higher-value invoices per customer. Mugavi ' +
-         'treats each invoice individually, reads the original payment terms ' +
-         'from Xero, and adapts the dunning cadence to the longer cycle.',
+         'treats each invoice individually and times its reminders from that ' +
+         "invoice's due date, which comes from Xero. A net-60 invoice is not " +
+         'chased at day 30, and you can give long-cycle customers their own ' +
+         'schedule with customer groups.',
     },
     {
       q: 'Does Mugavi handle retainer invoices differently from project invoices?',
-      a: 'Yes. Recurring retainer customers can be flagged once; Mugavi then ' +
-         'remembers their cadence, typical payment window, and any exclusions ' +
-         'across all subsequent invoices. Project milestone invoices stay ' +
-         'per-invoice so that a milestone dispute does not poison the broader ' +
-         'customer relationship.',
+      a: 'You can put recurring retainer customers in a group, and a group ' +
+         'has its own reminder schedule, so retainer customers can follow a ' +
+         'gentler one than project customers. Each invoice is still handled ' +
+         'on its own, and a customer with several overdue invoices gets one ' +
+         'reminder that lists them, not one per invoice. A disputed invoice ' +
+         'is left out of reminders.',
     },
     {
-      q: 'Can Mugavi keep track of CFO or fractional-finance escalations?',
-      a: 'Yes. You can configure per-customer exclusions for "any invoice ' +
-         'over $X goes to manual review" and "any invoice over 90 days goes to ' +
-         'manual review." These work in approval mode and serve as the ' +
-         'escalation layer for senior team members.',
+      q: 'Can Mugavi help with senior follow-ups on important accounts?',
+      a: 'In part. You can pause automatic reminders for a customer you are ' +
+         'handling yourself, add a call step to a schedule so a task lands on ' +
+         'your list (and give it to a teammate), and send a later reminder ' +
+         'under a different name, for example a partner. Mugavi does not yet ' +
+         'have rules such as "any invoice over a set amount goes to manual ' +
+         'review": approval is on or off for the whole account.',
     },
     {
       q: 'How does Mugavi work with our bookkeeper or fractional CFO?',
-      a: 'Your bookkeeper or fractional CFO gets a read-only seat on the ' +
-         'Mugavi dashboard at no additional cost on the founding-customer ' +
-         'plan. They can review approvals, see dispute classifications, and ' +
-         'audit the sequence without sending emails themselves.',
+      a: 'You can add them to your Mugavi workspace as a team member. Anyone ' +
+         'you add has the same access as you, because Mugavi does not have a ' +
+         'read-only role yet, so add only people you would trust to approve ' +
+         'reminders. They can review approvals, see dispute classifications, ' +
+         'and look at the activity log.',
     },
     {
       q: 'Will Mugavi break confidentiality for our client list?',
-      a: 'No. Mugavi never sends AR data to a third party. We do not train ' +
-         'AI models on customer data. See the public AI-data disclosure in our ' +
-         'security page for the full scope of what is and is not used.',
+      a: 'We never train AI models on your data. To write a reminder or ' +
+         'classify a reply, Mugavi sends the minimum context needed (for ' +
+         'example the invoice number, amount and days overdue) to Google ' +
+         'Gemini, and does not ask it to retain anything. See the security ' +
+         'page for the full scope of what is and is not used.',
     },
   ];
 
@@ -128,9 +136,9 @@ export default function ForConsultanciesPage() {
               Confidentiality-first.
             </h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              We never send AR data to third parties. We do not train models on
-              customer data. Customer data is processed for inference only, never
-              stored beyond what the in-app approval history requires.
+              We never train models on your data. To write a reminder we send
+              Google Gemini only the context it needs, and we do not ask it to
+              keep anything. The security page lists exactly what is used.
             </p>
           </div>
           <div className="card">
@@ -139,9 +147,9 @@ export default function ForConsultanciesPage() {
               Reads your Xero payment terms.
             </h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              The dunning cadence is per-invoice and reads the original terms
-              from the Xero invoice. Net-60 customer? Mugavi adapts without
-              a single configuration change.
+              Reminders are timed from each invoice's due date, which comes
+              from Xero, so a net-60 invoice is not chased early. Give a
+              slow-paying customer their own schedule with a customer group.
             </p>
           </div>
         </div>
@@ -149,19 +157,19 @@ export default function ForConsultanciesPage() {
       <section className="bg-ink-50 border-y border-ink-200">
         <div className="container-page py-16 max-w-3xl">
           <p className="eyebrow">For fractional finance teams</p>
-          <h2 className="mt-3 h2">Pair Mugavi with a fractional CFO.</h2>
+          <h2 className="mt-3 h2">Working with a fractional CFO or bookkeeper.</h2>
           <p className="mt-4 lead">
             If you already work with a fractional CFO or outsourced bookkeeping
-            provider, they get a free read-only seat on Mugavi from the
-            founding-customer plan. They review approvals, see dispute
-            classifications, and audit the sequence. You keep the senior
-            escalation layer with the right person in the loop.
+            provider, you can add them to your workspace. They can review
+            approvals, see dispute classifications, and read the activity log.
+            Mugavi has no read-only role yet, so they get the same access you
+            do. Nothing goes to a customer until a person approves it.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-ink-700">
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Read-only seat for bookkeeper / fractional CFO at no charge.</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Per-customer exclusion list for strategic accounts.</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Audit log for every approved, sent, paused, edited action.</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> SOC 2-ready permission model.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Add your bookkeeper or fractional CFO to the workspace (full access: there is no read-only role yet).</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Pause automatic reminders for any strategic account you are handling yourself.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> An activity log of what was drafted, approved, sent and paused.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Give a call task to a teammate, and send a later reminder under a partner&apos;s name.</li>
           </ul>
           <div className="mt-8">
             <Link href="/ar-audit" className="btn-primary inline-flex items-center gap-1.5">
