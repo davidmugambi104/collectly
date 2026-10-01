@@ -7,8 +7,8 @@ const PORT = 4818;
 process.env.QBO_API_BASE = `http://127.0.0.1:${PORT}`;
 process.env.USE_PGLITE = '1';
 const customers = Array.from({ length: 1500 }, (_, i) => ({ Id: `c${i}`, DisplayName: `Cust ${i}`, PrimaryEmailAddr: { Address: `c${i}@example.test` } }));
-const open = Array.from({ length: 2300 }, (_, i) => ({ Id: `q${i}`, DocNumber: `Q-${i}`, CustomerRef: { value: `c${i % 1500}`, name: `Cust ${i % 1500}` }, TotalAmount: 100, Balance: 100, DueDate: '2026-07-01', TxnDate: '2026-06-01', CurrencyRef: { value: 'USD' } }));
-const byId: Record<string, any> = { 'pq1': { Id: 'pq1', DocNumber: 'PQ1', CustomerRef: { value: 'c1' }, TotalAmount: 500, Balance: 0, DueDate: '2026-07-01', TxnDate: '2026-06-01', CurrencyRef: { value: 'USD' } } };
+const open = Array.from({ length: 2300 }, (_, i) => ({ Id: `q${i}`, DocNumber: `Q-${i}`, CustomerRef: { value: `c${i % 1500}`, name: `Cust ${i % 1500}` }, TotalAmt: 100, Balance: 100, DueDate: '2026-07-01', TxnDate: '2026-06-01', CurrencyRef: { value: 'USD' } }));
+const byId: Record<string, any> = { 'pq1': { Id: 'pq1', DocNumber: 'PQ1', CustomerRef: { value: 'c1' }, TotalAmt: 500, Balance: 0, DueDate: '2026-07-01', TxnDate: '2026-06-01', CurrencyRef: { value: 'USD' } } };
 const calls: string[] = [];
 const server = http.createServer((req, res) => {
   const u = new URL(req.url!, 'http://x'); const q = u.searchParams.get('query') ?? ''; calls.push(q.replace(/SELECT .* FROM/, 'SELECT * FROM').slice(0, 90));

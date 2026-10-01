@@ -165,7 +165,7 @@ async function main(): Promise<void> {
     if (u.includes('FROM%20Customer')) return resp(200, { QueryResponse: { Customer: [{ Id: 'c1', DisplayName: 'Acme D' }] } });
     return resp(200, {
       QueryResponse: {
-        Invoice: [{ Id: 'inv-d', DocNumber: 'D-1', CustomerRef: { value: 'c1' }, TotalAmount: 100, Balance: invBalance, DueDate: '2026-01-01', TxnDate: '2025-12-01' }],
+        Invoice: [{ Id: 'inv-d', DocNumber: 'D-1', CustomerRef: { value: 'c1' }, TotalAmt: 100, Balance: invBalance, DueDate: '2026-01-01', TxnDate: '2025-12-01' }],
       },
     });
   });

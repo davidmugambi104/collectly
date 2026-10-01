@@ -39,7 +39,7 @@ type QboInvoice = {
   DocNumber?: string;
   TxnDate?: string;
   DueDate?: string;
-  TotalAmount?: number;
+  TotalAmt?: number;
   Balance?: number;
   CurrencyRef?: { value?: string };
   CustomerRef?: { value?: string; name?: string };
@@ -280,7 +280,7 @@ export async function qboFetchAgingReport(orgId: string) {
   return qboFetch(orgId, `/reports/AgedReceivables?${new URLSearchParams({ query: 'SELECT * FROM AgeingReport MAXRESULTS 1000' }).toString()}`);
 }
 
-const QBO_INVOICE_FIELDS = 'Id, DocNumber, CustomerRef, TotalAmount, Balance, DueDate, TxnDate, CurrencyRef, EmailStatus';
+const QBO_INVOICE_FIELDS = 'Id, DocNumber, CustomerRef, TotalAmt, Balance, DueDate, TxnDate, CurrencyRef, EmailStatus';
 const QBO_PAGE = 1000;
 const QBO_MAX_PAGES = 10;
 
@@ -353,7 +353,7 @@ export async function qboRecordPayment(orgId: string, opts: {
 }) {
   const body = {
     CustomerRef: { value: opts.customerRef.value, name: opts.customerRef.name },
-    TotalAmount: opts.amount,
+    TotalAmt: opts.amount,
     Line: [
       {
         Amount: opts.amount,
@@ -491,7 +491,7 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
       // null/undefined), which `??` lets through. See matching fix in
       // xero.ts (same bug class, same symptom: blank invoice number).
       const number = inv.DocNumber || externalId;
-      const total = Number(inv.TotalAmount ?? 0);
+      const total = Number(inv.TotalAmt ?? 0);
       const balance = Number(inv.Balance ?? 0);
       const amountPaid = Math.max(0, total - balance);
       const currency = inv.CurrencyRef?.value ?? 'USD';
