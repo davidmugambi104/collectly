@@ -83,7 +83,7 @@ export default function VsGrowfinPage() {
       <WhenToChoose competitorName="Growfin" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="AI collections without the enterprise hangover"
-        body="Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers in 10 minutes."
+        body="Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers before you turn anything on."
       />
       <MarketingFooter />
     </div>

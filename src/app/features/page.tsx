@@ -135,7 +135,7 @@ export default function FeaturesPage() {
       <section className="container-page pb-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Try it on your actual invoices, not a demo.</h2>
-          <p className="mt-4 lead">14-day free trial. No credit card. Set up in 10 minutes.</p>
+          <p className="mt-4 lead">14-day free trial. No credit card. Connect Xero or QuickBooks and start in one sitting.</p>
           <div className="mt-6 max-w-md mx-auto"><WaitlistForm /></div>
         </div>
       </section>

@@ -52,7 +52,7 @@ const DIFFS = [
   {
     icon: Clock,
     label: 'Getting started',
-    collectly: 'Self-serve, under 10 minutes, 14-day free trial',
+    collectly: 'Self-serve, 14-day free trial',
     competitor: 'Book a demo, or a free analytics-only tier',
   },
 ];
@@ -123,7 +123,7 @@ export default function VsUpflowPage() {
       <WhenToChoose competitorName="Upflow" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="See the price, then decide"
-        body="14-day free trial, no credit card, no demo call. Connect Xero and see exactly what Mugavi would send your customers in 10 minutes."
+        body="14-day free trial, no credit card, no demo call. Connect Xero and see exactly what Mugavi would send your customers before you turn anything on."
       />
       <MarketingFooter />
     </div>

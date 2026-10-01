@@ -14,7 +14,7 @@ export const metadata = pageMetadata({
   description:
     'Side-by-side of Mugavi and Chaser. Chaser starts around $259/mo ' +
     `with templated reminders. Mugavi starts at $${PLAN_PRICING.starter.monthly}/mo with tone-aware ` +
-    'AI dunning, no per-invoice fees, 10-minute setup, and reply-or-pay ' +
+    'AI dunning, no per-invoice fees, self-serve setup, and reply-or-pay ' +
     'pause, built for 5-30 person agencies and consultancies on Xero.',
   path: '/vs-chaser',
   image: '/og-vs-chaser.png',
@@ -23,7 +23,7 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-invoice fees`, chaser: '~$259/mo entry plan (£199, by revenue band)' },
-  { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', chaser: 'A few hours, per G2 reviewers' },
+  { icon: Clock, label: 'Setup', collectly: 'Self-serve, no demo call', chaser: 'A few hours, per G2 reviewers' },
   { icon: Zap, label: 'AI dunning', collectly: 'Tone-aware email + SMS out of the box', chaser: 'Email/SMS/call, AI email generator' },
   { icon: Layers, label: 'Schedules', collectly: 'Customer groups, each with its own schedule. No cap on how many', chaser: '4 schedules on the $259 plan; unlimited from $779 (their subscription page, read 2026-09-30)' },
   { icon: Users, label: 'Best for', collectly: '5-30 person agencies and consultancies', chaser: 'SMB to mid-market ($5M–$120M revenue)' },
@@ -51,7 +51,7 @@ export default function VsChaserPage() {
         <p className="mt-5 lead">
           Chaser is a solid receivables tool, but it&apos;s priced for bigger businesses and starts at ~$259/mo.
           Mugavi gives small B2B service businesses the same AR automation from ${PLAN_PRICING.starter.monthly}/mo, with no per-invoice fees
-          and a 10-minute setup.
+          and self-serve setup.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/sign-up">
@@ -144,7 +144,7 @@ export default function VsChaserPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Stop overpaying for AR automation</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers in 10 minutes.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers before you turn anything on.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

@@ -194,7 +194,7 @@ export function RoiCalculator() {
           <Link href="/sign-up" className="mt-5 btn-brand w-full justify-center">
             Try Mugavi free for 14 days <ArrowRight className="h-3.5 w-3.5" />
           </Link>
-          <p className="mt-3 text-xs text-ink-500 text-center">No credit card. 10-minute setup. Cancel anytime.</p>
+          <p className="mt-3 text-xs text-ink-500 text-center">No credit card. Cancel anytime.</p>
           {/* The highest-intent moment this site produces: someone has just been
               shown a number about their own book. Asking for a trial here asks
               them to decide; asking to send them the number does not, and it

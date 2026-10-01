@@ -84,7 +84,7 @@ export default function VsZohobooksPage() {
       <WhenToChoose competitorName="Zoho Books" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Turn Zoho invoices into faster payments"
-        body="Start your 14-day free trial. No credit card. See what Mugavi would send your customers in 10 minutes."
+        body="Start your 14-day free trial. No credit card. See what Mugavi would send your customers before you turn anything on."
       />
       <MarketingFooter />
     </div>

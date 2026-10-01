@@ -205,7 +205,7 @@ export default function VsPaidnicePage() {
       <WhenToChoose competitorName="Paidnice" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Priced for the practice, not the invoice"
-        body="14-day free trial, full Practice-tier access, no credit card. Connect Xero and see what Mugavi would send your clients' customers in 10 minutes."
+        body="14-day free trial, full Practice-tier access, no credit card. Connect Xero and see what Mugavi would send your clients' customers before you turn anything on."
       />
       <MarketingFooter />
     </div>

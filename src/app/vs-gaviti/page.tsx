@@ -24,7 +24,7 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo, public pricing`, competitor: 'Custom pricing, request a quote' },
-  { icon: Clock, label: 'Setup', collectly: 'Under 10 minutes', competitor: 'Implementation-led, weeks' },
+  { icon: Clock, label: 'Setup', collectly: 'Self-serve, no demo call', competitor: 'Implementation-led, weeks' },
   { icon: ShieldCheck, label: 'Focus', collectly: 'AR dunning + cashflow for SMBs', competitor: 'Full invoice-to-cash + credit + deductions' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Mid-market / enterprise finance teams' },
 ];
@@ -67,7 +67,7 @@ export default function VsGavitiPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs Gaviti"
-        subtitle={`Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Mugavi takes the parts that matter most to small B2B services (smart dunning, cash-flow forecasting, and risk scoring) and packages them in a $${PLAN_PRICING.starter.monthly}/mo tool you can set up in 10 minutes.`}
+        subtitle={`Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Mugavi takes the parts that matter most to small B2B services (smart dunning, cash-flow forecasting, and risk scoring) and packages them in a $${PLAN_PRICING.starter.monthly}/mo tool you can set up before you turn anything on.`}
         competitorName="Gaviti"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Gaviti" />

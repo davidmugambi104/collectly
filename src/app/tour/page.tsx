@@ -98,7 +98,7 @@ export default function TourPage() {
               { icon: Mail, label: 'Tone-aware dunning: friendly → firm → final, automatically' },
               { icon: Wallet, label: 'Branded payment portal: customers pay without calling you' },
               { icon: BarChart3, label: '4-week cash forecast: know if you can make payroll' },
-              { icon: Clock, label: '10-minute setup: connect QBO/Xero and go' },
+              { icon: Clock, label: 'Self-serve setup: connect QBO or Xero and go' },
             ].map(({ icon: Icon, label }) => (
               <span key={label} className="inline-flex items-center gap-2 text-ink-700">
                 <Icon className="h-4 w-4 text-brand-600 shrink-0" />{label}

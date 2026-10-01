@@ -142,7 +142,7 @@ export default function VsMelioPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Don&apos;t let free invoicing become slow collections</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers in 10 minutes.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. See exactly what Mugavi would send your customers before you turn anything on.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

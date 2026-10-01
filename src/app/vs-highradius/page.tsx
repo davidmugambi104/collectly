@@ -24,7 +24,7 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR dunning, portal, forecast, risk scoring', competitor: 'O2C + AP + Treasury + Close/Reconciliation' },
-  { icon: Clock, label: 'Deployment', collectly: '10-minute self-serve setup', competitor: 'Enterprise implementation + change management' },
+  { icon: Clock, label: 'Deployment', collectly: 'Self-serve setup', competitor: 'Enterprise implementation + change management' },
   { icon: Globe2, label: 'Integrations', collectly: 'Xero, Plaid, Paystack (live); QuickBooks (beta); Stripe/Square (test/sandbox)', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Large enterprises / Office of the CFO' },
 ];
@@ -67,7 +67,7 @@ export default function VsHighradiusPage() {
       <MarketingHeader />
       <ComparisonHero
         title="Mugavi vs HighRadius"
-        subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Mugavi is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast, live in 10 minutes from $${PLAN_PRICING.starter.monthly}/mo.`}
+        subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Mugavi is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast, live before you turn anything on from $${PLAN_PRICING.starter.monthly}/mo.`}
         competitorName="HighRadius"
       />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="HighRadius" />
@@ -83,7 +83,7 @@ export default function VsHighradiusPage() {
       <WhenToChoose competitorName="HighRadius" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Big-company AI, small-company speed"
-        body="Start your 14-day free trial. No credit card. See what Mugavi would send your customers in 10 minutes."
+        body="Start your 14-day free trial. No credit card. See what Mugavi would send your customers before you turn anything on."
       />
       <MarketingFooter />
     </div>
