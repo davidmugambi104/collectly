@@ -2,6 +2,173 @@ type Post = { slug: string; title: string; date: string; read: string; excerpt: 
 
 export const POSTS: Post[] = [
   {
+    slug: 'why-hasnt-my-invoice-reminder-gone-out',
+    title: "Why hasn't my invoice reminder gone out? Ten things to check",
+    date: '2026-10-02', read: '5 min',
+    excerpt: 'You set up automatic reminders and a customer is still late. Most of the time one of ten ordinary reasons is the cause. Here is how to check each one.',
+    tags: ['invoice reminders', 'Xero', 'QuickBooks', 'A/R automation'],
+    body: `You turned on automatic reminders, an invoice is two weeks late, and nothing has gone out. Or the customer says they never got anything. It is a common problem, and it is almost never a bug. Usually one of the ordinary rules below is quietly stopping the email.
+
+Work down the list. The first few cause most of the trouble.
+
+## The invoice itself
+
+- **It is still a draft.** Reminder tools only act on invoices that have been approved or sent. In Xero that means the Awaiting Payment tab, not Draft. Check where the invoice actually sits.
+- **It is already marked paid.** If someone recorded a payment, even a part payment, the tool may treat the invoice as settled or send a different message. Look at the amount due, not just the status.
+- **It is not late yet.** Many schedules start a few days after the due date, and some send a reminder before it. A reminder set for day 7 will not fire on day 5.
+- **The balance is too small.** Some tools skip invoices below an amount you set. If you set that years ago and forgot, small invoices never get chased.
+
+## The customer
+
+- **There is no email address.** This is the most common cause. The contact exists, the invoice exists, and there is nowhere to send it. Look for the contact with a blank email field.
+- **They unsubscribed or the address bounced.** After either, a decent tool stops emailing them. You may never have been told.
+- **You paused them.** If you told someone you would call them, you may also have switched their reminders off and forgotten.
+- **They replied.** Some tools stop reminding an invoice once the customer answers, until you have read the reply. That is a good rule, but it surprises people.
+
+## The tool's own rules
+
+- **One reminder per customer, not per invoice.** A customer with three overdue invoices may get one email, then nothing for a week. If a tool does this, the other two invoices are waiting out the gap, not forgotten.
+- **Sending hours.** If the tool only sends on weekdays between set hours, an invoice that falls due on Saturday waits until Monday.
+
+## And then check the spam folder
+
+If the email did go out, the customer may not have seen it. Ask them to look in spam and promotions, and send a test to your own address. A reminder from an address your customer has never seen is easy to miss.
+
+## Where Xero and QuickBooks fit
+
+Xero has its own invoice reminders, and the invoices page shows whether they are on or off. QuickBooks Online has reminder settings too, under Account and settings, then Sales. We have not walked through every screen in both, and they change, so check the steps in your own account. What both do well is the basics. What neither does well is tell you why a particular invoice has not been reminded.
+
+That last part is the real problem. Ten possible reasons, and the tool shows you none of them.
+
+## Disclosure
+
+This article is from Mugavi, which makes accounts receivable software. In Mugavi, every invoice has a panel that answers "Why hasn't a reminder gone out?" in plain words, using the same rules the sender uses, and the invoice list has a Next reminder column that says what happens next and when. We wrote this list because the question comes up often, and every check above works without our product.`,
+  },
+  {
+    slug: 'read-an-aged-receivables-report',
+    title: 'How to read an aged receivables report, and what to do with each column',
+    date: '2026-10-02', read: '5 min',
+    excerpt: 'The report shows who owes you and how late. The columns are simple. What to do about each one is the part nobody explains.',
+    tags: ['aged receivables', 'Xero', 'QuickBooks', 'bookkeeping'],
+    body: `An aged receivables report lists what your customers owe, grouped by how overdue it is. If you only look at one report about money you are owed, make it this one.
+
+## Where to find it
+
+In Xero it is under Reporting, called Aged Receivables Summary (there is a Detail version too). In QuickBooks Online it is under Reports, called A/R Aging Summary. Menu names move around, so search for "aged" or "aging" if you do not see them.
+
+## The columns
+
+Most versions use the same five buckets:
+
+- Current, or not yet due
+- 1 to 30 days overdue
+- 31 to 60 days
+- 61 to 90 days
+- Over 90 days
+
+Each customer gets a row, and each bucket shows how much of their balance falls there. The right hand column is the total.
+
+## What to do about each one
+
+**Current.** Nothing, mostly. This is money that is behaving. If a large invoice is about to fall due, a short heads-up a few days before often saves a late payment.
+
+**1 to 30 days.** Send a reminder. This is the cheapest bucket to fix, because the customer usually forgot or the invoice got lost. A friendly note works better than a firm one at this stage.
+
+**31 to 60 days.** Someone should speak to them. If a reminder email did not work by now, the problem is probably not forgetfulness. Ask whether there is a dispute, a wrong purchase order number, or a cash problem.
+
+**61 to 90 days.** Treat it as a conversation about a plan. A payment date you both agree on beats a stern email. Write it down.
+
+**Over 90 days.** Decide, do not drift. Either there is an agreed plan, or you stop work for that customer, or you consider writing it off or passing it on. The one thing not to do is leave it in the report for another quarter.
+
+## Three habits that make the report useful
+
+1. Look at the total in the 61 days and over columns every month. If it grows, the problem is in your follow up, not your customers.
+2. Look for one customer carrying a large share of the overdue amount. One late payer matters more than ten small ones.
+3. Compare the report with what you actually chase. If a customer is in the 31 to 60 column and nobody has contacted them, that is the gap.
+
+## Disclosure
+
+This article is from Mugavi, which makes accounts receivable software. Mugavi has an aged receivables report with the same five buckets, shows it per customer, and exports it as a CSV. It matches the buckets above, and a customer's statement uses the same rules, so the two never disagree. Everything in this article works with the report your accounting software already has.`,
+  },
+  {
+    slug: 'late-payment-fees-when-to-charge',
+    title: 'Late payment fees: when to charge them, and how to do it without losing the customer',
+    date: '2026-10-02', read: '6 min',
+    excerpt: 'A late fee only works if you are allowed to charge it and you actually apply it. A short guide to both, including the UK rules.',
+    tags: ['late fees', 'late payment', 'invoicing', 'UK'],
+    body: `Late payment fees divide small business owners. Some think they are the only thing that gets slow payers moving. Others will not charge one because they are afraid of the argument. Both views have something to them.
+
+This is general information, not legal advice. The rules depend on where you and your customer are, so check your own contract and local law.
+
+## You can only charge what you agreed to
+
+In most places, a late fee needs a basis. Usually that is a clause in your contract or terms that the customer accepted before the work started. A fee you add after the invoice is late, with no earlier mention, is the kind that gets disputed and rarely collected.
+
+So the first step is not an invoice line. It is a sentence in your terms of business, in plain words, such as the amount, when it starts, and whether it repeats.
+
+## The UK has statutory rights
+
+If you are a business selling to another business in the UK, the Late Payment of Commercial Debts (Interest) Act gives you a right to statutory interest and a fixed sum for each late invoice, even if your contract is silent. The interest is set at a rate above the Bank of England base rate, and the fixed sums depend on the size of the debt. We are not going to quote current figures here because they change, so look them up on the government website before you rely on them.
+
+Outside the UK, other countries have their own rules, and in the United States it mostly comes down to your contract and state law.
+
+## How to charge a fee without losing the customer
+
+- **Say it early.** Put the fee in your terms and on your invoices, so it is never a surprise.
+- **Give a short grace period.** A fee on day one feels like a trap. A fee after two weeks feels fair.
+- **Send a reminder first.** Many customers pay after the reminder and the fee never comes up.
+- **Be willing to waive it.** A long standing customer who is a week late once should hear from you, not receive a penalty. Waiving a fee in return for payment today is a fair trade, and it works.
+- **Keep it proportionate.** A fee that is large compared with the invoice looks like a punishment and invites a dispute.
+- **Put it on its own line.** Do not bury a fee inside the invoice total. A separate line on the statement keeps the original invoice clean.
+
+## What not to do
+
+Do not add a fee to an invoice you know is in dispute. Do not charge a fee to a customer who has told you they will pay on a particular date, until that date has passed. And do not apply fees by hand to some customers and forget others, because inconsistency is the first thing a customer will point to.
+
+## Disclosure
+
+This article is from Mugavi, which makes accounts receivable software. Mugavi has a late fee rule you set yourself, with a grace period and an optional cap. It never applies a fee on its own: it lists the invoices that are due one, and you choose which to apply. It skips disputed invoices and invoices with a promise to pay. It does not write the fee back to your accounting software and does not add it to the payment page, so you collect it yourself and mark it paid. Everything above works without it.`,
+  },
+  {
+    slug: 'customer-statement-vs-another-reminder',
+    title: 'Send a statement instead of another reminder: when it works better',
+    date: '2026-10-02', read: '4 min',
+    excerpt: 'If a customer has several overdue invoices, a fifth reminder about one of them is the wrong email. A statement shows everything at once.',
+    tags: ['statements', 'invoice reminders', 'accounts receivable'],
+    body: `A customer with four overdue invoices is a different problem from a customer with one. Four separate reminders feel like nagging, and each one only mentions a single invoice, so the customer never sees the whole picture.
+
+A statement fixes that. It is a single page listing every open invoice, what is left on each, and the total.
+
+## When a statement works better
+
+- **The customer has more than one overdue invoice.** One document, one total, one payment.
+- **They say they did not know.** A statement is hard to argue with, because it lists dates and amounts.
+- **Their accounts payable team asks for one.** Many finance teams reconcile against statements, not individual emails.
+- **You want to reset the conversation.** A statement is less personal than a final notice, so it is a good middle step.
+
+## What a good statement has
+
+- Each open invoice with its number, issue date and due date
+- The amount, the amount paid and the balance left
+- How many days late each one is
+- A total, and the overdue part of it
+- Your payment details, so they can pay without writing back
+
+If you charge late fees, show them on their own lines, separate from the invoices, and include them in the total.
+
+## How often
+
+Monthly is common for customers who deal with you regularly. For a customer who is overdue, send one when you notice, then again after you have had their reply. More than that and it becomes noise.
+
+## Two things to check before you send
+
+First, make sure the invoices on it are really open. A statement that lists an invoice the customer paid last week costs you credibility. Second, check the customer is not in a dispute you have not resolved, because sending a statement mid dispute can look like you are ignoring it.
+
+## Disclosure
+
+This article is from Mugavi, which makes accounts receivable software. In Mugavi, any customer has a Statement page you can read, print, download as a CSV, or email. Emailing it waits 30 seconds so you can undo it, and your payment details print at the bottom. Statements are sent by hand only. Nothing is scheduled. Your accounting software almost certainly has a statement feature too, and that works fine.`,
+  },
+  {
     slug: 'stop-quickbooks-emailing-your-customers',
     title: 'How to stop QuickBooks Online from emailing your customers without asking',
     date: '2026-09-30', read: '4 min',
