@@ -26,6 +26,7 @@ import { isApprovalRequired } from '@/lib/dunning/approval';
 import { STANDARD_STEPS, PRESETS } from '@/lib/dunning/presets';
 import { daysUntilDue, stepDayPhrase } from '@/lib/dunning/step-timing';
 import { StarterSetup } from '@/components/dunning/starter-setup';
+import { senderNotices, type SenderNotice } from '@/lib/dunning/sender-health';
 
 const DEFAULT_STEPS: Step[] = STANDARD_STEPS;
 
@@ -137,6 +138,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   let stmtDrafts: StatementDraftItem[] = [];
   let sendWindow = { enabled: false, startHour: 9, endHour: 17, days: 31, timezone: 'UTC' };
   let senderContext: SenderContext = { businessName: '', ownDomain: null };
+  let notices: SenderNotice[] = [];
   let senderDomain: { domain: string; localPart: string; status: string; records: Array<{ kind: string; type: string; name: string; value: string; ttl: string; priority: number | null; status: string }> } | null = null;
   try {
     await ensureDunningControlSchema();
@@ -156,6 +158,11 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
     const [dom] = await db.select().from(dunningSenderDomains).where(eq(dunningSenderDomains.orgId, orgId)).limit(1);
     senderContext = await loadSenderContext(orgId);
     if (dom) senderDomain = { domain: dom.domain, localPart: dom.localPart, status: dom.status, records: dom.records ?? [] };
+    const [failed] = await db
+      .select({ n: sql<number>`count(*)::int`, last: sql<string | null>`(array_agg(${dunningRuns.error} ORDER BY ${dunningRuns.createdAt} DESC))[1]` })
+      .from(dunningRuns)
+      .where(and(eq(dunningRuns.orgId, orgId), eq(dunningRuns.status, 'failed'), sql`${dunningRuns.createdAt} > now() - interval '14 days'`));
+    notices = senderNotices({ domain: dom ? { domain: dom.domain, status: dom.status } : null, failedRecent: Number(failed?.n ?? 0), lastError: failed?.last });
     const pending = await db
       .select({ run: dunningRuns, customerId: customers.id, customerName: customers.name, invoiceNumber: invoices.number, amount: invoices.amount, amountPaid: invoices.amountPaid, currency: invoices.currency, dueDate: invoices.dueDate })
       .from(dunningApprovals)
@@ -350,6 +357,13 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           )}
         </div>
       )}
+
+      {notices.map((n) => (
+        <div key={n.title} role="alert" className="alert-danger mb-4">
+          <strong>{n.title}.</strong> {n.body}{' '}
+          {n.href && <a href={n.href} className="underline">Fix this</a>}
+        </div>
+      ))}
 
       {/* Impact strip — leads with what's at stake (loss aversion) and what
           automation has already recovered (progress), before asking the
