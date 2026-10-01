@@ -19,7 +19,7 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
   ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees', 'ACH fees'],
-  ['Time to set up', '< 10 min', 'A few hours (reviewer-reported)', 'Days', '< 10 min', '< 10 min', '< 10 min'],
+  ['Time to set up', '< 10 min', 'A few hours (reviewer-reported)', 'Not published', 'Not published', 'Not published', 'Not published'],
   ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
   ['Multi-currency', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '✓', '—', '✓'],
   ['Multi-entity', `${PLAN_PRICING.growth.name}+`, 'Core+', 'Corporate+', '—', '—', '—'],
@@ -27,7 +27,7 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Customer risk scoring', '✓', '✓', '—', '—', '—', '—'],
   ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓', '✓'],
   ['Free trial / self-serve', '14-day free', 'Free trial offered', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
-  ['Time-to-value', '< 1 day', 'Not published', '1-2 weeks', '< 1 day', '< 1 day', '< 1 day'],
+  ['Time-to-value', '< 1 day', 'Not published', 'Not published', 'Not published', 'Not published', 'Not published'],
   ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
   // Ours is '—' on purpose: the app records promises to pay and spots a customer asking for a plan, but it does not run instalment plans.
   ['Payment plans / subscriptions', '—', '✓', '✓', '—', '✓', '—'],

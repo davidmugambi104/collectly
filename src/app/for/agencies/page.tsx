@@ -12,33 +12,34 @@ import Link from 'next/link';
 // <FaqSection> read this one array.
 const FAQS: FaqItem[] = [
     {
-      q: 'How much time does an agency typically spend chasing invoices?',
-      a: 'For a 5-30 person agency on a 30-day payment cycle, the founder or ' +
-         'operations lead typically spends 3 to 5 hours per week chasing late ' +
-         'invoices. Mugavi reduces that to under 30 minutes per week after ' +
-         'the first 14 days of consistent approve-and-send operation.',
+      q: 'How much time will this save an agency?',
+      a: 'It depends on how many invoices you chase, and we do not yet have ' +
+         'customer data to quote a number. What changes is the kind of work: ' +
+         'Mugavi drafts each reminder and you review a queue and approve it, ' +
+         'instead of writing every email from scratch. You can see what it ' +
+         'would send before you rely on it.',
     },
     {
       q: 'How does Mugavi handle project milestone invoices?',
-      a: 'Each invoice, regardless of whether it is a recurring retainer or a ' +
-         'project milestone, is monitored individually. The dunning sequence is ' +
-         'per-invoice, not per-customer. Project milestone invoices typically ' +
-         'see a firmer first-touch tone by default because the relationship is ' +
-         'time-bounded and a single missed payment can break the deal flow.',
+      a: 'Each invoice, whether a recurring retainer or a project milestone, ' +
+         'follows the schedule for its customer. You choose the timing and ' +
+         'tone of every step, and customer groups let you put milestone ' +
+         'customers on a separate schedule from retainer customers. A customer ' +
+         'with several overdue invoices gets one reminder that lists them.',
     },
     {
       q: 'Will Mugavi send reminders to clients we want to keep close?',
-      a: 'Yes, unless you exclude them. The Mugavi dashboard has a single-click ' +
-         'exclude button per customer. You can mark a customer as strategic and ' +
-         'Mugavi stops all automated reminders on that customer; only the ' +
-         'human-in-the-loop approval prompt remains.',
+      a: 'Only if you let it. Every reminder waits for your approval by ' +
+         'default, and you can pause automatic reminders for any customer, ' +
+         'until a date you choose or until you switch them back on. While a ' +
+         'customer is paused, Mugavi drafts nothing for them.',
     },
     {
       q: 'Does this work for agencies on net-30 or net-60 terms?',
-      a: 'Both. The dunning cadence is configurable per organization. Net-60 ' +
-         'customers typically get a friendlier initial tone and a longer gap ' +
-         'before the firm stage. Mugavi adapts by reading the original payment ' +
-         'terms on the Xero invoice.',
+      a: 'Both. Reminders are timed from each invoice\'s due date, which ' +
+         'comes from Xero, so a net-60 invoice is not chased at day 30. You ' +
+         'set the steps and their tone, and a customer group can have its own ' +
+         'schedule with a longer gap before the firm stage.',
     },
     {
       q: 'How does Mugavi handle retainer continuity disputes?',

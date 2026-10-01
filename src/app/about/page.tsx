@@ -40,11 +40,11 @@ export default function AboutPage() {
       <section className="container-page pb-20 max-w-3xl prose prose-ink">
         <p className="lead">Mugavi is being built for 5–30 person agencies and consultancies using Xero, where a founder or operations lead still manages overdue invoices manually.</p>
         <h2 className="h3 mt-10">Why we exist</h2>
-        <p>The A/R automation market is $4-6B and growing. It&apos;s also dominated by tools priced for 500-person companies. QuickBooks and Xero now cover the invoicing and reminders basics. What&apos;s missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
+        <p>Most A/R automation is priced and built for much bigger companies than a 5-30 person agency. QuickBooks and Xero now cover the invoicing and reminders basics. What&apos;s missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
         <h2 className="h3 mt-10">What we believe</h2>
         <ul>
           <li><b>Small business owners are not stupid.</b> They&apos;re under-resourced, under-tooled, and overwhelmed. The right tool respects their time.</li>
-          <li><b>AI is leverage, not magic.</b> The right AI removes the boring 80% of A/R work: the 6th reminder, the cash-flow projection, the cash application. It doesn&apos;t replace the owner.</li>
+          <li><b>AI is leverage, not magic.</b> The right AI takes the repetitive part of A/R work, like the sixth reminder and the cash-flow projection. It doesn&apos;t replace the owner.</li>
           <li><b>Honest pricing wins.</b> No per-invoice fees. No setup costs. No annual contracts. No &quot;premium&quot; support tiers.</li>
         </ul>
         <h2 className="h3 mt-10">Where we are</h2>

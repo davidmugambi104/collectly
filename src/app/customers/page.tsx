@@ -3,12 +3,11 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Customer outcomes: agencies and consultancies on Mugavi',
+  title: 'What Mugavi is built to do: agencies and consultancies',
   description:
-    'We don\'t publish polished case studies until we have enough customers ' +
-    'to mean something. Here\'s how the founding cohort is using Mugavi ' +
-    'on Xero and QuickBooks: what they\'re trying to do, what we expect ' +
-    'to see, and what we will and won\'t claim.',
+    'We have no customer case studies yet, so we do not publish any. This ' +
+    'page says what Mugavi is built to do for agencies and consultancies on ' +
+    'Xero and QuickBooks, and what we will and will not claim.',
   path: '/customers',
   keywords: [
     'Mugavi customers',
@@ -19,7 +18,7 @@ export const metadata = pageMetadata({
 });
 
 const SCENARIOS = [
-  { industry: 'Design agency · 8 people · Xero', target: 'Cut average days-late from 47 toward 14 within 30 days of consistent approve-and-send follow-up.' },
+  { industry: 'Design agency · 8 people · Xero', target: 'Bring average days-late down over the first month of consistent approve-and-send follow-up.' },
   { industry: 'Management consultancy · 12 people · QuickBooks', target: 'Move first-touch reminders off a founder\'s plate by putting approve-and-send dunning on autopilot.' },
   { industry: 'Boutique law firm · 6 people · Xero', target: 'See 4 weeks out which invoices will convert to cash, for hiring and cash-flow planning.' },
 ];
