@@ -166,7 +166,7 @@ export default function VsQuickbooksPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Keep QuickBooks. Upgrade your collections.</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. QuickBooks integration is in beta. Xero connects in under a minute today.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. QuickBooks integration is in beta. Xero connects through Xero's own sign-in today.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

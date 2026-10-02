@@ -619,7 +619,7 @@ function FirstRunChecklist() {
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="app-title">Welcome to Mugavi</h2>
-          <p className="app-body mt-1 text-ink-600">Get meaningful value in 3 steps. Total time: about 2 minutes.</p>
+          <p className="app-body mt-1 text-ink-600">Get set up in 3 steps.</p>
           <ol className="mt-5 space-y-3.5">
             <Step n={1} title="Connect QuickBooks, Xero, or load sample data" desc="Pulls in customers, invoices, and payment history automatically." cta="Connect or load sample data" href="/dashboard/integrations" />
             <Step n={2} title="See your A/R aging and AI insights" desc="We'll score every customer for risk and recommend the next action." cta="Go to dashboard" href="/dashboard" />

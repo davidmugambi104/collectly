@@ -472,7 +472,7 @@ export function comparisonFaqJsonLd(slug: string): JsonLdThing | null {
         `${BRAND} writes each reminder in context rather than filling a template, ` +
         `and stops the sequence automatically the moment a customer replies or pays. ` +
         `It extracts promised payment dates from replies and classifies disputes so ` +
-        `they do not receive another chase. Setup runs under 10 minutes on Xero.`,
+        `they do not receive another chase. You connect Xero or QuickBooks with the provider's own sign-in.`,
     },
     {
       q: `Does ${BRAND} work with Xero and QuickBooks?`,

@@ -68,7 +68,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   const needsSetup = Object.values(providerStatus).filter((s) => !s.ready).length;
 
   return (
-    <AppShell title="Integrations" subtitle="Connect your accounting and payment tools. Setup takes 60 seconds.">
+    <AppShell title="Integrations" subtitle="Connect your accounting and payment tools.">
       {connectedProvider && (
         <div className="mb-6 card bg-success-50 border-success-200">
           <div className="flex items-start gap-3">

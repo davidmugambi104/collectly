@@ -229,7 +229,7 @@ export default function IntegrationsPage() {
         <p className="eyebrow">Integrations</p>
         <h1 className="mt-3 h1">Plug into the tools you already use.</h1>
         <p className="mt-6 lead">
-          Connect your books, payments, banking, and comms in 60 seconds. We read from your accounting system
+          Connect your books, payments, banking, and comms with each provider's own sign-in. We read from your accounting system
           and write back payments. Everything else stays in the apps you already pay for.
         </p>
         <p className="mt-3 text-sm text-ink-500">
@@ -296,7 +296,7 @@ export default function IntegrationsPage() {
       {/* How it works */}
       <section className="container-page pb-20 max-w-3xl">
         <p className="eyebrow">How it works</p>
-        <h2 className="mt-3 h2">60 seconds to your first synced invoice.</h2>
+        <h2 className="mt-3 h2">From Connect to your first synced invoice.</h2>
         <ol className="mt-8 space-y-5 text-ink-700">
           {[
             { icon: Database, title: 'Pick a provider', body: 'Click Connect on any integration card. We open the provider\'s official OAuth flow, not a fake form.' },

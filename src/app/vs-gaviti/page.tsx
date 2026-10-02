@@ -83,7 +83,7 @@ export default function VsGavitiPage() {
       <WhenToChoose competitorName="Gaviti" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta
         headline="Enterprise power without enterprise pain"
-        body="Start your 14-day free trial. No credit card. Connect Xero and see Mugavi run in under a minute (QuickBooks integration is in beta)."
+        body="Start your 14-day free trial. No credit card. Connect Xero and see Mugavi's drafts for your own overdue invoices (QuickBooks integration is in beta)."
       />
       <MarketingFooter />
     </div>
