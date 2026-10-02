@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
-import { z } from 'zod';
+import { REPLY_CLASSIFICATIONS, parseModelClassification, fallbackClassification, type InboxClassification, type ReplyClassification } from './inbox-rules.ts';
 
 let _genai: GoogleGenerativeAI | null = null;
 let _model: GenerativeModel | null = null;
@@ -23,35 +23,8 @@ function getModel(): GenerativeModel {
   return _model;
 }
 
-// Must match the live `reply_classification` Postgres enum exactly.
-export const REPLY_CLASSIFICATIONS = [
-  'will_pay_date',
-  'already_paid',
-  'disputed',
-  'missing_po',
-  'wrong_contact',
-  'needs_payment_plan',
-  'general_question',
-  'no_action',
-  'unclassified',
-] as const;
-export type ReplyClassification = (typeof REPLY_CLASSIFICATIONS)[number];
-
-const classificationSchema = z.object({
-  classification: z.enum(REPLY_CLASSIFICATIONS),
-  confidence: z.number().min(0).max(1),
-  summary: z.string().min(1).max(280),
-  recommendedAction: z.string().min(1).max(280),
-  suggestedPromiseDate: z.string().nullable(),
-});
-
-export type InboxClassification = {
-  classification: ReplyClassification;
-  confidence: number;
-  summary: string;
-  recommendedAction: string;
-  suggestedPromiseDate: string | null;
-};
+export { REPLY_CLASSIFICATIONS };
+export type { ReplyClassification, InboxClassification };
 
 export type ClassifyInboundReplyInput = {
   subject: string | null;
@@ -84,13 +57,7 @@ const CLASSIFICATION_GUIDE = `
  * 'unclassified' for a human to triage).
  */
 export async function classifyInboundReply(ctx: ClassifyInboundReplyInput): Promise<InboxClassification> {
-  const fallback: InboxClassification = {
-    classification: 'unclassified',
-    confidence: 0,
-    summary: ctx.body.slice(0, 200),
-    recommendedAction: 'Review this reply manually.',
-    suggestedPromiseDate: null,
-  };
+  const fallback = fallbackClassification(ctx.body);
 
   try {
     const systemPrompt = `You triage inbound email replies for ${ctx.businessName}'s accounts-receivable inbox. A customer replied to a payment reminder. Classify the reply and recommend the next step.
@@ -114,8 +81,7 @@ Today's date: ${new Date().toISOString().slice(0, 10)}. Classify this reply.`;
       contents: [{ role: 'user', parts: [{ text: systemPrompt + '\n\n' + userPrompt }] }],
     });
     const text = result.response.text();
-    const parsed = classificationSchema.parse(JSON.parse(text));
-    return parsed;
+    return parseModelClassification(text);
   } catch (e) {
     console.error('[inbox] classifyInboundReply Gemini call failed, using fallback:', e instanceof Error ? e.message : e);
     return fallback;

@@ -3,23 +3,7 @@ import { invoices, customers, organizations, inboxMessages, timelineEvents } fro
 import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { classifyInboundReply } from '@/lib/ai/inbox';
-
-// classifyInboundReply's Gemini call only validates suggestedPromiseDate as
-// z.string().nullable() -- no date-format check -- and the model
-// (gemini-flash-lite) has been observed to drift from the requested
-// YYYY-MM-DD format (e.g. "ASAP", "next Friday"). `new Date(x).toISOString()`
-// on an unparseable string throws RangeError, and that throw happened
-// *inside* the db.insert(inboxMessages) call below -- meaning a customer
-// reply with a bad date silently lost both the inbox message and the
-// timeline event, with only a caught error one layer up in
-// inbox-imap-poll.ts logging it. The IMAP UID cursor still advances past
-// the message regardless, so it was never retried either. Parse
-// defensively instead of trusting the model's string.
-function parseValidDate(value: string | null | undefined): Date | null {
-  if (!value) return null;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
+import { autoReplyClassification, parseValidDate } from '@/lib/ai/inbox-rules';
 
 /**
  * Handle an inbound reply from an AR customer (someone who owes an
@@ -38,6 +22,8 @@ export async function handleArCustomerReply(opts: {
   fromName: string | null;
   subject: string;
   body: string;
+  /** Out-of-office, bounce or other machine mail: recorded as no_action without asking the AI. */
+  autoReply?: boolean;
   rawPayload: unknown;
 }): Promise<{ handled: boolean; inboxMessageId?: string; reason?: string }> {
   const [invoice] = await db.select().from(invoices).where(eq(invoices.id, opts.invoiceId)).limit(1);
@@ -46,7 +32,7 @@ export async function handleArCustomerReply(opts: {
   const [customer] = await db.select().from(customers).where(eq(customers.id, invoice.customerId)).limit(1);
   const [org] = await db.select().from(organizations).where(eq(organizations.id, invoice.orgId)).limit(1);
 
-  const classification = await classifyInboundReply({
+  const classification = opts.autoReply ? autoReplyClassification(opts.body) : await classifyInboundReply({
     subject: opts.subject || null,
     body: opts.body,
     customerName: customer?.name ?? null,
