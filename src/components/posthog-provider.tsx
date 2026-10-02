@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
 import { useConsent } from '@/components/consent/consent-provider';
+import { isAppPath } from '@/lib/consent';
 
 /**
  * PostHog, gated on analytics consent.
@@ -46,6 +47,21 @@ function usePostHogInit(enabled: boolean): boolean {
         capture_pageview: false,
         capture_pageleave: true,
         autocapture: true,
+        // Autocapture records the text of what was clicked. Inside the app that text can be a
+        // customer's name or an amount, so those events are dropped; page views, custom events
+        // and identify (user and organization ids only) still go through.
+        before_send: (event) => {
+          if (!event) return event;
+          if (event.event === '$autocapture') {
+            try {
+              const url = String(event.properties?.$current_url ?? '');
+              if (isAppPath(new URL(url, 'https://x.invalid').pathname)) return null;
+            } catch {
+              return null;
+            }
+          }
+          return event;
+        },
         opt_out_capturing_by_default: true,
       });
       initialised = true;

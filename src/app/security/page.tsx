@@ -1,6 +1,6 @@
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
-import { ShieldCheck, Lock, Server, KeyRound, Eye, FileCheck2, AlertTriangle, Globe2, CheckCircle2 } from 'lucide-react';
+import { Lock, Server, KeyRound, Eye, FileCheck2, AlertTriangle, Globe2, CheckCircle2 } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
 import { CONTACT } from '@/lib/site-contact';
 
@@ -28,7 +28,7 @@ const principles = [
   {
     icon: Server,
     title: 'Hardened infrastructure',
-    body: 'Mugavi runs on Vercel (compute) and managed Postgres (data). All secrets live in Vercel environment variables, never in code, never in the client bundle. No SSH access is provisioned.',
+    body: 'Mugavi runs on Vercel (compute) and managed Postgres (data). Secrets live in Vercel environment variables, not in the code or the client bundle.',
   },
   {
     icon: Eye,
@@ -100,11 +100,11 @@ export default function SecurityPage() {
           </li>
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-            <span><b>We never train AI models on your data.</b> When we call Google Gemini to generate dunning copy, we send the minimum context needed and never ask the provider to retain it.</span>
+            <span><b>We never train AI models on your data.</b> When we call Google Gemini to generate dunning copy, we send the invoice facts and the contact name needed to write one message, through the paid API, whose terms say prompts are not used for training.</span>
           </li>
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-            <span><b>We never share your data with third-party marketers.</b> PostHog is product analytics only. We don&apos;t run ad pixels in the app.</span>
+            <span><b>We never share your data with third-party marketers.</b> PostHog is product analytics only. We run no ad scripts and no session recording inside the signed-in app.</span>
           </li>
           <li className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
@@ -166,12 +166,11 @@ export default function SecurityPage() {
         <p className="eyebrow">Compliance</p>
         <h2 className="mt-3 h2">Where the data lives, who can see it.</h2>
         <p className="mt-4 text-ink-600 leading-relaxed">
-          Mugavi is built for small businesses in the US, UK, EU, Australia, and Canada. Self-serve accounts are
-          currently processed in a single region (US); EU-only data residency is available for enterprise
-          agreements on request. We act as the data processor for your customer data; you remain the data
+          Mugavi serves small businesses and bookkeeping practices in the United States and the United
+          Kingdom. Accounts are processed in a single region (US). We act as the data processor for your customer data; you remain the data
           controller. Our Data Processing Agreement is available below.
         </p>
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <div className="card text-center">
             <Globe2 className="mx-auto h-6 w-6 text-brand-600" />
             <div className="mt-2 text-sm font-semibold text-ink-900">GDPR & UK GDPR</div>
@@ -181,11 +180,6 @@ export default function SecurityPage() {
             <FileCheck2 className="mx-auto h-6 w-6 text-brand-600" />
             <div className="mt-2 text-sm font-semibold text-ink-900">CCPA / CPRA</div>
             <div className="text-xs text-ink-500">No data sale, ever</div>
-          </div>
-          <div className="card text-center">
-            <ShieldCheck className="mx-auto h-6 w-6 text-brand-600" />
-            <div className="mt-2 text-sm font-semibold text-ink-900">Privacy Act (AU)</div>
-            <div className="text-xs text-ink-500">APP-aligned</div>
           </div>
         </div>
         <div className="mt-8 flex flex-wrap items-center gap-3">
