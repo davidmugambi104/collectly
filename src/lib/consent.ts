@@ -143,3 +143,16 @@ export function consentRequiredForCountry(country: string | null | undefined): b
   if (!country) return true;
   return CONSENT_REQUIRED_COUNTRIES.has(country.toUpperCase());
 }
+
+/**
+ * Routes that show a customer's own books: their customers, invoice amounts and payment
+ * history. Third-party recorders and ad scripts must not run here whatever the visitor
+ * consented to on the marketing site, because consent to "analytics" is not consent to
+ * a session recording of someone's receivables ledger.
+ */
+export const NO_THIRD_PARTY_PREFIXES = ['/dashboard', '/admin', '/sign-in', '/sign-up', '/pay'] as const;
+
+export function isAppPath(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return NO_THIRD_PARTY_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}

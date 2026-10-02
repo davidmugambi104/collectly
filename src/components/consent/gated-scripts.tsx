@@ -3,6 +3,7 @@
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
 import { useConsent } from './consent-provider';
+import { isAppPath } from '@/lib/consent';
 
 /**
  * Third-party scripts, mounted only once the visitor has allowed them.
@@ -36,15 +37,11 @@ const ADSENSE_CLIENT = 'ca-pub-7988406449660366';
  * site does not mean "run AdSense over my books", so this is a route rule
  * rather than a consent category.
  */
-const NO_ADS_PREFIXES = ['/dashboard', '/admin', '/sign-in', '/sign-up', '/pay'];
-
 export function GatedScripts() {
   const { has } = useConsent();
   const pathname = usePathname();
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
-  const adsAllowedHere = !NO_ADS_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname?.startsWith(`${prefix}/`),
-  );
+  const adsAllowedHere = !isAppPath(pathname);
 
   return (
     <>
@@ -62,7 +59,8 @@ export function GatedScripts() {
         />
       )}
 
-      {has('analytics') && clarityId && (
+      {/* Clarity records the session, so it is kept off the same routes as ads. */}
+      {has('analytics') && clarityId && adsAllowedHere && (
         // Clarity's loader is an inline IIFE rather than a plain src because
         // it has to define the clarity() queue function before the remote tag
         // arrives, or early calls are dropped.
