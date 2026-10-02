@@ -14,6 +14,7 @@ import { loadListOthers, extrasHtmlFor } from '@/lib/dunning/multi-invoice-load'
 import { sendCopies } from '@/lib/recipients-send';
 import { generateStatementDrafts } from '@/lib/statement-drafts';
 import { senderFromStep, senderKey } from '@/lib/dunning/step-sender';
+import { notCoveredByCredit } from '@/lib/dunning/credit-sql';
 import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, type RecentReminder } from '@/lib/dunning/chase-rules';
 import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
@@ -309,6 +310,10 @@ export async function processDunning(opts: ProcessOptions = {}) {
           WHERE ${dunningHolds.customerId} = ${customers.id}
             AND (${dunningHolds.heldUntil} IS NULL OR ${dunningHolds.heldUntil} > ${now})
         )`,
+        // A customer whose unapplied credit covers everything they owe in this
+        // invoice's currency is not chased: the owner applies the credit instead.
+        // Same rule as creditCoversOwed() in credit.ts, which the explainer uses.
+        notCoveredByCredit,
       ));
 
     // Batch-fetch every dunning_runs row already recorded for this sequence

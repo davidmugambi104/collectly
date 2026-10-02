@@ -4,7 +4,7 @@
  * reminder" for every row. Every read is scoped to the org.
  */
 import { db } from '@/db';
-import { invoices, customers, dunningHolds, promisesToPay, inboxMessages, dunningSequences, dunningRuns, dunningSettings, customerGroupMembers, groupSequences } from '@/db/schema';
+import { invoices, customers, dunningHolds, promisesToPay, inboxMessages, dunningSequences, dunningRuns, dunningSettings, customerGroupMembers, groupSequences, customerCredits } from '@/db/schema';
 import { and, eq, gte, sql, inArray } from 'drizzle-orm';
 import { maySendSms } from '@/lib/sms-consent';
 import { isApprovalRequired } from '@/lib/dunning/approval';
@@ -27,6 +27,20 @@ export async function explainInvoices(orgId: string, invoiceIds: string[], now =
 
   const holdRows: Array<{ customerId: string; heldUntil: Date | null }> = await db.select({ customerId: dunningHolds.customerId, heldUntil: dunningHolds.heldUntil }).from(dunningHolds).where(inArray(dunningHolds.customerId, customerIds));
   const holdBy = new Map(holdRows.map((h) => [h.customerId, h]));
+
+  // Unapplied credit per customer and currency, and what each owes in that currency, for the credit rule.
+  const creditRows: Array<{ customerId: string; currency: string; amount: string }> = await db.select({ customerId: customerCredits.customerId, currency: customerCredits.currency, amount: customerCredits.amount })
+    .from(customerCredits).where(inArray(customerCredits.customerId, customerIds));
+  const creditBy = new Map(creditRows.map((c) => [`${c.customerId}:${c.currency}`, Number(c.amount)]));
+  const owedBy = new Map<string, number>();
+  if (creditRows.length > 0) {
+    const owedRows: Array<{ customerId: string; currency: string; owed: string }> = await db
+      .select({ customerId: invoices.customerId, currency: invoices.currency, owed: sql<string>`COALESCE(SUM(${invoices.amount} - ${invoices.amountPaid}), 0)` })
+      .from(invoices)
+      .where(and(inArray(invoices.customerId, customerIds), inArray(invoices.status, ['sent', 'viewed', 'overdue', 'partial'])))
+      .groupBy(invoices.customerId, invoices.currency);
+    for (const r of owedRows) owedBy.set(`${r.customerId}:${r.currency}`, Number(r.owed));
+  }
 
   const promiseRows: Array<{ invoiceId: string; d: Date }> = await db.select({ invoiceId: promisesToPay.invoiceId, d: promisesToPay.promisedDate }).from(promisesToPay)
     .where(and(inArray(promisesToPay.invoiceId, ids), eq(promisesToPay.status, 'active'), gte(promisesToPay.promisedDate, now)));
@@ -79,6 +93,7 @@ export async function explainInvoices(orgId: string, invoiceIds: string[], now =
       window,
       hasEmail: !!customer.email, hasPhone: !!customer.phone, smsAllowed: maySendSms(customer),
       balance: Number(invoice.amount) - Number(invoice.amountPaid ?? 0), minBalance: rules.minBalance,
+      unappliedCredit: creditBy.get(`${customer.id}:${invoice.currency}`), customerOwed: owedBy.get(`${customer.id}:${invoice.currency}`),
       gapDays: rules.minGapDays, gapBlockedUntil: gapBlockedUntil(recentBy.get(customer.id) ?? [], invoice.id, rules.minGapDays),
     }));
   }

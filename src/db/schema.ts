@@ -1,5 +1,5 @@
 import {
-  pgTable, text, varchar, timestamp, integer, smallint, boolean, decimal, jsonb, index, uniqueIndex, pgEnum,
+  pgTable, text, varchar, timestamp, integer, smallint, boolean, decimal, jsonb, index, uniqueIndex, pgEnum, primaryKey,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
@@ -483,6 +483,22 @@ export const promisesToPay = pgTable('promises_to_pay', {
  * src/lib/dunning/hold.ts. A separate table, not a customers column: adding a
  * column would make every select-all on customers fail until the DDL had run.
  */
+/**
+ * Credit a customer holds that has not been applied to an invoice yet (Xero credit
+ * notes with remaining credit, QuickBooks credit memos with a balance). One row per
+ * customer and currency, replaced on every sync. Chasing someone who is owed credit
+ * is how you annoy a good customer, so reminders stop when it covers what they owe.
+ */
+export const customerCredits = pgTable('customer_credits', {
+  customerId: text('customer_id').notNull().references(() => customers.id, { onDelete: 'cascade' }),
+  orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  currency: varchar('currency', { length: 3 }).notNull(),
+  amount: decimal('amount', { precision: 14, scale: 2 }).notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.customerId, t.currency] }),
+}));
+
 export const dunningHolds = pgTable('dunning_holds', {
   customerId: text('customer_id').primaryKey().references(() => customers.id, { onDelete: 'cascade' }),
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),

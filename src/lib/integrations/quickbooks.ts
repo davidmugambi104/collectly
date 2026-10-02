@@ -16,6 +16,7 @@ import { eq, and, inArray } from 'drizzle-orm';
 import { fetchAllPages, chunk } from '@/lib/integrations/paging';
 import { needsLookup, reconcileStatus, statusFromAmounts } from '@/lib/integrations/sync-status';
 import { nanoid, errorMessage } from '@/lib/utils';
+import { replaceCredits } from '@/lib/integrations/credits';
 
 /* Intuit ships no types package for the QBO REST surface. These describe only
    the fields this module reads — narrower than `any`, and an upstream rename
@@ -320,6 +321,25 @@ export async function qboListCustomers(orgId: string) {
   return qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`);
 }
 
+/**
+ * Credit memos that still have credit left. A credit memo's Balance is what the
+ * customer has not yet had applied. Unapplied payments are not read here.
+ */
+type QboCreditMemo = { Id?: string; Balance?: number; CustomerRef?: { value?: string }; CurrencyRef?: { value?: string } };
+async function qboListCreditMemosFrom(orgId: string, startPosition: number): Promise<QboCreditMemo[]> {
+  const query = `SELECT Id, CustomerRef, Balance, CurrencyRef FROM CreditMemo WHERE Balance > '0' STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'CreditMemo', QboCreditMemo>;
+  return res?.QueryResponse?.CreditMemo ?? [];
+}
+
+export async function qboListCredits(orgId: string): Promise<{ credits: Array<{ customerExternalId: string; currency: string; amount: number }>; truncated: boolean }> {
+  const all = await fetchAllPages((page) => qboListCreditMemosFrom(orgId, 1 + (page - 1) * QBO_PAGE), QBO_PAGE, QBO_MAX_PAGES);
+  const credits = all.items
+    .filter((m: QboCreditMemo) => Number(m.Balance ?? 0) > 0 && m.CustomerRef?.value)
+    .map((m: QboCreditMemo) => ({ customerExternalId: String(m.CustomerRef!.value), currency: String(m.CurrencyRef?.value ?? 'USD'), amount: Number(m.Balance) }));
+  return { credits, truncated: all.truncated };
+}
+
 /** Customers past the first 1000. Same approach as qboListOpenInvoicesFrom. */
 async function qboListCustomersFrom(orgId: string, startPosition: number): Promise<QboCustomer[]> {
   const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
@@ -570,6 +590,16 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
     errors.push(`reconcile: ${errorMessage(e)}`);
   }
 
+
+  // 3a. Unapplied credit memos. Only stored when read in full, so a failed or
+  // cut-off read never erases real credit and restarts the chasing.
+  try {
+    const found = await qboListCredits(orgId);
+    if (!found.truncated) await replaceCredits(orgId, found.credits);
+    else errors.push('credit memos: too many to read in one sync, so credit was left as it was');
+  } catch (e: unknown) {
+    errors.push(`credit memos: ${errorMessage(e)}`);
+  }
 
   // 3. Touch lastSyncAt
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })

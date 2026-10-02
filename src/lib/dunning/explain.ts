@@ -11,6 +11,7 @@
 import { isWithinWindow, nextWindowOpen, type SendWindow } from './send-window.ts';
 import { belowMinBalance } from './chase-rules.ts';
 import { stepDayPhrase } from './step-timing.ts';
+import { creditCoversOwed } from './credit.ts';
 
 export type Step = { id: string; daysFromDue: number; channel: 'email' | 'sms' | 'phone' };
 
@@ -40,6 +41,9 @@ export type Facts = {
   /** The owner's per-customer gap in days, and when it ends if another invoice's reminder started it. */
   gapDays: number;
   gapBlockedUntil: Date | null;
+  /** Unapplied credit the customer holds in this invoice's currency, and everything they owe in it. */
+  unappliedCredit?: number;
+  customerOwed?: number;
 };
 
 export type Finding = { level: 'blocked' | 'waiting' | 'note' | 'ok'; text: string };
@@ -72,6 +76,9 @@ export function explain(f: Facts): Explanation {
   }
   if (f.promiseUntil && f.promiseUntil.getTime() >= f.now.getTime()) {
     return block(`${f.customerName} promised to pay by ${fmt(f.promiseUntil)}. Reminders wait until then.`, 'Promised to pay');
+  }
+  if (creditCoversOwed(f.unappliedCredit, f.customerOwed ?? f.balance)) {
+    return block(`${f.customerName} holds ${f.unappliedCredit!.toFixed(2)} of unapplied credit, which covers what they owe. Apply it in your books instead of chasing.`, 'Has credit');
   }
   if (f.unhandledReply && f.pauseOnReply) {
     return block(`${f.customerName} replied and the reply is still waiting in your inbox. Mark it handled and reminders can continue.`, 'Read their reply');

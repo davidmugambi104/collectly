@@ -21,6 +21,14 @@
 import { pool } from '@/db';
 
 export const DUNNING_CONTROL_DDL = [
+  `CREATE TABLE IF NOT EXISTS customer_credits (
+     customer_id text NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+     org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+     currency varchar(3) NOT NULL,
+     amount numeric(14,2) NOT NULL,
+     updated_at timestamptz NOT NULL DEFAULT now(),
+     PRIMARY KEY (customer_id, currency)
+   )`,
   `CREATE TABLE IF NOT EXISTS dunning_holds (
      customer_id text PRIMARY KEY REFERENCES customers(id) ON DELETE CASCADE,
      org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,

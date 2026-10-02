@@ -158,3 +158,16 @@ test('a call step makes a task, and is not blocked by a missing email, a missing
   assert.match(e.headline, /Tasks list/);
   assert.match(e.headline, /Nothing is sent to the customer/);
 });
+
+test('unapplied credit that covers what they owe stops the chase and says to apply it', () => {
+  const e = explain({ ...base, unappliedCredit: 250, customerOwed: 200 });
+  assert.equal(e.willAct, false);
+  assert.equal(e.short, 'Has credit');
+  assert.match(e.headline, /250\.00 of unapplied credit/);
+  assert.match(e.headline, /Apply it in your books/);
+});
+
+test('credit that does not cover it is ignored, and a hold still comes first', () => {
+  assert.equal(explain({ ...base, unappliedCredit: 50, customerOwed: 200 }).willAct, true);
+  assert.match(explain({ ...base, unappliedCredit: 250, customerOwed: 200, hold: { heldUntil: null } }).headline, /paused reminders/);
+});

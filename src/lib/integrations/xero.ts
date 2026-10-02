@@ -17,6 +17,7 @@ import { eq, and, inArray } from 'drizzle-orm';
 import { fetchAllPages, chunk } from '@/lib/integrations/paging';
 import { needsLookup, reconcileStatus, xeroSyncedStatus } from '@/lib/integrations/sync-status';
 import { nanoid, errorMessage } from '@/lib/utils';
+import { replaceCredits } from '@/lib/integrations/credits';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 // Tests point this at a local stand-in. Never honoured in production.
@@ -343,6 +344,24 @@ export async function xeroGetInvoicesByIds(orgId: string, ids: string[]): Promis
   return out;
 }
 
+/**
+ * Credit notes that still have credit left (status AUTHORISED). A credit note is
+ * money the customer is owed until it is applied to an invoice or refunded.
+ */
+type XeroCreditNote = { CreditNoteID?: string; Status?: string; RemainingCredit?: number; CurrencyCode?: string; Contact?: { ContactID?: string } };
+const MAX_CREDIT_PAGES = 20;
+export async function xeroListCredits(orgId: string): Promise<{ credits: Array<{ customerExternalId: string; currency: string; amount: number }>; truncated: boolean }> {
+  const all = await fetchAllPages(
+    async (page) => ((await xeroFetch(orgId, `/CreditNotes?where=Status=="AUTHORISED"&page=${page}`)) as { CreditNotes?: XeroCreditNote[] })?.CreditNotes ?? [],
+    XERO_PAGE_SIZE,
+    MAX_CREDIT_PAGES,
+  );
+  const credits = all.items
+    .filter((c: XeroCreditNote) => Number(c.RemainingCredit ?? 0) > 0 && c.Contact?.ContactID)
+    .map((c: XeroCreditNote) => ({ customerExternalId: String(c.Contact!.ContactID), currency: String(c.CurrencyCode ?? 'USD'), amount: Number(c.RemainingCredit) }));
+  return { credits, truncated: all.truncated };
+}
+
 /** List all contacts (customers) from Xero, every page. */
 export async function xeroListContacts(orgId: string): Promise<{ contacts: XeroContact[]; truncated: boolean }> {
   const all = await fetchAllPages(
@@ -578,6 +597,17 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
     errors.push(`reconcile: ${errorMessage(e)}`);
   }
 
+
+  // 3. Unapplied credit, so reminders stop for a customer the owner owes credit to.
+  // Only stored when it was read in full: a failed or cut-off read must not erase
+  // real credit and start the chasing again.
+  try {
+    const found = await xeroListCredits(orgId);
+    if (!found.truncated) await replaceCredits(orgId, found.credits);
+    else errors.push('credit notes: too many to read in one sync, so credit was left as it was');
+  } catch (e: unknown) {
+    errors.push(`credit notes: ${errorMessage(e)}`);
+  }
 
   await db.update(integrations).set({ lastSyncAt: new Date(), updatedAt: new Date() })
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'xero')));

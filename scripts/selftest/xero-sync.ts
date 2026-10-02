@@ -21,12 +21,14 @@ const byId: Record<string, any> = {
   'dis-then-paid': { InvoiceID: 'dis-then-paid', InvoiceNumber: 'INV-DP', Status: 'PAID', Total: 500, AmountDue: 0, CurrencyCode: 'USD', Date: '/Date(1780000000000+0000)/', DueDate: '/Date(1781000000000+0000)/', Contact: { ContactID: 'c3' } },
 };
 const calls: string[] = [];
+const notes = [{ CreditNoteID: 'n1', Status: 'AUTHORISED', RemainingCredit: 120.5, CurrencyCode: 'USD', Contact: { ContactID: 'c7' } }, { CreditNoteID: 'n2', Status: 'AUTHORISED', RemainingCredit: 79.5, CurrencyCode: 'USD', Contact: { ContactID: 'c7' } }, { CreditNoteID: 'n3', Status: 'AUTHORISED', RemainingCredit: 0, CurrencyCode: 'USD', Contact: { ContactID: 'c8' } }];
 const server = http.createServer((req, res) => {
   const u = new URL(req.url!, `http://x`);
   calls.push(`${u.pathname}${u.search}`);
   if (req.headers['xero-tenant-id'] !== 'T1') { res.writeHead(403); res.end('no tenant'); return; }
   const send = (o: unknown) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(o)); };
   const page = Number(u.searchParams.get('page') ?? 0);
+  if (u.pathname.endsWith('/CreditNotes')) return send({ CreditNotes: notes.slice((page - 1) * 100, page * 100) });
   if (u.pathname.endsWith('/Contacts')) return send({ Contacts: page ? contacts.slice((page - 1) * 100, page * 100) : contacts.slice(0, 100) });
   if (u.pathname.endsWith('/Invoices')) {
     const ids = u.searchParams.get('IDs');
@@ -45,6 +47,7 @@ async function main() {
   const { organizations, integrations, customers, invoices } = await import('@/db/schema');
   const { syncXeroForOrg } = await import('@/lib/integrations/xero');
   await ensureBootstrapped();
+  { const { sql } = await import('drizzle-orm'); const { DUNNING_CONTROL_DDL } = await import('@/lib/dunning-control-schema'); for (const stmt of DUNNING_CONTROL_DDL.filter((x: string) => x.includes('customer_credits'))) await db.execute(sql.raw(stmt)); }
   const [org] = await db.select().from(organizations).limit(1);
   await db.insert(integrations).values({ orgId: org.id, provider: 'xero', status: 'connected', accessToken: 'tok', refreshToken: 'ref', expiresAt: new Date(Date.now() + 3600_000), tenantId: 'T1' });
   const [cust] = await db.select().from(customers).where(eq(customers.orgId, org.id)).limit(1);
@@ -66,6 +69,7 @@ async function main() {
   const cs = await db.select({ n: customers.id }).from(customers).where(eq(customers.orgId, org.id));
   console.log('COUNTS invoices', all.length, 'customers', cs.length);
   console.log('CALLS', calls.map((c) => c.replace('/api.xro/2.0', '').slice(0, 70)).join('\nCALLS '));
+  { const { customerCredits } = await import('@/db/schema'); const rows = await db.select().from(customerCredits); console.log('CREDITS (expect one row, 200.00 for c7):', rows.map((r: { amount: string }) => r.amount).join(',')); }
   server.close();
   process.exit(0);
 }
