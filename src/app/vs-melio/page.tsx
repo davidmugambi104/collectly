@@ -23,7 +23,7 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: RefreshCw, label: 'Primary focus', collectly: 'AR automation and collections', melio: 'AP-first bill pay + light invoicing' },
-  { icon: DollarSign, label: 'Starting price', collectly: `$${PLAN_PRICING.starter.monthly}/mo`, melio: '$0/mo (free ACH limits, then fees)' },
+  { icon: DollarSign, label: 'Starting price', collectly: `$${PLAN_PRICING.starter.monthly}/mo`, melio: '$0/mo Go plan (1 user); paid plans from $25/mo; ACH fees after the free allowance' },
   { icon: Target, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', melio: 'Payment links + basic reminders' },
   { icon: CreditCard, label: 'Payment portal', collectly: 'Branded AR portal with dunning context', melio: 'Invoice payment links' },
 ];
@@ -62,7 +62,7 @@ export default function VsMelioPage() {
         </div>
       </section>
 
-      <ComparisonChecked competitor="Melio" date="2026-07-31" source="melio.com/pricing" href="https://www.melio.com/pricing" />
+      <ComparisonChecked competitor="Melio" date="2026-10-03" source="melio.com/pricing" href="https://www.melio.com/pricing" />
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {DIFFS.map((d) => (
