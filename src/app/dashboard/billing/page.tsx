@@ -126,7 +126,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                 Here&apos;s what happens next:
               </p>
               <ol className="mt-2 space-y-1 text-success-900/80 list-decimal list-inside">
-                <li>David emails your invoice <b>within 12 hours</b> (bank transfer, Wise, or PayPal — your choice).</li>
+                <li>David emails your invoice <b>within one business day</b> (bank transfer, Wise, or PayPal — your choice).</li>
                 <li>Once paid, your account is upgraded manually and you&apos;ll get a confirmation email.</li>
                 <li>You can keep using Mugavi during this window — no interruption.</li>
               </ol>
@@ -299,8 +299,8 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       <div className="mt-3 text-xs text-ink-500 text-center max-w-2xl mx-auto">
         Card checkout is coming soon. For the first customer batch, David handles
         upgrades manually by invoice (bank transfer, Wise, or PayPal) so he can
-        support setup personally. Same price, same plan — just a 12-hour
-        window between click and confirmation.
+        support setup personally. Same price, same plan — just a short
+        wait (up to one business day) between click and confirmation.
       </div>
 
       {/* Cancel or change plan. Plain on purpose: no survey, no discount offer, no guilt. */}

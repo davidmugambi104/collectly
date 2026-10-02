@@ -20,7 +20,7 @@ const FAQS: FaqItem[] = [
             { q: 'Is there really a free trial?', a: `Yes. 14 days, full access to ${PLAN_PRICING.growth.name}-tier features, no credit card required.` },
             { q: 'How does billing work?', a: `Founding customers get a manual invoice after the 14-day trial (bank transfer, Wise, or PayPal) at $${FOUNDING.monthly('growth')}/mo for ${PLAN_PRICING.growth.name}. Self-serve card checkout isn't live yet. No committed date.` },
             { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
-            { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing: David reviews and sends an invoice within 12 hours. Not yet automatic or self-serve.' },
+            { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing: David reviews and sends an invoice within one business day. Not yet automatic or self-serve.' },
             { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD, EUR in ${PLAN_PRICING.growth.name}. KES, NGN, ZAR in ${PLAN_PRICING.scale.name} or custom.` },
             { q: 'Can I switch from another tool?', a: 'Mugavi reads invoices and customers from QuickBooks Online (beta) and Xero. If your books are somewhere else, ask first and we will tell you honestly whether it will work. We do not run migrations for you.' },
 ];

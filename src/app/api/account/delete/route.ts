@@ -2,14 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAuth } from '@/lib/auth-helper';
 import { db } from '@/db';
-import { organizations, integrations } from '@/db/schema';
+import { organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { cascadeDeleteOrgData } from '@/lib/account-deletion';
 import { clerkClient } from '@clerk/nextjs/server';
-import { disconnectQbo } from '@/lib/integrations/quickbooks';
-import { disconnectXero } from '@/lib/integrations/xero';
-import { disconnectSquare } from '@/lib/integrations/square';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,25 +79,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Revoke access at the accounting provider BEFORE the cascade removes the
-  // stored tokens. Deleting the integrations row alone used to leave Mugavi
-  // authorised at Intuit/Xero/Square with nothing left on our side able to
-  // revoke it. Best effort, same as a manual Disconnect: a provider outage
-  // must not block the owner from deleting their data.
-  try {
-    const rows = await db.select({ provider: integrations.provider }).from(integrations).where(eq(integrations.orgId, orgId));
-    for (const r of rows) {
-      try {
-        if (r.provider === 'quickbooks') await disconnectQbo(orgId);
-        else if (r.provider === 'xero') await disconnectXero(orgId);
-        else if (r.provider === 'square') await disconnectSquare(orgId);
-      } catch (e: unknown) {
-        console.error(`[account.delete] revoke ${r.provider} failed (continuing):`, e instanceof Error ? e.message : e);
-      }
-    }
-  } catch (e: unknown) {
-    console.error('[account.delete] could not list integrations to revoke (continuing):', e instanceof Error ? e.message : e);
-  }
+  // Provider access (Intuit, Xero, Square) is revoked inside cascadeDeleteOrgData, so the
+  // Clerk organization.deleted webhook gets the same treatment as this route.
 
   // App-data cascade delete — shared with the /api/webhooks/clerk
   // `organization.deleted` handler (see src/lib/account-deletion.ts) so

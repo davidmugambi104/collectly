@@ -19,13 +19,41 @@
  * `organization.deleted` webhook afterward — this is a no-op.
  */
 import { db, pool } from '@/db';
-import { organizations, deletedOrgsLog } from '@/db/schema';
+import { organizations, deletedOrgsLog, integrations } from '@/db/schema';
+import { disconnectQbo } from '@/lib/integrations/quickbooks';
+import { disconnectXero } from '@/lib/integrations/xero';
+import { disconnectSquare } from '@/lib/integrations/square';
 import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 
 export type CascadeDeleteResult =
   | { deleted: true; orgId: string; orgName: string }
   | { deleted: false; orgId: string };
+
+/**
+ * Revoke our access at the accounting provider BEFORE the cascade removes the stored
+ * tokens. Deleting the integrations row alone used to leave Mugavi authorised at
+ * Intuit, Xero and Square with nothing left on our side able to revoke it. Best effort,
+ * same as a manual Disconnect: a provider outage must never block someone from deleting
+ * their data. Runs for BOTH deletion paths (in-app delete and the Clerk
+ * organization.deleted webhook) because both go through cascadeDeleteOrgData.
+ */
+async function revokeProviderAccess(orgId: string): Promise<void> {
+  try {
+    const rows = await db.select({ provider: integrations.provider }).from(integrations).where(eq(integrations.orgId, orgId));
+    for (const r of rows) {
+      try {
+        if (r.provider === 'quickbooks') await disconnectQbo(orgId);
+        else if (r.provider === 'xero') await disconnectXero(orgId);
+        else if (r.provider === 'square') await disconnectSquare(orgId);
+      } catch (e: unknown) {
+        console.error(`[account-deletion] revoke ${r.provider} failed (continuing):`, e instanceof Error ? e.message : e);
+      }
+    }
+  } catch (e: unknown) {
+    console.error('[account-deletion] could not list integrations to revoke (continuing):', e instanceof Error ? e.message : e);
+  }
+}
 
 export async function cascadeDeleteOrgData(
   orgId: string,
@@ -35,6 +63,8 @@ export async function cascadeDeleteOrgData(
   if (!org) {
     return { deleted: false, orgId };
   }
+
+  await revokeProviderAccess(orgId);
 
   // Durable audit trail, written BEFORE the cascade. Was recordEvent() into
   // the `events` table — but events.orgId is ON DELETE CASCADE like every

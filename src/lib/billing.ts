@@ -515,12 +515,12 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
     try {
       await sendEmail({
         to: owner.email,
-        subject: `Your ${planInfo.name} upgrade for ${org.name} — invoice coming within 12 hours`,
+        subject: `Your ${planInfo.name} upgrade for ${org.name} — invoice coming within one business day`,
         html: [
           `<p>Hi ${owner.name?.split(' ')[0] ?? 'there'},</p>`,
           `<p>I just received your <strong>${planInfo.name}</strong> upgrade request for <strong>${org.name}</strong>. Here's what happens next:</p>`,
           `<ol>`,
-          `<li>I'll email your invoice within 12 hours (bank transfer, Wise, or PayPal — your call).</li>`,
+          `<li>I'll email your invoice within one business day (bank transfer, Wise, or PayPal — your call).</li>`,
           `<li>Once paid, I'll upgrade your account manually and confirm by email.</li>`,
           `<li>You can keep using Mugavi during this window — no interruption.</li>`,
           `</ol>`,
