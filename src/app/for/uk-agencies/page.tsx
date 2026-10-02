@@ -53,7 +53,7 @@ const FAQS: FaqItem[] = [
       a: `A single organisation is $${PLAN_PRICING.starter.monthly}/mo (around ` +
          `£${Math.round(PLAN_PRICING.starter.monthly * 0.8)}/mo at current FX rates) and a ` +
          `practice covering up to ${PRACTICE_INCLUDED_ORGS} client books is ` +
-         `$${PLAN_PRICING.growth.monthly}/mo, billed in GBP via Stripe. No per-invoice ` +
+         `$${PLAN_PRICING.growth.monthly}/mo, invoiced by hand in US dollars (bank transfer, Wise or PayPal), with card checkout not live yet. No per-invoice ` +
          `fees, no setup fees, no SMS markup. Cancel any time. The first ${FOUNDING.seats} ` +
          `founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months.`,
     },
@@ -167,7 +167,7 @@ export default function ForUkAgenciesPage() {
             for {FOUNDING.months} months, ${FOUNDING.monthly('growth')}/mo for a practice
             covering up to {PRACTICE_INCLUDED_ORGS} client organisations, then
             ${PLAN_PRICING.growth.monthly}/mo. A single organisation is
-            ${PLAN_PRICING.starter.monthly}/mo. Billing is via Stripe in GBP; cancel any time.
+            ${PLAN_PRICING.starter.monthly}/mo. Billing is a manual invoice in US dollars for now (bank transfer, Wise or PayPal); cancel any time.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-ink-700">
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organisation, unlimited invoices.</li>
