@@ -23,6 +23,9 @@ const byId: Record<string, any> = {
 };
 const calls: string[] = [];
 const revoked: string[] = [];
+let overpaymentsForbidden = false;
+const overpayments = [{ Status: 'AUTHORISED', RemainingCredit: 30, CurrencyCode: 'USD', Contact: { ContactID: 'c7' } }, { Status: 'AUTHORISED', RemainingCredit: 0, CurrencyCode: 'USD', Contact: { ContactID: 'c9' } }];
+const prepayments = [{ Status: 'AUTHORISED', RemainingCredit: 50, CurrencyCode: 'USD', Contact: { ContactID: 'c8' } }];
 const notes = [{ CreditNoteID: 'n1', Status: 'AUTHORISED', RemainingCredit: 120.5, CurrencyCode: 'USD', Contact: { ContactID: 'c7' } }, { CreditNoteID: 'n2', Status: 'AUTHORISED', RemainingCredit: 79.5, CurrencyCode: 'USD', Contact: { ContactID: 'c7' } }, { CreditNoteID: 'n3', Status: 'AUTHORISED', RemainingCredit: 0, CurrencyCode: 'USD', Contact: { ContactID: 'c8' } }];
 const server = http.createServer((req, res) => {
   const u = new URL(req.url!, `http://x`);
@@ -36,6 +39,8 @@ const server = http.createServer((req, res) => {
   }
   if (req.headers['xero-tenant-id'] !== 'T1') { res.writeHead(403); res.end('no tenant'); return; }
   const page = Number(u.searchParams.get('page') ?? 0);
+  if (u.pathname.endsWith('/Overpayments')) { if (overpaymentsForbidden) { res.writeHead(403); res.end('forbidden'); return; } return send({ Overpayments: overpayments.slice((page - 1) * 100, page * 100) }); }
+  if (u.pathname.endsWith('/Prepayments')) return send({ Prepayments: prepayments.slice((page - 1) * 100, page * 100) });
   if (u.pathname.endsWith('/CreditNotes')) return send({ CreditNotes: notes.slice((page - 1) * 100, page * 100) });
   if (u.pathname.endsWith('/Contacts')) return send({ Contacts: page ? contacts.slice((page - 1) * 100, page * 100) : contacts.slice(0, 100) });
   if (u.pathname.endsWith('/Invoices')) {
@@ -89,7 +94,12 @@ async function main() {
     const { disconnectXero } = await import('@/lib/integrations/xero'); await disconnectXero(org.id);
     const left = await db.select().from(integrations).where(eq(integrations.orgId, org.id));
     console.log('DISCONNECT revoked at Xero (expect only c-mine):', JSON.stringify(revoked), '| local row removed:', left.length === 0); }
-  { const { customerCredits } = await import('@/db/schema'); const rows = await db.select().from(customerCredits); console.log('CREDITS (expect one row, 200.00 for c7):', rows.map((r: { amount: string }) => r.amount).join(',')); }
+  { const { customerCredits } = await import('@/db/schema'); const rows = await db.select().from(customerCredits); console.log('CREDITS (expect c7 230.00 = notes 200 + overpayment 30, c8 50.00 prepayment):', rows.map((r: { customerId: string; amount: string }) => `${r.customerId.slice(0, 4)}=${r.amount}`).sort().join(','));
+    { const { saveXeroConnection } = await import('@/lib/integrations/xero'); const jwt2 = `h.${Buffer.from(JSON.stringify({ authentication_event_id: 'evt-mugavi' })).toString('base64url')}.s`; await saveXeroConnection(org.id, { access_token: jwt2, refresh_token: 'r', expires_in: 1800 }); }
+    overpaymentsForbidden = true;
+    const again = await syncXeroForOrg(org.id);
+    const rows2 = await db.select().from(customerCredits);
+    console.log('403 on overpayments: credit notes + prepayments still count, others reported:', rows2.map((r: { amount: string }) => r.amount).sort().join(','), '| message:', again.errors.filter((e: string) => /overpayments/.test(e)).join(';').slice(0, 90)); }
   server.close();
   process.exit(0);
 }

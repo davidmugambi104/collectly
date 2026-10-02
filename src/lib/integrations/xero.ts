@@ -367,18 +367,44 @@ export async function xeroGetInvoicesByIds(orgId: string, ids: string[]): Promis
  * Credit notes that still have credit left (status AUTHORISED). A credit note is
  * money the customer is owed until it is applied to an invoice or refunded.
  */
-type XeroCreditNote = { CreditNoteID?: string; Status?: string; RemainingCredit?: number; CurrencyCode?: string; Contact?: { ContactID?: string } };
+type XeroCreditLike = { Status?: string; RemainingCredit?: number; CurrencyCode?: string; Contact?: { ContactID?: string } };
 const MAX_CREDIT_PAGES = 20;
-export async function xeroListCredits(orgId: string): Promise<{ credits: Array<{ customerExternalId: string; currency: string; amount: number }>; truncated: boolean }> {
-  const all = await fetchAllPages(
-    async (page) => ((await xeroFetch(orgId, `/CreditNotes?where=Status=="AUTHORISED"&page=${page}`)) as { CreditNotes?: XeroCreditNote[] })?.CreditNotes ?? [],
-    XERO_PAGE_SIZE,
-    MAX_CREDIT_PAGES,
-  );
-  const credits = all.items
-    .filter((c: XeroCreditNote) => Number(c.RemainingCredit ?? 0) > 0 && c.Contact?.ContactID)
-    .map((c: XeroCreditNote) => ({ customerExternalId: String(c.Contact!.ContactID), currency: String(c.CurrencyCode ?? 'USD'), amount: Number(c.RemainingCredit) }));
-  return { credits, truncated: all.truncated };
+
+/**
+ * Credit a customer holds that has not been used: credit notes, overpayments and prepayments, all with
+ * status AUTHORISED and a RemainingCredit. Each is its own source. If Xero refuses one with 403 (the connection
+ * lacks that permission) the others still count and the refusal is reported; any other failure throws, so the
+ * caller leaves stored credit as it was instead of erasing real credit.
+ */
+export async function xeroListCredits(orgId: string): Promise<{ credits: Array<{ customerExternalId: string; currency: string; amount: number }>; truncated: boolean; unavailable: string[] }> {
+  const sources: Array<{ path: string; key: 'CreditNotes' | 'Overpayments' | 'Prepayments'; label: string; required: boolean }> = [
+    { path: 'CreditNotes', key: 'CreditNotes', label: 'credit notes', required: true },
+    { path: 'Overpayments', key: 'Overpayments', label: 'overpayments', required: false },
+    { path: 'Prepayments', key: 'Prepayments', label: 'prepayments', required: false },
+  ];
+  const credits: Array<{ customerExternalId: string; currency: string; amount: number }> = [];
+  const unavailable: string[] = [];
+  let truncated = false;
+  for (const src of sources) {
+    try {
+      const all = await fetchAllPages(
+        async (page) => ((await xeroFetch(orgId, `/${src.path}?where=Status=="AUTHORISED"&page=${page}`)) as Record<string, XeroCreditLike[] | undefined>)?.[src.key] ?? [],
+        XERO_PAGE_SIZE,
+        MAX_CREDIT_PAGES,
+      );
+      if (all.truncated) truncated = true;
+      for (const c of all.items) {
+        if (Number(c.RemainingCredit ?? 0) > 0 && c.Contact?.ContactID) {
+          credits.push({ customerExternalId: String(c.Contact.ContactID), currency: String(c.CurrencyCode ?? 'USD'), amount: Number(c.RemainingCredit) });
+        }
+      }
+    } catch (e: unknown) {
+      // Only an optional source refused for permission is tolerated; everything else must stop the replace.
+      if (!src.required && /failed: 403/.test(errorMessage(e))) { unavailable.push(src.label); continue; }
+      throw e;
+    }
+  }
+  return { credits, truncated, unavailable };
 }
 
 /** List all contacts (customers) from Xero, every page. */
@@ -635,7 +661,8 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   try {
     const found = await xeroListCredits(orgId);
     if (!found.truncated) await replaceCredits(orgId, found.credits);
-    else errors.push('credit notes: too many to read in one sync, so credit was left as it was');
+    else errors.push('credits: too many to read in one sync, so credit was left as it was');
+    if (found.unavailable.length > 0) errors.push(`credit from ${found.unavailable.join(' and ')} is not counted: Xero did not allow reading it. Reconnect Xero to grant payments access.`);
   } catch (e: unknown) {
     errors.push(`credit notes: ${errorMessage(e)}`);
   }
