@@ -1288,6 +1288,354 @@ If your business sends fewer than 4 touchpoints before a final notice, the final
 Davie
 `,
   },
+  {
+    slug: 'quickbooks-unapplied-payments-credit-memos-chasing-paid-clients',
+    title: 'Unapplied payments and credit memos: why QuickBooks clients get chased for money they already paid',
+    date: '2026-10-03', read: '6 min',
+    excerpt: 'A customer pays, the money lands in QuickBooks, and the invoice still shows as open. Where those payments hide, how to find them, and why a reminder tool needs to know.',
+    tags: ['QuickBooks', 'bookkeeping', 'credit memos', 'unapplied payments'],
+    body: `The most embarrassing reminder a client can send is the one for an invoice the customer already paid. It happens often enough that most bookkeepers have a story about it. The cause is usually not the customer and not the client. It is money sitting in the books that has not been matched to the invoice.
+
+This post is about the two places that money hides in QuickBooks Online, and how to clear them before anyone sends a chase. Menu names change, so check each step in your own file.
+
+## Hiding place one: a payment that was never applied
+
+A customer pays by transfer or check. Someone records it as a payment, or the bank feed picks it up, but it is not linked to a specific invoice. The cash is in the books. The invoice still says open, and the balance owed still shows on the customer.
+
+You will see this most when:
+
+- the customer paid one lump sum for several invoices
+- the remittance did not say which invoice it was for
+- the bank feed matched the deposit to the customer but not to the invoice
+- a payment arrived early, before the invoice was sent
+
+An open invoice with a recent payment from the same customer is the pattern to look for. If the amounts add up, the payment is probably unapplied.
+
+## Hiding place two: a credit memo nobody used
+
+A credit memo is what you raise when you owe the customer something: a returned item, a pricing correction, a discount agreed after the fact. If it is never applied to an invoice, it sits there and the customer's invoice stays open at full value. The customer, quite reasonably, believes they owe less.
+
+Reminding someone for an amount they think you already credited is a good way to start an argument. It also tells them nobody is looking at the account.
+
+## A ten minute check before the weekly chase
+
+For each client book, before you send anything:
+
+1. Open the customer list and sort by balance. Pick any customer with several open invoices.
+2. Look for payments or credit memos dated after the oldest open invoice that are not linked to anything.
+3. If one covers an invoice, apply it, then re-read the balance.
+4. If a payment is a different amount from any invoice, ask the client before guessing. Part-applying the wrong invoice just moves the mess.
+5. Re-run the aged receivables report. Our [guide to reading one](/blog/read-an-aged-receivables-report) explains what the buckets mean.
+
+Do this on the same day each week and the pile stays small. Left for a quarter, it becomes a reconciliation project.
+
+## What a reminder tool should do about it
+
+A reminder tool that only reads invoices will chase these customers. It sees an open invoice and does its job. A better one also reads the credit and the unmatched payments and holds the reminder.
+
+Mugavi does this for QuickBooks. It reads credit memos and unapplied payments, and if a customer holds credit that covers what they owe, it stops chasing and shows you why, so you know to apply the credit in your books. Here are the limits, stated plainly:
+
+- The QuickBooks connection is in beta. This logic has been tested against stand-ins and a test database, not a real QuickBooks company, and QuickBooks has not yet confirmed it accepts the filter we use to find unapplied payments.
+- Partial credit does not stop a reminder, and the credit is not mentioned in the email.
+- It does not apply the credit for you. You do that in QuickBooks.
+
+Because every reminder also waits for your approval by default, a wrong one can still be caught by you before it goes out. See [why a reminder has or has not gone out](/blog/why-hasnt-my-invoice-reminder-gone-out) for how to read the reason on any invoice.
+
+## If you are doing this for many clients
+
+Add this check to the engagement. Tell the client you will apply payments and credits that you can match, and that you will ask about the rest. It makes the first month of [invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service) much calmer, because the first reminders go out on invoices that really are open.
+
+The tool is [Mugavi for bookkeepers](/for/bookkeepers), $399 a month for ten client books. Start with one book and compare what it flags against what you already know is unapplied.`,
+  },
+  {
+    slug: 'accounts-receivable-month-end-checklist-quickbooks-online',
+    title: 'An accounts receivable month-end checklist for QuickBooks Online',
+    date: '2026-10-03', read: '6 min',
+    excerpt: 'A short close routine for each client book that makes the receivables number trustworthy, so the chasing that follows is chasing real debts.',
+    tags: ['QuickBooks', 'bookkeeping', 'month-end', 'accounts receivable'],
+    body: `Receivables is the part of the month-end close that clients look at hardest and bookkeepers check least. The number matters because it drives the owner's decisions: who to chase, whether to hire, whether to take that job. If it is wrong, every decision after it is slightly wrong too.
+
+Here is a close routine you can run on each QuickBooks Online book in under half an hour once it is clean. The first month will take longer. That is the cleanup you were going to have to do anyway.
+
+## 1. Get the cash in first
+
+Reconcile the bank and card accounts before you look at receivables. Money that has arrived but is not matched is the single biggest source of fake overdue invoices. If the books are behind on the bank, say so in your notes and treat the receivables number as provisional.
+
+## 2. Clear unmatched money
+
+Look for payments and credit memos that are not applied to an invoice. We cover this in detail in [unapplied payments and credit memos](/blog/quickbooks-unapplied-payments-credit-memos-chasing-paid-clients). A customer who paid but still shows as owing is the item most likely to embarrass your client.
+
+## 3. Check the oldest items
+
+Run the aged receivables report and read the oldest bucket first. For each invoice in it, put it in one of four boxes:
+
+- **Real and chasing.** The customer owes it and has been asked.
+- **Real and disputed.** There is a disagreement. Move it to the owner.
+- **Probably paid.** Money arrived and has not been matched. Go back to step 2.
+- **Probably dead.** The customer has gone, or the owner has given up.
+
+The last box is a decision for the owner and, where tax is involved, for their accountant. We cover the stopping point in [when to stop chasing and write off](/blog/when-to-stop-chasing-write-off-bad-debt-quickbooks).
+
+## 4. Look for invoices that were never sent
+
+An invoice created but left in draft, or never emailed, will age without anyone noticing. Filter for invoices that were not sent. Nothing makes a customer less likely to pay than never having been asked.
+
+## 5. Read the totals, not just the rows
+
+Compare this month's total overdue with last month's. You are not looking for a target. You are looking for a change you cannot explain. A jump usually means one large invoice went overdue. A fall usually means a lump sum was matched.
+
+## 6. Note who needs a person, not an email
+
+A short list for the owner: the two or three customers where a phone call will do more than another reminder. Common reasons are a large balance, a long-standing relationship, or a customer who has replied but not paid.
+
+## 7. Write the one-page summary
+
+For each client, a few lines: total overdue, what was paid since last month, what is disputed, who you suggest the owner calls. If you offer follow-up as a service, this page is the proof the service is working. It can be as plain as an email.
+
+## A checklist to copy
+
+- [ ] Bank and card feeds reconciled
+- [ ] Unapplied payments and credit memos cleared or queried
+- [ ] Oldest bucket sorted into the four boxes
+- [ ] Draft and unsent invoices checked
+- [ ] Month on month change explained
+- [ ] Short list of people to ring
+- [ ] Summary sent
+
+## Where Mugavi fits, and where it does not
+
+The routine above works with QuickBooks alone. Mugavi helps with the step after it: it drafts reminders for what is genuinely overdue in each client book and waits for you to approve them. There is a client books view that shows outstanding and overdue amounts for every book you belong to, with the books that need a person first. It shows counts only: there is no combined inbox and no combined approvals, so you still open each book to act. The QuickBooks connection is in beta, so check its numbers against your own report for the first month.
+
+If you want to see how that fits a practice, read the [bookkeeper page](/for/bookkeepers).`,
+  },
+  {
+    slug: 'when-to-stop-chasing-write-off-bad-debt-quickbooks',
+    title: 'When to stop chasing an invoice and what to do in QuickBooks when you do',
+    date: '2026-10-03', read: '6 min',
+    excerpt: 'There comes a point where another reminder is wasted effort. How to decide, how to tell the client, and what a bookkeeper needs to ask before touching the books.',
+    tags: ['QuickBooks', 'bookkeeping', 'bad debt', 'write-off'],
+    body: `Every receivables list has a few invoices that are never going to be paid. The customer closed, or went silent, or the work was disputed and nobody wanted to fight. Chasing them forever has a cost. Reminders go to a dead inbox, the aged report stays red, and the owner keeps reading a number that is not real.
+
+Writing something off is a decision about money and tax, and it belongs to the owner and their accountant. Your job as the bookkeeper is to make the decision easy to take and to record it cleanly once it is made. This is general information, not tax or legal advice, and the rules differ by country and by how the business reports income.
+
+## Signs it is time to stop
+
+None of these alone settles it. Several together usually do.
+
+- The customer has not replied to anything for a long time, across email and a call.
+- The business appears to have closed, or the email bounces.
+- The amount is small next to the effort and the relationship cost.
+- The invoice was disputed and the owner has chosen not to pursue it.
+- It is far older than the client's usual payment pattern.
+
+A customer who replied, promised a date, and then missed it is not in this group yet. That customer needs a call. Our post on [a statement instead of another reminder](/blog/customer-statement-vs-another-reminder) can help with the in-between ones.
+
+## Before you touch anything
+
+Ask the owner three things, in writing:
+
+1. Do they want to stop chasing this one, or are they still hoping?
+2. Is anything else going on with this customer, such as a new job in progress?
+3. Has their accountant said how bad debts should be treated for tax?
+
+Keep the answers. If anyone asks later why an invoice was cleared, you want the owner's message, not your memory.
+
+## Stop the reminders first
+
+Whatever tool sends your reminders, pause that customer before you do anything in the books. Otherwise a reminder can go out for an invoice you have just decided is dead. In Mugavi, you can pause any customer, and a reply from the customer pauses that invoice until you have read it. A pause is not a write-off. It only stops messages.
+
+## Then the books
+
+There are a few common approaches in QuickBooks Online, and which one is right depends on the business and its accountant. In outline:
+
+- **Raise a credit memo or a write-off entry** against the invoice, so it closes and the customer balance drops, with the cost going to a bad debt account.
+- **Leave it open and flagged** if the owner may still pursue it, and keep it out of the numbers you show as collectable.
+
+Do not delete the invoice. Deleting it removes the record of the sale, which can cause trouble for sales tax and for the customer relationship if the work was real. If you are unsure, ask the accountant before choosing. QuickBooks menu names move around, so follow the current steps in its own help rather than a screenshot from last year.
+
+## What Mugavi does and does not do
+
+Mugavi does not write write-offs or credit memos to QuickBooks. It reads invoices, so after you close one in QuickBooks it stops appearing as something to chase. It has no write-off feature, and its late fees are tracked separately in Mugavi and are not written back to QuickBooks. Its QuickBooks connection is in beta.
+
+## Tell the client what you did
+
+Send the owner a short note: which invoices were closed, the total, and the date. It is the paper trail, and it also stops them being surprised at year end. Keep the tone factual. Nobody needs a lecture on why the customer did not pay.
+
+## Learn from the list
+
+Look at the invoices you wrote off and ask what they have in common. Often it is no deposit, a large first job for a new customer, or no reminders until it was very late. The cheapest bad debt is the one that never starts. Our guide on [onboarding a client to follow-up](/blog/onboard-client-to-invoice-follow-up-first-week) covers setting the rules early.`,
+  },
+  {
+    slug: 'run-invoice-reminders-across-many-quickbooks-client-books',
+    title: 'Running invoice reminders across many QuickBooks client books: a pilot plan',
+    date: '2026-10-03', read: '7 min',
+    excerpt: 'How a bookkeeping practice can roll out reminders across ten client books without sending a wrong email, starting with one book and a clear checklist for when to add the next.',
+    tags: ['QuickBooks', 'bookkeeping', 'practice management', 'client services'],
+    body: `Setting up reminders for one client is easy. Doing it for ten, each with a different owner, different customers and a different idea of what polite means, is where practices get into trouble. The usual failure is not technical. It is sending something to a client's customer that the client would not have sent.
+
+This is a plan for rolling it out slowly enough to catch that. It assumes each client is on QuickBooks Online and you have access to their file as their accountant.
+
+## Pick one client for the pilot
+
+Choose a client who:
+
+- complains about late payers and will notice an improvement
+- has a manageable number of overdue invoices, say a dozen rather than two hundred
+- will answer your messages quickly
+- has books you already trust
+
+Avoid your biggest or most nervous client for the pilot. You want a place where a small mistake costs little.
+
+## Agree the rules in writing
+
+Before connecting anything, write down for this client:
+
+1. The sender name and who the reminders appear to come from.
+2. Whether every message needs their approval at first (it should).
+3. Which customers are never to be chased automatically, such as friends, large accounts or anyone in a dispute.
+4. What pauses a chase: a reply, a promise of payment, a dispute.
+
+The [first week onboarding guide](/blog/onboard-client-to-invoice-follow-up-first-week) has a fuller version.
+
+## Check the numbers before you send
+
+Connect the book, then compare what the tool shows against your own aged receivables report. Totals and customer names should match. If they do not, stop and find out why before you draft a single reminder. Mugavi's QuickBooks connection is in beta and has not yet been run against a real QuickBooks company by us, so this comparison is not optional. Tell us if it is wrong.
+
+## Draft first, send nothing
+
+Start in draft-only mode: the tool drafts reminders for what is already overdue and nothing goes out. Read every draft the way the client's customer will. Look for three things: the wrong amount, the wrong name, and a tone that does not sound like the client. Edit or delete.
+
+## Send a few, then watch
+
+Approve a small batch. Mugavi holds a sent message for thirty seconds so you can undo it, but closing the page cancels it, so stay on the screen. Then watch what happens over a week: replies, payments, anything odd. A reply pauses that invoice until you have read it.
+
+## Decide whether to add the next client
+
+Add the next book when these are true for the pilot:
+
+- [ ] No reminder went out that you or the client regretted
+- [ ] The tool's totals matched your report
+- [ ] Replies were read and handled within a business day
+- [ ] The client is willing to say they noticed money arriving
+
+If one of these is not true, fix it first. Adding books does not fix a process problem. It copies it.
+
+## How it looks at ten books
+
+Once you have several books, the client books view in Mugavi shows outstanding and overdue amounts for each, the oldest overdue invoice, and what needs a person, such as a reconnect, replies or reminders waiting. Books that need attention come first. Know its limits: it shows counts, there is no combined inbox or combined approvals, and you open each book to act. A book appears in the list once someone has opened it.
+
+On price, it is $399 a month for ten client books, billed by hand for now while card payments are set up. We are still working out exactly how extra books are charged, so ask before you plan around it.
+
+## Keep it a service, not a favour
+
+Whatever you roll out, say what you charge for it. We wrote about [pricing invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service) and the [reminder emails you might send on a client's behalf](/blog/payment-reminder-emails-bookkeepers-send-for-clients). Both fit a pilot like this. The page for practices is [Mugavi for bookkeepers](/for/bookkeepers).`,
+  },
+  {
+    slug: 'uk-invoice-payment-terms-you-can-chase',
+    title: 'UK invoice payment terms that make a late invoice easier to chase',
+    date: '2026-10-03', read: '5 min',
+    excerpt: 'Clear terms on the invoice do half of the chasing for you. What to put on a UK invoice so a customer cannot say they did not know when or how to pay.',
+    tags: ['UK', 'payment terms', 'invoicing', 'bookkeeping'],
+    body: `Most chasing starts with a vague invoice. "Payment due on receipt" means one thing to you and another to a customer whose accounts team pays on the last Friday of the month. If the terms were not clear, you are asking for money while the customer thinks they are on time.
+
+This is a practical list for UK invoices. It is general guidance from a software company, not legal advice. Check the current rules on the government website before relying on any detail, and ask a solicitor for anything that matters.
+
+## Say when, in dates
+
+"30 days" is ambiguous. Thirty days from the invoice date, or from the date the customer received it, or from the end of the month? Put an actual due date on the invoice and use it in every reminder. A date can be checked. A number of days can be argued with.
+
+## Say how
+
+Put the bank details on the invoice itself, not in a separate email that gets lost: account name, sort code, account number, and the reference the customer should use. A missing reference is a common reason a payment arrives and cannot be matched.
+
+## Ask for the right name and number
+
+Large customers often will not pay without a purchase order number. Ask for it before you start the work, and print it on the invoice. An invoice that is rejected for a missing PO number looks like a late payment, and the customer may not tell you.
+
+## Know what the law gives you
+
+For business-to-business sales in the UK, the Late Payment of Commercial Debts (Interest) Act can give you a right to statutory interest and a fixed sum on late invoices, even if your contract says nothing. We are not quoting rates or amounts because they change. Look them up on gov.uk. Our post on [late payment fees](/blog/late-payment-fees-when-to-charge) goes into how to use that without souring the relationship.
+
+## Write the terms once, then keep to them
+
+If you tell some customers 14 days and others 45, you will lose track, and so will they. Pick a default, write it in your quotes and your invoices, and make exceptions on purpose.
+
+## A short terms block you can adapt
+
+Replace the bracketed parts with your own details:
+
+- Due date: [date]. Payment is due in full by this date.
+- Pay by bank transfer to [account name], sort code [00-00-00], account [number].
+- Please use [invoice number] as the payment reference.
+- Purchase order: [number, if you were given one].
+- If this invoice is not paid by the due date, we may charge interest and costs as the law allows.
+
+Check that last line with your adviser first. Only include it if you intend to use it.
+
+## Then the reminders can be short
+
+With clear terms, a first reminder can be two sentences: the invoice, the amount, the due date, how to pay. Our [dunning templates](/blog/best-dunning-templates-2026) work from this. The customer cannot say the date was unclear, and you do not need to sound cross.
+
+## Where Mugavi fits
+
+Mugavi drafts reminders from your accounting software, waits for you to approve each one, and lets you add payment details that print on statements. It is built and priced in dollars, and we have not tested it with a UK QuickBooks company. If you are in the UK, read the [UK page](/for/uk-agencies) and ask us before you commit. Everything in this post works without any tool.`,
+  },
+  {
+    slug: 'chasing-accounts-payable-at-large-uk-customer',
+    title: 'Chasing a large UK customer: who to email, and what to ask for',
+    date: '2026-10-03', read: '6 min',
+    excerpt: 'Large companies pay through accounts payable teams, not the person who hired you. How to find the right contact, avoid the portal trap and keep a paper trail.',
+    tags: ['UK', 'accounts payable', 'invoice follow-up', 'bookkeeping'],
+    body: `When a small business sells to a large company, the person who hired them is almost never the person who pays them. Your client sends the invoice to a contact. The contact says "I have approved it." Then the invoice disappears into a payables process nobody has explained, and sixty days later the owner is asking you why the money has not arrived.
+
+This is how to chase in that situation, written for UK bookkeepers working on behalf of small clients. It is general guidance, not legal advice, and every large customer has its own system, so treat this as a list of questions to ask rather than a procedure.
+
+## Find out the process at the start
+
+The best time to learn how a big customer pays is before the first invoice. Ask your client to get four things from their contact:
+
+1. The name or shared mailbox of the accounts payable team.
+2. Whether invoices must go through a supplier portal or can be emailed.
+3. Whether a purchase order number is required, and in what format.
+4. How often payment runs happen, and what the cut-off is.
+
+Write the answers down. A payment run on the last Friday of the month with a cut-off a week earlier explains a lot of "late" invoices that were never late.
+
+## The portal trap
+
+Some large customers only accept invoices uploaded to their own system. An invoice emailed to the person who hired you can sit forever because it never reached the process. If an invoice is overdue, the first thing to check is whether it is in the right place, and whether the portal shows it as received, approved or scheduled for payment.
+
+## Ask a specific question
+
+"Has this been paid?" gets a vague answer. These get a real one:
+
+- Has invoice [number] been received by accounts payable?
+- Has it been approved, and when?
+- Which payment run is it in?
+- Is anything missing, such as a purchase order number?
+
+Keep the message short and put the invoice number, amount and due date in the first line. Our [reminder email examples](/blog/payment-reminder-emails-bookkeepers-send-for-clients) show the tone.
+
+## Copy the right people, once
+
+Your client's contact is useful for pushing things from the inside, but not for paperwork. Send the question to the payables team and copy the contact. In Mugavi you can add other people at a customer, such as an accounts payable address, so they also receive reminders and statements. Each gets their own email with their own unsubscribe link, up to five extra people per customer, and a reply from any of them pauses the reminder and lands in your Inbox. Reply matching for a copied person has not been tested against a real mailbox yet.
+
+## Use a statement when there are several
+
+If a large customer has several open invoices, a statement is easier for a payables team than a string of reminders. See [a statement instead of another reminder](/blog/customer-statement-vs-another-reminder).
+
+## Know when to go over their head
+
+If payables says it is approved and scheduled and the date passes, ask for the new date in writing. If a second date passes, it is time for the owner to speak to their contact by phone. Do not threaten. Large companies have processes, and your client usually wants to be a supplier again next year.
+
+## Keep a paper trail
+
+Note the date you sent each message, who you sent it to and what they said. If the customer is in the UK and the invoice stays unpaid, you will want this record for any conversation about statutory interest. Look up the current rules on gov.uk before you rely on them.
+
+## Where Mugavi fits
+
+Mugavi is for small businesses and the bookkeepers who work with them. It drafts the reminder, you approve it, and it waits thirty seconds before sending so you can undo. It has no portal integrations, so it will not tell you whether a customer's portal has your invoice. We have not tested it with a UK QuickBooks company. The [UK page](/for/uk-agencies) has the details we are sure of.`,
+  },
 ];
 
 export const POSTS_BY_SLUG: Record<string, Post> = POSTS.reduce((acc, p) => { acc[p.slug] = p; return acc; }, {} as Record<string, Post>);
