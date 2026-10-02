@@ -1,0 +1,69 @@
+{
+  "epoch": 4182,
+  "enclaves": [
+    {
+      "id": "c171a753",
+      "label": "Frankfurt 1",
+      "region": "eu-central-1",
+      "tee": "AMD SEV-SNP",
+      "gpu": "H100 80GB",
+      "model": "nimlith-sum-7b",
+      "status": "active",
+      "p50_latency_ms": 240,
+      "mrenclave": "5c74ac66ff101b9b65522d06d648cebf9b4ef8c9d1042192594efff365789f509840cf5398ae3182ffb7b4c230c35bcb",
+      "signer": "4bff6c153a26b9cb93ec9999e343267c601b281d3a37541112307e938bcea5a4",
+      "price": {
+        "unitsPerMtokIn": 2500000,
+        "unitsPerMtokOut": 9000000
+      }
+    },
+    {
+      "id": "cdf6f890",
+      "label": "Ohio 2",
+      "region": "us-east-2",
+      "tee": "Intel TDX",
+      "gpu": "H100 80GB",
+      "model": "nimlith-sum-7b",
+      "status": "active",
+      "p50_latency_ms": 180,
+      "mrenclave": "971c9e0e17a4749bb771d9cd164f50f8265236fa22c9d93be7484af1e6fce2f8182dbfa692551dc9ac1e08368dc9dba5",
+      "signer": "df5eb2077081005aeb707ed3f5da9074f97a7e509ffde8abe65aa14a83498a6f",
+      "price": {
+        "unitsPerMtokIn": 2500000,
+        "unitsPerMtokOut": 6000000
+      }
+    },
+    {
+      "id": "95a6ce54",
+      "label": "Mumbai 3",
+      "region": "ap-south-1",
+      "tee": "NVIDIA CC-H100",
+      "gpu": "A100 40GB",
+      "model": "nimlith-code-13b",
+      "status": "active",
+      "p50_latency_ms": 240,
+      "mrenclave": "367e57df0376fd5ad596514b75829690d091c763b7e01a72b8b882bcc78004dea30503fafba96b9e3caa14ad9cd86110",
+      "signer": "5d0b7853005c76ef13748add8f06cffb751db56f24af4e524a21a2d83cdcae90",
+      "price": {
+        "unitsPerMtokIn": 2500000,
+        "unitsPerMtokOut": 6000000
+      }
+    },
+    {
+      "id": "6a8ac2fa",
+      "label": "Stockholm 4",
+      "region": "eu-north-1",
+      "tee": "Intel SGX",
+      "gpu": "\u2014",
+      "model": "nimlith-sum-7b",
+      "status": "draining",
+      "p50_latency_ms": 180,
+      "mrenclave": "f34f9a70718c849910df18cae29ff6dac1b5b002fc9325e6332b05137228fb16de8959fa429ac96a92a0ec858864a61f",
+      "signer": "35ebc70b898cb4a750f2b2d2d3ea80518beb88ae1b95c341ecf3868c9141a674",
+      "price": {
+        "unitsPerMtokIn": 2500000,
+        "unitsPerMtokOut": 9000000
+      }
+    }
+  ]
+}

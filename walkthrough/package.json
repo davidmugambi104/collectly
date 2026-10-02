@@ -1,0 +1,12 @@
+{
+  "name": "walkthrough",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "all": "node run.mjs all",
+    "preview": "node run.mjs timeline && PREVIEW=1 node run.mjs compose"
+  },
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}
