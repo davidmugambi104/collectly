@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { authEventIdFromToken, newestTenant, pickTenant } from './xero-tenant.ts';
+import { authEventIdFromToken, newestTenant, pickTenant, connectionIdFor } from './xero-tenant.ts';
 
 const jwt = (claims: object) => `h.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.s`;
 
@@ -37,4 +37,12 @@ test("this consent's own organisation beats a newer one authorised earlier", () 
 
 test('with no consent list it falls back to the newest of all', () => {
   assert.equal(pickTenant([], [{ tenantId: 'a', updatedDateUtc: '2026-01-01' }, { tenantId: 'b', updatedDateUtc: '2026-02-01' }])?.tenantId, 'b');
+});
+
+test('the connection to revoke is the one for our organisation only', () => {
+  const all = [{ id: 'c-demo', tenantId: 'T2' }, { id: 'c-mine', tenantId: 'T1' }];
+  assert.equal(connectionIdFor(all, 'T1'), 'c-mine');
+  assert.equal(connectionIdFor(all, 'T9'), null);
+  assert.equal(connectionIdFor(all, null), null);
+  assert.equal(connectionIdFor([{ tenantId: 'T1' }], 'T1'), null);
 });

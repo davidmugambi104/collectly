@@ -18,7 +18,7 @@ import { fetchAllPages, chunk } from '@/lib/integrations/paging';
 import { needsLookup, reconcileStatus, xeroSyncedStatus } from '@/lib/integrations/sync-status';
 import { nanoid, errorMessage } from '@/lib/utils';
 import { replaceCredits } from '@/lib/integrations/credits';
-import { authEventIdFromToken, pickTenant, type XeroTenant as ConsentTenant } from '@/lib/integrations/xero-tenant';
+import { authEventIdFromToken, pickTenant, connectionIdFor, type XeroTenant as ConsentTenant } from '@/lib/integrations/xero-tenant';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 // Tests point this at a local stand-in. Never honoured in production.
@@ -432,6 +432,18 @@ export async function xeroRecordPayment(orgId: string, opts: {
 export async function disconnectXero(orgId: string) {
   const [integ] = await db.select().from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'xero'))).limit(1);
   if (!integ) return { ok: true };
+  // Revoke at Xero too, for this organisation only. Deleting just our row used to leave the organisation
+  // "already connected" on Xero's side, which is how a stale one (Demo Company) kept being offered and picked.
+  // Best effort: if Xero cannot be reached or the token is dead, the local row is still removed.
+  try {
+    const fresh = await getFreshXero(orgId);
+    const headers = { Authorization: `Bearer ${fresh.accessToken}`, Accept: 'application/json' };
+    const list = await fetch(XERO_CONNECTIONS, { headers });
+    if (list.ok) {
+      const id = connectionIdFor((await list.json()) as ConsentTenant[], fresh.tenantId);
+      if (id) await fetch(`${XERO_CONNECTIONS}/${encodeURIComponent(id)}`, { method: 'DELETE', headers });
+    }
+  } catch { /* still remove the local connection */ }
   await db.delete(integrations).where(eq(integrations.id, integ.id));
   return { ok: true };
 }

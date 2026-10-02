@@ -22,14 +22,16 @@ const byId: Record<string, any> = {
   'dis-then-paid': { InvoiceID: 'dis-then-paid', InvoiceNumber: 'INV-DP', Status: 'PAID', Total: 500, AmountDue: 0, CurrencyCode: 'USD', Date: '/Date(1780000000000+0000)/', DueDate: '/Date(1781000000000+0000)/', Contact: { ContactID: 'c3' } },
 };
 const calls: string[] = [];
+const revoked: string[] = [];
 const notes = [{ CreditNoteID: 'n1', Status: 'AUTHORISED', RemainingCredit: 120.5, CurrencyCode: 'USD', Contact: { ContactID: 'c7' } }, { CreditNoteID: 'n2', Status: 'AUTHORISED', RemainingCredit: 79.5, CurrencyCode: 'USD', Contact: { ContactID: 'c7' } }, { CreditNoteID: 'n3', Status: 'AUTHORISED', RemainingCredit: 0, CurrencyCode: 'USD', Contact: { ContactID: 'c8' } }];
 const server = http.createServer((req, res) => {
   const u = new URL(req.url!, `http://x`);
   calls.push(`${u.pathname}${u.search}`);
   const send = (o: unknown) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(o)); };
+  if (req.method === 'DELETE' && u.pathname.startsWith('/Connections/')) { revoked.push(decodeURIComponent(u.pathname.split('/')[2])); res.writeHead(204); res.end(); return; }
   if (u.pathname === '/Connections') {
-    const demo = { tenantId: 'T2', tenantName: 'Demo Company (Global)', updatedDateUtc: '2026-10-02T01:00:00Z' };
-    const mine = { tenantId: 'T1', tenantName: 'mugavi', updatedDateUtc: '2026-10-02T00:00:00Z' };
+    const demo = { id: 'c-demo', tenantId: 'T2', tenantName: 'Demo Company (Global)', updatedDateUtc: '2026-10-02T01:00:00Z' };
+    const mine = { id: 'c-mine', tenantId: 'T1', tenantName: 'mugavi', updatedDateUtc: '2026-10-02T00:00:00Z' };
     return send(u.searchParams.get('authEventId') === 'evt-mugavi' ? [mine] : [demo, mine]);
   }
   if (req.headers['xero-tenant-id'] !== 'T1') { res.writeHead(403); res.end('no tenant'); return; }
@@ -83,7 +85,10 @@ async function main() {
     const [row] = await db.select().from(integrations).where(eq(integrations.orgId, org.id));
     console.log('TENANT from this consent:', row.tenantId === 'T1', '| name stored:', (row.metadata as { tenantName?: string } | null)?.tenantName === 'mugavi');
     const first = await syncAgain(org.id);
-    console.log('FIRST sync errors (expect none):', JSON.stringify(first.errors.filter((e: string) => /tenant|contacts/.test(e)))); }
+    console.log('FIRST sync errors (expect none):', JSON.stringify(first.errors.filter((e: string) => /tenant|contacts/.test(e))));
+    const { disconnectXero } = await import('@/lib/integrations/xero'); await disconnectXero(org.id);
+    const left = await db.select().from(integrations).where(eq(integrations.orgId, org.id));
+    console.log('DISCONNECT revoked at Xero (expect only c-mine):', JSON.stringify(revoked), '| local row removed:', left.length === 0); }
   { const { customerCredits } = await import('@/db/schema'); const rows = await db.select().from(customerCredits); console.log('CREDITS (expect one row, 200.00 for c7):', rows.map((r: { amount: string }) => r.amount).join(',')); }
   server.close();
   process.exit(0);

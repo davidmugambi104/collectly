@@ -7,7 +7,7 @@
  * /connections?authEventId=<id> returns only the organisations picked in that one consent.
  * Pure, no network or database, so it can be tested.
  */
-export type XeroTenant = { tenantId: string; tenantName?: string; createdDateUtc?: string; updatedDateUtc?: string };
+export type XeroTenant = { id?: string; tenantId: string; tenantName?: string; createdDateUtc?: string; updatedDateUtc?: string };
 
 /** The authentication_event_id claim from the access token (a JWT), or null. Never throws. */
 export function authEventIdFromToken(accessToken: string | null | undefined): string | null {
@@ -33,4 +33,10 @@ export function newestTenant(tenants: XeroTenant[] | null | undefined): XeroTena
 /** From this consent's own tenants if there are any, otherwise the newest of all. */
 export function pickTenant(fromConsent: XeroTenant[] | null | undefined, all: XeroTenant[] | null | undefined): XeroTenant | null {
   return newestTenant(fromConsent) ?? newestTenant(all);
+}
+
+/** The connection id to revoke for one organisation, or null when Xero does not list it. */
+export function connectionIdFor(all: XeroTenant[] | null | undefined, tenantId: string | null | undefined): string | null {
+  if (!tenantId) return null;
+  return (all ?? []).find((t) => t?.tenantId === tenantId && t.id)?.id ?? null;
 }
