@@ -151,6 +151,7 @@ export default function ForBookkeepersPage() {
           <h2 className="mt-3 h2">Fewer chase emails you write by hand.</h2>
           <ul className="mt-6 space-y-3 text-sm text-ink-700">
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One reminder per customer per week by default, listing their other overdue invoices, so nobody is nagged three times.</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Your client&apos;s relationship stays yours: hold any customer you are handling personally, and choose the days and hours reminders may be drafted, so nothing lands at midnight.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> A customer who holds credit that covers what they owe is not chased. Mugavi says why and tells you to apply the credit in QuickBooks.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> A reply pauses the chase and lands in your inbox with a suggested next step. Disputed invoices are left out.</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Statements you can print, download or email per customer, and an aged receivables report per book.</li>
