@@ -62,7 +62,7 @@ export const storyboard = {
   scenes: [
     {
       id: 'intro', card: 'intro', lead: 0.6, tail: 0.6,
-      narration: 'Chasing late invoices is the job nobody wants. Mugavi writes the reminders, but you approve every one first. Here is the whole flow in about two minutes.',
+      narration: 'Chasing late invoices is the job nobody wants. Mugavi writes the reminders, but you approve every one first. Here is the whole flow in under a minute and a half.',
       async run(api) { await api.moveTo([api.cfg.width * 0.5, api.cfg.height * 0.55], { duration: 1400 }) },
     },
     {
