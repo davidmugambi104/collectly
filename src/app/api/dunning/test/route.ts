@@ -6,7 +6,7 @@ import { eq, and } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
-import { nanoid } from '@/lib/utils';
+import { nanoid, escapeHtml } from '@/lib/utils';
 import { z } from 'zod';
 import { parseJsonBody } from '@/lib/parse-body';
 import { maySendSms } from '@/lib/sms-consent';
@@ -40,6 +40,11 @@ export async function POST(req: NextRequest) {
     .where(and(eq(invoices.id, data.invoiceId), eq(invoices.orgId, orgId)))
     .limit(1);
   if (!row) return NextResponse.json({ error: 'not found' }, { status: 404 });
+
+  // Same opt-out rule as /api/dunning/send and the scheduler: a real send never goes to a customer who opted out.
+  if (data.sendReal && row.customer.dndAt) {
+    return NextResponse.json({ error: 'customer has opted out of dunning emails' }, { status: 403 });
+  }
 
   const now = Date.now();
   const daysOverdue = Math.max(0, Math.floor((now - new Date(row.invoice.dueDate).getTime()) / 86400000));
@@ -102,7 +107,7 @@ export async function POST(req: NextRequest) {
         const sendResult = await sendEmail({
           to: row.customer.email,
           subject: result.subject ?? `Invoice ${row.invoice.number} is overdue`,
-          html: withUnsubscribeFooter(`<p style="white-space: pre-wrap; font-family: -apple-system, sans-serif;">${result.body}</p>`, row.customer.email),
+          html: withUnsubscribeFooter(`<p style="white-space: pre-wrap; font-family: -apple-system, sans-serif;">${escapeHtml(result.body)}</p>`, row.customer.email),
           headers: dunningListUnsubscribeHeaders(row.customer.email),
         });
         await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));

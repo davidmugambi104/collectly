@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cronAuthorized, configuredSecrets } from '@/lib/cron-auth';
 import { pollOutreachReplies } from '@/lib/outreach-imap-poll';
 
 export async function GET(req: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) {
+  const secrets = configuredSecrets(process.env.CRON_SECRET);
+  if (secrets.length === 0) {
     // Fail-closed, same as /api/cron/dunning: refuse to run rather than
     // silently skip the auth check if the env var is missing.
     return NextResponse.json({ error: 'cron not configured' }, { status: 503 });
   }
-  const auth = req.headers.get('authorization');
-  if (auth !== `Bearer ${secret}`) {
+  if (!cronAuthorized(req.headers.get('authorization'), secrets)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
   const t0 = Date.now();

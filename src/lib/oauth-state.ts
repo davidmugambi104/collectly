@@ -26,6 +26,7 @@
  */
 import { randomBytes, createHmac, createCipheriv, createDecipheriv } from 'node:crypto';
 import { getRedis } from '@/lib/infra';
+import { resolveStateSecret } from '@/lib/oauth-state-secret';
 import type { cookies as nextCookies } from 'next/headers';
 
 // The actual `next/headers` module is loaded lazily below (dynamic
@@ -45,7 +46,9 @@ async function readCookieJar(): Promise<CookieJar | null> {
 export type OAuthProvider = 'quickbooks' | 'xero' | 'square' | 'stripe';
 
 const STATE_TTL_SECONDS = 10 * 60; // 10 min — long enough for user to auth, short enough to limit replay.
-const COOKIE_SECRET = process.env.OAUTH_STATE_SECRET ?? process.env.CRON_SECRET ?? 'collectly-dev-fallback';
+// Resolved when the cookie path is actually used, so a missing secret in production fails that
+// flow loudly instead of silently signing cookies with a key that is in the source.
+const cookieSecret = () => resolveStateSecret(process.env);
 
 // Cookie name + path are per-provider so QuickBooks and Xero flows (which
 // share this module) never read/overwrite each other's pending state.
@@ -69,7 +72,7 @@ function newNonce(): string {
 
 function encryptCookie(json: string): string {
   // Derive a 32-byte key from COOKIE_SECRET.
-  const key = createHmac('sha256', COOKIE_SECRET).update('qbo-cookie-key').digest();
+  const key = createHmac('sha256', cookieSecret()).update('qbo-cookie-key').digest();
   const iv = randomBytes(12);
   const cipher = createCipheriv('aes-256-gcm', key, iv);
   const ciphertext = Buffer.concat([cipher.update(json, 'utf8'), cipher.final()]);
@@ -81,7 +84,7 @@ function decryptCookie(payload: string): string | null {
   try {
     const [ivB64, tagB64, ctB64] = payload.split('.');
     if (!ivB64 || !tagB64 || !ctB64) return null;
-    const key = createHmac('sha256', COOKIE_SECRET).update('qbo-cookie-key').digest();
+    const key = createHmac('sha256', cookieSecret()).update('qbo-cookie-key').digest();
     const iv = Buffer.from(ivB64, 'base64url');
     const tag = Buffer.from(tagB64, 'base64url');
     const ct = Buffer.from(ctB64, 'base64url');
