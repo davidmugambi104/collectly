@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { AppShell } from '@/components/app/shell';
 import { requireAdminEmail } from '@/lib/auth-helper';
 import { configStatus, todoOrder } from '@/lib/config-status';
+import { EncryptTokensButton } from '@/components/dunning/encrypt-tokens-button';
 
 const LABEL = { now: 'Needed now', soon: 'Needed soon', later: 'Later or dormant' } as const;
 
@@ -31,6 +32,8 @@ export default async function ConfigPage() {
 
   return (
     <AppShell title="Services" subtitle={todo.length === 0 ? 'Everything is configured' : `${todo.length} not configured yet`}>
+      {status.find((x) => x.id === 'tokens')?.configured && <EncryptTokensButton />}
+
       {todo.length > 0 && (
         <div className="card-primary mb-6">
           <h2 className="app-heading">Do next</h2>
