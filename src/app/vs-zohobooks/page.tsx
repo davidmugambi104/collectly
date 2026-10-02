@@ -5,8 +5,7 @@ import {
   ComparisonDiffGrid,
   CompetitorGrowthStrategy,
   WhenToChoose,
-  ComparisonCta,
-} from '@/components/marketing/comparison-section';
+  ComparisonCta, ComparisonChecked } from '@/components/marketing/comparison-section';
 import { Bot, DollarSign, Layers, Target } from 'lucide-react';
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
@@ -71,6 +70,7 @@ export default function VsZohobooksPage() {
         subtitle="Zoho Books is a capable accounting suite with light invoicing and reminders. Mugavi is the AR specialist layer that turns overdue invoices into predictable cash, with AI dunning, forecasting, and risk scoring."
         competitorName="Zoho Books"
       />
+      <ComparisonChecked competitor="Zoho Books" source="zoho.com/books/pricing" href="https://www.zoho.com/books/pricing/" note="Zoho prices vary by region." />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Zoho Books" />
         {/* No table: this competitor is outside the matrix's scope (see
             comparison-table.tsx), so rendering it here would fill the page

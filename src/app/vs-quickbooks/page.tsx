@@ -9,6 +9,7 @@ import { Check, ArrowRight, Bot, DollarSign, Target, LineChart } from 'lucide-re
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
+import { ComparisonChecked } from '@/components/marketing/comparison-section';
 
 export const metadata = pageMetadata({
   title: 'Mugavi vs QuickBooks: smarter AR automation for QBO users',
@@ -63,6 +64,7 @@ export default function VsQuickbooksPage() {
         </div>
       </section>
 
+      <ComparisonChecked competitor="QuickBooks" date="2026-07-31" source="quickbooks.intuit.com/pricing" href="https://quickbooks.intuit.com/pricing/" />
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {DIFFS.map((d) => (
@@ -100,7 +102,7 @@ export default function VsQuickbooksPage() {
           <li>Reminders go to every customer or none. Users say there is no way to hold one customer, or to send a different tone to a long-standing client.</li>
           <li>Reminders can go out for an invoice that was paid but not yet recorded, or over a payment arrangement made by phone.</li>
           <li>After reminders moved into Workflows, some firms reported that turning them off on one invoice did not always stop them.</li>
-          <li>Some owners report emails to their customers that they did not write or approve, such as a "finish your payment" nudge.</li>
+          <li>Some owners report emails to their customers that they did not write or approve, such as a &quot;finish your payment&quot; nudge.</li>
         </ul>
         <p className="mt-5 text-ink-600 leading-relaxed">
           Mugavi holds each reminder for your approval by default, lets you pause any customer, and stops
@@ -166,7 +168,7 @@ export default function VsQuickbooksPage() {
       <section className="container-page py-20">
         <div className="card-lg grad-mesh text-center">
           <h2 className="h2">Keep QuickBooks. Upgrade your collections.</h2>
-          <p className="mt-4 lead">Start your 14-day free trial. No credit card. QuickBooks integration is in beta. Xero connects through Xero's own sign-in today.</p>
+          <p className="mt-4 lead">Start your 14-day free trial. No credit card. QuickBooks integration is in beta. Xero connects through Xero&apos;s own sign-in today.</p>
           <div className="mt-6 max-w-md mx-auto">
             <WaitlistForm />
           </div>

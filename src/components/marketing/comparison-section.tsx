@@ -42,6 +42,21 @@ export function ComparisonHero({
   );
 }
 
+/**
+ * A dated line under the hero of every comparison page: where the competitor's facts came
+ * from and when they were read. `date` is omitted when we have not re-read the source
+ * recently, and the line then says so instead of implying a check that did not happen.
+ */
+export function ComparisonChecked({ competitor, date, source, href, note }: { competitor: string; date?: string; source: string; href: string; note?: string }) {
+  return (
+    <p className="container-page max-w-3xl pb-6 text-xs text-ink-500">
+      {date ? <>{competitor} facts read on {date} from </> : <>{competitor} facts are from </>}
+      <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink-700">{source}</a>
+      {date ? '.' : ', and have not been re-checked recently.'} {note ? `${note} ` : ''}Prices and features change; if something here is out of date, tell us.
+    </p>
+  );
+}
+
 export function ComparisonDiffGrid({ diffs, competitorName }: { diffs: DiffCard[]; competitorName: string }) {
   return (
     <section className="container-page pb-16">

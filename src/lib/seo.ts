@@ -23,6 +23,7 @@
 
 import type { Metadata } from 'next';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_INCLUDED_ORGS } from '@/lib/utils';
+import { CONTACT } from './site-contact';
 
 export const BRAND = 'Mugavi';
 // All absolute URLs returned to crawlers must use the live production domain.
@@ -65,7 +66,7 @@ export const SITE = {
   // site's content to a stranger. Update it only once the new handle is
   // registered to us -- and if it never is, delete these two tags instead.
   twitter: '@getcollectly',
-  email: 'hello@getcollectly.app',
+  email: CONTACT.hello,
 };
 
 // ─── Metadata builders ─────────────────────────────────────────────────────

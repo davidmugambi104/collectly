@@ -3,6 +3,7 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import { WaitlistForm } from '@/components/marketing/waitlist';
 import { pageMetadata, webPageJsonLd } from '@/lib/seo';
 import { FOUNDING } from '@/lib/utils';
+import { CONTACT } from '@/lib/site-contact';
 
 export const metadata = pageMetadata({
   title: 'Contact: sales, support, partnerships, press',
@@ -32,7 +33,7 @@ export default function ContactPage() {
       <section className="container-page pt-16 pb-20 max-w-xl">
         <p className="eyebrow">Contact</p>
         <h1 className="mt-3 h1">Get in touch.</h1>
-        <p className="mt-4 lead">For sales, support, partnerships, or press: <a className="link" href="mailto:hello@getcollectly.app">hello@getcollectly.app</a></p>
+        <p className="mt-4 lead">For sales, support, partnerships, or press: <a className="link" href={`mailto:${CONTACT.hello}`}>{CONTACT.hello}</a></p>
         <div className="mt-10 card">
           <h2 className="h3">Join the waitlist</h2>
           <p className="mt-2 text-sm text-ink-600">Get early access and take {FOUNDING.discountPct}% off for your first {FOUNDING.months} months as one of the first {FOUNDING.seats} founding members.</p>

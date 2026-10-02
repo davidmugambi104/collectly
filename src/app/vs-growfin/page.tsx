@@ -5,8 +5,7 @@ import {
   ComparisonDiffGrid,
   CompetitorGrowthStrategy,
   WhenToChoose,
-  ComparisonCta,
-} from '@/components/marketing/comparison-section';
+  ComparisonCta, ComparisonChecked } from '@/components/marketing/comparison-section';
 import { Bot, Clock, Building2, Target } from 'lucide-react';
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
@@ -70,6 +69,7 @@ export default function VsGrowfinPage() {
         subtitle="Growfin brings behavioral AI to enterprise order-to-cash on NetSuite. Mugavi brings the AI parts that actually matter to small B2B services (tone-aware dunning, cash-flow forecasting, and customer risk scoring) without the ERP implementation."
         competitorName="Growfin"
       />
+      <ComparisonChecked competitor="Growfin" date="2026-10-02" source="growfin.ai" href="https://www.growfin.ai" note="Growfin does not publish prices." />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Growfin" />
         {/* No table: this competitor is outside the matrix's scope (see
             comparison-table.tsx), so rendering it here would fill the page

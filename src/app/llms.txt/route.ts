@@ -106,7 +106,9 @@ rather than self-serve.
 
 - Xero OAuth sync: live
 - QuickBooks OAuth sync: beta
-- Plaid bank feeds, Paystack payments, Resend email: live
+- Resend email: live
+- Plaid bank feeds: beta, not used by the forecast yet
+- Paystack: temporarily disabled
 - Stripe, Square, Twilio: wired and tested, production credentials swapped in on the first setup call
 - Customer payments today settle by wire; card and ACH rails are built but disabled until payouts route to the customer's own account
 

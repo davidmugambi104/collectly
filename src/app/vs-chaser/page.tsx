@@ -8,6 +8,7 @@ import { Check, ArrowRight, DollarSign, Clock, Zap, Users, Layers } from 'lucide
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
+import { ComparisonChecked } from '@/components/marketing/comparison-section';
 
 export const metadata = pageMetadata({
   title: 'Mugavi vs Chaser: AR automation for small B2B services',
@@ -61,6 +62,7 @@ export default function VsChaserPage() {
         </div>
       </section>
 
+      <ComparisonChecked competitor="Chaser" date="2026-09-30" source="chaserhq.com/pricing" href="https://www.chaserhq.com/pricing" />
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {DIFFS.map((d) => (

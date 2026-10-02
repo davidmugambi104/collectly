@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Database, MessageSquare, BarChart3, Lock, Server } from 'lucide-react';
 import { pageMetadata, faqJsonLd } from '@/lib/seo';
 import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
+import { CONTACT } from '@/lib/site-contact';
 
 // Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports. Both the FAQPage markup below and the
@@ -42,7 +43,6 @@ export const metadata = pageMetadata({
     'Stripe AR tool',
     'Twilio SMS dunning',
     'Plaid cash flow forecast',
-    'Paystack integrations',
   ],
 });
 
@@ -229,12 +229,12 @@ export default function IntegrationsPage() {
         <p className="eyebrow">Integrations</p>
         <h1 className="mt-3 h1">Plug into the tools you already use.</h1>
         <p className="mt-6 lead">
-          Connect your books, payments, banking, and comms with each provider's own sign-in. We read from your accounting system
+          Connect your books, payments, banking, and comms with each provider&apos;s own sign-in. We read from your accounting system
           and write back payments. Everything else stays in the apps you already pay for.
         </p>
         <p className="mt-3 text-sm text-ink-500">
           Status means what is wired today. Some integrations need production credentials swapped in before they collect real money.
-          Paystack is live for Nigeria, Ghana, Kenya, and South Africa. Stripe is test-mode for US/UK/AU/CA until live keys are added.
+          Customer payments settle by wire transfer today. Stripe is in test mode until live keys are added, and Paystack is temporarily disabled.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link href="/sign-up" className="btn-primary">
@@ -324,7 +324,7 @@ export default function IntegrationsPage() {
             Tell us what&apos;s blocking you and we&apos;ll add it to the public roadmap.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <a href="mailto:hello@getcollectly.app?subject=Integration%20request" className="btn-primary">
+            <a href={`mailto:${CONTACT.hello}?subject=Integration%20request`} className="btn-primary">
               Request an integration
             </a>
             <Link href="/customers" className="btn-ghost">

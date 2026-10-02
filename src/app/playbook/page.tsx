@@ -55,7 +55,7 @@ const playbookJsonLd = JSON.stringify([
     steps: [
       { name: 'Audit your A/R aging every Monday morning', text: 'A 10-minute Monday ritual that surfaces invoices nobody has followed up.' },
       { name: 'Set up a 3-step dunning sequence that auto-fires', text: 'Friendly email at day 1. Firmer email at day 7. SMS or phone at day 30. Auto-pause on payment or reply. Most teams save 5+ hours/week within the first month.' },
-      { name: 'Give every customer a frictionless pay link', text: 'One-click pay portals cut DSO by an average of 12 days. ACH for US, BACS for UK, SEPA for EU, Direct Debit for AU. Card as fallback.' },
+      { name: 'Give every customer a frictionless pay link', text: 'Put a pay link in every reminder so paying is one step. ACH for US, BACS for UK, SEPA for EU, Direct Debit for AU. Card as fallback.' },
       { name: 'Risk-score your customers and focus on the top 5', text: 'Score every customer on paid rate, average days to pay, and oldest unpaid invoice. Spend your collection time on the high-balance × high-risk ones. Ignore the rest.' },
       { name: 'Measure DSO weekly, not monthly', text: 'Track DSO every Monday. Catch trends early. Every day you take off DSO frees about a day of billing as cash. On $1 million a year of revenue, that is roughly $2,700 a day.' },
     ],
@@ -77,7 +77,7 @@ const STEPS = [
   {
     n: '03',
     title: 'Give every customer a frictionless pay link',
-    body: 'One-click pay portals cut DSO by an average of 12 days. ACH for US, BACS for UK, SEPA for EU, Direct Debit for AU. Card as fallback.',
+    body: 'Put a pay link in every reminder so paying is one step. ACH for US, BACS for UK, SEPA for EU, Direct Debit for AU. Card as fallback.',
   },
   {
     n: '04',

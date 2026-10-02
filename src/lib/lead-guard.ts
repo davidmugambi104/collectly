@@ -1,3 +1,4 @@
+import { CONTACT } from './site-contact.ts';
 /**
  * Pure helpers shared by the public lead-capture routes. Nothing here imports
  * anything, so the node test runner can load it (see lead-email.ts for why).
@@ -27,7 +28,7 @@ export function looksLikeEmail(v: unknown): v is string {
  * on purpose: the form must never show success when nobody will see it.
  */
 export const LEAD_FAILED_MESSAGE =
-  'We could not save that just now. Please try again in a minute, or email hello@getcollectly.app.';
+  `We could not save that just now. Please try again in a minute, or email ${CONTACT.hello}.`;
 
 /**
  * Decide the HTTP outcome of a capture attempt. A lead counts as captured if

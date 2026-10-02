@@ -5,8 +5,7 @@ import {
   ComparisonDiffGrid,
   CompetitorGrowthStrategy,
   WhenToChoose,
-  ComparisonCta,
-} from '@/components/marketing/comparison-section';
+  ComparisonCta, ComparisonChecked } from '@/components/marketing/comparison-section';
 import { DollarSign, Layers, Users, FileText } from 'lucide-react';
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
@@ -155,6 +154,7 @@ export default function VsPaidnicePage() {
         subtitle={`Paidnice is a good product and, for a single business, a cheaper one. The difference is what you are charged for: they price invoice volume and add $${PAIDNICE_ENTITY_MONTHLY} a month per extra entity, we price the client book. Below about a dozen books they cost less. Above it we do, and the gap widens fast.`}
         competitorName="Paidnice"
       />
+      <ComparisonChecked competitor="Paidnice" date="2026-09-20" source="paidnice.com/pricing" href="https://www.paidnice.com/pricing" />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Paidnice" />
 
       <section className="container-page py-14 max-w-3xl">

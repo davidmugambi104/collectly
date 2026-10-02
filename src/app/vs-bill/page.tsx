@@ -8,6 +8,7 @@ import { Check, ArrowRight, DollarSign, Layers, Target, Receipt } from 'lucide-r
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { PLAN_PRICING } from '@/lib/utils';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { ComparisonChecked } from '@/components/marketing/comparison-section';
 
 export const metadata = pageMetadata({
   title: 'Mugavi vs BILL: dedicated AR automation vs all-in-one FinOps',
@@ -63,6 +64,7 @@ export default function VsBillPage() {
         </div>
       </section>
 
+      <ComparisonChecked competitor="BILL" date="2026-07-31" source="bill.com/pricing" href="https://www.bill.com/pricing" />
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {DIFFS.map((d) => (

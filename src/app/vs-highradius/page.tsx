@@ -5,8 +5,7 @@ import {
   ComparisonDiffGrid,
   CompetitorGrowthStrategy,
   WhenToChoose,
-  ComparisonCta,
-} from '@/components/marketing/comparison-section';
+  ComparisonCta, ComparisonChecked } from '@/components/marketing/comparison-section';
 import { Layers, Clock, Globe2, Target } from 'lucide-react';
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
@@ -70,6 +69,7 @@ export default function VsHighradiusPage() {
         subtitle={`HighRadius is the ceiling of autonomous enterprise finance. Mugavi is the floor that small B2B services actually need: smart AR follow-up, a branded payment portal, and a cash-flow forecast, live before you turn anything on from $${PLAN_PRICING.starter.monthly}/mo.`}
         competitorName="HighRadius"
       />
+      <ComparisonChecked competitor="HighRadius" date="2026-10-02" source="highradius.com" href="https://www.highradius.com" note="Deployment claims could not be verified." />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="HighRadius" />
         {/* No table: this competitor is outside the matrix's scope (see
             comparison-table.tsx), so rendering it here would fill the page

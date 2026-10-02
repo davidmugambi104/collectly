@@ -5,8 +5,7 @@ import {
   ComparisonDiffGrid,
   CompetitorGrowthStrategy,
   WhenToChoose,
-  ComparisonCta,
-} from '@/components/marketing/comparison-section';
+  ComparisonCta, ComparisonChecked } from '@/components/marketing/comparison-section';
 import { DollarSign, Clock, Building2, Target } from 'lucide-react';
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
@@ -110,6 +109,7 @@ export default function VsUpflowPage() {
         subtitle="Upflow is a capable platform built for B2B finance teams: collections, payments and cash application, with AI agents you can dial from suggestion-only to autonomous. It is also demo-gated, and priced for companies that have a Controller. Mugavi does the chasing part, on Xero, for teams where AR is nobody's job."
         competitorName="Upflow"
       />
+      <ComparisonChecked competitor="Upflow" date="2026-10-02" source="upflow.io" href="https://www.upflow.io" note="Upflow does not publish prices." />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Upflow" />
       {/* No table: Upflow sits outside the matrix's scope (see
           comparison-table.tsx), which covers the tools a 5-30 person agency

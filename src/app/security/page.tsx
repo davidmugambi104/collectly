@@ -2,6 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { ShieldCheck, Lock, Server, KeyRound, Eye, FileCheck2, AlertTriangle, Globe2, CheckCircle2 } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
+import { CONTACT } from '@/lib/site-contact';
 
 export const metadata = pageMetadata({
   title: 'Security: encryption, infrastructure, and access control',
@@ -148,7 +149,7 @@ export default function SecurityPage() {
         <p className="mt-4 text-ink-600 leading-relaxed">
           We commit to notifying affected customers within 72 hours of becoming aware of a security incident that
           materially impacts their data, consistent with our DPA. You can reach the security team directly at{' '}
-          <a href="mailto:security@getcollectly.app" className="link">security@getcollectly.app</a> for disclosure,
+          <a href={`mailto:${CONTACT.security}`} className="link">{CONTACT.security}</a> for disclosure,
           responsible-vulnerability reports.
         </p>
         <div className="mt-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
@@ -194,7 +195,7 @@ export default function SecurityPage() {
           <a href="/privacy" className="btn-ghost">
             Privacy policy
           </a>
-          <a href="mailto:security@getcollectly.app" className="btn-ghost">
+          <a href={`mailto:${CONTACT.security}`} className="btn-ghost">
             Email the security team
           </a>
         </div>

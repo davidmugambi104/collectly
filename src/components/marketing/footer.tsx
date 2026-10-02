@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Logo } from '@/components/brand/logo';
 import { ConsentLink } from '@/components/consent/consent-link';
+import { CONTACT } from '@/lib/site-contact';
 
 export function MarketingFooter() {
   // No top margin. The old mt-32 stacked 128px on top of whatever bottom
@@ -94,7 +95,7 @@ export function MarketingFooter() {
                     scrolled to the bottom looking for a way to get in touch —
                     which is where people look — found nothing. */}
                 <li><Link href="/contact" className="inline-block py-1.5 hover:text-ink-900">Contact</Link></li>
-                <li><a href="mailto:hello@getcollectly.app" className="inline-block py-1.5 hover:text-ink-900">Email us directly</a></li>
+                <li><a href={`mailto:${CONTACT.hello}`} className="inline-block py-1.5 hover:text-ink-900">Email us directly</a></li>
               </ul>
             </div>
             <div>

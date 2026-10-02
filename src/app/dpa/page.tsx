@@ -2,6 +2,7 @@ import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { Mail, Globe2, Server, Users } from 'lucide-react';
 import { pageMetadata } from '@/lib/seo';
+import { CONTACT } from '@/lib/site-contact';
 
 export const metadata = pageMetadata({
   title: 'Data Processing Agreement (DPA): GDPR + UK GDPR compliant',
@@ -57,7 +58,7 @@ const sections = [
       <>
         <p>
           Mugavi uses the following sub-processors. You can subscribe to changes at{' '}
-          <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a>.
+          <a href={`mailto:${CONTACT.dpa}`} className="link">{CONTACT.dpa}</a>.
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
           <li><b>Vercel</b>: application hosting.</li>
@@ -201,11 +202,11 @@ export default function DPAPage() {
           <h3 className="h3">Need this countersigned?</h3>
           <p className="mt-2 text-sm text-ink-600 leading-relaxed">
             We accept email-based DPA execution. Send a countersigned PDF to{' '}
-            <a href="mailto:dpa@getcollectly.app" className="link">dpa@getcollectly.app</a> and we&apos;ll return a fully
+            <a href={`mailto:${CONTACT.dpa}`} className="link">{CONTACT.dpa}</a> and we&apos;ll return a fully
             executed copy within one business day. No DocuSign loop required.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <a href="mailto:dpa@getcollectly.app" className="btn-primary">
+            <a href={`mailto:${CONTACT.dpa}`} className="btn-primary">
               <Mail className="h-4 w-4" /> Request countersignature
             </a>
             <a href="/security" className="btn-ghost">

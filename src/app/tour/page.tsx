@@ -5,6 +5,7 @@ import { ArrowRight, Mail, Wallet, BarChart3, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { pageMetadata } from '@/lib/seo';
 import { TrackView } from '@/components/marketing/track-view';
+import { CONTACT } from '@/lib/site-contact';
 
 export const metadata = pageMetadata({
   title: 'Product tour: how Mugavi follows up on overdue invoices',
@@ -93,7 +94,7 @@ export default function TourPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a
-              href="mailto:hello@getcollectly.app?subject=Founder%20walkthrough%20request&body=Hi%20Davie%2C%0A%0AI'd%20like%20to%20book%20a%20founder%20walkthrough.%20Here's%20a%20good%20time%20for%20me%3A%0A%0A"
+              href={`mailto:${CONTACT.hello}?subject=Founder%20walkthrough%20request&body=Hi%20Davie%2C%0A%0AI'd%20like%20to%20book%20a%20founder%20walkthrough.%20Here's%20a%20good%20time%20for%20me%3A%0A%0A`}
               className="btn-primary"
             >
               Request a founder walkthrough
@@ -120,7 +121,7 @@ export default function TourPage() {
             {[
               { icon: Mail, label: 'Tone-aware dunning: friendly → firm → final, automatically' },
               { icon: Wallet, label: 'Branded payment portal: customers pay without calling you' },
-              { icon: BarChart3, label: '4-week cash forecast: know if you can make payroll' },
+              { icon: BarChart3, label: '4-week cash forecast (Practice plan)' },
               { icon: Clock, label: 'Self-serve setup: connect QBO or Xero and go' },
             ].map(({ icon: Icon, label }) => (
               <span key={label} className="inline-flex items-center gap-2 text-ink-700">

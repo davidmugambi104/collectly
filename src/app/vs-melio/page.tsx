@@ -8,6 +8,7 @@ import { Check, ArrowRight, DollarSign, RefreshCw, Target, CreditCard } from 'lu
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
+import { ComparisonChecked } from '@/components/marketing/comparison-section';
 
 export const metadata = pageMetadata({
   title: 'Mugavi vs Melio: AR automation beyond payment links',
@@ -61,6 +62,7 @@ export default function VsMelioPage() {
         </div>
       </section>
 
+      <ComparisonChecked competitor="Melio" date="2026-07-31" source="melio.com/pricing" href="https://www.melio.com/pricing" />
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {DIFFS.map((d) => (

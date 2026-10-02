@@ -42,7 +42,7 @@ export default function ComparePage() {
         <h1 className="mt-3 h1">Mugavi vs the AR automation landscape</h1>
         <p className="mt-5 lead">
           Most AR tools are built for finance teams at big companies, hide their pricing, or bury collections inside a broader payments platform.
-          Mugavi is the only AR-native tool built for small B2B service businesses at a flat, transparent price.
+          Mugavi is built for small businesses and bookkeeping practices, at a flat, published price.
         </p>
       </section>
 

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { Honeypot } from '@/components/marketing/honeypot';
+import { CONTACT } from '@/lib/site-contact';
 
 export function AuditForm() {
   const [email, setEmail] = useState('');
@@ -50,7 +51,7 @@ export function AuditForm() {
         <h2 className="mt-3 font-display font-semibold text-xl text-ink-950">Audit request received</h2>
         <p className="mt-2 text-sm text-ink-600">
           We&apos;ll review your A/R snapshot and reply within 24 hours with 3 specific fixes.
-          If you don&apos;t hear back, check your spam folder or email hello@getcollectly.app.
+          If you don&apos;t hear back, check your spam folder or email {CONTACT.hello}.
         </p>
       </div>
     );

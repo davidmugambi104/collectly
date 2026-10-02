@@ -3,6 +3,7 @@ import { Check, X } from 'lucide-react';
 import { LazyMotion, domAnimation, m, useReducedMotion } from 'framer-motion';
 import { PLAN_PRICING } from '@/lib/utils';
 import { COMPETITORS, type CompetitorKey } from './comparison-data';
+import { CONTACT } from '@/lib/site-contact';
 
 // Scope note: this table compares Mugavi to the AR/invoicing tools SMBs
 // actually evaluate (Chaser, BILL, Melio, QuickBooks AR, FreshBooks). We
@@ -195,7 +196,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
           {' '}<a href="https://quickbooks.intuit.com/pricing/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">QuickBooks</a>,
           {' '}<a href="https://www.freshbooks.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">FreshBooks</a>).
           Pricing/features change; if you spot something stale,{' '}
-          <a href="mailto:hello@getcollectly.app" className="underline underline-offset-2 transition-colors hover:text-ink-900">tell us</a>.
+          <a href={`mailto:${CONTACT.hello}`} className="underline underline-offset-2 transition-colors hover:text-ink-900">tell us</a>.
         </p>
       </div>
     </>
