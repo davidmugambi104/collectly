@@ -41,7 +41,14 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   const post = POSTS_BY_SLUG[slug];
   if (!post) notFound();
 
-  const otherPosts = Object.values(POSTS_BY_SLUG).filter((p) => p.slug !== post.slug).slice(0, 3);
+  // The next three posts after this one, wrapping round. A plain slice(0, 3)
+  // linked the same three posts from every page and left the rest reachable
+  // only from the blog index.
+  const all = Object.values(POSTS_BY_SLUG);
+  const at = all.findIndex((p) => p.slug === post.slug);
+  const otherPosts = all.length > 1
+    ? Array.from({ length: Math.min(3, all.length - 1) }, (_, i) => all[(at + 1 + i) % all.length])
+    : [];
   const path = `/blog/${post.slug}`;
 
   // Article + BreadcrumbList JSON-LD. Built-in blog index schema (Blog) would
