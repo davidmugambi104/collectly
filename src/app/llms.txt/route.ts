@@ -91,14 +91,14 @@ per-invoice fees, no per-reminder fees, no platform fee on payments.
 
 - ${p.starter.name}: $${p.starter.monthly}/mo. ${p.starter.orgs}. Unlimited invoices, ${p.starter.users} users.
 - ${p.growth.name}: $${p.growth.monthly}/mo. Up to ${PRACTICE_INCLUDED_ORGS} client organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. Unlimited users.
-- ${p.scale.name}: $${p.scale.monthly}/mo flat, up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations. Adds API access and SSO.
+- ${p.scale.name}: $${p.scale.monthly}/mo flat, up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations.
 - ${p.enterprise.name}: $${p.enterprise.monthly.toLocaleString()}/mo. Unlimited client organizations.
 
 ${p.growth.name} stays the cheaper option until ${PRACTICE_SCALE_CROSSOVER_ORGS} client books
 ($${p.growth.monthly} + $${PRACTICE_EXTRA_ORG_MONTHLY} per book past ${PRACTICE_INCLUDED_ORGS}); past that ${p.scale.name} is cheaper.
 
-The first ${FOUNDING.seats} founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months —
-$${FOUNDING.monthly('growth')}/mo for ${p.growth.name} — then the price reverts to list. 14-day
+The first ${FOUNDING.seats} founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months
+($${FOUNDING.monthly('growth')}/mo for ${p.growth.name}), then the price reverts to list. 14-day
 trial, no credit card. Billing during the private beta is founder-invoiced
 rather than self-serve.
 
@@ -118,6 +118,10 @@ is not from us.
 
 ## Key pages
 
+- [Mugavi for bookkeepers and accountants](${DOMAIN}/for/bookkeepers): the lead use case, many client books on QuickBooks or Xero.
+- [Mugavi for UK agencies](${DOMAIN}/for/uk-agencies): UK late-payment context.
+- [Mugavi for agencies](${DOMAIN}/for/agencies) and [consultancies](${DOMAIN}/for/consultancies).
+- [Product tour](${DOMAIN}/tour): a walkthrough with demo data.
 - [Pricing](${DOMAIN}/pricing): every tier, what each includes, and the founding discount.
 - [Features](${DOMAIN}/features): what ships today.
 - [Integrations](${DOMAIN}/integrations): per-integration status.

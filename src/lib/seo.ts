@@ -162,14 +162,14 @@ export function orgJsonLd(): JsonLdThing {
         contactType: 'customer support',
         email: SITE.email,
         availableLanguage: ['English'],
-        areaServed: ['GB', 'US', 'AU', 'CA', 'KE', 'NG'],
+        areaServed: ['US', 'GB'],
       },
       {
         '@type': 'ContactPoint',
         contactType: 'sales',
         email: SITE.email,
         availableLanguage: ['English'],
-        areaServed: ['GB', 'US', 'AU', 'CA', 'KE', 'NG'],
+        areaServed: ['US', 'GB'],
       },
     ],
     // The founder's X profile is already linked publicly from the homepage
@@ -297,11 +297,14 @@ export function pricingProductJsonLd(): JsonLdThing {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: `${BRAND} — accounts-receivable automation for agencies`,
+    name: `${BRAND}: invoice reminders you approve first`,
+    image: `${SITE.url}/og-pricing.png`,
+    url: `${SITE.url}/pricing`,
     description:
-      'AI-native accounts-receivable automation for 5-30 person agencies and consultancies. ' +
-      'Tone-aware email reminders, reply-or-pay pause, promise-to-pay tracking, and ' +
-      'dispute classification on Xero and QuickBooks.',
+      'Overdue-invoice reminders for bookkeeping practices and small businesses. ' +
+      'Each reminder waits for your approval, the sequence pauses when a customer replies or pays, ' +
+      'promised-payment dates are tracked, and disputes are separated from ordinary late payment. ' +
+      'Works with Xero and QuickBooks Online (beta).',
     brand: { '@type': 'Brand', name: BRAND },
     category: 'BusinessApplication > Accounts Receivable Automation',
     offers: [
@@ -324,6 +327,7 @@ export function pricingProductJsonLd(): JsonLdThing {
         name: PLAN_PRICING.starter.name,
         price: String(PLAN_PRICING.starter.monthly),
         priceCurrency: 'USD',
+        priceValidUntil: '2027-12-31',
         availability: 'https://schema.org/InStock',
         description:
           `${PLAN_PRICING.starter.audience}. One organization, unlimited invoices, ` +
@@ -336,6 +340,7 @@ export function pricingProductJsonLd(): JsonLdThing {
         name: PLAN_PRICING.growth.name,
         price: String(PLAN_PRICING.growth.monthly),
         priceCurrency: 'USD',
+        priceValidUntil: '2027-12-31',
         availability: 'https://schema.org/InStock',
         description:
           `${PLAN_PRICING.growth.audience}. Up to ${PRACTICE_INCLUDED_ORGS} client ` +
@@ -348,10 +353,11 @@ export function pricingProductJsonLd(): JsonLdThing {
         name: PLAN_PRICING.scale.name,
         price: String(PLAN_PRICING.scale.monthly),
         priceCurrency: 'USD',
+        priceValidUntil: '2027-12-31',
         availability: 'https://schema.org/InStock',
         description:
-          `${PLAN_PRICING.scale.audience}. Up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations, plus API ` +
-          'access, SSO, custom workflows, and priority support.',
+          `Up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations at a flat monthly price, ` +
+          'for practices past the point where per-book pricing costs more.',
         url: `${SITE.url}/pricing`,
       },
     ],
@@ -381,7 +387,7 @@ export const COMPETITORS: Record<
   chaser: {
     name: 'Chaser',
     pricing: 'around $259/mo on its entry plan',
-    builtFor: 'SMB to mid-market businesses, roughly $5M–$120M revenue',
+    builtFor: 'SMB to mid-market businesses, roughly $5M to $120M revenue',
     shape: 'a templated reminder-sequence tool',
   },
   freshbooks: {

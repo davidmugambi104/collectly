@@ -110,7 +110,7 @@ export default function PricingPage() {
 
         <div className="mt-10 max-w-2xl mx-auto text-center">
           <p className="text-sm text-ink-600">Comparing tools? See <Link href="/vs-paidnice" className="link">Mugavi vs Paidnice</Link>, <Link href="/vs-chaser" className="link">vs Chaser</Link>, <Link href="/vs-quickbooks" className="link">vs QuickBooks</Link>, or <Link href="/compare" className="link">all comparisons</Link>.</p>
-          <p className="mt-3 text-sm text-ink-600">{PLAN_PRICING.growth.name} keeps going past {PRACTICE_INCLUDED_ORGS} books at ${PRACTICE_EXTRA_ORG_MONTHLY} each, and stays the cheaper option until {PRACTICE_SCALE_CROSSOVER_ORGS}. Past that, {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo flat for up to {PRACTICE_SCALE_INCLUDED_ORGS} books, and adds API access and SSO. <Link href="/contact" className="link">Talk to sales</Link>.</p>
+          <p className="mt-3 text-sm text-ink-600">{PLAN_PRICING.growth.name} keeps going past {PRACTICE_INCLUDED_ORGS} books at ${PRACTICE_EXTRA_ORG_MONTHLY} each, and stays the cheaper option until {PRACTICE_SCALE_CROSSOVER_ORGS}. Past that, {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo flat for up to {PRACTICE_SCALE_INCLUDED_ORGS} books. <Link href="/contact" className="link">Talk to sales</Link>.</p>
           <p className="mt-3 text-sm text-ink-600">A bookkeeper or accountant running several client books? See <Link href="/for/bookkeepers" className="link">how Mugavi works for a practice</Link>.</p>
         </div>
       </section>
