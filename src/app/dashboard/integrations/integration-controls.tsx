@@ -28,7 +28,11 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
         body: JSON.stringify({ provider }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? 'sync failed');
+      if (!res.ok) {
+        // The API puts the useful reason in `details`; showing only "sync failed" hid it.
+        const why = Array.isArray(data?.details) && data.details.length > 0 ? `: ${String(data.details[0]).slice(0, 240)}` : '';
+        throw new Error(`${data?.error ?? 'sync failed'}${why}`);
+      }
       // The API can return ok:true with a non-empty `errors` array — e.g.
       // customers imported fine but the invoice fetch itself failed, or a
       // handful of rows were individually malformed. That used to be

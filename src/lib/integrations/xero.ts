@@ -190,7 +190,18 @@ async function xeroFetch(orgId: string, path: string, init?: RequestInit) {
       continue;
     }
 
-    if (!res.ok) throw new Error(`Xero ${path} failed: ${res.status} ${await res.text()}`);
+    if (!res.ok) {
+      const text = await res.text();
+      // 401, or 403 AuthenticationUnsuccessful, means Xero no longer accepts this
+      // connection (access revoked in Xero, or the organisation was removed). Retrying
+      // cannot fix it, and leaving the card on "Connected" hides it, so mark the
+      // integration as errored: the card then offers Connect again.
+      if (res.status === 401 || (res.status === 403 && /AuthenticationUnsuccessful/i.test(text))) {
+        await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
+        throw new Error('Xero no longer accepts this connection. Reconnect Xero from Integrations.');
+      }
+      throw new Error(`Xero ${path} failed: ${res.status} ${text}`);
+    }
     return res.json();
   }
 }
