@@ -107,9 +107,12 @@ Every day you take off DSO frees about a day of billing as cash. On $1 million a
     xref += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
   }
   parts.push(Buffer.from(xref, 'binary'));
+  // startxref is the byte offset where the xref table BEGINS, i.e. `pos` before the table is
+  // counted. It used to be recorded after, which pointed 210 bytes past the table.
+  const xrefStart = pos;
   pos += Buffer.byteLength(xref, 'binary');
 
-  const trailer = `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${pos}\n%%EOF\n`;
+  const trailer = `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF\n`;
   parts.push(Buffer.from(trailer, 'binary'));
 
   return Buffer.concat(parts);
@@ -191,15 +194,15 @@ function makeCtaPage(): string {
 0 -40 Td
 /F2 12 Tf
 14 TL
-(Mugavi is the AI-native A/R platform for 5-30 person) Tj
+(Mugavi drafts invoice reminders for small businesses and) Tj
 0 -18 Td
-(agencies and consultancies. We connect to Xero \\226 QuickBooks) Tj
+(bookkeeping practices, and waits for you to approve each one.) Tj
 0 -18 Td
-(is in beta \\226 write tone-aware dunning emails and SMS in) Tj
+(It connects to Xero and to QuickBooks Online, which is in) Tj
 0 -18 Td
-(your voice, and give you a 4-week cash-flow forecast so you) Tj
+(beta. You edit every reminder before it sends, and the) Tj
 0 -18 Td
-(always know what's coming.) Tj
+(Practice plan adds a 4-week cash-flow forecast.) Tj
 0 -60 Td
 /F1 16 Tf
 (Try it free for 14 days:) Tj

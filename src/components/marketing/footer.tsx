@@ -23,11 +23,11 @@ export function MarketingFooter() {
               <Logo className="h-7 w-7" />
               <span>Mugavi</span>
             </Link>
-            <p className="mt-3 max-w-sm text-sm text-ink-600">Honest AR automation for 5-30 person agencies and consultancies on Xero. Built in Nairobi.</p>
+            <p className="mt-3 max-w-sm text-sm text-ink-600">Invoice reminders you approve first, for small businesses and bookkeeping practices on QuickBooks and Xero. Built in Nairobi.</p>
             <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-ink-500">
-              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">US · UK · EU · AU · CA · KE · NG</span>
-              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">5–30 person teams</span>
-              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Xero (QuickBooks beta)</span>
+              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">US · UK · EU · AU · CA</span>
+              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Small businesses and bookkeepers</span>
+              <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Xero · QuickBooks Online (beta)</span>
             </div>
             <p className="mt-6 text-xs text-ink-500">© 2026 Mugavi, Inc. · Built in Nairobi.</p>
           </div>

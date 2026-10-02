@@ -53,9 +53,9 @@ export const SITE = {
   name: BRAND,
   alternateName: ['Mugavi for Xero', 'Mugavi AR', 'Mugavi App'],
   description:
-    `${BRAND} is the accounts-receivable automation tool for 5-30 person ` +
-    `agencies and consultancies on Xero and QuickBooks. It drafts client-safe ` +
-    `invoice reminders, pauses when a customer replies or pays, tracks ` +
+    `${BRAND} drafts overdue-invoice reminders for small businesses and ` +
+    `bookkeeping practices on QuickBooks and Xero, and waits for you to approve ` +
+    `each one. It pauses when a customer replies or pays, tracks ` +
     `promised-payment dates, and separates disputes from ordinary late ` +
     `payment. From $${PLAN_PRICING.starter.monthly}/mo flat.`,
   url: DOMAIN,
