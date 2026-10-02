@@ -16,6 +16,11 @@ export default async function ConfigPage() {
         <div className="card max-w-md mx-auto text-center py-12">
           <h2 className="h3">Not authorized</h2>
           <p className="mt-2 text-sm text-ink-600">This page is for the Mugavi team only.</p>
+          {admin.email && (
+            <p className="mt-3 text-sm text-ink-600">
+              You are signed in as <strong>{admin.email}</strong>. To see this page, add that address to <code>ADMIN_EMAILS</code> (comma separated) in the hosting environment and redeploy.
+            </p>
+          )}
         </div>
       </AppShell>
     );
