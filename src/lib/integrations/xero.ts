@@ -494,7 +494,6 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
-  let reconciledByLookup = 0;
   let truncated = false;
 
   // 1. Contacts → customers
@@ -647,7 +646,6 @@ export async function syncXeroForOrg(orgId: string): Promise<XeroSyncResult> {
     if (missing.length > 0) {
       for (const inv of await xeroGetInvoicesByIds(orgId, missing)) {
         await applyInvoice(inv);
-        reconciledByLookup++;
       }
     }
   } catch (e: unknown) {

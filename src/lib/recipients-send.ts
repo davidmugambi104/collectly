@@ -4,7 +4,7 @@
  * email went out, and never fails it: a copy that cannot be sent is logged and
  * skipped. Someone who unsubscribed, or whose address is suppressed, is skipped.
  */
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '@/db';
 import { customerRecipients, emailSuppressions, reminderCopies } from '@/db/schema';
 import { sendEmail, withUnsubscribeFooter, dunningListUnsubscribeHeaders, fetchResendMessageId } from '@/lib/infra';
