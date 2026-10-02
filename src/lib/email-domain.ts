@@ -89,3 +89,14 @@ export function normalizeRecords(records: unknown): DnsRecord[] {
 export function canSendFrom(row: { status: string; domain: string; localPart: string } | null | undefined): boolean {
   return !!row && row.status === 'verified' && !!row.domain && !!row.localPart;
 }
+
+/**
+ * The DMARC record a sending domain should publish. The provider does not issue
+ * this one: it is the owner's policy, added once at their registrar. Starts at
+ * p=none (watch, do not reject) so a mistake cannot bounce their real mail.
+ * The reporting address is optional and must be an address the owner controls.
+ */
+export function dmarcRecord(domain: string, reportTo?: string | null): { type: 'TXT'; name: string; value: string } {
+  const rua = reportTo && /^[^\s@;,]+@[^\s@;,]+\.[^\s@;,]+$/.test(reportTo.trim()) ? `; rua=mailto:${reportTo.trim()}` : '';
+  return { type: 'TXT', name: `_dmarc.${domain}`, value: `v=DMARC1; p=none${rua}` };
+}
