@@ -367,7 +367,8 @@ export function AppShell({
             the 5-up stat grid stretched to the full viewport and line lengths
             ran past readable. 1440px holds the 5-up grid at a sensible tile
             width and keeps long text measured. */}
-        <main id="main" className="flex-1 overflow-x-hidden">
+        {/* A div, not a second <main>: the root layout already provides the one main landmark. Kept focusable so the skip link lands here. */}
+        <div id="main" tabIndex={-1} className="flex-1 overflow-x-hidden outline-none">
           <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 sm:py-7">
             <div className="mb-6 hidden md:block">
               <h1 className="app-title">{title}</h1>
@@ -377,7 +378,7 @@ export function AppShell({
             </div>
             {children}
           </div>
-        </main>
+        </div>
       </div>
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
