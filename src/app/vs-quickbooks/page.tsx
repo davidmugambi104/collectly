@@ -132,7 +132,7 @@ export default function VsQuickbooksPage() {
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>Bottom line:</strong> QuickBooks is where your invoices live and that is not worth changing. The only question is whether its built-in reminders are enough. On a small book they are. Past roughly a hundred open invoices the reminders stop working and the chasing starts.
+            <strong>Bottom line:</strong> QuickBooks is where your invoices live and that is not worth changing. The only question is whether its built-in reminders are enough. On a small book they are. Past roughly a hundred open invoices the reminders stop working and the chasing starts. Run several client books? See <Link href="/for/bookkeepers" className="link">Mugavi for bookkeepers</Link>.
           </div>
         </div>
       </section>
