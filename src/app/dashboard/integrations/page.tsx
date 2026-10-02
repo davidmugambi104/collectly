@@ -151,7 +151,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
           <li>Click <b>Connect</b> on the provider you use.</li>
           <li>Authorize Mugavi in the provider&apos;s OAuth flow.</li>
           <li>We pull your customer, invoice, and payment history (read-only, scoped to A/R).</li>
-          <li>You can disconnect any time — we delete the tokens.</li>
+          <li>You can disconnect any time. We ask the provider to revoke our access and delete the stored tokens. Data already imported stays in Mugavi until you remove it or delete your account.</li>
         </ol>
         <p className="mt-4 text-xs text-ink-500">All integrations are encrypted at rest and in transit. We never modify your books without your explicit action.</p>
       </div>

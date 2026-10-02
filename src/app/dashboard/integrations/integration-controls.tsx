@@ -56,7 +56,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
   };
 
   const onDisconnect = async () => {
-    if (!confirm(`Disconnect ${label}? This will remove the connection and stop future syncs. You can reconnect at any time.`)) return;
+    if (!confirm(`Disconnect ${label}? Mugavi asks ${label} to revoke its access, deletes the stored tokens and stops syncing. Customers and invoices already imported stay in Mugavi until you delete them or delete your account. You can reconnect at any time.`)) return;
     setDisconnecting(true);
     try {
       const res = await fetch(`/api/integrations/sync?provider=${provider}`, { method: 'DELETE' });

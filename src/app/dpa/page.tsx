@@ -109,9 +109,10 @@ const sections = [
       <>
         <p>
           Mugavi will assist you in responding to data-subject requests (access, rectification, deletion,
-          portability, objection) within 10 business days. You can also export or delete your data at any time
-          from <a href="/dashboard/settings" className="link">Settings → Data</a>, and we provide a one-click
-          full-account deletion that purges all Customer Data within 30 days, with backups rotating out on the same 30-day cycle.
+          portability, objection) within 10 business days. You can download your reminder history, aged receivables report and customer statements as CSV from the app;
+          for a full export of everything else, ask us and we will provide it as part of the same request process. The account owner can delete
+          the account from <a href="/dashboard/settings" className="link">Settings</a>: Customer Data is removed from the live database
+          immediately, and backups rotate out on a 30-day cycle.
         </p>
       </>
     ),

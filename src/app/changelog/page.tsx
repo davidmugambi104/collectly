@@ -43,7 +43,7 @@ export default function ChangelogPage() {
             {
               date: '2026-07-05',
               title: 'Beta: opening the founding cohort',
-              body: 'Opened signups for the founding customers. No customers onboarded yet. This is day one of outreach.',
+              body: 'Opened signups for the first 10 founding customers. No customers onboarded yet. This is day one of outreach.',
             },
             {
               date: '2026-06-20',

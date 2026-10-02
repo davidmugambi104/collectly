@@ -170,6 +170,14 @@ export default function ForBookkeepersPage() {
           <li>No payment plans, no tags on customers, and statements are sent by you, not on a schedule.</li>
           <li>Card checkout is not live. We invoice Practice accounts directly for now.</li>
         </ul>
+        <h2 className="mt-12 h2">Leaving is easy.</h2>
+        <ul className="mt-6 space-y-3 text-sm text-ink-700">
+          <li>14-day trial with no card taken. It does not turn into a paid plan by itself.</li>
+          <li>Disconnecting a client book from QuickBooks or Xero is one click on Integrations. We ask Intuit or Xero to revoke our access and delete the stored tokens. What was already imported stays in Mugavi until you delete it or delete the account.</li>
+          <li>Reminder history, the aged receivables report and customer statements download as CSV. There is no one-click export of everything yet; ask and we will send the rest.</li>
+          <li>The account owner can delete a book from Settings. Its customers, invoices and reminder history go straight away, and backups roll off within 30 days.</li>
+          <li>To cancel or change a plan, ask from Billing. David confirms by email and nothing changes until he does. No cancellation fee, no contract.</li>
+        </ul>
         <div className="mt-8">
           <Link href="/ar-audit" className="btn-primary inline-flex items-center gap-1.5">
             Get a free A/R health audit <ArrowRight className="h-4 w-4" />

@@ -22,7 +22,7 @@ const FAQS: FaqItem[] = [
             { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
             { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing: David reviews and sends an invoice within 12 hours. Not yet automatic or self-serve.' },
             { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD, EUR in ${PLAN_PRICING.growth.name}. KES, NGN, ZAR in ${PLAN_PRICING.scale.name} or custom.` },
-            { q: 'Can I switch from another tool?', a: 'Yes. Free migration from QuickBooks, Xero, FreshBooks, Wave, and most others.' },
+            { q: 'Can I switch from another tool?', a: 'Mugavi reads invoices and customers from QuickBooks Online (beta) and Xero. If your books are somewhere else, ask first and we will tell you honestly whether it will work. We do not run migrations for you.' },
 ];
 
 export const metadata = pageMetadata({
@@ -64,6 +64,7 @@ export default function PricingPage() {
       <section className="container-page pt-16 pb-10 text-center">
         <h1 className="h1 mx-auto max-w-3xl text-balance">Simple pricing. No per-invoice fees.</h1>
         <p className="mt-5 lead mx-auto max-w-2xl">Priced per client book, not per invoice. 14-day trial with no credit card, founder-assisted setup, and no contracts. Cancel anytime.</p>
+        <p className="mt-3 mx-auto max-w-2xl text-sm text-ink-600">Mugavi waits for you to approve each reminder, so nothing reaches your customer that you have not read. You can switch that off, but it is on until you do.</p>
         <p className="mt-3 text-sm text-brand-700 font-medium">Founding cohort: {FOUNDING.discountPct}% off for {FOUNDING.months} months, first {FOUNDING.seats} customers.</p>
       </section>
 
@@ -126,6 +127,24 @@ export default function PricingPage() {
               <div key={item} className="flex items-center gap-2 py-1.5"><X className="h-3.5 w-3.5 text-ink-400" />{item}</div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="container-page py-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="h2 text-center">Leaving is easy</h2>
+          <p className="mt-3 text-center text-sm text-ink-600">What you can do today, and where the limits are.</p>
+          <ul className="mt-8 space-y-3 text-sm text-ink-700">
+            {[
+              'Trial: 14 days, no card taken, and it does not turn into a paid plan on its own.',
+              'Cancel or change plan: ask from Billing inside the app. David confirms by email, and nothing changes until he does. There is no cancellation fee and no contract. Billing is manual for now, so this is a request, not an instant button.',
+              'Disconnect QuickBooks, Xero or Square: one click on Integrations. We ask the provider to revoke our access and delete the stored tokens. If the provider cannot be reached, our copy of the connection is still removed and you can revoke Mugavi from inside QuickBooks or Xero yourself. Customers and invoices already imported stay in Mugavi until you delete them or delete your account.',
+              'Export: your reminder history, the aged receivables report and any customer statement download as CSV. There is no one-click export of everything yet. Ask us for the rest and we will send it.',
+              'Delete your account: the owner can do it from Settings. Customers, invoices, payments, reminder history and integrations are removed straight away, and backups roll off within 30 days.',
+            ].map((item) => (
+              <li key={item} className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />{item}</li>
+            ))}
+          </ul>
         </div>
       </section>
 

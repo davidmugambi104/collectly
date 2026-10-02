@@ -558,3 +558,52 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
 
   return { requestId: created.id, plan: planInfo.name, monthly: planInfo.monthly };
 }
+
+/* ----------------------------- CANCEL / CHANGE PLAN REQUEST ----------------------------- */
+
+/**
+ * Record a "cancel" or "change my plan" request from the Billing page and tell
+ * the founder. Nothing is cancelled or charged by this call: David confirms by
+ * email. One open request of each kind per org, so a second click does not
+ * file a duplicate or send a second email.
+ */
+export async function recordCancelRequest(opts: { orgId: string; kind: import('@/lib/cancel-request').CancelKind; note?: string }) {
+  const { upgradeRequests, organizations: orgs, users } = await import('@/db/schema');
+  const { sendEmail } = await import('@/lib/infra');
+  const { buildCancelNotes, isCancelNote, founderEmail, customerEmail, CANCEL_NOTE_PREFIX } = await import('@/lib/cancel-request');
+
+  const [org] = await db.select().from(orgs).where(eq(orgs.id, opts.orgId)).limit(1);
+  if (!org) throw new Error('organization not found');
+  const [sub] = await db.select().from(subscriptions).where(eq(subscriptions.orgId, opts.orgId)).limit(1);
+  const plan = (sub?.plan ?? org.plan ?? 'starter') as PlanKey;
+  const planInfo = PLAN_PRICING[plan] ?? PLAN_PRICING.starter;
+
+  const open = await db.select().from(upgradeRequests).where(and(eq(upgradeRequests.orgId, opts.orgId), eq(upgradeRequests.status, 'pending')));
+  const existing = open.find((r: { notes: string | null }) => (opts.kind === 'cancel' ? isCancelNote(r.notes) : !!r.notes?.startsWith(CANCEL_NOTE_PREFIX.change)));
+  if (existing) return { requestId: (existing as { id: string }).id, duplicate: true };
+
+  const notes = buildCancelNotes(opts.kind, opts.note);
+  const [created] = await db
+    .insert(upgradeRequests)
+    .values({ orgId: opts.orgId, plan, customerEmail: `${org.slug}@getcollectly.app`, businessName: org.name, notes, status: 'pending' })
+    .returning();
+
+  const [owner] = await db.select({ email: users.email, name: users.name }).from(users).where(eq(users.id, org.ownerId)).limit(1);
+
+  try {
+    await sendEmail({
+      to: process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app',
+      ...founderEmail({ kind: opts.kind, orgName: org.name, orgSlug: org.slug, planName: planInfo.name, ownerEmail: owner?.email ?? null, notes, requestId: created.id, appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com' }),
+    });
+  } catch (e) {
+    console.error('[recordCancelRequest] notify founder failed (non-fatal):', e instanceof Error ? e.message : e);
+  }
+  if (owner?.email) {
+    try {
+      await sendEmail({ to: owner.email, ...customerEmail({ kind: opts.kind, orgName: org.name, firstName: owner.name?.split(' ')[0] ?? null }) });
+    } catch (e) {
+      console.error('[recordCancelRequest] customer email failed (non-fatal):', e instanceof Error ? e.message : e);
+    }
+  }
+  return { requestId: created.id, duplicate: false };
+}

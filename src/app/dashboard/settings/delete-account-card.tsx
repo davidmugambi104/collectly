@@ -125,6 +125,15 @@ export function DeleteAccountCard({ orgName }: { orgName: string }) {
           </ul>
 
           <p className="app-meta mt-3 font-normal">
+            Deleting also revokes Mugavi&apos;s access at QuickBooks, Xero and Square. Before you delete, you can
+            download your{' '}
+            <a href="/dashboard/dunning/history" className="text-brand-600 underline underline-offset-2 hover:text-brand-700">reminder history</a>
+            {' '}and{' '}
+            <a href="/dashboard/reports/aged" className="text-brand-600 underline underline-offset-2 hover:text-brand-700">aged receivables report</a>
+            {' '}as CSV. Deleting does not by itself stop billing: to end your plan,{' '}
+            <a href="/dashboard/billing#cancel" className="text-brand-600 underline underline-offset-2 hover:text-brand-700">ask to cancel on Billing</a>.
+          </p>
+          <p className="app-meta mt-2 font-normal">
             See our{' '}
             <a href="/privacy" className="text-brand-600 underline underline-offset-2 hover:text-brand-700">
               privacy notice

@@ -12,6 +12,7 @@ import { PLAN_PRICING, PRACTICE_EXTRA_ORG_MONTHLY, formatCurrency, formatDate } 
 import { bookOverage } from '@/lib/book-overage';
 import { createCustomerPortal } from '@/lib/billing';
 import Link from 'next/link';
+import { parseCancelKind } from '@/lib/cancel-request';
 
 // Limits come from PLAN_PRICING. This file used to keep its own table, and it
 // drifted: it still capped Starter at 50 invoices and 1 user after the plan
@@ -20,7 +21,7 @@ import Link from 'next/link';
 
 const stripeConfigured = !!process.env.STRIPE_SECRET_KEY;
 
-export default async function BillingPage({ searchParams }: { searchParams: Promise<{ upgraded?: string; cancelled?: string; requested?: string; plan?: string; req?: string }> }) {
+export default async function BillingPage({ searchParams }: { searchParams: Promise<{ upgraded?: string; cancelled?: string; requested?: string; plan?: string; req?: string; leave?: string; dup?: string }> }) {
   const { userId, orgId } = await auth();
   if (!userId) redirect('/sign-in');
   if (!orgId) redirect('/sign-in');
@@ -29,6 +30,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const justUpgraded = sp.upgraded === '1';
   const justCancelled = sp.cancelled === '1';
   const justRequested = sp.requested === '1' && sp.plan;
+  const leaveKind = parseCancelKind(sp.leave);
 
   const [org] = await db.select().from(organizations).where(eq(organizations.id, orgId)).limit(1);
   const [sub] = await db.select().from(subscriptions).where(eq(subscriptions.orgId, orgId)).limit(1);
@@ -79,6 +81,17 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
     redirect(`/dashboard/billing?requested=1&plan=${target}&req=${result.requestId}`);
   }
 
+  async function requestLeave(form: FormData) {
+    'use server';
+    const actorOrgId = await requireOrgId();
+    if (!actorOrgId) return;
+    const kind = parseCancelKind(form.get('kind'));
+    if (!kind) return;
+    const { recordCancelRequest } = await import('@/lib/billing');
+    const result = await recordCancelRequest({ orgId: actorOrgId, kind, note: String(form.get('note') ?? '') });
+    redirect(`/dashboard/billing?leave=${kind}${result.duplicate ? '&dup=1' : ''}#cancel`);
+  }
+
   async function openPortal() {
     'use server';
     const actorOrgId = await requireOrgId();
@@ -119,6 +132,22 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               </ol>
               <p className="mt-2 text-xs text-success-900/70">
                 Questions? Reply to the invoice email or reach David at <a href="mailto:david@getcollectly.app" className="underline">david@getcollectly.app</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {leaveKind && (
+        <div role="status" className="mb-4 rounded-[10px] border border-success-200/70 bg-success-50/70 p-4 text-[13px] text-success-900 lift-1">
+          <div className="flex items-start gap-2">
+            <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
+            <div>
+              <div className="font-semibold">
+                {sp.dup === '1' ? 'You already have this request open.' : leaveKind === 'cancel' ? 'Cancel request received.' : 'Plan change request received.'}
+              </div>
+              <p className="mt-1 text-success-900/80">
+                David will confirm by email, and nothing changes until he does.
+                {leaveKind === 'cancel' && ' Once the cancellation takes effect you are not charged again.'}
               </p>
             </div>
           </div>
@@ -272,6 +301,28 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         upgrades manually by invoice (bank transfer, Wise, or PayPal) so he can
         support setup personally. Same price, same plan — just a 12-hour
         window between click and confirmation.
+      </div>
+
+      {/* Cancel or change plan. Plain on purpose: no survey, no discount offer, no guilt. */}
+      <div id="cancel" className="mt-8 card scroll-mt-20">
+        <h2 className="app-heading">Cancel or change plan</h2>
+        <p className="mt-1 text-sm text-ink-600">
+          Tell us here and David will confirm by email, and nothing changes until he does. Once a
+          cancellation takes effect you are not charged again. There is no cancellation fee and no contract.
+          Your data stays until you delete it in <Link href="/dashboard/settings" className="link">Settings</Link>, and
+          you can download your <Link href="/dashboard/dunning/history" className="link">reminder history</Link> and
+          {' '}<Link href="/dashboard/reports/aged" className="link">aged receivables report</Link> as CSV first.
+        </p>
+        <form action={requestLeave} className="mt-4 space-y-3 max-w-xl">
+          <label className="block text-sm text-ink-700">
+            Anything we should know (optional)
+            <textarea name="note" maxLength={1500} rows={3} className="mt-1 w-full rounded-lg border border-ink-300 p-2 text-sm" placeholder="For a plan change, say which plan you want." />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button type="submit" name="kind" value="cancel" className="btn-secondary btn-sm">Ask to cancel my plan</button>
+            <button type="submit" name="kind" value="change" className="btn-secondary btn-sm">Ask to change my plan</button>
+          </div>
+        </form>
       </div>
 
       {/* Invoice history */}
