@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Loader2, Download, CheckCircle2, Mail, Building2, User } from 'lucide-react';
+import { Honeypot } from '@/components/marketing/honeypot';
 
 export function PlaybookForm() {
   const [loading, setLoading] = useState(false);
@@ -9,16 +10,18 @@ export function PlaybookForm() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
+  const [website, setWebsite] = useState('');
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
     setError(null);
     try {
       const res = await fetch('/api/playbook/download', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email, name: name || undefined, company: company || undefined }),
+        body: JSON.stringify({ email, name: name || undefined, company: company || undefined, website }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -47,15 +50,16 @@ export function PlaybookForm() {
         <CheckCircle2 className="h-10 w-10 mx-auto text-emerald-600" />
         <h3 className="mt-3 font-display font-semibold text-ink-950 text-lg">Check your downloads folder</h3>
         <p className="mt-1 text-sm text-ink-600">
-          The PDF should be on your machine. Read it today — Step 1 alone typically recovers $4,200 in the first week.
+          The PDF should be on your machine. Start with Step 1 today.
         </p>
-        <p className="mt-3 text-xs text-ink-500">Want us to email you the playbook too? <a href="/ar-audit" className="link">Book a free 15-min A/R review</a> and we&apos;ll send it.</p>
+        <p className="mt-3 text-xs text-ink-500">Want a second pair of eyes on your own numbers? <a href="/ar-audit" className="link">Ask for the free A/R audit</a>.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} className="card-lg">
+    <form onSubmit={submit} className="card-lg relative">
+      <Honeypot value={website} onChange={setWebsite} />
       <h3 className="font-display font-semibold text-ink-950 text-lg">Get the free playbook</h3>
       <p className="mt-1 text-sm text-ink-600">PDF starts downloading as soon as you submit.</p>
       <div className="mt-5 space-y-3">
@@ -96,7 +100,7 @@ export function PlaybookForm() {
         </button>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <p className="text-xs text-ink-500 text-center">
-          We&apos;ll email you the playbook link and one follow-up after 7 days. No other marketing.
+          We keep your email so we can answer if you write back. No automatic emails.
         </p>
       </div>
     </form>

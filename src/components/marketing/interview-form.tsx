@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { Honeypot } from '@/components/marketing/honeypot';
 
 export function InterviewForm() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ export function InterviewForm() {
   const [outstanding, setOutstanding] = useState('');
   const [tool, setTool] = useState('');
   const [pain, setPain] = useState('');
+  const [website, setWebsite] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
@@ -27,7 +29,7 @@ export function InterviewForm() {
       // showed "Got it, we'll reach out" to someone filling this out for
       // a $25 incentive, with nothing actually saved. Matches the pattern
       // already fixed in AuditForm (src/components/marketing/audit-form.tsx).
-      const res = await fetch('/api/interview', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, name, company, country, teamSize, industry, dso, outstanding, tool, pain }) });
+      const res = await fetch('/api/interview', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, name, company, country, teamSize, industry, dso, outstanding, tool, pain, website }) });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `Request failed (${res.status})`);
@@ -52,6 +54,7 @@ export function InterviewForm() {
 
   return (
     <form onSubmit={submit} className="space-y-5">
+      <Honeypot value={website} onChange={setWebsite} />
       <div className="grid sm:grid-cols-2 gap-3">
         <div><label className="label">Name</label><input value={name} onChange={(e) => setName(e.target.value)} required className="input" /></div>
         <div><label className="label">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="input" /></div>

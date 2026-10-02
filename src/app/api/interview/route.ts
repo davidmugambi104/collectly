@@ -1,61 +1,66 @@
 import { rateLimit, getIp } from '@/lib/rate-limit';
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import * as schema from '@/db/schema';
-import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
-import { sendLeadNotification } from '@/lib/lead-notify';
+import { captureLead } from '@/lib/lead-capture';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
+import { parseJsonBody } from '@/lib/parse-body';
+import { isHoneypotHit, leadOutcome, LEAD_FAILED_MESSAGE } from '@/lib/lead-guard';
 
 const body = z.object({
-  email: z.string().email(),
-  name: z.string().min(1),
-  company: z.string().min(1),
-  country: z.string().min(2),
-  teamSize: z.string(),
-  industry: z.string(),
-  dso: z.string(),
-  outstanding: z.string().optional(),
-  tool: z.string().optional(),
-  pain: z.string().min(1),
+  email: z.string().email().max(254),
+  name: z.string().min(1).max(200),
+  company: z.string().min(1).max(200),
+  country: z.string().min(2).max(100),
+  teamSize: z.string().max(100),
+  industry: z.string().max(200),
+  dso: z.string().max(100),
+  outstanding: z.string().max(100).optional(),
+  tool: z.string().max(200).optional(),
+  pain: z.string().min(1).max(4000),
+  website: z.string().optional(), // honeypot
 });
 
 export async function POST(req: NextRequest) {
   const rl = await rateLimit(getIp(req), { max: 10, key: 'interview' });
   if (!rl.allowed) return NextResponse.json({ error: 'Too many requests. Try again in a minute.' }, { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } });
 
-  try {
-    await ensureBootstrapped();
-    const data = body.parse(await req.json());
-    const [row] = await db.insert(schema.waitlist).values({
-      id: nanoid(),
+  await ensureBootstrapped();
+  const parsed = await parseJsonBody(req, body);
+  if (!parsed.ok) return parsed.response;
+  const data = parsed.data;
+  if (isHoneypotHit(data)) return NextResponse.json({ ok: true });
+
+  // The waitlist.country column is varchar(2). The form sends a free-text
+  // country, so an unsliced value made the insert throw and the lead was lost.
+  const country = data.country.length === 2 ? data.country.toUpperCase() : null;
+  const r = await captureLead(
+    {
       email: data.email,
       name: data.name,
       company: data.company,
-      country: data.country,
+      country,
       teamSize: data.teamSize,
-      painPoint: `[INTERVIEW] Industry: ${data.industry}, DSO: ${data.dso}, A/R: ${data.outstanding ?? '?'}, Tool: ${data.tool ?? '?'}\n\n${data.pain}`,
+      painPoint: `[INTERVIEW] Industry: ${data.industry}, DSO: ${data.dso}, A/R: ${data.outstanding ?? '?'}, Tool: ${data.tool ?? '?'}\n\n${country ? '' : `[Country: ${data.country}] `}${data.pain}`,
       source: 'interview-form',
-    }).onConflictDoNothing({ target: schema.waitlist.email }).returning();
-    await sendLeadNotification({
+    },
+    {
       type: 'interview',
       email: data.email,
       name: data.name,
       company: data.company,
       meta: {
+        country: data.country,
+        teamSize: data.teamSize,
         industry: data.industry,
         dso: data.dso,
         outstanding: data.outstanding,
         tool: data.tool,
-        pain: data.pain?.slice(0, 200),
+        pain: data.pain,
       },
-    });
-    return NextResponse.json({ ok: true, id: row?.id });
-  } catch (e: unknown) {
-    // Was unwrapped — a validation failure (body.parse) threw an unhandled
-    // ZodError straight into a bare 500 with no JSON body, same class of
-    // bug already fixed on /api/sequences/[id]. Matches the try/catch
-    // already present on the sibling ar-audit/waitlist routes.
-    return NextResponse.json({ error: e instanceof Error ? e.message : 'Bad request' }, { status: 400 });
-  }
+    },
+    { promote: true },
+  );
+  const { status } = leadOutcome(r);
+  if (status !== 200) return NextResponse.json({ error: LEAD_FAILED_MESSAGE }, { status });
+  return NextResponse.json({ ok: true, id: r.id });
 }

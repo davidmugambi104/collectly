@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { track } from '@/lib/track';
+import { Honeypot } from '@/components/marketing/honeypot';
 
 /**
  * Email capture for the free calculators.
@@ -37,9 +38,11 @@ export function ToolLeadCapture({
   const [email, setEmail] = useState('');
   const [state, setState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [website, setWebsite] = useState('');
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (state === 'sending') return;
     if (!email.trim() || !email.includes('@')) {
       setError('Enter a valid email address.');
       return;
@@ -50,9 +53,12 @@ export function ToolLeadCapture({
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), source, painPoint: `[${source}] ${summary}` }),
+        body: JSON.stringify({ email: email.trim(), source, painPoint: `[${source}] ${summary}`, website }),
       });
-      if (!res.ok) throw new Error('Something went wrong. Try again.');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(res.status === 429 || res.status === 503 ? (data.error ?? 'Something went wrong. Try again.') : 'Something went wrong. Try again.');
+      }
       track('homepage_cta_click', { location: source, label });
       setState('sent');
     } catch (err) {
@@ -64,22 +70,23 @@ export function ToolLeadCapture({
   if (state === 'sent') {
     return (
       <div className={`rounded-lg border border-success-200 bg-success-50 p-4 ${className}`}>
-        <p className="text-sm font-medium text-success-700">On its way.</p>
+        <p className="text-sm font-medium text-success-700">Got it.</p>
         <p className="mt-1 text-sm text-ink-700">
-          Reply to it with a question about your own book and you&apos;ll get an answer from the
-          person who built this, not a sequence.
+          We have your email and the numbers you just worked out, and the person who built this
+          will reply from a real address. Nothing is sent automatically.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} className={`rounded-lg border border-ink-200 bg-white p-4 ${className}`}>
+    <form onSubmit={submit} className={`relative rounded-lg border border-ink-200 bg-white p-4 ${className}`}>
+      <Honeypot value={website} onChange={setWebsite} />
       <label htmlFor={`lead-${source}`} className="block text-sm font-medium text-ink-900">
         {label}
       </label>
       <p className="mt-1 text-xs text-ink-600">
-        No sequence, no sales call booked on your behalf. One email with the numbers above.
+        No sequence, no sales call booked on your behalf. We keep the numbers above so the reply can start from them.
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <input

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { Honeypot } from '@/components/marketing/honeypot';
 
 export function AuditForm() {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ export function AuditForm() {
   const [ar, setAr] = useState('');
   const [dso, setDso] = useState('30-45');
   const [topPain, setTopPain] = useState('');
+  const [website, setWebsite] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -25,7 +27,7 @@ export function AuditForm() {
       const res = await fetch('/api/ar-audit', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email, name, company, country, tool, ar, dso, topPain }),
+        body: JSON.stringify({ email, name, company, country, tool, ar, dso, topPain, website }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -56,6 +58,7 @@ export function AuditForm() {
 
   return (
     <form onSubmit={submit} className="space-y-5">
+      <Honeypot value={website} onChange={setWebsite} />
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
           <label className="label">Name *</label>

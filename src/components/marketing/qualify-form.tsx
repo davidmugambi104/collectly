@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { Honeypot } from '@/components/marketing/honeypot';
 
 export function QualifyForm({
   initialEmail = '',
@@ -17,6 +18,7 @@ export function QualifyForm({
   const [currentTool, setCurrentTool] = useState('spreadsheet');
   const [hoursPerWeek, setHoursPerWeek] = useState('');
   const [frustration, setFrustration] = useState('');
+  const [website, setWebsite] = useState('');
   const [wouldSwitch, setWouldSwitch] = useState<'yes' | 'no' | 'maybe'>('maybe');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
@@ -30,7 +32,7 @@ export function QualifyForm({
       const res = await fetch('/api/qualify', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email, name, company, currentTool, hoursPerWeek, frustration, wouldSwitch }),
+        body: JSON.stringify({ email, name, company, currentTool, hoursPerWeek, frustration, wouldSwitch, website }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -58,6 +60,7 @@ export function QualifyForm({
 
   return (
     <form onSubmit={submit} className="space-y-5">
+      <Honeypot value={website} onChange={setWebsite} />
       {showIdentityFields && (
         <div className="grid sm:grid-cols-2 gap-3">
           {!initialName && (

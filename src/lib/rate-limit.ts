@@ -71,7 +71,16 @@ export async function rateLimit(
     prefix: `collectly:ratelimit:${namespace}`,
   });
 
-  const { success, remaining, reset } = await limiter.limit(identifier);
+  let res: Awaited<ReturnType<typeof limiter.limit>>;
+  try {
+    res = await limiter.limit(identifier);
+  } catch (e) {
+    // A Redis outage must not turn every public lead form into a 500 (the
+    // callers do not wrap this). Fall back to the per-process limiter.
+    console.error('[rate-limit] redis unavailable, using in-process limiter:', e instanceof Error ? e.message : e);
+    return inProcessRateLimit(identifier, opts);
+  }
+  const { success, remaining, reset } = res;
   return {
     allowed: success,
     remaining: Math.max(0, remaining),

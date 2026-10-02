@@ -2,28 +2,33 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Check, Loader2 } from 'lucide-react';
+import { Honeypot } from '@/components/marketing/honeypot';
 
 export function WaitlistForm({ variant, source = 'homepage', compact }: { variant?: 'dark' | 'light'; source?: string; compact?: boolean }) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const [website, setWebsite] = useState('');
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) return;
+    if (!email || status === 'loading') return;
     setStatus('loading');
     try {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email, source }),
+        body: JSON.stringify({ email, source, website }),
       });
-      if (!res.ok) throw new Error('Failed');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(res.status === 429 || res.status === 503 ? (data.error ?? 'Failed') : 'Failed');
+      }
       setStatus('ok');
       setMessage("You're on the list. We'll be in touch.");
-    } catch  {
+    } catch (err: unknown) {
       setStatus('error');
-      setMessage('Something went wrong. Try again.');
+      setMessage(err instanceof Error && err.message !== 'Failed' ? err.message : 'Something went wrong. Try again.');
     }
   }
 
@@ -38,6 +43,7 @@ export function WaitlistForm({ variant, source = 'homepage', compact }: { varian
   const dark = variant === 'dark';
   return (
     <form onSubmit={submit} className="w-full">
+      <Honeypot value={website} onChange={setWebsite} />
       <div className={`flex flex-col sm:flex-row gap-2 rounded-lg p-1.5 ${dark ? 'bg-ink-900 border border-ink-800' : 'bg-white border border-ink-200 shadow-sm'}`}>
         <input
           type="email"

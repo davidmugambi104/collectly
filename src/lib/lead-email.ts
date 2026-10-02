@@ -7,7 +7,7 @@
  * src/lib/legacy-domain.ts is separate from middleware. Nothing here imports
  * anything.
  */
-export type LeadType = 'waitlist' | 'interview' | 'dunning_test' | 'async_qualify';
+export type LeadType = 'waitlist' | 'interview' | 'dunning_test' | 'async_qualify' | 'ar_audit' | 'signup';
 
 export interface LeadNotification {
   type: LeadType;
@@ -30,6 +30,8 @@ export function leadSubject(data: LeadNotification): string {
   switch (data.type) {
     case 'waitlist': return `🌱 New waitlist signup — ${data.email}`;
     case 'interview': return `🎯 New interview — ${data.email} (${data.company ?? 'n/a'})`;
+    case 'ar_audit': return `📊 A/R audit request — ${data.company ?? 'n/a'} (${data.email})`;
+    case 'signup': return `🚀 New sign-up — ${data.email}`;
     case 'async_qualify': return `📋 Async qualify reply — ${data.email} (${data.company ?? 'n/a'})`;
     default: return `🧪 Dunning test from ${data.email}`;
   }

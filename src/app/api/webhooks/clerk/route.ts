@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import type { WebhookEvent } from '@clerk/nextjs/server';
 import { cascadeDeleteOrgData } from '@/lib/account-deletion';
+import { sendLeadNotification } from '@/lib/lead-notify';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,6 +65,22 @@ export async function POST(req: NextRequest) {
     event = wh.verify(payload, headers) as WebhookEvent;
   } catch (e: unknown) {
     return NextResponse.json({ error: `signature verification failed: ${e instanceof Error ? e.message : e}` }, { status: 400 });
+  }
+
+  // A new sign-up is the strongest lead there is and used to tell nobody.
+  // Needs `user.created` ticked on the Clerk webhook endpoint. A failed email
+  // is logged and still acknowledged: Clerk retrying would only resend it.
+  if (event?.type === 'user.created') {
+    const u = event.data;
+    const primary = u.email_addresses?.find((a) => a.id === u.primary_email_address_id) ?? u.email_addresses?.[0];
+    const name = [u.first_name, u.last_name].filter(Boolean).join(' ') || undefined;
+    const n = await sendLeadNotification({
+      type: 'signup',
+      email: primary?.email_address ?? `(no email) ${u.id}`,
+      name,
+      meta: { clerkUserId: u.id },
+    });
+    return NextResponse.json({ received: true, notified: n.ok });
   }
 
   if (event?.type !== 'organization.deleted') {

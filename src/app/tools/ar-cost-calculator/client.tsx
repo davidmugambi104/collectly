@@ -41,6 +41,7 @@ export function ArCostCalculator() {
   }, [avgInvoice, lateDays, lateClients, chaseHours, hourlyRate]);
 
   async function sendReport() {
+    if (sending) return;
     if (!email.trim() || !email.includes('@')) {
       setSendError('Enter a valid email address.');
       return;
@@ -57,7 +58,10 @@ export function ArCostCalculator() {
           painPoint: `[AR cost calculator] annual drag ${formatCurrency(result.total, currency)} — avg invoice ${formatCurrency(avgInvoice, currency)}, ${lateDays}d late, ${lateClients} late clients, ${chaseHours}h/wk chasing at ${formatCurrency(hourlyRate, currency)}/hr`,
         }),
       });
-      if (!res.ok) throw new Error('Something went wrong. Try again.');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(res.status === 429 || res.status === 503 ? (data.error ?? 'Something went wrong. Try again.') : 'Something went wrong. Try again.');
+      }
       setSent(true);
     } catch (e: unknown) {
       setSendError(e instanceof Error ? e.message : 'Something went wrong. Try again.');
@@ -134,12 +138,12 @@ export function ArCostCalculator() {
         <div className="card">
           {sent ? (
             <>
-              <h3 className="font-semibold text-ink-900">Sent — check your inbox</h3>
-              <p className="mt-1 text-sm text-ink-600">The detailed breakdown and 5-step AR playbook are on their way to {email}.</p>
+              <h3 className="font-semibold text-ink-900">Got it</h3>
+              <p className="mt-1 text-sm text-ink-600">We have {email} and your numbers. The 5-step playbook is a free download on the <a href="/playbook" className="link">playbook page</a>, and the person who built this will reply from a real address.</p>
             </>
           ) : showCapture ? (
             <>
-              <h2 className="font-semibold text-ink-900">Get the detailed breakdown + 5-step AR playbook</h2>
+              <h2 className="font-semibold text-ink-900">Leave your email and we will reply about your numbers</h2>
               <div className="mt-3 flex gap-2">
                 <input
                   type="email"
@@ -154,7 +158,7 @@ export function ArCostCalculator() {
                 </button>
               </div>
               {sendError && <p className="mt-2 text-xs text-red-600">{sendError}</p>}
-              <p className="mt-2 text-xs text-ink-500">No spam. Unsubscribe anytime.</p>
+              <p className="mt-2 text-xs text-ink-500">No automatic emails. One personal reply.</p>
             </>
           ) : (
             <>

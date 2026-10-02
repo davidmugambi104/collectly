@@ -6,7 +6,7 @@ import { sendLeadNotification } from '@/lib/lead-notify';
 import { parseJsonBody } from '@/lib/parse-body';
 
 const schema = z.object({
-  type: z.enum(['waitlist', 'interview', 'dunning_test', 'async_qualify']),
+  type: z.enum(['waitlist', 'interview', 'dunning_test', 'async_qualify', 'ar_audit', 'signup']),
   email: z.string().email(),
   name: z.string().optional(),
   company: z.string().optional(),

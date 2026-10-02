@@ -1,26 +1,40 @@
 import { rateLimit, getIp } from '@/lib/rate-limit';
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { waitlist } from '@/db/schema';
-import { nanoid } from '@/lib/utils';
 import { z } from 'zod';
 import { generatePlaybookPdf } from '@/lib/playbook-pdf';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { parseJsonBody } from '@/lib/parse-body';
+import { captureLead } from '@/lib/lead-capture';
+import { isHoneypotHit, leadOutcome, LEAD_FAILED_MESSAGE } from '@/lib/lead-guard';
 
 const schema = z.object({
-  email: z.string().email(),
-  name: z.string().min(1).optional(),
-  company: z.string().optional(),
+  email: z.string().email().max(254),
+  name: z.string().min(1).max(200).optional(),
+  company: z.string().max(200).optional(),
   /** When false, return a redirect to a hosted PDF URL instead of the bytes. */
   inline: z.boolean().default(false),
+  website: z.string().optional(), // honeypot
 });
+
+function pdfResponse(extra: Record<string, string> = {}) {
+  const pdf = generatePlaybookPdf();
+  return new NextResponse(new Uint8Array(pdf), {
+    headers: {
+      'content-type': 'application/pdf',
+      'content-disposition': `attachment; filename="collectly-dso-playbook.pdf"`,
+      'content-length': String(pdf.length),
+      ...extra,
+    },
+  });
+}
 
 /**
  * POST /api/playbook/download
  * Body: { email, name?, company? }
  * Returns: application/pdf (the "5-Step DSO Reduction Playbook")
- * Side effect: stores email in waitlist with source='playbook-download'
+ * Side effects: stores the email in waitlist with source='playbook-download'
+ * and emails the founder. If neither could be done the PDF is withheld and a
+ * 503 is returned, so a lead is never given the file without being recorded.
  */
 export async function POST(req: NextRequest) {
   const rl = await rateLimit(getIp(req), { max: 10, key: 'playbook-download' });
@@ -30,39 +44,26 @@ export async function POST(req: NextRequest) {
   const _parsed = await parseJsonBody(req, schema);
   if (!_parsed.ok) return _parsed.response;
   const data = _parsed.data;
-  const [row] = await db.insert(waitlist).values({
-    id: nanoid(),
-    email: data.email,
-    name: data.name,
-    company: data.company,
-    source: 'playbook-download',
-  }).onConflictDoNothing({ target: waitlist.email }).returning();
+  // A bot gets the file but is not stored and does not email the founder.
+  if (isHoneypotHit(data)) return pdfResponse({ 'x-lead-accepted': '0' });
 
-  // Fire-and-forget lead notify
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3030}`;
-  fetch(`${base}/api/lead-notify`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ type: 'waitlist', email: data.email, name: data.name, company: data.company, meta: { source: 'playbook-download' } }),
-  }).catch(() => {});
-
-  const pdf = generatePlaybookPdf();
-  return new NextResponse(new Uint8Array(pdf), {
-    headers: {
-      'content-type': 'application/pdf',
-      'content-disposition': `attachment; filename="collectly-dso-playbook.pdf"`,
-      'content-length': String(pdf.length),
-      'x-lead-accepted': row ? '1' : '0',
-    },
-  });
+  // Was an unawaited fetch() to our own /api/lead-notify, which a serverless
+  // function often froze before it was sent, with every failure swallowed.
+  const r = await captureLead(
+    { email: data.email, name: data.name, company: data.company, source: 'playbook-download' },
+    { type: 'waitlist', email: data.email, name: data.name, company: data.company, meta: { source: 'playbook-download' } },
+  );
+  const { status } = leadOutcome(r);
+  if (status !== 200) return NextResponse.json({ error: LEAD_FAILED_MESSAGE }, { status });
+  return pdfResponse({ 'x-lead-accepted': r.created ? '1' : '0' });
 }
 
-/** GET endpoint for direct download (e.g. /playbook link in a footer). */
+/**
+ * GET: plain download, nothing captured. It used to accept ?email= and insert
+ * it into the waitlist unverified, which let anyone subscribe someone else's
+ * address with a link. Nothing on the site links to it with an email.
+ */
 export async function GET(req: NextRequest) {
-  // SECURITY: this is a public, unauthenticated GET (unlike POST above, it
-  // was missing rate limiting entirely) — without it, a caller could hammer
-  // it to spam waitlist inserts via ?email= or just to burn CPU regenerating
-  // the PDF on every request.
   const rl = await rateLimit(getIp(req), { max: 10, key: 'playbook-download' });
   if (!rl.allowed) {
     return NextResponse.json(
@@ -70,26 +71,5 @@ export async function GET(req: NextRequest) {
       { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } },
     );
   }
-
-  const sp = new URL(req.url).searchParams;
-  const email = sp.get('email');
-  if (email) {
-    // If they passed an email via query string, capture it.
-    try {
-      await ensureBootstrapped();
-      await db.insert(waitlist).values({
-        id: nanoid(),
-        email,
-        source: 'playbook-link',
-      }).onConflictDoNothing({ target: waitlist.email });
-    } catch {}
-  }
-  const pdf = generatePlaybookPdf();
-  return new NextResponse(new Uint8Array(pdf), {
-    headers: {
-      'content-type': 'application/pdf',
-      'content-disposition': `attachment; filename="collectly-dso-playbook.pdf"`,
-      'content-length': String(pdf.length),
-    },
-  });
+  return pdfResponse();
 }
