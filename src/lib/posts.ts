@@ -46,7 +46,7 @@ This article is from Mugavi, which makes accounts receivable software. In Mugavi
   },
   {
     slug: 'read-an-aged-receivables-report',
-    title: 'How to read an aged receivables report, and what to do with each column',
+    title: 'How to read an aged receivables report, column by column',
     date: '2026-10-02', read: '5 min',
     excerpt: 'The report shows who owes you and how late. The columns are simple. What to do about each one is the part nobody explains.',
     tags: ['aged receivables', 'Xero', 'QuickBooks', 'bookkeeping'],
@@ -92,7 +92,7 @@ This article is from Mugavi, which makes accounts receivable software. Mugavi ha
   },
   {
     slug: 'late-payment-fees-when-to-charge',
-    title: 'Late payment fees: when to charge them, and how to do it without losing the customer',
+    title: 'When to charge late payment fees without losing the customer',
     date: '2026-10-02', read: '6 min',
     excerpt: 'A late fee only works if you are allowed to charge it and you actually apply it. A short guide to both, including the UK rules.',
     tags: ['late fees', 'late payment', 'invoicing', 'UK'],
@@ -131,7 +131,7 @@ This article is from Mugavi, which makes accounts receivable software. Mugavi ha
   },
   {
     slug: 'customer-statement-vs-another-reminder',
-    title: 'Send a statement instead of another reminder: when it works better',
+    title: 'Send a statement instead of another reminder',
     date: '2026-10-02', read: '4 min',
     excerpt: 'If a customer has several overdue invoices, a fifth reminder about one of them is the wrong email. A statement shows everything at once.',
     tags: ['statements', 'invoice reminders', 'accounts receivable'],
@@ -170,7 +170,7 @@ This article is from Mugavi, which makes accounts receivable software. In Mugavi
   },
   {
     slug: 'stop-quickbooks-emailing-your-customers',
-    title: 'How to stop QuickBooks Online from emailing your customers without asking',
+    title: 'Stop QuickBooks Online emailing your customers without asking',
     date: '2026-09-30', read: '4 min',
     excerpt: 'Business owners keep finding that QuickBooks sent their customers reminders they never approved. What people report, where to look, and how to stay in control.',
     tags: ['QuickBooks', 'invoice reminders', 'A/R automation'],
@@ -326,7 +326,7 @@ https://mugavi.com
 
   {
     slug: 'cash-flow-forecasting-small-business',
-    title: 'How to forecast cash flow when you have 12 open invoices and 3 days of runway',
+    title: 'Forecast cash flow when you have 12 open invoices',
     date: '2026-07-05', read: '6 min',
     excerpt: 'A practical guide for owners. Why weighted aging beats straight-line forecasts. And when to ignore your bookkeeper\'s spreadsheet.',
     tags: ['cash flow', 'forecasting', 'small business'],
@@ -658,7 +658,7 @@ Davie
   },
   {
     slug: 'true-cost-of-late-payments-small-business-2026',
-    title: 'The true cost of late payments for small businesses (and what to do about it)',
+    title: 'The true cost of late payments for small businesses',
     date: '2026-07-15', read: '6 min',
     excerpt: 'Late invoices cost the average 10-person service business $17,500 in cash plus another $4,000+ in hidden costs. The full breakdown, with sources, and the 4 actions that actually move the number.',
     tags: ['late payments', 'cash flow', 'small business', 'data'],
@@ -733,7 +733,7 @@ Davie
   },
   {
     slug: 'final-notice-that-gets-paid-2026',
-    title: 'How to write a final notice that actually gets paid (with 4 templates)',
+    title: 'How to write a final notice that gets paid (4 templates)',
     date: '2026-07-15', read: '5 min',
     excerpt: 'Most "final notices" are too long, too legal, and too late. Here\'s the 4-paragraph structure that gets paid within 7 days, and 4 templates you can copy.',
     tags: ['dunning', 'final notice', 'templates', 'collections'],
