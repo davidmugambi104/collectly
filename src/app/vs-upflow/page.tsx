@@ -20,7 +20,7 @@ import { PLAN_PRICING } from '@/lib/utils';
  * this page says exactly that instead of picking a number and asserting it.
  */
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Upflow: published pricing for teams without a finance department',
+  title: 'Mugavi vs Upflow: published pricing, no finance team needed',
   description:
     'Upflow is a Financial Relationship Management platform for B2B finance ' +
     'teams, with collections, payments and cash application, and pricing you ' +
