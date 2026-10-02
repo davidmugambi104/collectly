@@ -8,7 +8,8 @@ import { db } from '@/db';
 import { organizations, subscriptions, customers, invoices, payments } from '@/db/schema';
 import { eq, and, gte, sql, desc } from 'drizzle-orm';
 import { CheckCircle2, Sparkles, ArrowUpRight, CreditCard, Calendar, AlertCircle, ExternalLink, FileText, X } from 'lucide-react';
-import { PLAN_PRICING, formatCurrency, formatDate } from '@/lib/utils';
+import { PLAN_PRICING, PRACTICE_EXTRA_ORG_MONTHLY, formatCurrency, formatDate } from '@/lib/utils';
+import { bookOverage } from '@/lib/book-overage';
 import { createCustomerPortal } from '@/lib/billing';
 import Link from 'next/link';
 
@@ -213,6 +214,17 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               limit={current.includedOrgs}
             />
           </div>
+          {(() => {
+            const o = bookOverage({ books: bookCount, included: current.includedOrgs, extraMonthly: PRACTICE_EXTRA_ORG_MONTHLY });
+            if (o.kind === 'within') return null;
+            return (
+              <p role="status" className="mt-3 text-sm text-ink-700">
+                {o.kind === 'upgrade'
+                  ? `You belong to ${o.books} client books, and this plan covers one. The Practice plan is for running several.`
+                  : `${o.extra} ${o.extra === 1 ? 'book is' : 'books are'} beyond the ${current.includedOrgs} included. Extra books are ${formatCurrency(PRACTICE_EXTRA_ORG_MONTHLY, 'USD')} a month each, ${formatCurrency(o.monthly, 'USD')} a month in all, added to your invoice. Nothing is blocked.`}
+              </p>
+            );
+          })()}
         </div>
 
         {/* Quick links */}
