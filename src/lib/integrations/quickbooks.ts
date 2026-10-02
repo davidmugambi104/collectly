@@ -58,13 +58,13 @@ const QBO_REVOKE = 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke';
 
 // Refresh the access token if it's within 5 min of expiry (or already past).
 // Persists the new tokens. Returns the (possibly new) integration row.
-async function getFreshQboToken(orgId: string) {
+async function getFreshQboToken(orgId: string, force = false) {
   const [integ] = await db.select().from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks'))).limit(1);
   if (!integ) throw new Error('QuickBooks not connected');
 
   const now = Date.now();
   const expiresAt = integ.expiresAt ? new Date(integ.expiresAt).getTime() : 0;
-  const needsRefresh = !integ.accessToken || !integ.refreshToken || expiresAt - now < 5 * 60 * 1000;
+  const needsRefresh = force || !integ.accessToken || !integ.refreshToken || expiresAt - now < 5 * 60 * 1000;
   if (!needsRefresh) return integ;
 
   const basic = Buffer.from(`${process.env.QBO_CLIENT_ID}:${process.env.QBO_CLIENT_SECRET}`).toString('base64');
@@ -135,8 +135,9 @@ const QBO_MAX_RETRIES = 3;
  * be there.
  */
 async function qboFetch(orgId: string, path: string) {
-  const integ = await getFreshQboToken(orgId);
+  let integ = await getFreshQboToken(orgId);
   const url = path.startsWith('http') ? path : `${QBO_BASE}/v3/company/${integ.realmId}${path}`;
+  let refreshedOn401 = false;
 
   for (let attempt = 0; ; attempt++) {
     const res = await fetch(url, {
@@ -153,9 +154,29 @@ async function qboFetch(orgId: string, path: string) {
       continue;
     }
 
-    if (!res.ok) throw new Error(`QBO ${path} failed: ${res.status} ${await res.text()}`);
-    return res.json();
+    // A 401 can mean the access token was invalidated early (for example the
+    // user reconnected elsewhere). Refresh once and retry before giving up.
+    if (res.status === 401 && !refreshedOn401) {
+      refreshedOn401 = true;
+      integ = await getFreshQboToken(orgId, true);
+      continue;
+    }
+
+    if (!res.ok) throw new Error(`QBO ${path} failed: ${res.status} ${await res.text()}${tidSuffix(res)}`);
+    const json = await res.json();
+    // QuickBooks reports some failures as a Fault object. Never treat one as an empty result:
+    // an empty page would read as "no more invoices" and end a sync looking clean.
+    if (json && typeof json === 'object' && (json as { Fault?: unknown }).Fault) {
+      throw new Error(`QBO ${path} returned a Fault: ${JSON.stringify((json as { Fault: unknown }).Fault).slice(0, 300)}${tidSuffix(res)}`);
+    }
+    return json;
   }
+}
+
+/** Intuit asks for the intuit_tid response header when you report a problem. */
+function tidSuffix(res: Response): string {
+  const tid = res.headers.get('intuit_tid');
+  return tid ? ` (intuit_tid ${tid})` : '';
 }
 
 async function qboPost(orgId: string, path: string, body: unknown) {
@@ -287,7 +308,7 @@ const QBO_MAX_PAGES = 10;
 
 /** List all open invoices (Balance > 0) from QBO. Returns raw Query response (first page only). */
 export async function qboListOpenInvoices(orgId: string) {
-  const query = `SELECT ${QBO_INVOICE_FIELDS} FROM Invoice WHERE Balance > '0' MAXRESULTS ${QBO_PAGE}`;
+  const query = `SELECT ${QBO_INVOICE_FIELDS} FROM Invoice WHERE Balance > '0' ORDERBY Id MAXRESULTS ${QBO_PAGE}`;
   return qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`);
 }
 
@@ -297,7 +318,7 @@ export async function qboListOpenInvoices(orgId: string) {
  * first page asks for more, with STARTPOSITION (1-based).
  */
 async function qboListOpenInvoicesFrom(orgId: string, startPosition: number): Promise<QboInvoice[]> {
-  const query = `SELECT ${QBO_INVOICE_FIELDS} FROM Invoice WHERE Balance > '0' STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const query = `SELECT ${QBO_INVOICE_FIELDS} FROM Invoice WHERE Balance > '0' ORDERBY Id STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
   const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Invoice', QboInvoice>;
   return res?.QueryResponse?.Invoice ?? [];
 }
@@ -317,7 +338,7 @@ const QBO_CUSTOMER_FIELDS = 'Id, DisplayName, CompanyName, PrimaryEmailAddr, Pri
 
 /** List customers from QBO (first page). */
 export async function qboListCustomers(orgId: string) {
-  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer MAXRESULTS ${QBO_PAGE}`;
+  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer ORDERBY Id MAXRESULTS ${QBO_PAGE}`;
   return qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`);
 }
 
@@ -328,14 +349,14 @@ export async function qboListCustomers(orgId: string) {
  */
 type QboCreditMemo = { Id?: string; Balance?: number; CustomerRef?: { value?: string }; CurrencyRef?: { value?: string } };
 async function qboListCreditMemosFrom(orgId: string, startPosition: number): Promise<QboCreditMemo[]> {
-  const query = `SELECT Id, CustomerRef, Balance, CurrencyRef FROM CreditMemo WHERE Balance > '0' STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const query = `SELECT Id, CustomerRef, Balance, CurrencyRef FROM CreditMemo WHERE Balance > '0' ORDERBY Id STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
   const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'CreditMemo', QboCreditMemo>;
   return res?.QueryResponse?.CreditMemo ?? [];
 }
 
 type QboPayment = { Id?: string; UnappliedAmt?: number; CustomerRef?: { value?: string }; CurrencyRef?: { value?: string } };
 async function qboListUnappliedPaymentsFrom(orgId: string, startPosition: number): Promise<QboPayment[]> {
-  const query = `SELECT Id, CustomerRef, UnappliedAmt, CurrencyRef FROM Payment WHERE UnappliedAmt > '0' STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const query = `SELECT Id, CustomerRef, UnappliedAmt, CurrencyRef FROM Payment WHERE UnappliedAmt > '0' ORDERBY Id STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
   const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Payment', QboPayment>;
   return res?.QueryResponse?.Payment ?? [];
 }
@@ -358,7 +379,7 @@ export async function qboListCredits(orgId: string): Promise<{ credits: Array<{ 
 
 /** Customers past the first 1000. Same approach as qboListOpenInvoicesFrom. */
 async function qboListCustomersFrom(orgId: string, startPosition: number): Promise<QboCustomer[]> {
-  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer ORDERBY Id STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
   const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Customer', QboCustomer>;
   return res?.QueryResponse?.Customer ?? [];
 }
