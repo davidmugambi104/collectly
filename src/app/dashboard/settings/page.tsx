@@ -106,6 +106,18 @@ export default async function SettingsPage() {
         </div>
       </form>
 
+      <div className="mt-10 max-w-3xl border-t border-ink-200 pt-8">
+        <h2 className="app-label">Export your data</h2>
+        <p className="app-meta mt-1 font-normal">Customers, invoices, reminders and statements as CSV files. Owner or admin only.</p>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <a className="btn-secondary btn-sm" href="/api/account/export">Download everything (ZIP)</a>
+          {(['customers', 'invoices', 'reminders', 'statements'] as const).map((d) => (
+            <a key={d} className="link text-sm" href={`/api/account/export?dataset=${d}`}>{d} (CSV)</a>
+          ))}
+        </div>
+        <p className="app-meta mt-2 font-normal">Customers and invoices imported from QuickBooks or Xero can be removed from Integrations after you disconnect.</p>
+      </div>
+
       {/* Irreversible actions live below the fold of the form, behind a rule and
           real whitespace — far enough from Save that no one arrives here by
           momentum. */}

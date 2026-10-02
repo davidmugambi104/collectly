@@ -109,8 +109,8 @@ const sections = [
       <>
         <p>
           Mugavi will assist you in responding to data-subject requests (access, rectification, deletion,
-          portability, objection) within 10 business days. You can download your reminder history, aged receivables report and customer statements as CSV from the app;
-          for a full export of everything else, ask us and we will provide it as part of the same request process. The account owner can delete
+          portability, objection) within 10 business days. The account owner or an admin can download customers, invoices, reminders and statements as a ZIP of CSV files from <a href="/dashboard/settings" className="link">Settings</a>;
+          for anything outside that, ask us and we will provide it as part of the same request process. The account owner can delete
           the account from <a href="/dashboard/settings" className="link">Settings</a>: Customer Data is removed from the live database
           immediately, and backups rotate out on a 30-day cycle.
         </p>

@@ -173,8 +173,8 @@ export default function ForBookkeepersPage() {
         <h2 className="mt-12 h2">Leaving is easy.</h2>
         <ul className="mt-6 space-y-3 text-sm text-ink-700">
           <li>14-day trial with no card taken. It does not turn into a paid plan by itself.</li>
-          <li>Disconnecting a client book from QuickBooks or Xero is one click on Integrations. We ask Intuit or Xero to revoke our access and delete the stored tokens. What was already imported stays in Mugavi until you delete it or delete the account.</li>
-          <li>Reminder history, the aged receivables report and customer statements download as CSV. There is no one-click export of everything yet; ask and we will send the rest.</li>
+          <li>Disconnecting a client book from QuickBooks or Xero is one click on Integrations. We ask Intuit or Xero to revoke our access and delete the stored tokens. What was already imported stays until you remove it: Integrations shows the counts, you confirm, and only rows from that provider go.</li>
+          <li>Settings has one download, a ZIP of CSV files, with customers, invoices, reminders and what each customer owes. The owner or an admin can export.</li>
           <li>The account owner can delete a book from Settings. Its customers, invoices and reminder history go straight away, and backups roll off within 30 days.</li>
           <li>To cancel or change a plan, ask from Billing. David confirms by email and nothing changes until he does. No cancellation fee, no contract.</li>
         </ul>

@@ -62,7 +62,9 @@ export type EventType =
   | 'auth.signed_in'
   | 'auth.signed_up'
   | 'integration.connected'
-  | 'integration.disconnected';
+  | 'integration.disconnected'
+  | 'data.exported'
+  | 'data.imported_removed';
 
 export async function recordEvent(opts: {
   orgId: string;
