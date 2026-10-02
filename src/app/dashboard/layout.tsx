@@ -1,3 +1,4 @@
+import { loadBookCount } from '@/lib/practice-load';
 import { getAuth as auth } from '@/lib/auth-helper';
 import { ClerkProvider } from '@/components/clerk-provider';
 import { IdentifyUser } from '@/components/app/identify-user';
@@ -14,7 +15,7 @@ import { and, eq, sql } from 'drizzle-orm';
  * failure degrades to neutral chrome rather than taking the whole dashboard
  * down with it — the sidebar is not worth a 500.
  */
-async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceChrome> {
+async function loadChrome(orgId: string | null | undefined, userId?: string | null): Promise<WorkspaceChrome> {
   const base: WorkspaceChrome = {
     orgName: null,
     plan: null,
@@ -24,6 +25,7 @@ async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceCh
     unreadCount: 0,
     pendingCount: 0,
     taskCount: 0,
+    bookCount: 0,
   };
   if (!orgId) return base;
 
@@ -65,6 +67,8 @@ async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceCh
       const [tasks] = await db.select({ n: sql<number>`count(*)` }).from(dunningRuns).where(and(eq(dunningRuns.orgId, orgId), eq(dunningRuns.channel, 'phone'), eq(dunningRuns.status, 'scheduled')));
       taskCount = Number(tasks?.n ?? 0);
     } catch { /* leave it at 0 */ }
+    let bookCount = 0;
+    try { if (userId) bookCount = await loadBookCount(userId); } catch { /* the Client books link just stays hidden */ }
 
     return {
       orgName: org?.name ?? null,
@@ -75,6 +79,7 @@ async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceCh
       unreadCount: Number(unread?.n ?? 0),
       pendingCount,
       taskCount,
+      bookCount,
     };
   } catch {
     return base;
@@ -83,7 +88,7 @@ async function loadChrome(orgId: string | null | undefined): Promise<WorkspaceCh
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId, orgId } = await auth();
-  const chrome = await loadChrome(orgId);
+  const chrome = await loadChrome(orgId, userId);
 
   // ClerkProvider scopes to the dashboard rather than the root layout: AppShell
   // renders Clerk's UserButton and OrganizationSwitcher on the client, and

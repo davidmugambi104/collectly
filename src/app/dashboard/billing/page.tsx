@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import { loadBookCount } from '@/lib/practice-load';
 import { AppShell } from '@/components/app/shell';
 import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
@@ -46,10 +47,8 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
     .select({ invoiceCountThisMonth: sql<number>`count(*)::int` })
     .from(invoices)
     .where(and(eq(invoices.orgId, orgId), gte(invoices.createdAt, monthStart)));
-  const [{ connectedIntegrations }] = await db
-    .select({ connectedIntegrations: sql<number>`count(*)::int` })
-    .from(sql`integrations`)
-    .where(sql`org_id = ${orgId} AND status = 'connected'`);
+  // Client organizations are the books this person belongs to, not connected integrations.
+  const bookCount = userId ? await loadBookCount(userId) : 1;
 
   // Recent payments → "invoice history" (real receipts, not Stripe-generated)
   const recentPayments = await db
@@ -210,7 +209,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             />
             <UsageMeter
               label="Client organizations"
-              used={connectedIntegrations}
+              used={bookCount}
               limit={current.includedOrgs}
             />
           </div>

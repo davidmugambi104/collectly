@@ -32,6 +32,8 @@ export type WorkspaceChrome = {
   pendingCount: number;
   /** Open call tasks — drives the Tasks nav count. */
   taskCount: number;
+  /** How many organizations (client books) this person belongs to. */
+  bookCount: number;
 };
 
 const FALLBACK: WorkspaceChrome = {
@@ -43,6 +45,7 @@ const FALLBACK: WorkspaceChrome = {
   unreadCount: 0,
   pendingCount: 0,
   taskCount: 0,
+  bookCount: 0,
 };
 
 const WorkspaceContext = createContext<WorkspaceChrome>(FALLBACK);

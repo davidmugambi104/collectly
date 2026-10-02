@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Inbox, FileText, Building2, ArrowDownToLine,
-  Send, TrendingUp, History, BarChart3, PhoneCall, Percent, Plug, Settings, MessageSquareText, type LucideIcon,
+  Send, TrendingUp, History, BarChart3, PhoneCall, Percent, Plug, Settings, MessageSquareText, Layers, type LucideIcon,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -13,6 +13,8 @@ export type NavItem = {
   showPending?: boolean;
   /** Render the count of open call tasks as a trailing pill. */
   showTasks?: boolean;
+  /** Only shown to people who belong to more than one organization (a practice with several client books). */
+  onlyWithManyBooks?: boolean;
   /** Sub-destinations, revealed only while this section is active. */
   children?: { href: string; label: string }[];
 };
@@ -35,6 +37,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
       { href: '/dashboard/inbox', label: 'Inbox', icon: Inbox, showUnread: true },
+      { href: '/dashboard/practice', label: 'Client books', icon: Layers, onlyWithManyBooks: true },
     ],
   },
   {
