@@ -1,4 +1,4 @@
-import { loadBookCount } from '@/lib/practice-load';
+import { loadCachedBookCount } from '@/lib/practice-load';
 import { getAuth as auth } from '@/lib/auth-helper';
 import { ClerkProvider } from '@/components/clerk-provider';
 import { IdentifyUser } from '@/components/app/identify-user';
@@ -68,7 +68,7 @@ async function loadChrome(orgId: string | null | undefined, userId?: string | nu
       taskCount = Number(tasks?.n ?? 0);
     } catch { /* leave it at 0 */ }
     let bookCount = 0;
-    try { if (userId) bookCount = await loadBookCount(userId); } catch { /* the Client books link just stays hidden */ }
+    try { if (userId) bookCount = await loadCachedBookCount(userId); } catch { /* the Client books link just stays hidden */ }
 
     return {
       orgName: org?.name ?? null,

@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 
-import { loadBookCount } from '@/lib/practice-load';
+import { loadBookCount, loadCachedBookCount } from '@/lib/practice-load';
 import { AppShell } from '@/components/app/shell';
 import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
@@ -13,6 +13,7 @@ import { bookOverage } from '@/lib/book-overage';
 import { createCustomerPortal } from '@/lib/billing';
 import Link from 'next/link';
 import { parseCancelKind } from '@/lib/cancel-request';
+import { CONTACT } from '@/lib/site-contact';
 
 // Limits come from PLAN_PRICING. This file used to keep its own table, and it
 // drifted: it still capped Starter at 50 invoices and 1 user after the plan
@@ -51,7 +52,8 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
     .from(invoices)
     .where(and(eq(invoices.orgId, orgId), gte(invoices.createdAt, monthStart)));
   // Client organizations are the books this person belongs to, not connected integrations.
-  const bookCount = userId ? await loadBookCount(userId) : 1;
+  // Asks Clerk; if it is unreachable the cached count is a fair stand-in.
+  const bookCount = await loadBookCount(userId).catch(() => loadCachedBookCount(userId)).catch(() => 1);
 
   // Recent payments → "invoice history" (real receipts, not Stripe-generated)
   const recentPayments = await db
@@ -249,8 +251,8 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             return (
               <p role="status" className="mt-3 text-sm text-ink-700">
                 {o.kind === 'upgrade'
-                  ? `You belong to ${o.books} client books, and this plan covers one. The Practice plan is for running several.`
-                  : `${o.extra} ${o.extra === 1 ? 'book is' : 'books are'} beyond the ${current.includedOrgs} included. Extra books are ${formatCurrency(PRACTICE_EXTRA_ORG_MONTHLY, 'USD')} a month each, ${formatCurrency(o.monthly, 'USD')} a month in all, added to your invoice. Nothing is blocked.`}
+                  ? `You belong to ${o.books} client books, and this plan covers one. The Practice plan is for running several. Ask David to set it up and he will invoice you by hand. If your practice already has a Practice plan, it sits on one organization, so this note appears on your client books too and you can ignore it there.`
+                  : `${o.extra} ${o.extra === 1 ? 'book is' : 'books are'} beyond the ${current.includedOrgs} included. Extra books are ${formatCurrency(PRACTICE_EXTRA_ORG_MONTHLY, 'USD')} a month each, ${formatCurrency(o.monthly, 'USD')} a month in all, added to your manual invoice. Nothing is blocked and nothing is charged automatically.`}
               </p>
             );
           })()}
@@ -262,10 +264,10 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           <ul className="mt-3 space-y-2 text-sm">
             <li><Link href="/dashboard/invoices" className="link-quiet"><FileText className="h-3.5 w-3.5" />View invoices</Link></li>
             <li><Link href="/dashboard/payments" className="link-quiet"><CreditCard className="h-3.5 w-3.5" />View payments</Link></li>
-            <li><a href="mailto:billing@getcollectly.app" className="link-quiet"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
+            <li><a href={`mailto:${CONTACT.david}`} className="link-quiet"><ExternalLink className="h-3.5 w-3.5" />Contact billing</a></li>
           </ul>
           <div className="mt-4 pt-4 border-t border-ink-100 text-xs text-ink-500">
-            Questions about your plan? Email <a href="mailto:billing@getcollectly.app" className="text-brand-600">billing@getcollectly.app</a>.
+            Questions about your plan? Email <a href={`mailto:${CONTACT.david}`} className="text-brand-600">{CONTACT.david}</a>.
           </div>
         </div>
       </div>

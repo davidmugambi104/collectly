@@ -19,6 +19,8 @@ export type BookFacts = {
   lastSyncAt: Date | null;
   integrationError: boolean;
   hasIntegration: boolean;
+  /** A Clerk organization Mugavi has no record of yet: nobody has opened it. */
+  notOpenedYet?: boolean;
 };
 
 export type BookSummary = BookFacts & {
@@ -35,6 +37,7 @@ function overdueRank(m: Money): number {
 
 export function attentionFor(b: BookFacts, now: Date = new Date()): string[] {
   const out: string[] = [];
+  if (b.notOpenedYet) return ['Not opened yet. Open it once to set it up'];
   if (b.integrationError) out.push('Accounting connection needs to be reconnected');
   else if (!b.hasIntegration) out.push('Not connected to Xero or QuickBooks');
   else if (b.lastSyncAt && now.getTime() - b.lastSyncAt.getTime() > 3 * 86_400_000) out.push('Has not synced in over 3 days');

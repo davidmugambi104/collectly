@@ -15,6 +15,7 @@ import { db } from '@/db';
 import { users, organizations, deletedOrgsLog, subscriptions } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
+import { recordMembership } from '@/lib/clerk-books';
 
 // Admin emails allowed to hit internal/admin-only routes (lead exports,
 // upgrade-request review, etc). Same allowlist as src/app/admin/upgrade-requests.
@@ -133,6 +134,12 @@ export async function ensureOrgProvisioned(userId: string, orgId: string): Promi
   }).onConflictDoNothing();
 }
 
+/** Fill the membership cache the Client books view reads. Never lets a failure break a request. */
+async function rememberMembership(userId: string, orgId: string): Promise<void> {
+  try { await recordMembership(userId, orgId); }
+  catch (e: unknown) { console.error('[auth] could not record membership:', e instanceof Error ? e.message : e); }
+}
+
 export async function getAuth() {
   if (!devShimEnabled()) {
     throw new Error('Dev auth shim is disabled in production');
@@ -147,6 +154,7 @@ export async function getAuth() {
   const session = await auth();
   if (session.userId && session.orgId) {
     await ensureOrgProvisioned(session.userId, session.orgId);
+    await rememberMembership(session.userId, session.orgId);
   }
   return session;
 }
@@ -170,6 +178,7 @@ export async function getAuthWithOrg() {
 
   if (session.orgId) {
     await ensureOrgProvisioned(session.userId, session.orgId);
+    await rememberMembership(session.userId, session.orgId);
     return { userId: session.userId, orgId: session.orgId, user: null };
   }
 

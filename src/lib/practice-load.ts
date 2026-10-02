@@ -8,19 +8,48 @@ import { db } from '@/db';
 import { organizations, memberships, invoices, integrations, inboxMessages, dunningApprovals } from '@/db/schema';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import type { BookFacts, Money } from '@/lib/practice';
+import { reconcileBooks, type BookRef } from '@/lib/book-membership';
+import { listClerkBooks, dropMemberships } from '@/lib/clerk-books';
+
+const devShim = () => process.env.USE_DEV_AUTH === '1';
+
+async function cachedBooks(userId: string): Promise<BookRef[]> {
+  const rows: Array<{ id: string; name: string }> = await db
+    .select({ id: organizations.id, name: organizations.name })
+    .from(memberships).innerJoin(organizations, eq(organizations.id, memberships.orgId))
+    .where(eq(memberships.userId, userId));
+  return rows.map((r) => ({ orgId: r.id, name: r.name }));
+}
+
+/**
+ * The books this person belongs to. With Clerk this asks Clerk (and trims our stale
+ * cache); in the dev shim it is the cache. Throws if Clerk cannot be reached, so a
+ * missing list is never mistaken for "no books".
+ */
+export async function listBooks(userId: string) {
+  const cached = await cachedBooks(userId);
+  const clerk = devShim() ? null : await listClerkBooks(userId);
+  const r = reconcileBooks(clerk, cached);
+  if (r.staleOrgIds.length) await dropMemberships(userId, r.staleOrgIds).catch(() => undefined);
+  return r;
+}
 
 const OPEN = ['sent', 'viewed', 'overdue', 'partial'] as const;
 
+/** Verified count, for the billing page. The sidebar uses loadCachedBookCount (no Clerk call per page). */
 export async function loadBookCount(userId: string): Promise<number> {
+  return (await listBooks(userId)).books.length;
+}
+
+export async function loadCachedBookCount(userId: string): Promise<number> {
   const [row] = await db.select({ n: sql<number>`count(*)::int` }).from(memberships).where(eq(memberships.userId, userId));
   return Number(row?.n ?? 0);
 }
 
 export async function loadBooks(userId: string, now: Date = new Date()): Promise<BookFacts[]> {
-  const orgRows: Array<{ id: string; name: string }> = await db
-    .select({ id: organizations.id, name: organizations.name })
-    .from(memberships).innerJoin(organizations, eq(organizations.id, memberships.orgId))
-    .where(eq(memberships.userId, userId));
+  const { books: refs, unseen } = await listBooks(userId);
+  const orgRows = refs.map((r) => ({ id: r.orgId, name: r.name }));
+  const unseenIds = new Set(unseen.map((u) => u.orgId));
   if (orgRows.length === 0) return [];
   const orgIds = orgRows.map((o) => o.id);
 
@@ -65,6 +94,7 @@ export async function loadBooks(userId: string, now: Date = new Date()): Promise
       lastSyncAt: synced,
       integrationError: mine.some((i) => i.status === 'error'),
       hasIntegration: mine.some((i) => i.status === 'connected' || i.status === 'error'),
+      notOpenedYet: unseenIds.has(o.id),
     };
   });
 }
