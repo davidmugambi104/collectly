@@ -8,7 +8,7 @@ import { loadAgedReport } from '@/lib/aged-receivables-load';
 import { formatCurrency } from '@/lib/utils';
 
 const HEAD = ['Not due', '1-30 days', '31-60 days', '61-90 days', '90+ days'];
-const cell = (c: number, currency: string) => (c === 0 ? <span className="text-ink-300">–</span> : formatCurrency(c / 100, currency));
+const cell = (c: number, currency: string) => (c === 0 ? <span className="text-ink-500">–</span> : formatCurrency(c / 100, currency));
 
 export default async function AgedReceivablesPage() {
   const { userId, orgId } = await auth();

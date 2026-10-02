@@ -33,16 +33,16 @@ export function DsoCalculator({ benchmarks }: { benchmarks: Array<{ region: stri
         </div>
         <div className="mt-4 space-y-4">
           <div>
-            <label className="label">Accounts receivable (open invoices)</label>
-            <input type="number" min="0" step="1000" value={ar} onChange={(e) => setAr(Number(e.target.value))} className="input font-mono" />
+            <label className="label" htmlFor="client-f1">Accounts receivable (open invoices)</label>
+            <input id="client-f1" type="number" min="0" step="1000" value={ar} onChange={(e) => setAr(Number(e.target.value))} className="input font-mono" />
           </div>
           <div>
-            <label className="label">Revenue for the period</label>
-            <input type="number" min="0" step="1000" value={revenue} onChange={(e) => setRevenue(Number(e.target.value))} className="input font-mono" />
+            <label className="label" htmlFor="client-f2">Revenue for the period</label>
+            <input id="client-f2" type="number" min="0" step="1000" value={revenue} onChange={(e) => setRevenue(Number(e.target.value))} className="input font-mono" />
           </div>
           <div>
-            <label className="label">Period</label>
-            <select value={periodDays} onChange={(e) => setPeriodDays(Number(e.target.value))} className="input">
+            <label className="label" htmlFor="client-f3">Period</label>
+            <select id="client-f3" value={periodDays} onChange={(e) => setPeriodDays(Number(e.target.value))} className="input">
               {PERIODS.map((p) => <option key={p.days} value={p.days}>{p.label}</option>)}
             </select>
           </div>

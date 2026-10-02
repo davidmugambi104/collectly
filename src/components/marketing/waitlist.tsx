@@ -51,7 +51,7 @@ export function WaitlistForm({ variant, source = 'homepage', compact }: { varian
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourcompany.com"
-          className={`flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none ${dark ? 'text-white placeholder:text-ink-500' : 'text-ink-900 placeholder:text-ink-400'}`}
+          className={`flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none ${dark ? 'text-white placeholder:text-ink-400' : 'text-ink-900 placeholder:text-ink-500'}`}
         />
         <button
           type="submit"

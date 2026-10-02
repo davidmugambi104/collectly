@@ -201,7 +201,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             placeholder="Search or jump to…"
             aria-label="Search commands"
             aria-controls="command-results"
-            className="h-[52px] w-full bg-transparent text-[15px] tracking-[-0.01em] text-ink-950 placeholder:text-ink-400 focus:outline-none"
+            className="h-[52px] w-full bg-transparent text-[15px] tracking-[-0.01em] text-ink-950 placeholder:text-ink-500 focus:outline-none"
           />
           <kbd className="kbd shrink-0">Esc</kbd>
         </div>
@@ -219,7 +219,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                 {/* Group headers stick to the top of the scroller, so a long
                     result list never leaves the reader without a heading. */}
                 {header && (
-                  <div className="sticky top-0 z-10 -mx-1.5 bg-white/90 px-4 pb-1.5 pt-2.5 text-2xs font-medium uppercase tracking-[0.08em] text-ink-400 backdrop-blur-sm">
+                  <div className="sticky top-0 z-10 -mx-1.5 bg-white/90 px-4 pb-1.5 pt-2.5 text-2xs font-medium uppercase tracking-[0.08em] text-ink-500 backdrop-blur-sm">
                     {header}
                   </div>
                 )}

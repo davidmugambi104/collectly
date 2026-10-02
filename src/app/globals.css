@@ -25,7 +25,7 @@
        (~8°), info/blue (~211°), and the dashboard's own violet (~255°) —
        so a marketing CTA can never be misread as a status badge, and the
        public site now reads as visually its own brand rather than a skin
-       of the product screen. --brand-600 is 4.68:1 against white, so
+       of the product screen. --brand-600 is 4.98:1 against white (the earlier 4.68 figure was wrong, the old 28 135 135 measured 4.32), so
        `bg-brand-600 text-white` (the hero band, primary CTAs) stays WCAG AA. */
     --ink-50: 250 249 248;
     --ink-100: 244 242 241;
@@ -45,7 +45,7 @@
     --brand-300: 130 217 217;
     --brand-400: 71 205 205;
     --brand-500: 43 171 171;
-    --brand-600: 28 135 135;
+    --brand-600: 24 124 124;
     --brand-700: 20 107 107;
     --brand-800: 16 80 80;
     --brand-900: 14 58 58;
@@ -139,7 +139,7 @@
     @apply bg-ink-50 text-ink-900 antialiased;
     font-feature-settings: "ss01", "cv11";
   }
-  *:focus-visible { @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-ink-50; }
+  *:focus-visible { @apply outline-none ring-2 ring-brand-600 ring-offset-2 ring-offset-ink-50; }
 }
 
 @layer components {
@@ -160,7 +160,7 @@
      pricing cards, feature cards, FAQ items and comparison cards at once. */
   .card { @apply rounded-xl border border-ink-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-ink-300; }
   .card-lg { @apply rounded-2xl border border-ink-200 bg-white p-8 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-ink-300; }
-  .input { @apply w-full rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none; }
+  .input { @apply w-full rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-ink-500 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/25 focus:outline-none; }
   .label { @apply block text-sm font-medium text-ink-700 mb-1.5; }
   .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
   .badge-success { @apply badge bg-emerald-50 text-emerald-700 border border-emerald-200; }
@@ -610,6 +610,17 @@
 }
 
 @layer base {
+  /* WCAG 2.3.3 / 2.2.2: honour the OS reduced-motion setting on the public
+     pages too (the .app scope below only covered the dashboard). */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   /* Focus. `ring-offset` on a light ring over white is nearly invisible at a
      glance; a two-tone ring (white gap, then accent) stays legible on any
      surface the app puts a control on, and ring-offset-2 clipped visibly
@@ -618,7 +629,7 @@
     outline: none;
     box-shadow:
       0 0 0 2px rgb(255 255 255 / 0.95),
-      0 0 0 4px rgb(var(--brand-500) / 0.55);
+      0 0 0 4px rgb(var(--brand-600));
   }
 
   /* Motion respects the OS setting. Everything above is decoration; none of

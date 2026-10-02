@@ -343,11 +343,11 @@ function AgingCard({ aging }: { aging: Awaited<ReturnType<typeof getAgingReport>
           >
             <span className={`h-2 w-2 shrink-0 rounded-full ${r.fill}`} aria-hidden="true" />
             <span className="flex-1 truncate text-[13px] text-ink-700 group-hover:text-ink-950">{r.label}</span>
-            <span className="w-8 text-right text-2xs tabular-nums text-ink-400">{Math.round(r.pct)}%</span>
+            <span className="w-8 text-right text-2xs tabular-nums text-ink-500">{Math.round(r.pct)}%</span>
             <span className="w-28 text-right text-[13px] font-medium tabular-nums text-ink-950">
               {formatCurrency(r.amount)}
             </span>
-            <span className="w-7 text-right text-2xs tabular-nums text-ink-400">{r.count}</span>
+            <span className="w-7 text-right text-2xs tabular-nums text-ink-500">{r.count}</span>
             <ChevronRight
               className="h-3.5 w-3.5 shrink-0 text-ink-300 opacity-0 transition-opacity group-hover:opacity-100"
               aria-hidden="true"

@@ -157,7 +157,7 @@ export function CustomersTable({ insights, noDebt, gaps = {} }: { insights: Row[
                             </span>
                             {gaps[row.customerId] && <span className="mt-0.5 block"><GapBadges gaps={gaps[row.customerId]} /></span>}
                             {row.email && (
-                              <span className="block truncate text-2xs leading-4 text-ink-400">{row.email}</span>
+                              <span className="block truncate text-2xs leading-4 text-ink-500">{row.email}</span>
                             )}
                           </span>
                           <ChevronRight
@@ -182,7 +182,7 @@ export function CustomersTable({ insights, noDebt, gaps = {} }: { insights: Row[
                         <div className="truncate text-[13px] leading-[18px] text-ink-700" title={row.recommendedAction}>
                           {row.recommendedAction}
                         </div>
-                        <div className="text-2xs leading-4 text-ink-400">
+                        <div className="text-2xs leading-4 text-ink-500">
                           <span className="num">{Math.round(row.predictedPayment7d * 100)}%</span> chance of payment in 7d
                         </div>
                       </td>

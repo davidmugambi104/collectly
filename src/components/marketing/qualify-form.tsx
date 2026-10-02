@@ -64,19 +64,19 @@ export function QualifyForm({
       {showIdentityFields && (
         <div className="grid sm:grid-cols-2 gap-3">
           {!initialName && (
-            <div><label className="label">Name</label><input value={name} onChange={(e) => setName(e.target.value)} className="input" /></div>
+            <div><label className="label" htmlFor="qualify-form-f1">Name</label><input id="qualify-form-f1" value={name} onChange={(e) => setName(e.target.value)} className="input" /></div>
           )}
           {!initialEmail && (
-            <div><label className="label">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="input" /></div>
+            <div><label className="label" htmlFor="qualify-form-f2">Email</label><input id="qualify-form-f2" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="input" /></div>
           )}
           {!initialCompany && (
-            <div><label className="label">Company</label><input value={company} onChange={(e) => setCompany(e.target.value)} className="input" /></div>
+            <div><label className="label" htmlFor="qualify-form-f3">Company</label><input id="qualify-form-f3" value={company} onChange={(e) => setCompany(e.target.value)} className="input" /></div>
           )}
         </div>
       )}
       <div>
-        <label className="label">What are you currently using to track and follow up on overdue invoices?</label>
-        <select value={currentTool} onChange={(e) => setCurrentTool(e.target.value)} className="input">
+        <label className="label" htmlFor="qualify-form-f4">What are you currently using to track and follow up on overdue invoices?</label>
+        <select id="qualify-form-f4" value={currentTool} onChange={(e) => setCurrentTool(e.target.value)} className="input">
           <option value="spreadsheet">Spreadsheet</option>
           <option value="quickbooks-xero-reminders">QuickBooks or Xero built-in reminders</option>
           <option value="another-tool">Another tool</option>
@@ -84,16 +84,16 @@ export function QualifyForm({
         </select>
       </div>
       <div>
-        <label className="label">How many hours a week would you say you spend chasing payments?</label>
-        <input value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} required className="input" placeholder="e.g. 2-3 hours" />
+        <label className="label" htmlFor="qualify-form-f5">How many hours a week would you say you spend chasing payments?</label>
+        <input id="qualify-form-f5" value={hoursPerWeek} onChange={(e) => setHoursPerWeek(e.target.value)} required className="input" placeholder="e.g. 2-3 hours" />
       </div>
       <div>
-        <label className="label">What&apos;s the most frustrating part of that process for you right now?</label>
-        <textarea value={frustration} onChange={(e) => setFrustration(e.target.value)} required rows={3} className="input" />
+        <label className="label" htmlFor="qualify-form-f6">What&apos;s the most frustrating part of that process for you right now?</label>
+        <textarea id="qualify-form-f6" value={frustration} onChange={(e) => setFrustration(e.target.value)} required rows={3} className="input" />
       </div>
       <div>
-        <label className="label">Would you switch tools if something automated the follow-ups for you?</label>
-        <select value={wouldSwitch} onChange={(e) => setWouldSwitch(e.target.value as 'yes' | 'no' | 'maybe')} className="input">
+        <label className="label" htmlFor="qualify-form-f7">Would you switch tools if something automated the follow-ups for you?</label>
+        <select id="qualify-form-f7" value={wouldSwitch} onChange={(e) => setWouldSwitch(e.target.value as 'yes' | 'no' | 'maybe')} className="input">
           <option value="yes">Yes</option>
           <option value="maybe">Maybe</option>
           <option value="no">No</option>

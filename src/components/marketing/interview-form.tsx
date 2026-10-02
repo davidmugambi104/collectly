@@ -56,39 +56,39 @@ export function InterviewForm() {
     <form onSubmit={submit} className="space-y-5">
       <Honeypot value={website} onChange={setWebsite} />
       <div className="grid sm:grid-cols-2 gap-3">
-        <div><label className="label">Name</label><input value={name} onChange={(e) => setName(e.target.value)} required className="input" /></div>
-        <div><label className="label">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="input" /></div>
+        <div><label className="label" htmlFor="interview-form-f1">Name</label><input id="interview-form-f1" value={name} onChange={(e) => setName(e.target.value)} required className="input" /></div>
+        <div><label className="label" htmlFor="interview-form-f2">Email</label><input id="interview-form-f2" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="input" /></div>
       </div>
       <div className="grid sm:grid-cols-3 gap-3">
-        <div><label className="label">Company</label><input value={company} onChange={(e) => setCompany(e.target.value)} required className="input" /></div>
-        <div><label className="label">Country</label>
-          <select value={country} onChange={(e) => setCountry(e.target.value)} className="input">
+        <div><label className="label" htmlFor="interview-form-f3">Company</label><input id="interview-form-f3" value={company} onChange={(e) => setCompany(e.target.value)} required className="input" /></div>
+        <div><label className="label" htmlFor="interview-form-f4">Country</label>
+          <select id="interview-form-f4" value={country} onChange={(e) => setCountry(e.target.value)} className="input">
             {['US','GB','AU','CA','IE','NZ','KE','NG','ZA','IN','Other'].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <div><label className="label">Team size</label>
-          <select value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className="input">
+        <div><label className="label" htmlFor="interview-form-f5">Team size</label>
+          <select id="interview-form-f5" value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className="input">
             {['1-4', '5-10', '11-25', '26-50', '51-100', '100+'].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
-        <div><label className="label">Industry</label>
-          <select value={industry} onChange={(e) => setIndustry(e.target.value)} className="input">
+        <div><label className="label" htmlFor="interview-form-f6">Industry</label>
+          <select id="interview-form-f6" value={industry} onChange={(e) => setIndustry(e.target.value)} className="input">
             {['agency', 'consulting', 'saas', 'it-services', 'accounting', 'legal', 'freelance-collective', 'other'].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <div><label className="label">Average days to payment (DSO)</label>
-          <select value={dso} onChange={(e) => setDso(e.target.value)} className="input">
+        <div><label className="label" htmlFor="interview-form-f7">Average days to payment (DSO)</label>
+          <select id="interview-form-f7" value={dso} onChange={(e) => setDso(e.target.value)} className="input">
             {['<15', '15-30', '30-45', '45-60', '60-90', '90+', 'not-sure'].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
       </div>
-      <div><label className="label">Roughly how much is in outstanding A/R right now? (USD)</label><input value={outstanding} onChange={(e) => setOutstanding(e.target.value)} placeholder="e.g. $50,000" className="input" /></div>
-      <div><label className="label">What tools do you use today for invoicing + AR?</label><input value={tool} onChange={(e) => setTool(e.target.value)} placeholder="e.g. QuickBooks, Xero, Wave, spreadsheets" className="input" /></div>
+      <div><label className="label" htmlFor="interview-form-f8">Roughly how much is in outstanding A/R right now? (USD)</label><input id="interview-form-f8" value={outstanding} onChange={(e) => setOutstanding(e.target.value)} placeholder="e.g. $50,000" className="input" /></div>
+      <div><label className="label" htmlFor="interview-form-f9">What tools do you use today for invoicing + AR?</label><input id="interview-form-f9" value={tool} onChange={(e) => setTool(e.target.value)} placeholder="e.g. QuickBooks, Xero, Wave, spreadsheets" className="input" /></div>
       <div>
-        <label className="label">What&apos;s the worst part of collecting unpaid invoices?</label>
-        <textarea value={pain} onChange={(e) => setPain(e.target.value)} required rows={3} className="input" placeholder="e.g. Awkward phone calls, cash flow gaps, manual chasing..." />
+        <label className="label" htmlFor="interview-form-f10">What&apos;s the worst part of collecting unpaid invoices?</label>
+        <textarea id="interview-form-f10" value={pain} onChange={(e) => setPain(e.target.value)} required rows={3} className="input" placeholder="e.g. Awkward phone calls, cash flow gaps, manual chasing..." />
       </div>
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">

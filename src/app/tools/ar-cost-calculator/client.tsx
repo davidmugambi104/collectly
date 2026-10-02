@@ -1,4 +1,5 @@
 'use client';
+import * as React from 'react';
 import { useState, useMemo } from 'react';
 import { Calculator, ArrowRight, Clock, DollarSign, TrendingUp, Mail, Download } from 'lucide-react';
 import Link from 'next/link';
@@ -183,11 +184,19 @@ export function ArCostCalculator() {
 }
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  const id = React.useId();
   return (
     <div>
-      <label className="text-sm font-medium text-ink-900">{label}</label>
-      {hint && <p className="text-xs text-ink-500 mt-0.5">{hint}</p>}
-      <div className="mt-1.5">{children}</div>
+      <label htmlFor={id} className="text-sm font-medium text-ink-900">{label}</label>
+      {hint && <p id={`${id}-hint`} className="text-xs text-ink-500 mt-0.5">{hint}</p>}
+      <div className="mt-1.5">
+        {React.Children.map(children, (child, i) => {
+          if (!React.isValidElement<Record<string, unknown>>(child)) return child;
+          return i === 0
+            ? React.cloneElement(child, { id, ...(hint ? { 'aria-describedby': `${id}-hint` } : {}) })
+            : React.cloneElement(child, { 'aria-label': `${label} slider` });
+        })}
+      </div>
     </div>
   );
 }

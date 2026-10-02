@@ -30,7 +30,7 @@ function Section({
 /** "Optional" is stated once per optional field. The alternative — an asterisk
  *  on every required field — marks the majority to describe the minority. */
 function Optional() {
-  return <span className="ml-1 font-normal text-ink-400">Optional</span>;
+  return <span className="ml-1 font-normal text-ink-500">Optional</span>;
 }
 
 export function NewCustomerForm() {

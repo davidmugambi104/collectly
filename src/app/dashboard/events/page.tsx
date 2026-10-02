@@ -74,7 +74,7 @@ export default async function EventsPage() {
                   <div className="min-w-0 flex-1">
                     <div className="font-mono text-[13px] font-medium leading-[18px] text-ink-900">{e.type}</div>
                     {payload && (
-                      <div className="truncate font-mono text-2xs leading-4 text-ink-400" title={payload}>
+                      <div className="truncate font-mono text-2xs leading-4 text-ink-500" title={payload}>
                         {payload}
                       </div>
                     )}

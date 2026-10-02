@@ -20,7 +20,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
           We hit an unexpected error rendering this page. Your data is safe.
         </p>
         {error.digest && (
-          <p className="mt-2 text-xs text-ink-400 font-mono">Reference: {error.digest}</p>
+          <p className="mt-2 text-xs text-ink-500 font-mono">Reference: {error.digest}</p>
         )}
         <button onClick={reset} className="mt-5 btn-primary">
           <RefreshCw className="h-4 w-4" />Try again

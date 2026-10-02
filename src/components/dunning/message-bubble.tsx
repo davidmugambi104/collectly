@@ -20,7 +20,7 @@ export function MessageBubble({
   if (channel === 'sms') {
     return (
       <div className={`animate-fade-in rounded-2xl border border-ink-200 bg-gradient-to-b from-ink-50 to-ink-100/60 p-4 ${className}`}>
-        <div className="flex items-center gap-1.5 text-2xs text-ink-400 mb-2.5">
+        <div className="flex items-center gap-1.5 text-2xs text-ink-500 mb-2.5">
           <MessageSquare className="h-3 w-3" />Text message
         </div>
         <div className="flex justify-end">
@@ -38,7 +38,7 @@ export function MessageBubble({
         <span className="h-2.5 w-2.5 rounded-full bg-danger-400" />
         <span className="h-2.5 w-2.5 rounded-full bg-warn-400" />
         <span className="h-2.5 w-2.5 rounded-full bg-success-400" />
-        <span className="ml-2 flex items-center gap-1 text-2xs text-ink-400">
+        <span className="ml-2 flex items-center gap-1 text-2xs text-ink-500">
           <Mail className="h-3 w-3" />New message
         </span>
       </div>

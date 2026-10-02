@@ -131,7 +131,7 @@ export function DisputePanel({
                 {/* The optional field says so; the required ones don't need to
                     each carry a mark to make the point. */}
                 <label htmlFor="dispute-message" className="label">
-                  Customer&apos;s message <span className="ml-1 font-normal text-ink-400">Optional</span>
+                  Customer&apos;s message <span className="ml-1 font-normal text-ink-500">Optional</span>
                 </label>
                 <textarea id="dispute-message" name="customerMessage" className="input" rows={2} placeholder="What the customer said" />
               </div>

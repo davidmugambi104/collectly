@@ -256,8 +256,8 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true, send
                   </select>
                 </div>
               </div>
-              <div><label className="label">Channel</label><select value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option><option value="phone">Call (a task for you)</option></select></div>
-              <div><label className="label">Tone</label><select value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
+              <div><label className="label" htmlFor="sequence-editor-f1">Channel</label><select id="sequence-editor-f1" value={active.channel} onChange={(e) => updateStep(activeIdx!, { channel: e.target.value as Step['channel'] })} className="input"><option value="email">Email</option><option value="sms">SMS</option><option value="phone">Call (a task for you)</option></select></div>
+              <div><label className="label" htmlFor="sequence-editor-f2">Tone</label><select id="sequence-editor-f2" value={active.tone} onChange={(e) => updateStep(activeIdx!, { tone: e.target.value as Step['tone'] })} className="input"><option value="friendly">Friendly</option><option value="firm">Firm</option><option value="final">Final</option></select></div>
             </div>
             {active.channel === 'email' && (
               <fieldset className="rounded-[10px] border p-3 [border-color:var(--hair)]">
@@ -291,8 +291,8 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true, send
             )}
             <p className="app-meta font-normal">This step goes out {stepDayPhrase(active.daysFromDue)}.{active.daysFromDue < 0 && ' A step before the due date is a heads-up, and never calls the invoice overdue.'}</p>
             <div>
-              <label className="label">{active.channel === 'phone' ? 'Notes for the call (optional)' : 'Style hint (optional)'}</label>
-              <textarea
+              <label className="label" htmlFor="sequence-editor-f3">{active.channel === 'phone' ? 'Notes for the call (optional)' : 'Style hint (optional)'}</label>
+              <textarea id="sequence-editor-f3"
                 value={active.template}
                 onChange={(e) => updateStep(activeIdx!, { template: e.target.value })}
                 rows={3}

@@ -42,7 +42,7 @@ export default function CustomersPage() {
         <div className="grid md:grid-cols-3 gap-5">
           {SCENARIOS.map((s) => (
             <div key={s.industry} className="card-lg">
-              <div className="text-xs font-semibold uppercase tracking-wider text-ink-400">Illustrative target</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-ink-500">Illustrative target</div>
               <h2 className="mt-2 font-display font-bold text-lg text-ink-950">{s.industry}</h2>
               <p className="mt-4 text-sm text-ink-700 leading-relaxed">{s.target}</p>
             </div>
