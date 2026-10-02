@@ -12,7 +12,7 @@ import { CONTACT } from '@/lib/site-contact';
 const FAQS: FaqItem[] = [
     {
       q: 'Which accounting platforms does Mugavi integrate with?',
-      a: 'Xero is in production (live OAuth sync). QuickBooks Online is built and tested in sandbox; production credentials pending the Intuit App Assessment Questionnaire review.',
+      a: 'Xero is in production (live OAuth sync). QuickBooks Online is in beta: built and tested in sandbox, with production credentials pending the Intuit App Assessment Questionnaire review.',
     },
     {
       q: 'Do you integrate with Stripe?',
