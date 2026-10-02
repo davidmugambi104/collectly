@@ -6,7 +6,8 @@ import { OpenBookButton } from '@/components/app/open-book-button';
 import { getAuth as auth } from '@/lib/auth-helper';
 import { loadBooks } from '@/lib/practice-load';
 import { rankBooks, totalBooks, type Money } from '@/lib/practice';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
+import { practiceBillingNote } from '@/lib/practice-copy';
 
 function MoneyLines({ money, field }: { money: Money; field: 'outstanding' | 'overdue' }) {
   const rows = Object.entries(money).filter(([, v]) => v[field] > 0);
@@ -18,7 +19,18 @@ export default async function PracticePage() {
   const { userId, orgId } = await auth();
   if (!userId || !orgId) redirect('/sign-in');
 
-  const books = rankBooks(await loadBooks(userId));
+  let loaded: Awaited<ReturnType<typeof loadBooks>> | null = null;
+  try { loaded = await loadBooks(userId); } catch { loaded = null; }
+  if (loaded === null) {
+    return (
+      <AppShell title="Client books" subtitle="Could not load your books">
+        <p role="alert" className="card-primary text-ink-700">
+          We could not reach the sign-in provider to list the organizations you belong to, so nothing is shown rather than a partial list. Reload in a minute. Your books and their data are untouched.
+        </p>
+      </AppShell>
+    );
+  }
+  const books = rankBooks(loaded);
   const totals = totalBooks(books);
   const needAttention = books.filter((b) => b.attention.length > 0).length;
 
@@ -72,8 +84,9 @@ export default async function PracticePage() {
       </div>
 
       <p className="mt-4 text-sm text-ink-600">
-        Only books you belong to are listed. To add a client, create an organization from the switcher in the header and connect their Xero or QuickBooks.
+        Only organizations you belong to are listed. To add a client, create an organization from the switcher on the left and connect their Xero or QuickBooks.
       </p>
+      <p className="mt-2 text-sm text-ink-600">{practiceBillingNote(books.length, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY)}</p>
     </AppShell>
   );
 }
