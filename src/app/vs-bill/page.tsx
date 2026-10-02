@@ -25,7 +25,7 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR-only: deep dunning, forecasting, risk scoring', bill: 'AP + AR + spend/expense platform' },
-  { icon: DollarSign, label: 'Pricing', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-user or per-invoice fees`, bill: '$49/user/mo + ACH/card/wire fees' },
+  { icon: DollarSign, label: 'Pricing', collectly: `$${PLAN_PRICING.starter.monthly}/mo for one org, no per-user or per-invoice fees`, bill: 'From $49/user/mo (Essentials; $65 Team) + per-payment fees (ACH $0.59, card 2.9%)' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', bill: 'SMBs and accounting firms needing broad FinOps' },
   { icon: Receipt, label: 'AR depth', collectly: 'Tone-aware AI dunning + AR aging + cashflow forecast', bill: 'Invoicing, reminders, payment acceptance' },
 ];
@@ -64,7 +64,7 @@ export default function VsBillPage() {
         </div>
       </section>
 
-      <ComparisonChecked competitor="BILL" date="2026-07-31" source="bill.com/pricing" href="https://www.bill.com/pricing" />
+      <ComparisonChecked competitor="BILL" date="2026-10-03" source="bill.com/pricing" href="https://www.bill.com/pricing" />
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {DIFFS.map((d) => (

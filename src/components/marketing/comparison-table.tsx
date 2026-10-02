@@ -18,8 +18,8 @@ const MOBILE_LEAD_ROWS = 4;
 
 const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
-  ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo', 'Free + fees', '$19/mo'],
-  ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Transaction fees', 'ACH fees'],
+  ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo (1 user)', '$38/mo list', '$23/mo list'],
+  ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Payment processing fees', 'Not on pricing page'],
   ['Time to set up', 'Self-serve, no demo call', 'A few hours (reviewer-reported)', 'Not published', 'Not published', 'Not published', 'Not published'],
   ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
   ['Multi-currency', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '✓', '—', '✓'],
@@ -27,7 +27,7 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Cash-flow forecast', `${PLAN_PRICING.growth.name}+`, 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
   ['Customer risk scoring', '✓', '✓', '—', '—', '—', '—'],
   ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓', '✓'],
-  ['Free trial / self-serve', '14-day free', 'Free trial offered', 'Free trial', 'Free forever', 'Within QBO', '30-day trial'],
+  ['Free trial / self-serve', '14-day free', 'Free trial offered', 'Free trial', 'Free plan, 1 user', 'Within QBO', 'Not checked'],
   ['Time-to-value', '< 1 day', 'Not published', 'Not published', 'Not published', 'Not published', 'Not published'],
   ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
   // Ours is '—' on purpose: the app records promises to pay and spots a customer asking for a plan, but it does not run instalment plans.
@@ -189,7 +189,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
           the <a href="/compare" className="underline underline-offset-2 transition-colors hover:text-ink-900">full comparison list</a> for the others.
         </p>
         <p className="mt-2">
-          <b>Last verified:</b> Chaser on 2026-09-30 (£199 a month billed monthly on its UK page, priced by revenue band, shown converted to dollars); the others on 2026-07-31, against public pricing pages
+          <b>Last verified:</b> Chaser, BILL, Melio, QuickBooks and FreshBooks on 2026-10-03 (Chaser: $259 a month billed monthly on its USD pricing, priced by revenue band; QuickBooks and FreshBooks: list prices before first-months promotions). Rows on set-up time, support, payment plans, multi-currency and analytics depth are not on those pages and were not re-checked. Sources are the public pricing pages
           (<a href="https://www.chaserhq.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">Chaser</a>,
           {' '}<a href="https://www.bill.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">BILL</a>,
           {' '}<a href="https://www.melio.com/pricing" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-ink-900">Melio</a>,

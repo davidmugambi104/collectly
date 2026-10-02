@@ -69,7 +69,7 @@ export default function VsFreshbooksPage() {
         subtitle="FreshBooks makes invoicing simple. But when your invoices start going overdue and cash flow gets unpredictable, you need more than reminders. Mugavi adds AI dunning, forecasting, and risk scoring while keeping your accounting workflow intact."
         competitorName="FreshBooks"
       />
-      <ComparisonChecked competitor="FreshBooks" date="2026-07-31" source="freshbooks.com/pricing" href="https://www.freshbooks.com/pricing" />
+      <ComparisonChecked competitor="FreshBooks" date="2026-10-03" source="freshbooks.com/pricing" href="https://www.freshbooks.com/pricing" />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="FreshBooks" />
       <ComparisonFullTable only="freshbooks" />
       <CompetitorGrowthStrategy

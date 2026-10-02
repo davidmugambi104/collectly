@@ -374,7 +374,7 @@ export const COMPETITORS: Record<
 > = {
   bill: {
     name: 'BILL',
-    pricing: '$49 per user/mo plus ACH, card and wire fees',
+    pricing: 'from $49 per user/mo plus per-payment fees (ACH, card, instant)',
     builtFor: 'SMBs and accounting firms wanting broad FinOps',
     shape: 'an AP + AR + spend platform',
   },
@@ -386,7 +386,7 @@ export const COMPETITORS: Record<
   },
   freshbooks: {
     name: 'FreshBooks',
-    pricing: 'from about $19/mo',
+    pricing: 'from $23/mo list price (promotional first months are lower)',
     builtFor: 'freelancers and small service businesses',
     shape: 'invoicing with basic payment tracking',
   },

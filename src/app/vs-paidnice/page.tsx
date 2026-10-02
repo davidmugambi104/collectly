@@ -18,7 +18,7 @@ import {
 
 /**
  * Paidnice figures are published at paidnice.com/pricing and were read on
- * 2026-09-20. They are quoted, not estimated, and the arithmetic below is
+ * 2026-09-20 and re-read 2026-10-03 (no change). They are quoted, not estimated, and the arithmetic below is
  * derived from their own two published rates: the Pro tier price for a given
  * monthly invoice volume, and $29/month for each entity beyond the first.
  *
@@ -154,7 +154,7 @@ export default function VsPaidnicePage() {
         subtitle={`Paidnice is a good product and, for a single business, a cheaper one. The difference is what you are charged for: they price invoice volume and add $${PAIDNICE_ENTITY_MONTHLY} a month per extra entity, we price the client book. Below about a dozen books they cost less. Above it we do, and the gap widens fast.`}
         competitorName="Paidnice"
       />
-      <ComparisonChecked competitor="Paidnice" date="2026-09-20" source="paidnice.com/pricing" href="https://www.paidnice.com/pricing" />
+      <ComparisonChecked competitor="Paidnice" date="2026-10-03" source="paidnice.com/pricing" href="https://www.paidnice.com/pricing" />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Paidnice" />
 
       <section className="container-page py-14 max-w-3xl">
@@ -190,7 +190,7 @@ export default function VsPaidnicePage() {
           </table>
         </div>
         <p className="mt-4 app-meta">
-          Paidnice figures from paidnice.com/pricing, read 2026-09-20. Their invoice allowance is shared across
+          Paidnice figures from paidnice.com/pricing, re-read 2026-10-03. Their invoice allowance is shared across
           entities, so a practice hits the next tier sooner than the same invoice count in one book would.
           Check their current pricing before deciding. We would rather you did.
         </p>

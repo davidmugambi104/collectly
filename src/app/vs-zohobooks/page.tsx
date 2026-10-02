@@ -25,7 +25,7 @@ export const metadata = pageMetadata({
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', competitor: 'Basic invoice reminders' },
   { icon: Layers, label: 'AR depth', collectly: 'Aging, forecast, risk score, branded portal', competitor: 'Invoicing + payment tracking inside Zoho suite' },
-  { icon: DollarSign, label: 'Pricing', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no hidden fees`, competitor: 'Tiered accounting plans, per-org pricing' },
+  { icon: DollarSign, label: 'Pricing', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no hidden fees`, competitor: 'Free plan with payment reminders; paid plans from $20/mo ($15 billed annually) on the US page' },
   { icon: Target, label: 'Best for', collectly: 'Agencies and consultancies focused on reducing DSO', competitor: 'Small businesses that want one Zoho suite' },
 ];
 
@@ -70,7 +70,7 @@ export default function VsZohobooksPage() {
         subtitle="Zoho Books is a capable accounting suite with light invoicing and reminders. Mugavi is the AR specialist layer that turns overdue invoices into predictable cash, with AI dunning, forecasting, and risk scoring."
         competitorName="Zoho Books"
       />
-      <ComparisonChecked competitor="Zoho Books" source="zoho.com/books/pricing" href="https://www.zoho.com/books/pricing/" note="Zoho prices vary by region." />
+      <ComparisonChecked competitor="Zoho Books" date="2026-10-03" source="zoho.com/books/pricing" href="https://www.zoho.com/books/pricing/" note="Zoho prices vary by region." />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Zoho Books" />
         {/* No table: this competitor is outside the matrix's scope (see
             comparison-table.tsx), so rendering it here would fill the page
