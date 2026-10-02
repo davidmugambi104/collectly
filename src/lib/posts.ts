@@ -72,6 +72,362 @@ That is what [Mugavi](/for/bookkeepers) is built for. It drafts reminders for ea
 Start with one client who already complains about late payers. Run it for a month, see how many hours it really takes, and price the service from that.`,
   },
   {
+    slug: 'payment-reminder-emails-bookkeepers-send-for-clients',
+    title: "Payment reminder emails you can send on a client's behalf (4 templates)",
+    date: '2026-10-03', read: '6 min',
+    excerpt: "Four copy-ready emails for a bookkeeper chasing a client's late invoices: a heads-up, a due-date note, a first overdue reminder and a firm one. With rules for when to send each.",
+    tags: ['bookkeepers', 'templates', 'QuickBooks', 'invoice reminders'],
+    body: `When a client asks you to chase their late invoices, the hard part is rarely the chasing. It is the wording. You are writing in someone else's name, to someone else's customer, about money. Get the tone wrong and the client calls you angry. Say nothing and the invoice ages.
+
+Below is a set of four emails you can copy, with the rules for when each one goes out. Everything in square brackets is a blank to fill in. Nothing here needs special software. You can keep the set in a document or in QuickBooks Online's own reminder settings.
+
+## Before you send anything
+
+Get these four things from the client in writing. It takes one email, and it saves you an awkward call later.
+
+- **Who the emails come from.** Your name, the client's name, or a shared accounts address. Pick one and keep it the same for every customer.
+- **Which customers are off limits.** Some clients have a customer they do not want chased at all, such as a relative or their biggest account. Ask.
+- **When to stop and call.** Agree the day when you stop emailing and hand the invoice back to the client.
+- **Whether you can change terms.** Do not offer payment plans or write-offs yourself. Those are the client's call.
+
+If you send as the client, use their business name in the signature. If you send as yourself, say whose invoice it is in the first line. Customers ignore emails from someone they have never heard of, so name the client early.
+
+## Email 1: the heads-up, a few days before the due date
+
+Send this three to five days before the due date. It is not a chase. It is a courtesy, and it never calls the invoice late.
+
+**Subject:** Invoice [invoice number] from [client business] is due on [due date]
+
+Hi [customer first name],
+
+A quick note that invoice [invoice number] for [amount] is due on [due date]. You can pay it here: [payment link or bank details].
+
+If anything on the invoice looks wrong, reply to this email and we will sort it out before the due date.
+
+Thanks,
+[your name], for [client business]
+
+Why bother? Some late payments are simply invoices that sat unread in an inbox. A short note with the amount and the way to pay removes that excuse.
+
+## Email 2: the due-date email
+
+Send this on the due date, or the morning after. Keep it light.
+
+**Subject:** Invoice [invoice number] is due today
+
+Hi [customer first name],
+
+Invoice [invoice number] for [amount] is due today. Payment details are below.
+
+[payment link or bank details]
+
+If you have already paid, thank you, and please ignore this. If you need anything else from us to pay it, such as a purchase order number, tell me and I will send it.
+
+Thanks,
+[your name], for [client business]
+
+The purchase order line matters more than it looks. Invoices often stall in a customer's accounts payable team because a reference is missing, not because anyone refuses to pay.
+
+## Email 3: first overdue
+
+Send this seven days after the due date. It names the problem plainly and asks a question, which is easier to answer than a demand.
+
+**Subject:** Invoice [invoice number] is [number] days overdue
+
+Hi [customer first name],
+
+Our records show invoice [invoice number] for [amount] was due on [due date] and has not been paid yet. Could you let me know when we can expect it?
+
+If it has gone out already, tell me the date and I will match it up on our side. If there is a problem with the invoice, tell me what it is and I will pass it to [client first name] today.
+
+Pay online: [payment link or bank details]
+
+Thanks,
+[your name], for [client business]
+
+There are two ways out of this email: "I paid" and "there is a problem." Both get you a reply. A reply is what you are after, because a customer who answers is much easier to move than one who stays silent.
+
+## Email 4: the firm one
+
+Send this fourteen to twenty-one days after the due date, or on the day you agreed with the client. Stay calm and factual. State what you need and by when. Do not threaten anything the client has not approved.
+
+**Subject:** Action needed: invoice [invoice number], [amount], [number] days overdue
+
+Hi [customer first name],
+
+Invoice [invoice number] for [amount] was due on [due date] and is now [number] days overdue. We have written before and have not had a reply.
+
+Please pay by [date], or reply by then with a date you can commit to. Payment details: [payment link or bank details].
+
+If we do not hear from you by [date], [client first name] will contact you directly about the account. [Add a line here about pausing work or supply only if the client has told you to.]
+
+Thanks,
+[your name], for [client business]
+
+For more on this last step, including how to word a final notice, see our post on [writing a final notice that gets paid](/blog/final-notice-that-gets-paid-2026).
+
+## A short checklist for every send
+
+- Check the invoice is still unpaid in the books right now, not from last week's report.
+- Check the customer has no open dispute or promise to pay noted anywhere.
+- Check the amount and the due date match the invoice, not a memory of it.
+- Check the email goes to the person who pays, not only the person who ordered.
+- Write down the date you sent it, so the next step is not a guess.
+
+## Mistakes that cause the angry client call
+
+- Chasing an invoice the client already settled by cash or cheque that you have not recorded yet.
+- Sending a firm email to a customer who replied to the last one and was waiting on an answer from you.
+- Sending the same email to a customer with three overdue invoices, three times in one week. One message that covers everything reads better than three separate ones.
+- Using a tone the client would never use. If the client is warm and chatty, soften the wording above.
+
+## If you run this for ten or more clients
+
+The set above works for one client. At ten clients the problem changes. You are tracking ten lists of customers, ten schedules and ten opinions about tone. A spreadsheet and a calendar reminder will carry you until a busy week breaks it. If you are building this into a paid service, our page for [bookkeepers](/for/bookkeepers) covers how we think about it.
+
+Mugavi drafts reminders like these for QuickBooks and Xero and holds each one until the owner approves it, so nothing goes to a client's customer unseen. The QuickBooks connection is in beta, late fees are not written back to QuickBooks, and there is no read-only team role yet. Whichever way you do it, keep the wording above and change only the blanks.`,
+  },
+  {
+    slug: 'customer-says-never-got-invoice-or-disputes-it',
+    title: "A client's customer says they never got the invoice, or disputes it. What to do.",
+    date: '2026-10-03', read: '6 min',
+    excerpt: "Two different problems with two short processes: the invoice that never arrived, and the invoice the customer says is wrong. Includes wording you can copy.",
+    tags: ['bookkeepers', 'disputes', 'QuickBooks', 'collections'],
+    body: `Sooner or later a client's customer will say one of two things. "I never got that invoice." Or "I am not paying that, it is wrong." Both stop a payment, and both are often handled badly because the person chasing is guessing. This post gives you a short process for each, and wording you can copy.
+
+The rule underneath all of it: do not argue about who is right until you have the facts. Often the customer is neither lying nor careless. The invoice went to the wrong person, or the job was not what they expected.
+
+## When the customer says they never got the invoice
+
+### Step 1: Check where it went
+
+Before replying, look at what the books show.
+
+- **The email address on the customer record.** A typo, an old address, or a person who has left the company are the usual causes.
+- **Whether the invoice was marked as sent.** In QuickBooks Online an invoice can be saved but never emailed. In Xero it can sit as approved and never sent. Both look fine at a quick glance.
+- **Whether anyone else should have received it.** Many businesses want the invoice sent to an accounts payable address, not to the person who placed the order.
+
+If you can see the email went out, say so politely, with the date. Do not say it as a gotcha.
+
+### Step 2: Resend it, and ask where it should go
+
+Send it again straight away. Do not wait for the question of fault to resolve. The goal is to get the invoice in front of the right person, not to prove it was sent.
+
+**Subject:** Invoice [invoice number] from [client business], resent
+
+Hi [customer first name],
+
+Thanks for letting me know. I have attached invoice [invoice number] for [amount], dated [invoice date], due [due date]. Payment details are below.
+
+[payment link or bank details]
+
+Could you tell me the best email address for invoices at [customer business]? I will update our records so future ones reach the right person.
+
+Thanks,
+[your name], for [client business]
+
+### Step 3: Decide about the due date, with the client
+
+If the customer genuinely never received it, ask the client whether to move the due date. Some clients will hold to the original terms. Others will give a few days. That is their decision, not yours. Whatever they decide, write it down and tell the customer the date plainly.
+
+### Step 4: Fix the cause
+
+Update the email address in the books. Add the accounts payable contact if there is one. If the invoice was never sent, tell the client so they can catch it next time. This step is the one that stops the same call happening again.
+
+## When the customer disputes the invoice
+
+A dispute is a different thing. The customer has the invoice and says it is wrong. Treat it as a question to answer, not a refusal to resist.
+
+### Step 1: Pause the chasing
+
+Stop all reminders on that invoice at once. Nothing makes a dispute worse than a firm "overdue" email arriving the day after the customer explained their problem. If your reminders run automatically, this is the first thing to switch off.
+
+### Step 2: Find out exactly what is disputed
+
+Customers often dispute part of an invoice, not all of it. Ask for specifics.
+
+**Subject:** Re: Invoice [invoice number]
+
+Hi [customer first name],
+
+Thanks for telling me. I have paused any reminders on this invoice while we look at it.
+
+Could you tell me which part is the problem? For example, the amount, a line item, the quantity, or the date of the work. If you have a purchase order or a quote that shows something different, please send it.
+
+I will take it to [client first name] and come back to you by [date].
+
+Thanks,
+[your name], for [client business]
+
+Notice what this email does not do. It does not agree the customer is right. It does not say they are wrong. It promises a reply on a date, and you must keep that date.
+
+### Step 3: Take it to the client with the facts
+
+Send the client a short note, not a forwarded argument.
+
+- The invoice number, amount and date.
+- What the customer says is wrong, in the customer's words.
+- What the books show.
+- What you suggest: stand by it, issue a credit note, or correct and reissue.
+
+The client decides. You record what they decided.
+
+### Step 4: Ask for the undisputed part
+
+If only one line is disputed, ask the customer to pay the rest now. It keeps cash moving and shows good faith. Some clients will want a credit note for the disputed line and a fresh invoice for the remainder. Do whatever the client agrees to, and keep the paperwork in the books.
+
+### Step 5: Close it clearly
+
+When it is settled, tell the customer in one line.
+
+**Subject:** Invoice [invoice number] resolved
+
+Hi [customer first name],
+
+Thanks for your patience. Following our conversation, [client business] has [issued a credit note for [amount] / confirmed the invoice stands / sent a corrected invoice, number [new invoice number]]. The amount now due is [amount], by [date].
+
+Payment details: [payment link or bank details]
+
+Thanks,
+[your name], for [client business]
+
+## What to write down
+
+For every dispute, keep a short log in the customer's record or your own notes.
+
+- The date the customer raised it, and how.
+- What they said was wrong.
+- What you checked.
+- What the client decided, and the date.
+- The date reminders were paused, and the date they restarted.
+
+This is not paperwork for its own sake. If the same customer disputes the next invoice, you will want to know what happened last time.
+
+## What not to do
+
+- Do not send a late fee notice while a dispute is open. Whether a fee is fair is the client's call and depends on their contract.
+- Do not promise a credit note yourself. Only the client can agree to give up money.
+- Do not tell the customer they are wrong based on the books alone. The books can be wrong too.
+- Do not let a dispute sit. Set a date and keep it. Silence is how a small dispute turns into a lost customer and a write-off.
+
+## Before the next one
+
+Many of these calls trace back to the same few causes: the wrong email address, a missing purchase order number, and invoices that did not match what was agreed. A short check for each client at the start, covering who receives invoices and whether customers need a purchase order, removes a lot of them. Our page for [bookkeepers](/for/bookkeepers) describes how we think about running that across many books.
+
+If you would rather a customer did not have to write an email to dispute something, a payment page with a "something is not right" button gives them another way. Mugavi has one: pressing it stops reminders and tells the owner. It has not been tested with a real customer yet. The QuickBooks connection is in beta, late fees are not written back to QuickBooks, and there is no read-only team role. Even without any tool, the process above holds.
+
+For wording on the gentler end of the same problem, see [the dunning templates post](/blog/best-dunning-templates-2026).`,
+  },
+  {
+    slug: 'onboard-client-to-invoice-follow-up-first-week',
+    title: "How to onboard a client to invoice follow-up in the first week",
+    date: '2026-10-03', read: '6 min',
+    excerpt: "A day-by-day checklist for the first week of an A/R follow-up service: access, customer list clean-up, the call with the client, the schedule, a dry run and the first report.",
+    tags: ['bookkeepers', 'onboarding', 'checklist', 'QuickBooks'],
+    body: `You have agreed to follow up on a client's unpaid invoices. The contract is signed and the client is waiting. The first week decides whether this becomes a service they thank you for, or one they quietly cancel because a reminder went to the wrong person.
+
+This is a checklist for that first week, day by day, with the questions to ask and the things to write down. It works whether you send the reminders yourself or use software to draft them.
+
+## Before day one: what you are agreeing to
+
+Settle these in the contract or a short email, not in a phone call you will forget.
+
+- **What you will do.** Send reminders, answer replies, and report. Say whether you will phone customers.
+- **What you will not do.** Offer payment plans, write off balances, charge fees, or start legal action. Those stay with the client.
+- **How you are paid.** A monthly fee for the service is simpler to explain than a cut of what you collect.
+- **How you will report.** One short message a week is plenty to start with.
+
+If a client says chasing is not what they hired a bookkeeper for, that is fine. You are selling follow-up as a defined service, and defined means they know exactly what they are buying.
+
+## Day 1: get access and read the books
+
+- Get your own login to the client's QuickBooks Online or Xero. Do not use the client's password. A named login for you is safer for both sides.
+- Check what role you were given and what it lets you see. If the client only wanted to share part of the books, find out now.
+- Run the aged receivables report. In QuickBooks it is the A/R Aging Summary. In Xero it is Aged Receivables Summary. Save a copy with today's date. This is your starting point, and you will compare against it in a month.
+- Note the oldest overdue invoices and the five largest balances.
+
+## Day 2: clean the customer list
+
+Bad data causes most of the embarrassing emails. Spend time here.
+
+- **Missing emails.** Make a list of customers who owe money and have no email address. You cannot remind them until you have one.
+- **Wrong contacts.** Check that the email on each large customer is the person who pays, not the person who ordered.
+- **Duplicates.** The same customer entered twice splits their balance and means two reminders for one debt.
+- **Credits and unapplied payments.** If a customer has a credit memo or a payment that was never matched to an invoice, they may owe nothing. Apply it first. Chasing someone who has already paid is the quickest way to lose a client's trust.
+
+Send the client the list of missing contacts and ask them to fill the gaps by day 4.
+
+## Day 3: have the conversation about customers
+
+This is a fifteen-minute call with the client. Go through the top overdue customers one by one and ask:
+
+- Is there anything I should know about this customer?
+- Is there a dispute, a promise to pay, or a favour involved?
+- Would you rather I did not email this one at all?
+- Who should the reminders come from, and in what tone?
+
+Write the answers down in the customer's record. Put the do-not-chase names in a list you can check before every send.
+
+Ask one more thing: "If a customer replies angry, what do you want me to do?" The answer is often "tell me and I will call them," and now you know.
+
+## Day 4: choose the schedule and write the wording
+
+Keep the first schedule simple. A reasonable pattern is a heads-up before the due date, a reminder on the due date, a first overdue reminder a week later, and a firmer one two weeks after that. Our post on [the dunning templates](/blog/best-dunning-templates-2026) has wording you can start from, and you can change it to match the client's voice.
+
+Agree with the client:
+
+- The days each reminder goes out.
+- The sender name and reply address.
+- The minimum balance below which you do not chase.
+- The day you stop emailing and hand the invoice back to the client.
+
+Different customers may need different schedules. A large long-standing customer should not get the same sequence as a new one with a small balance. Two or three groups are enough to start.
+
+## Day 5: do a dry run before anything goes out
+
+Draft the first round of reminders and have the client read every one. This is the single most useful thing in the week.
+
+- Send the first few to yourself or to the client so you can see how they look.
+- Check amounts, invoice numbers, due dates and payment links.
+- Check each one against the do-not-chase list.
+- Ask the client to approve the first batch in writing, even if it is a one-line reply.
+
+Do not start with a full backlog. Invoices that are months overdue need a different message than one that is three days late. Handle the old ones by hand with the client, and let the schedule take the newer ones.
+
+## Day 6 and 7: send, watch, and report
+
+- Send the approved batch. Note the date.
+- Check for replies the same day and the next. Answer each one, or pass it to the client with a short summary.
+- Pause reminders on any invoice where the customer replied and is waiting on someone.
+- Write the first weekly report.
+
+Keep the first report short:
+
+- How many customers were contacted.
+- Which replied, and what they said.
+- Which invoices were paid since day 1.
+- Anything you need from the client.
+
+Compare the aged receivables report to the copy you saved on day 1. Report the real change in numbers, even if it is small. A modest honest result is better than a promise you cannot keep.
+
+## The first-week checklist
+
+- Own login to the books, role confirmed.
+- Aged receivables report saved and dated.
+- Customers with no email listed and sent to the client.
+- Duplicates, credits and unapplied payments checked.
+- Do-not-chase list written.
+- Schedule, sender and stop day agreed in writing.
+- First batch drafted and approved by the client.
+- First weekly report sent.
+
+## Running this across many clients
+
+Do this once and it is a job. Do it for ten clients and you need a repeatable version: the same checklist and the same questions each time, with only the customer notes changing. Write your version down once and reuse it. Our page for [bookkeepers](/for/bookkeepers) covers how we think about running follow-up across many books.
+
+If you want software for the drafting step, Mugavi drafts reminders for what is already overdue in QuickBooks or Xero and sends nothing until the owner approves it, with a 30-second hold after approval. The QuickBooks connection is in beta, late fees are not written back to QuickBooks, and there is no read-only team role for a helper yet. A spreadsheet and your own email work for a handful of clients.`,
+  },
+  {
     slug: 'why-hasnt-my-invoice-reminder-gone-out',
     title: "Why hasn't my invoice reminder gone out? Ten things to check",
     date: '2026-10-02', read: '5 min',
