@@ -1,8 +1,7 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import posthog from 'posthog-js';
-import { PostHogProvider as PHProvider } from 'posthog-js/react';
+import { getLoadedPostHog, loadPostHog, markPostHogReady } from '@/lib/posthog-client';
 import { useConsent } from '@/components/consent/consent-provider';
 
 /**
@@ -40,25 +39,35 @@ function usePostHogInit(enabled: boolean): boolean {
   useEffect(() => {
     if (!enabled) return;
     if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
-    if (!initialised) {
-      posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-        api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-        capture_pageview: false,
-        capture_pageleave: true,
-        autocapture: true,
-        opt_out_capturing_by_default: true,
-      });
-      initialised = true;
-    }
-    posthog.opt_in_capturing();
-    setReady(true);
+    let cancelled = false;
+    // posthog-js is fetched here, after consent, instead of being bundled
+    // into every page.
+    loadPostHog().then((posthog) => {
+      if (cancelled) return;
+      if (!initialised) {
+        posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
+          api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+          capture_pageview: false,
+          capture_pageleave: true,
+          autocapture: true,
+          opt_out_capturing_by_default: true,
+        });
+        initialised = true;
+      }
+      posthog.opt_in_capturing();
+      markPostHogReady();
+      setReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [enabled]);
 
   // Withdrawing consent has to actually stop collection, not just stop asking.
   useEffect(() => {
     if (enabled) return;
     if (!initialised) return;
-    posthog.opt_out_capturing();
+    getLoadedPostHog()?.opt_out_capturing();
     setReady(false);
   }, [enabled]);
 
@@ -71,7 +80,7 @@ function PageviewTracker({ enabled }: { enabled: boolean }) {
   useEffect(() => {
     if (!enabled) return;
     if (!pathname || !process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
-    posthog.capture('$pageview', { $current_url: window.location.href });
+    getLoadedPostHog()?.capture('$pageview', { $current_url: window.location.href });
   }, [pathname, search, enabled]);
   return null;
 }
@@ -83,7 +92,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return <>{children}</>;
   return (
-    <PHProvider client={posthog}>
+    <>
       {/* useSearchParams() opts the nearest Suspense boundary out of server
           rendering. The layout's boundary wraps {children}, so without this
           one the whole page shipped as an empty shell whenever the PostHog key
@@ -92,6 +101,6 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         <PageviewTracker enabled={enabled && ready} />
       </Suspense>
       {children}
-    </PHProvider>
+    </>
   );
 }

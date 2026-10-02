@@ -1,4 +1,4 @@
-import posthog from 'posthog-js';
+import { getLoadedPostHog } from '@/lib/posthog-client';
 
 /**
  * The marketing site's product events, in one place.
@@ -35,6 +35,7 @@ export function track(event: MarketingEvent, props?: EventProps): void {
   // something that does not.
   if (typeof window === 'undefined') return;
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
-  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  const posthog = getLoadedPostHog();
+  if (!posthog || !(posthog as unknown as { __loaded?: boolean }).__loaded) return;
   posthog.capture(event, props);
 }

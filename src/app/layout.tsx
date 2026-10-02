@@ -31,6 +31,11 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-jetbrains-mono',
+  // Mono is only used for figures in dashboard tables and a few code
+  // snippets, never above the fold on a marketing page. Not preloading it
+  // keeps a font file off the critical path of every page; it still loads
+  // on demand with font-display: swap, and the fallback is a monospace stack.
+  preload: false,
 });
 
 // A real display face. font-display and font-sans were BOTH var(--font-inter),
