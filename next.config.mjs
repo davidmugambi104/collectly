@@ -27,6 +27,9 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/ar-roi', destination: '/tools/ar-roi', permanent: true },
+      // www.mugavi.com answered 200 with the same pages as the bare domain, a
+      // second crawlable copy of the site. Send it to the bare domain.
+      { source: '/:path*', has: [{ type: 'host', value: 'www.mugavi.com' }], destination: 'https://mugavi.com/:path*', permanent: true },
     ];
   },
 
