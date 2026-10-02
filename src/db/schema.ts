@@ -1,8 +1,19 @@
 import {
-  pgTable, text, varchar, timestamp, integer, smallint, boolean, decimal, jsonb, index, uniqueIndex, pgEnum, primaryKey,
+  pgTable, text, varchar, timestamp, integer, smallint, boolean, decimal, jsonb, index, uniqueIndex, pgEnum, primaryKey, customType,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
+import { parseKey, encryptSecret, decryptSecret } from '@/lib/secret-box';
+
+/**
+ * A text column that is encrypted at rest when INTEGRATION_TOKEN_KEY is set (see secret-box.ts).
+ * Code reads and writes plain strings; the database holds the encrypted form.
+ */
+const encryptedText = customType<{ data: string; driverData: string }>({
+  dataType() { return 'text'; },
+  toDriver(value) { return encryptSecret(value, parseKey(process.env.INTEGRATION_TOKEN_KEY)); },
+  fromDriver(value) { return decryptSecret(value, parseKey(process.env.INTEGRATION_TOKEN_KEY)); },
+});
 
 /* ----------------------------- ENUMS ----------------------------- */
 
@@ -148,8 +159,8 @@ export const integrations = pgTable('integrations', {
   orgId: text('org_id').notNull().references(() => organizations.id, { onDelete: 'cascade' }),
   provider: integrationProvider('provider').notNull(),
   status: integrationStatus('status').notNull().default('pending'),
-  accessToken: text('access_token'),
-  refreshToken: text('refresh_token'),
+  accessToken: encryptedText('access_token'),
+  refreshToken: encryptedText('refresh_token'),
   expiresAt: timestamp('expires_at', { withTimezone: true }),
   realmId: text('realm_id'), // QBO company id
   tenantId: text('tenant_id'), // Xero org id
