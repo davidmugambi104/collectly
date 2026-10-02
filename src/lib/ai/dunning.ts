@@ -82,7 +82,14 @@ function resolveInvoiceLabel(ctx: DunningContext): string {
 // This is a pure string fix, not another model call -- deliberately kept
 // that way so fixing correctness doesn't cost extra tokens.
 function ensurePaymentLink(body: string, paymentLink: string, channel: 'email' | 'sms'): string {
-  const cleaned = body.replace(/\[?\{{0,2}\s*payment[_ ]?link\s*\}{0,2}\]?/gi, paymentLink);
+  // Only genuine placeholders are swapped: [payment link], {payment_link},
+  // {{payment_link}} or a bare payment_link. The plain words "payment link" in a
+  // sentence are left alone, otherwise "use our secure payment link https://..."
+  // became "use our secure<url> <url>".
+  const placeholder = /\[\s*payment[_ ]?link\s*\]|\{\{?\s*payment[_ ]?link\s*\}\}?|\bpayment_link\b/gi;
+  const cleaned = body.includes(paymentLink)
+    ? body.replace(placeholder, '').replace(/[ \t]+([.,;:!?])/g, '$1').replace(/[ \t]{2,}/g, ' ')
+    : body.replace(placeholder, paymentLink);
   if (cleaned.includes(paymentLink)) return cleaned;
   const withLink = `${cleaned}${channel === 'email' ? '\n\n' : ' '}Pay here: ${paymentLink}`;
   return channel === 'sms' ? withLink.slice(0, 320) : withLink;
@@ -165,6 +172,7 @@ Output rules:
 - Never invent details not given in the context. Use only the invoice number, amount, currency, due date, and contact name provided.
 - Reference payment history only if it's relevant to the tone (e.g. "We usually get this settled within a few days — wanted to make sure this didn't slip through.")
 - No exclamation points. No emoji. No all-caps. No pleading.
+- Never threaten a consequence the context does not state: no suspending services, legal action, fees or collections.
 - Include a clear next step. Use the exact payment link given below, verbatim — never write a placeholder like "[payment link]" or invent your own URL.
 - Currency formatting: the amount is pre-formatted for you as "${formattedAmount}". Use it verbatim.
 - Sound like a thoughtful operations person, not a debt collector.

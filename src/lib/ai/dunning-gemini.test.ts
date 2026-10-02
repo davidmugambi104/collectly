@@ -92,6 +92,24 @@ describe('generateDunningMessage — happy path (valid Gemini response)', () => 
   });
 });
 
+describe('generateDunningMessage — payment link wording', () => {
+  test('email: the words "payment link" in a sentence are kept and the real link is not doubled', async (t) => {
+    const url = 'https://mugavi.com/pay/inv_nanoid_abc123';
+    mockGeminiText(t, JSON.stringify({ subject: 'Reminder', body: `Hi Jane, please complete the balance using our secure payment link ${url}. Thanks.` }));
+    const result = await generateDunningMessage(ctx({ channel: 'email' }));
+    assert.ok(result.body.includes('secure payment link ' + url), `got: ${result.body}`);
+    assert.equal(result.body.split(url).length - 1, 1, `link should appear once, got: ${result.body}`);
+  });
+
+  test('email: a placeholder next to the real link is removed instead of doubling the link', async (t) => {
+    const url = 'https://mugavi.com/pay/inv_nanoid_abc123';
+    mockGeminiText(t, JSON.stringify({ subject: 'Reminder', body: `Hi Jane, pay here: ${url} or via [payment_link]. Thanks.` }));
+    const result = await generateDunningMessage(ctx({ channel: 'email' }));
+    assert.equal(result.body.split(url).length - 1, 1, `link should appear once, got: ${result.body}`);
+    assert.ok(!/payment_link/i.test(result.body));
+  });
+});
+
 describe('generateDunningMessage — Zod schema validation rejects malformed output', () => {
   test('email: missing body field falls back instead of returning bad data', async (t) => {
     mockGeminiText(t, JSON.stringify({ subject: 'Only a subject, no body' }));
