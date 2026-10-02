@@ -9,7 +9,7 @@ import { TrackView } from '@/components/marketing/track-view';
 export const metadata = pageMetadata({
   title: 'Product tour: how Mugavi follows up on overdue invoices',
   description:
-    'Watch an 84-second tour of how Mugavi follows up on overdue ' +
+    'Watch a 76-second tour of how Mugavi follows up on overdue ' +
     'invoices, collects payments through a branded portal, and forecasts ' +
     'cash flow, without the awkward chase. Built for small agencies and ' +
     'consultancies on Xero.',
@@ -43,8 +43,9 @@ export default function TourPage() {
       </section>
 
       {/* Recorded walkthrough. Made on made-up demo data in a copy of the app
-          that cannot send mail. It has no sound: the English captions (on by
-          default) carry the narration, and the caption below says what it is. */}
+          that cannot send mail. The voice is Alba, a CC BY 4.0 Piper voice from
+          the University of Edinburgh's CSTR, so the credit below is required.
+          English captions are available from the player's CC button. */}
       <section className="container-page pb-16">
         <div className="max-w-4xl mx-auto">
           <video
@@ -53,13 +54,13 @@ export default function TourPage() {
             preload="metadata"
             playsInline
             poster="/video/mugavi-walkthrough-poster.jpg"
-            aria-label="Mugavi walkthrough, 84 seconds, no sound, with captions: connect your books, see overdue invoices, approve each reminder before it sends"
+            aria-label="Mugavi walkthrough, 76 seconds, narrated, with captions: connect your books, see overdue invoices, approve each reminder before it sends"
           >
             <source src="/video/mugavi-walkthrough.mp4" type="video/mp4" />
-            <track kind="captions" src="/video/mugavi-walkthrough.en.vtt" srcLang="en" label="English" default />
+            <track kind="captions" src="/video/mugavi-walkthrough.en.vtt" srcLang="en" label="English" />
           </video>
           <p className="mt-3 text-xs text-ink-500 text-center">
-            84 seconds, no sound, captions on. Recorded on demo data with a test copy of Mugavi that cannot send email; the reminder text shown is the built-in template.
+            76 seconds with narration and captions. Recorded on demo data with a test copy of Mugavi that cannot send email; the reminder text shown is the built-in template. Voice: Alba (CSTR, University of Edinburgh, CC BY 4.0), made with Piper.
           </p>
         </div>
       </section>

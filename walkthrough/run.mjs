@@ -15,6 +15,7 @@ import {
 } from './storyboard.mjs'
 import { synthesizeAll } from './src/tts.mjs'
 import { synthesizeSilent } from './src/tts-silent.mjs'
+import { synthesizePiper, piperAvailable } from './src/tts-piper.mjs'
 import { generateMusic } from './src/music.mjs'
 import { record } from './src/recorder.mjs'
 import { renderOverlays } from './src/overlays.mjs'
@@ -71,6 +72,11 @@ async function startLocalStack() {
 
 const stages = {
   async tts() {
+    if (!process.env.OPENROUTER_API_KEY && piperAvailable()) {
+      console.log('tts: no OPENROUTER_API_KEY, using the offline Piper voice (CC BY 4.0, credit it on the page).')
+      await synthesizePiper(narrationLines, { outDir: path.join(OUT, 'voice') })
+      return
+    }
     if (!process.env.OPENROUTER_API_KEY) {
       console.log('tts: no OPENROUTER_API_KEY, writing SILENT placeholders timed by word count. Re-run `node run.mjs tts` with a key for the real voice.')
       await synthesizeSilent(narrationLines, { outDir: path.join(OUT, 'voice') })
