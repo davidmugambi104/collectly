@@ -11,6 +11,9 @@ import Link from 'next/link';
 import { SampleDataButton } from './sample-data-button';
 import { PlaidCard } from './plaid-card';
 import { IntegrationControls } from './integration-controls';
+import { RemoveImportedButton } from '@/components/dunning/remove-imported-button';
+import { previewXeroData } from '@/lib/integrations/imported-data-db';
+import { describeImported } from '@/lib/integrations/imported-data';
 
 const PROVIDER_LABELS: Record<string, string> = {
   quickbooks: 'QuickBooks Online',
@@ -34,6 +37,9 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
     db.select({ n: count() }).from(customers).where(eq(customers.orgId, orgId)),
   ]);
   const customerCount = Number(customerCountRow[0]?.n ?? 0);
+  // Data a disconnected Xero left behind (a wrong organisation, or simply an owner who left).
+  let importedNotice: string | null = null;
+  try { if (!list.some((i: typeof list[number]) => i.provider === 'xero' && i.status === 'connected')) importedNotice = describeImported(await previewXeroData(orgId)); } catch { /* the notice just stays hidden */ }
   const conn = (p: string) => list.find((i: typeof list[number]) => i.provider === p);
 
   // Detect which providers have production credentials configured.
@@ -127,6 +133,8 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
           </div>
         </div>
       )}
+
+      {importedNotice && <RemoveImportedButton message={importedNotice} />}
 
       <div id="providers" className="grid md:grid-cols-2 gap-4">
         <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt?.toISOString() ?? null} />
