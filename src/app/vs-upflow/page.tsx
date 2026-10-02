@@ -35,7 +35,7 @@ const DIFFS = [
     icon: DollarSign,
     label: 'Pricing',
     collectly: `Published: $${PLAN_PRICING.starter.monthly}/mo, flat, no per-invoice fees`,
-    competitor: 'Not published. Demo required. Third-party listings range from ~$249 to $500+/mo, on ARR-based tiers',
+    competitor: 'Not published; ask for a quote. Plans are set by annual invoiced revenue (Starter is for up to $10M a year), with no seat fees and a free analytics-only tier',
   },
   {
     icon: Target,

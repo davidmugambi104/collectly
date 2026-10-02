@@ -24,14 +24,14 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: DollarSign, label: 'Price', collectly: `$${PLAN_PRICING.starter.monthly}/mo, public pricing`, competitor: 'Custom pricing, request a quote' },
-  { icon: Clock, label: 'Setup', collectly: 'Self-serve, no demo call', competitor: 'Implementation-led, weeks' },
+  { icon: Clock, label: 'Setup', collectly: 'Self-serve, no demo call', competitor: 'No timeline published; request a quote' },
   { icon: ShieldCheck, label: 'Focus', collectly: 'AR dunning + cashflow for SMBs', competitor: 'Full invoice-to-cash + credit + deductions' },
-  { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Mid-market / enterprise finance teams' },
+  { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Finance teams with an ERP; no size stated on their site' },
 ];
 
 const STRATEGY = [
   { title: 'ROI-first sales motion', body: 'Gaviti leads with an embedded ROI calculator and case-study proof to justify enterprise deals.' },
-  { title: 'Usage-based pricing', body: 'No per-user limits makes Gaviti easy to expand inside large finance teams.' },
+  { title: 'Quote-based pricing', body: 'Gaviti publishes no prices and sends you to a quote form, which suits a finance team running a procurement process.' },
   { title: 'Credit + deductions modules', body: 'Gaviti bundles credit risk and dispute management, making it a platform, not a point tool.' },
   { title: 'Analyst and event marketing', body: 'Heavy presence at finance events and analyst reports builds enterprise trust.' },
 ];
@@ -78,7 +78,7 @@ export default function VsGavitiPage() {
         competitorName="Gaviti"
         summary="Gaviti grew by selling a full invoice-to-cash platform to finance leaders who needed credit, deductions, and collections in one place."
         cards={STRATEGY}
-        takeaway="Gaviti sells as an enterprise implementation: demo, scoping, onboarding, a named owner. That is the right shape if you have a controller who will run it. It is a lot of process for a founder who wants the reminders to go out on Monday."
+        takeaway="Gaviti publishes no prices and sends you to a quote and a demo, which fits a finance team with a controller who will run it. If you are a small team that wants to see a price and start today, that is a lot of process for a modest AR problem."
       />
       <WhenToChoose competitorName="Gaviti" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

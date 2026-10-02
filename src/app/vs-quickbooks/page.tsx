@@ -23,8 +23,8 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'Basic payment reminders' },
-  { icon: DollarSign, label: 'Cost', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees`, quickbooks: '$0/mo + payment processing fees' },
-  { icon: LineChart, label: 'Forecasting', collectly: '4-week AR cash-flow forecast', quickbooks: 'Basic reporting only' },
+  { icon: DollarSign, label: 'Cost', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees`, quickbooks: 'Reminders come with your QuickBooks plan; payments carry processing fees' },
+  { icon: LineChart, label: 'Forecasting', collectly: '4-week AR cash-flow forecast', quickbooks: 'Reports, and a cash flow planner on some plans' },
   { icon: Target, label: 'Best for', collectly: 'Businesses serious about reducing DSO', quickbooks: 'Businesses already living in QBO' },
 ];
 

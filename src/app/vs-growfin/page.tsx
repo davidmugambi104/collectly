@@ -24,8 +24,8 @@ export const metadata = pageMetadata({
 
 const DIFFS = [
   { icon: Bot, label: 'AI approach', collectly: 'Tone-aware Gemini dunning + risk scoring', competitor: 'Behavioral AI for enterprise collections CRM' },
-  { icon: Clock, label: 'Time to value', collectly: '< 1 day, self-serve', competitor: 'Months (ERP implementation)' },
-  { icon: Building2, label: 'Integrations', collectly: 'Xero, Plaid, Paystack (live); QuickBooks (beta); Stripe/Square (test/sandbox)', competitor: 'NetSuite, Salesforce, major ERPs' },
+  { icon: Clock, label: 'Time to value', collectly: 'Self-serve, no demo call', competitor: 'No timeline published; book a demo' },
+  { icon: Building2, label: 'Integrations', collectly: 'Xero (live); QuickBooks (beta)', competitor: 'NetSuite (dedicated SuiteApp), Xero, Sage, Zoho Books and other cloud ERPs; Slack and Salesforce' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Enterprise AR managers / controllers' },
 ];
 
@@ -78,7 +78,7 @@ export default function VsGrowfinPage() {
         competitorName="Growfin"
         summary="Growfin grew by becoming the behavioral AI collections layer for NetSuite-driven enterprises."
         cards={STRATEGY}
-        takeaway="Growfin is built for a finance team with a dedicated AR function and a NetSuite-shaped stack. If you have neither, the implementation costs more than the problem does."
+        takeaway="Growfin is built for a finance team with a dedicated AR function and a NetSuite-shaped stack. If you have neither, a demo-led enterprise tool is probably more than you need."
       />
       <WhenToChoose competitorName="Growfin" chooseCollectly={CHOOSE_US} chooseCompetitor={CHOOSE_THEM} />
       <ComparisonCta

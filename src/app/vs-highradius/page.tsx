@@ -25,7 +25,7 @@ export const metadata = pageMetadata({
 const DIFFS = [
   { icon: Layers, label: 'Scope', collectly: 'AR dunning, portal, forecast, risk scoring', competitor: 'O2C + AP + Treasury + Close/Reconciliation' },
   { icon: Clock, label: 'Deployment', collectly: 'Self-serve setup', competitor: 'Enterprise implementation + change management' },
-  { icon: Globe2, label: 'Integrations', collectly: 'Xero, Plaid, Paystack (live); QuickBooks (beta); Stripe/Square (test/sandbox)', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
+  { icon: Globe2, label: 'Integrations', collectly: 'Xero (live); QuickBooks (beta)', competitor: 'SAP, Oracle, MS Dynamics, NetSuite' },
   { icon: Target, label: 'Best for', collectly: '5-30 person agencies and consultancies', competitor: 'Large enterprises / Office of the CFO' },
 ];
 
@@ -47,7 +47,7 @@ const CHOOSE_THEM = [
   { label: 'You are a large enterprise with a dedicated transformation budget' },
   { label: 'You need AP, Treasury, and Close automation alongside AR' },
   { label: 'You run SAP/Oracle/NetSuite and want deep ERP integration' },
-  { label: 'You have months for implementation and change management' },
+  { label: 'You have a team to run an enterprise rollout' },
 ];
 
 export default function VsHighradiusPage() {
