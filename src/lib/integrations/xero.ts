@@ -18,6 +18,7 @@ import { fetchAllPages, chunk } from '@/lib/integrations/paging';
 import { needsLookup, reconcileStatus, xeroSyncedStatus } from '@/lib/integrations/sync-status';
 import { nanoid, errorMessage } from '@/lib/utils';
 import { replaceCredits } from '@/lib/integrations/credits';
+import { authEventIdFromToken, pickTenant, type XeroTenant as ConsentTenant } from '@/lib/integrations/xero-tenant';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 // Tests point this at a local stand-in. Never honoured in production.
@@ -43,7 +44,7 @@ function parseXeroDate(value: unknown): Date | null {
   const d = new Date(value);
   return isNaN(d.getTime()) ? null : d;
 }
-const XERO_CONNECTIONS = 'https://api.xero.com/Connections';
+const XERO_CONNECTIONS = process.env.XERO_CONNECTIONS_URL ?? 'https://api.xero.com/Connections';
 
 // Auto-refresh access token if within 5 min of expiry.
 async function getFreshXero(orgId: string) {
@@ -56,7 +57,7 @@ async function getFreshXero(orgId: string) {
 
   if (!needsRefresh) {
     // Ensure we have a tenantId; if not, resolve on first use
-    if (!integ.tenantId) await resolveXeroTenant(orgId, integ.accessToken!, integ.id);
+    if (!integ.tenantId) return { ...integ, tenantId: await resolveXeroTenant(orgId, integ.accessToken!, integ.id) };
     return integ;
   }
 
@@ -85,7 +86,7 @@ async function getFreshXero(orgId: string) {
   const updated = { ...integ, accessToken: json.access_token, refreshToken: json.refresh_token ?? integ.refreshToken, expiresAt: newExpiresAt };
 
   // Tenant may also need to be re-resolved if our session was wiped
-  if (!updated.tenantId) await resolveXeroTenant(orgId, updated.accessToken!, integ.id);
+  if (!updated.tenantId) return { ...updated, tenantId: await resolveXeroTenant(orgId, updated.accessToken!, integ.id) };
   return updated;
 }
 
@@ -104,12 +105,9 @@ async function resolveXeroTenant(orgId: string, accessToken: string, integration
   // reconnecting to Xero's Demo Company kept syncing an old, empty org
   // instead). updatedDateUtc reflects the most recent (re)authorization per
   // Xero's own docs, so sort on that and take the most recent.
-  const sorted = [...(json ?? [])].sort((a: XeroTenant, b: XeroTenant) =>
-    new Date(b.updatedDateUtc ?? b.createdDateUtc ?? 0).getTime() - new Date(a.updatedDateUtc ?? a.createdDateUtc ?? 0).getTime(),
-  );
-  const mostRecent = sorted[0];
+  const mostRecent = pickTenant(null, json);
   if (!mostRecent?.tenantId) throw new Error('Xero: no tenant found for this connection');
-  await db.update(integrations).set({ tenantId: mostRecent.tenantId, updatedAt: new Date() }).where(eq(integrations.id, integrationId));
+  await db.update(integrations).set({ tenantId: mostRecent.tenantId, metadata: { tenantName: mostRecent.tenantName ?? null }, updatedAt: new Date() }).where(eq(integrations.id, integrationId));
   return mostRecent.tenantId as string;
 }
 
@@ -253,6 +251,20 @@ export async function xeroRefresh(refreshToken: string) {
   return res.json();
 }
 
+/** The organisation(s) chosen in the consent that produced this token, or the newest of all as a fallback. */
+async function tenantFromConsent(accessToken: string): Promise<ConsentTenant | null> {
+  const headers = { Authorization: `Bearer ${accessToken}`, Accept: 'application/json' };
+  const eventId = authEventIdFromToken(accessToken);
+  let fromConsent: ConsentTenant[] = [];
+  if (eventId) {
+    const r = await fetch(`${XERO_CONNECTIONS}?authEventId=${encodeURIComponent(eventId)}`, { headers });
+    if (r.ok) fromConsent = (await r.json()) as ConsentTenant[];
+  }
+  if (fromConsent.length > 0) return pickTenant(fromConsent, null);
+  const r = await fetch(XERO_CONNECTIONS, { headers });
+  return r.ok ? pickTenant(null, (await r.json()) as ConsentTenant[]) : null;
+}
+
 export async function saveXeroConnection(orgId: string, tokens: {
   access_token: string;
   refresh_token: string;
@@ -260,6 +272,11 @@ export async function saveXeroConnection(orgId: string, tokens: {
   tenant_id?: string;
 }) {
   const expiresAt = new Date(Date.now() + (tokens.expires_in ?? 1800) * 1000);
+  // Which organisation did they just pick? Ask Xero for the ones from this consent only.
+  let tenant: ConsentTenant | null = null;
+  try { tenant = await tenantFromConsent(tokens.access_token); } catch { /* resolved later, from the full list */ }
+  const tenantId = tokens.tenant_id ?? tenant?.tenantId ?? null;
+  const metadata = tenant ? { tenantName: tenant.tenantName ?? null } : undefined;
   const existing = await db
     .select()
     .from(integrations)
@@ -272,7 +289,8 @@ export async function saveXeroConnection(orgId: string, tokens: {
         accessToken: tokens.access_token,
         refreshToken: tokens.refresh_token,
         expiresAt,
-        tenantId: tokens.tenant_id ?? null,
+        tenantId,
+        ...(metadata ? { metadata } : {}),
         status: 'connected',
         lastSyncAt: new Date(),
         updatedAt: new Date(),
@@ -290,7 +308,8 @@ export async function saveXeroConnection(orgId: string, tokens: {
       accessToken: tokens.access_token,
       refreshToken: tokens.refresh_token,
       expiresAt,
-      tenantId: tokens.tenant_id ?? null,
+      tenantId,
+      ...(metadata ? { metadata } : {}),
       lastSyncAt: new Date(),
     })
     .returning();

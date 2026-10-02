@@ -130,7 +130,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
 
       <div id="providers" className="grid md:grid-cols-2 gap-4">
         <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt?.toISOString() ?? null} />
-        <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt?.toISOString() ?? null} />
+        <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt?.toISOString() ?? null} detail={((conn('xero')?.metadata as { tenantName?: string | null } | null)?.tenantName) ? `Connected to ${(conn('xero')!.metadata as { tenantName: string }).tenantName}` : null} />
         <IntegrationCard logo="S" name="Stripe" description="Payments processor. Paused — we use bank transfer / Wise for billing. Code is kept in case we re-enable." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt?.toISOString() ?? null} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
@@ -151,7 +151,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   );
 }
 
-function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt }: { logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero' | 'square'; label?: string; lastSyncAt?: string | null }) {
+function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt, detail }: { detail?: string | null; logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero' | 'square'; label?: string; lastSyncAt?: string | null }) {
   const connected = status === 'connected';
   const errored = status === 'error';
   const paused = status === 'paused';
@@ -171,6 +171,7 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
             {!connected && !errored && !paused && <span className="badge-neutral">Not connected</span>}
           </div>
           <p className="app-body mt-1">{description}</p>
+          {connected && detail && <p className="mt-1 text-sm font-medium text-ink-800">{detail}</p>}
           <div className="mt-3 flex items-center gap-2">
             {paused ? (
               <span className="btn-secondary btn-sm opacity-60 cursor-not-allowed" aria-disabled="true">Paused</span>

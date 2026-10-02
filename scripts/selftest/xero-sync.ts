@@ -6,6 +6,7 @@ import { and, eq } from 'drizzle-orm';
 
 const PORT = 4817;
 process.env.XERO_API_BASE = `http://127.0.0.1:${PORT}/api.xro/2.0`;
+process.env.XERO_CONNECTIONS_URL = `http://127.0.0.1:${PORT}/Connections`;
 process.env.USE_PGLITE = '1';
 
 // ---- A fake Xero that follows the documented rules: 100 per page, page=N, IDs=a,b ----
@@ -25,8 +26,13 @@ const notes = [{ CreditNoteID: 'n1', Status: 'AUTHORISED', RemainingCredit: 120.
 const server = http.createServer((req, res) => {
   const u = new URL(req.url!, `http://x`);
   calls.push(`${u.pathname}${u.search}`);
-  if (req.headers['xero-tenant-id'] !== 'T1') { res.writeHead(403); res.end('no tenant'); return; }
   const send = (o: unknown) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(o)); };
+  if (u.pathname === '/Connections') {
+    const demo = { tenantId: 'T2', tenantName: 'Demo Company (Global)', updatedDateUtc: '2026-10-02T01:00:00Z' };
+    const mine = { tenantId: 'T1', tenantName: 'mugavi', updatedDateUtc: '2026-10-02T00:00:00Z' };
+    return send(u.searchParams.get('authEventId') === 'evt-mugavi' ? [mine] : [demo, mine]);
+  }
+  if (req.headers['xero-tenant-id'] !== 'T1') { res.writeHead(403); res.end('no tenant'); return; }
   const page = Number(u.searchParams.get('page') ?? 0);
   if (u.pathname.endsWith('/CreditNotes')) return send({ CreditNotes: notes.slice((page - 1) * 100, page * 100) });
   if (u.pathname.endsWith('/Contacts')) return send({ Contacts: page ? contacts.slice((page - 1) * 100, page * 100) : contacts.slice(0, 100) });
@@ -69,6 +75,15 @@ async function main() {
   const cs = await db.select({ n: customers.id }).from(customers).where(eq(customers.orgId, org.id));
   console.log('COUNTS invoices', all.length, 'customers', cs.length);
   console.log('CALLS', calls.map((c) => c.replace('/api.xro/2.0', '').slice(0, 70)).join('\nCALLS '));
+  // A brand-new connection with no tenant: the consent's own organisation must win over a newer one, and the first sync must work.
+  { const { saveXeroConnection, syncXeroForOrg: syncAgain } = await import('@/lib/integrations/xero');
+    const jwt = `h.${Buffer.from(JSON.stringify({ authentication_event_id: 'evt-mugavi' })).toString('base64url')}.s`;
+    await db.delete(integrations).where(eq(integrations.orgId, org.id));
+    await saveXeroConnection(org.id, { access_token: jwt, refresh_token: 'r', expires_in: 1800 });
+    const [row] = await db.select().from(integrations).where(eq(integrations.orgId, org.id));
+    console.log('TENANT from this consent:', row.tenantId === 'T1', '| name stored:', (row.metadata as { tenantName?: string } | null)?.tenantName === 'mugavi');
+    const first = await syncAgain(org.id);
+    console.log('FIRST sync errors (expect none):', JSON.stringify(first.errors.filter((e: string) => /tenant|contacts/.test(e)))); }
   { const { customerCredits } = await import('@/db/schema'); const rows = await db.select().from(customerCredits); console.log('CREDITS (expect one row, 200.00 for c7):', rows.map((r: { amount: string }) => r.amount).join(',')); }
   server.close();
   process.exit(0);
