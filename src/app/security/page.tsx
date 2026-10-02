@@ -17,12 +17,12 @@ const principles = [
   {
     icon: Lock,
     title: 'Encryption in transit and at rest',
-    body: 'All traffic is TLS 1.2+ (HSTS enabled). Data is encrypted at rest using AES-256 on managed Postgres volumes. Backups are encrypted with provider-managed KMS keys and retained for 30 days.',
+    body: 'All traffic is TLS 1.2+ (HSTS enabled). Data is encrypted at rest by our managed Postgres provider, which also runs the database backups.',
   },
   {
     icon: KeyRound,
     title: 'Least-privilege access control',
-    body: 'Role-based access via Clerk. Your team only sees the orgs they belong to. No service accounts with standing admin access. Every database query is scoped by org_id at the application layer.',
+    body: 'Sign-in runs through Clerk. Your team members only see the organizations they belong to, and database queries are scoped by org_id at the application layer.',
   },
   {
     icon: Server,
@@ -32,19 +32,18 @@ const principles = [
   {
     icon: Eye,
     title: 'Audit logging',
-    body: 'Every state-changing action (dunning send, invoice update, payment mark, integration connect) writes to an immutable events table scoped by org. You can export your full audit log at any time.',
+    body: 'Key actions, such as reminders sent and integrations connected, are recorded in an events log scoped to your organization, and you can read it on the Activity page in your dashboard.',
   },
 ];
 
 const controls = [
   { label: 'TLS 1.2+ everywhere', status: 'enforced' },
-  { label: 'AES-256 at rest', status: 'enforced' },
-  { label: 'Quarterly access reviews', status: 'enforced' },
-  { label: 'Encrypted backups (30-day retention)', status: 'enforced' },
+  { label: 'Encrypted at rest (managed Postgres provider)', status: 'enforced' },
+  { label: 'Database backups (managed Postgres provider)', status: 'enforced' },
   { label: 'Secrets in environment variables only', status: 'enforced' },
   { label: 'Org-scoped queries (no cross-tenant reads)', status: 'enforced' },
-  { label: 'SSO via Clerk (Google, Microsoft, GitHub)', status: 'available' },
-  { label: 'SOC 2 Type II', status: 'in progress' },
+  { label: 'Sign in with Google or email (via Clerk)', status: 'available' },
+  { label: 'SOC 2 Type II', status: 'not yet' },
   { label: 'GDPR + UK GDPR + CCPA-aligned DPA', status: 'available' },
   { label: 'DPA on request', status: 'available' },
 ];
@@ -52,7 +51,7 @@ const controls = [
 const statusClass: Record<string, string> = {
   enforced: 'badge-success',
   available: 'badge-neutral',
-  'in progress': 'badge-warn',
+  'not yet': 'badge-warn',
 };
 
 export default function SecurityPage() {
@@ -118,7 +117,7 @@ export default function SecurityPage() {
         <p className="eyebrow">Controls</p>
         <h2 className="mt-3 h2">Current security posture.</h2>
         <p className="mt-3 text-ink-600">
-          Honest status as of today. &quot;In progress&quot; means we have a target date within the next two quarters.
+          Honest status as of today. &quot;Not yet&quot; means we do not have it and have not started an audit.
         </p>
         <div className="mt-8 card overflow-hidden p-0">
           <table className="w-full text-sm">
@@ -150,7 +149,7 @@ export default function SecurityPage() {
           We commit to notifying affected customers within 72 hours of becoming aware of a security incident that
           materially impacts their data, consistent with our DPA. You can reach the security team directly at{' '}
           <a href="mailto:security@getcollectly.app" className="link">security@getcollectly.app</a> for disclosure,
-          responsible-vulnerability reports, or to request our latest penetration-test summary.
+          responsible-vulnerability reports.
         </p>
         <div className="mt-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />

@@ -94,8 +94,8 @@ const sections = [
       <>
         <p>
           Mugavi implements technical and organizational measures to protect Customer Data, including:
-          TLS 1.2+ in transit, AES-256 at rest, org-scoped queries, role-based access via Clerk, audit logging of
-          all state changes, and quarterly access reviews. The current security posture is published on our{' '}
+          TLS 1.2+ in transit, encryption at rest by our managed Postgres provider, org-scoped queries, sign-in through
+          Clerk, and an events log of key actions. The current security posture is published on our{' '}
           <a href="/security" className="link">Security page</a>.
         </p>
       </>

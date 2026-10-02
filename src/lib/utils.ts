@@ -172,7 +172,7 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
     orgs: 'Unlimited client organizations',
     includedOrgs: 'unlimited',
     users: 'unlimited',
-    features: ['Everything in Practice Scale', 'Dedicated success manager', 'Custom integrations', 'SLA', 'SOC 2 reporting', 'White-glove onboarding'],
+    features: ['Everything in Practice Scale', 'Dedicated success manager', 'Custom integrations', 'SLA', 'White-glove onboarding'],
   },
 };
 
