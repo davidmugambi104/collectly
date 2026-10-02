@@ -28,6 +28,7 @@ import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { renderEmailHtml } from '@/lib/dunning/scheduler';
+import { isSmsConfigured } from '@/lib/dunning/sms-config';
 import { approvalBlocker, applyEdits, type ApprovalEdits } from '@/lib/dunning/approval';
 
 export type DeliverResult =
@@ -94,6 +95,7 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
     customerEmail: customer.email,
     customerPhone: customer.phone,
     smsAllowed: maySendSms(customer),
+    smsConfigured: isSmsConfigured(),
   });
   if (blocker) {
     await db.update(dunningRuns).set({ status: 'cancelled', error: `not sent at approval: ${blocker}` }).where(eq(dunningRuns.id, runId));

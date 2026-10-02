@@ -19,6 +19,7 @@ import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, ty
 import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
+import { isSmsConfigured, smsStepSkipReason } from '@/lib/dunning/sms-config';
 import { recordEvent } from '@/lib/events';
 import { maySendSms } from '@/lib/sms-consent';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
@@ -374,7 +375,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
       const dueSteps = (seq.steps ?? []).filter((s: DunningStep) => s.daysFromDue <= days).sort((a: DunningStep, b: DunningStep) => a.daysFromDue - b.daysFromDue);
       if (!dueSteps.length) continue;
 
-      const lastStep = dueSteps[dueSteps.length - 1];
+      const lastStep: DunningStep = dueSteps[dueSteps.length - 1];
 
       // Check if this exact step was already executed for this invoice
       // (batched lookup computed once above, not a per-invoice query).
@@ -404,6 +405,31 @@ export async function processDunning(opts: ProcessOptions = {}) {
       // Owner rule: at most one new reminder per customer in N days. Checked
       // before the AI call so a held-back invoice costs nothing.
       if (isGapBlocked(recentByCustomer.get(customer.id) ?? [], invoice.id, rules.minGapDays, now)) continue;
+
+      // SMS step but Twilio is not set up: skip it with a recorded reason, in
+      // approval and auto-send mode alike. Nothing is drafted (no AI call, no
+      // queue entry the owner could not approve) and the sequence carries on
+      // to its next step. No reroute to email. See sms-config.ts.
+      const smsSkip = smsStepSkipReason(lastStep.channel, isSmsConfigured());
+      if (smsSkip) {
+        const skipValues = {
+          id: nanoid(), orgId: seq.orgId, invoiceId: invoice.id, sequenceId: seq.id, stepId: lastStep.id,
+          channel: 'sms' as const, status: 'cancelled' as const, scheduledFor: now, body: '', error: smsSkip,
+        };
+        const q = db.insert(dunningRuns).values(skipValues);
+        const skipped = await (retriableRunIds.has(`${invoice.id}:${lastStep.id}`)
+          ? q.onConflictDoUpdate({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId], set: { status: 'cancelled', error: smsSkip } })
+          : q.onConflictDoNothing({ target: [dunningRuns.invoiceId, dunningRuns.sequenceId, dunningRuns.stepId] })
+        ).returning({ id: dunningRuns.id });
+        if (skipped.length) {
+          await recordEvent({
+            orgId: seq.orgId,
+            type: 'dunning.run.cancelled',
+            payload: { runId: skipped[0].id, invoiceId: invoice.id, stepId: lastStep.id, channel: 'sms', days, reason: smsSkip },
+          });
+        }
+        continue;
+      }
 
       try {
         const result = await generateDunningMessage({

@@ -23,6 +23,8 @@ export function approvalBlocker(opts: {
   customerEmail: string | null;
   customerPhone: string | null;
   smsAllowed: boolean;
+  /** Twilio is set up. Omitted means true, so existing callers keep their behaviour. */
+  smsConfigured?: boolean;
   /** The customer answered a reminder and nobody has handled the reply yet. */
   unhandledReply?: boolean;
 }): string | null {
@@ -33,6 +35,7 @@ export function approvalBlocker(opts: {
   if (opts.unhandledReply) return 'the customer has replied and the reply is still waiting in your inbox';
   if (opts.channel === 'email' && !opts.customerEmail) return 'customer has no email on file';
   if (opts.channel === 'sms') {
+    if (opts.smsConfigured === false) return 'text messaging (Twilio) is not set up';
     if (!opts.customerPhone) return 'customer has no phone number on file';
     if (!opts.smsAllowed) return 'customer has not opted in to SMS';
   }

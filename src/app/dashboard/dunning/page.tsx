@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import { isSmsConfigured } from '@/lib/dunning/sms-config';
 import { AppShell } from '@/components/app/shell';
 import { getAuth as auth, requireOrgId } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
@@ -375,7 +376,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       ) : (
         <>
         {recentRuns.length === 0 && queue.length === 0 && <StarterSetup presets={PRESETS.map(({ id, name, blurb }) => ({ id, name, blurb }))} approvalRequired={approvalRequired} />}
-        <ApprovalQueue approvalRequired={approvalRequired} items={queue} smsConfigured={!!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM_NUMBER)} />
+        <ApprovalQueue approvalRequired={approvalRequired} items={queue} smsConfigured={isSmsConfigured()} />
         <StatementDraftsQueue items={stmtDrafts} />
         </>
       )}
