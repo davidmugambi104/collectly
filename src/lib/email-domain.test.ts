@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeDomain, isBlockedDomain, normalizeLocalPart, mapProviderStatus, normalizeRecords, canSendFrom } from './email-domain.ts';
+import { normalizeDomain, isBlockedDomain, normalizeLocalPart, mapProviderStatus, normalizeRecords, canSendFrom, dmarcRecord } from './email-domain.ts';
 import { formatOwnDomainFrom } from './email-from.ts';
 
 test('domains are cleaned from what people paste', () => {
@@ -69,4 +69,16 @@ test('the own-domain From line names the business, with no platform, and cannot 
   assert.ok(!/[\r\n]/.test(evil));
   assert.ok(evil.endsWith('<billing@acme.com>'));
   assert.equal(formatOwnDomainFrom('', 'billing', 'acme.com'), '"acme.com" <billing@acme.com>');
+});
+
+test('dmarcRecord starts in monitor mode and names the _dmarc host', () => {
+  const r = dmarcRecord('acme.com');
+  assert.equal(r.name, '_dmarc.acme.com');
+  assert.equal(r.value, 'v=DMARC1; p=none');
+});
+
+test('dmarcRecord adds a report address only when it looks like one', () => {
+  assert.equal(dmarcRecord('acme.com', 'dmarc@acme.com').value, 'v=DMARC1; p=none; rua=mailto:dmarc@acme.com');
+  assert.equal(dmarcRecord('acme.com', 'not an address').value, 'v=DMARC1; p=none');
+  assert.equal(dmarcRecord('acme.com', 'a@b.com; p=reject').value, 'v=DMARC1; p=none');
 });
