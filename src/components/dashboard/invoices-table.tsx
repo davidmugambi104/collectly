@@ -104,7 +104,7 @@ export function InvoicesTable({ rows, next = {} }: { rows: Row[]; next?: Record<
                 <div className="text-right">
                   <div className="app-meta">Balance</div>
                   <div className="num-strong mt-0.5 text-[15px]">{formatCurrency(balance, invoice.currency)}</div>
-                  <div className="num text-2xs text-ink-400">of {formatCurrency(invoice.amount, invoice.currency)}</div>
+                  <div className="num text-2xs text-ink-500">of {formatCurrency(invoice.amount, invoice.currency)}</div>
                 </div>
               </div>
             </Link>
@@ -163,7 +163,7 @@ export function InvoicesTable({ rows, next = {} }: { rows: Row[]; next?: Record<
                             <span className="block truncate text-[13px] font-medium leading-[18px] text-ink-950 transition-colors group-hover:text-brand-700">
                               {customer.name}
                             </span>
-                            <span className="block truncate text-2xs leading-4 text-ink-400">
+                            <span className="block truncate text-2xs leading-4 text-ink-500">
                               {customer.email ?? customer.phone}
                             </span>
                           </span>
@@ -191,10 +191,10 @@ export function InvoicesTable({ rows, next = {} }: { rows: Row[]; next?: Record<
                       <td className="whitespace-nowrap text-2xs">
                         {next[invoice.id]
                           ? <span title={next[invoice.id].headline} className={next[invoice.id].willAct ? 'font-medium text-brand-700' : 'text-ink-600'}>{next[invoice.id].short}</span>
-                          : <span className="text-ink-300">–</span>}
+                          : <span className="text-ink-500">–</span>}
                       </td>
                       <td className="col-num text-ink-500">{formatCurrency(invoice.amount, invoice.currency)}</td>
-                      <td className={`col-num ${settled ? 'text-ink-400' : 'num-strong'}`}>
+                      <td className={`col-num ${settled ? 'text-ink-500' : 'num-strong'}`}>
                         {formatCurrency(balance, invoice.currency)}
                       </td>
                     </tr>

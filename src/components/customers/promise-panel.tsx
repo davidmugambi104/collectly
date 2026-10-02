@@ -123,7 +123,7 @@ export function PromisePanel({
                     than every required field carrying an asterisk — three marks
                     to avoid one is the wrong trade. */}
                 <label htmlFor="promise-source" className="label">
-                  Source <span className="ml-1 font-normal text-ink-400">Optional</span>
+                  Source <span className="ml-1 font-normal text-ink-500">Optional</span>
                 </label>
                 <input id="promise-source" name="sourceText" className="input" placeholder="e.g. said on call 8/2" />
               </div>

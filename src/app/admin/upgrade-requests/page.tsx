@@ -105,7 +105,7 @@ export default async function AdminUpgradeRequestsPage() {
                             {r.notes}
                           </div>
                         )}
-                        <div className="mt-2 text-xs text-ink-400 font-mono">ID: {r.id}</div>
+                        <div className="mt-2 text-xs text-ink-500 font-mono">ID: {r.id}</div>
                       </div>
                       <div className="flex flex-col gap-2 shrink-0">
                         <form action={markStatus}>

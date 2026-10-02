@@ -68,7 +68,7 @@ function NavLink({
         )}
         <Icon
           className={`h-4 w-4 shrink-0 transition-colors ${
-            active ? 'text-brand-600' : 'text-ink-400 group-hover:text-ink-600'
+            active ? 'text-brand-600' : 'text-ink-500 group-hover:text-ink-600'
           }`}
         />
         <span className="flex-1 truncate">{item.label}</span>
@@ -140,7 +140,7 @@ function NavTree({ pathname, unreadCount, dense }: { pathname: string | null; un
           {/* Cluster labels sit at the quietest step in the rail: wide tracking
               at small size reads as a signpost, not as another link. */}
           {group.label && (
-            <div className="px-2.5 pb-1.5 text-2xs font-medium uppercase tracking-[0.08em] text-ink-400">
+            <div className="px-2.5 pb-1.5 text-2xs font-medium uppercase tracking-[0.08em] text-ink-500">
               {group.label}
             </div>
           )}
@@ -354,7 +354,7 @@ export function AppShell({
           <button
             type="button"
             onClick={() => setPaletteOpen(true)}
-            className="group flex h-8 shrink-0 items-center gap-2 rounded-lg bg-ink-50 px-2.5 text-[13px] text-ink-400 ring-1 ring-inset ring-ink-300/55 transition-colors hover:bg-white hover:text-ink-600 hover:ring-ink-300 sm:w-64"
+            className="group flex h-8 shrink-0 items-center gap-2 rounded-lg bg-ink-50 px-2.5 text-[13px] text-ink-500 ring-1 ring-inset ring-ink-300/55 transition-colors hover:bg-white hover:text-ink-600 hover:ring-ink-300 sm:w-64"
             style={{ boxShadow: 'inset 0 1px 2px 0 rgb(var(--shade) / 0.05)' }}
           >
             <Search className="h-3.5 w-3.5 shrink-0 transition-colors group-hover:text-ink-500" />

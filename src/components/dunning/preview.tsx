@@ -148,7 +148,7 @@ export function DunningPreview(props: PreviewProps) {
               <span className="h-2.5 w-2.5 rounded-full bg-danger-400" />
               <span className="h-2.5 w-2.5 rounded-full bg-warn-400" />
               <span className="h-2.5 w-2.5 rounded-full bg-success-400" />
-              <span className="ml-2 flex items-center gap-1 text-2xs text-ink-400">
+              <span className="ml-2 flex items-center gap-1 text-2xs text-ink-500">
                 {props.channel === 'sms' ? <MessageSquare className="h-3 w-3" /> : <Mail className="h-3 w-3" />}
                 Editing what {props.customerName.split(' ')[0]} will see
               </span>

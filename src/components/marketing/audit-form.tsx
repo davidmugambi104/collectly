@@ -62,23 +62,23 @@ export function AuditForm() {
       <Honeypot value={website} onChange={setWebsite} />
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
-          <label className="label">Name *</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} required className="input" placeholder="Your name" />
+          <label className="label" htmlFor="audit-form-f1">Name *</label>
+          <input id="audit-form-f1" value={name} onChange={(e) => setName(e.target.value)} required className="input" placeholder="Your name" />
         </div>
         <div>
-          <label className="label">Email *</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="input" placeholder="you@company.com" />
+          <label className="label" htmlFor="audit-form-f2">Email *</label>
+          <input id="audit-form-f2" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="input" placeholder="you@company.com" />
         </div>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
-          <label className="label">Company *</label>
-          <input value={company} onChange={(e) => setCompany(e.target.value)} required className="input" placeholder="Company name" />
+          <label className="label" htmlFor="audit-form-f3">Company *</label>
+          <input id="audit-form-f3" value={company} onChange={(e) => setCompany(e.target.value)} required className="input" placeholder="Company name" />
         </div>
         <div>
-          <label className="label">Country</label>
-          <select value={country} onChange={(e) => setCountry(e.target.value)} className="input">
+          <label className="label" htmlFor="audit-form-f4">Country</label>
+          <select id="audit-form-f4" value={country} onChange={(e) => setCountry(e.target.value)} className="input">
             {['US', 'GB', 'AU', 'CA', 'IE', 'NZ', 'KE', 'NG', 'ZA', 'IN', 'Other'].map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
@@ -88,8 +88,8 @@ export function AuditForm() {
 
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
-          <label className="label">Invoicing tool today *</label>
-          <select value={tool} onChange={(e) => setTool(e.target.value)} required className="input">
+          <label className="label" htmlFor="audit-form-f5">Invoicing tool today *</label>
+          <select id="audit-form-f5" value={tool} onChange={(e) => setTool(e.target.value)} required className="input">
             <option value="">Select one</option>
             {['QuickBooks', 'Xero', 'FreshBooks', 'Wave', 'Zoho Books', 'Spreadsheets', 'Stripe', 'Other'].map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -97,8 +97,8 @@ export function AuditForm() {
           </select>
         </div>
         <div>
-          <label className="label">Average days to payment (DSO)</label>
-          <select value={dso} onChange={(e) => setDso(e.target.value)} className="input">
+          <label className="label" htmlFor="audit-form-f6">Average days to payment (DSO)</label>
+          <select id="audit-form-f6" value={dso} onChange={(e) => setDso(e.target.value)} className="input">
             {['<15', '15-30', '30-45', '45-60', '60-90', '90+', 'not-sure'].map((c) => (
               <option key={c} value={c}>{c} days</option>
             ))}
@@ -107,14 +107,14 @@ export function AuditForm() {
       </div>
 
       <div>
-        <label className="label">Outstanding A/R right now</label>
-        <input value={ar} onChange={(e) => setAr(e.target.value)} className="input" placeholder="e.g. $35,000 USD" />
+        <label className="label" htmlFor="audit-form-f7">Outstanding A/R right now</label>
+        <input id="audit-form-f7" value={ar} onChange={(e) => setAr(e.target.value)} className="input" placeholder="e.g. $35,000 USD" />
         <p className="mt-1 text-xs text-ink-500">Optional, but helps us give a sharper audit.</p>
       </div>
 
       <div>
-        <label className="label">What&apos;s the biggest pain in your collections process? *</label>
-        <textarea
+        <label className="label" htmlFor="audit-form-f8">What&apos;s the biggest pain in your collections process? *</label>
+        <textarea id="audit-form-f8"
           value={topPain}
           onChange={(e) => setTopPain(e.target.value)}
           required

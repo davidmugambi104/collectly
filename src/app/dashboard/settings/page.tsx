@@ -87,7 +87,7 @@ export default async function SettingsPage() {
 
           <Section title="Profile" hint="How you describe the business.">
             <label htmlFor="org-business-type" className="label">
-              Business type <span className="ml-1 font-normal text-ink-400">Optional</span>
+              Business type <span className="ml-1 font-normal text-ink-500">Optional</span>
             </label>
             <input
               id="org-business-type"

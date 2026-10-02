@@ -86,14 +86,14 @@ export function HoldPanel({ customerId, customerName, hold }: { customerId: stri
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label htmlFor="hold-until" className="label">
-                  Until <span className="ml-1 font-normal text-ink-400">Optional</span>
+                  Until <span className="ml-1 font-normal text-ink-500">Optional</span>
                 </label>
                 <input id="hold-until" name="heldUntil" type="date" min={today} className="input" />
                 <p className="mt-1 text-xs text-ink-500">Leave empty to pause until you resume.</p>
               </div>
               <div>
                 <label htmlFor="hold-reason" className="label">
-                  Note <span className="ml-1 font-normal text-ink-400">Optional</span>
+                  Note <span className="ml-1 font-normal text-ink-500">Optional</span>
                 </label>
                 <input id="hold-reason" name="reason" maxLength={200} className="input" placeholder="e.g. agreed a payment plan on the phone" />
               </div>

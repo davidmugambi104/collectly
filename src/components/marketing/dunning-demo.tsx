@@ -59,18 +59,18 @@ export function DunningDemo() {
         <p className="mt-1 text-sm text-ink-600">Pick a tone. See a sample message. No signup, no tracking.</p>
         <div className="mt-5 space-y-4">
           <div>
-            <label className="text-xs font-semibold text-ink-700 uppercase tracking-wider">Invoice amount (USD)</label>
-            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="input mt-1 font-mono" />
+            <label className="text-xs font-semibold text-ink-700 uppercase tracking-wider" htmlFor="dunning-demo-f1">Invoice amount (USD)</label>
+            <input id="dunning-demo-f1" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="input mt-1 font-mono" />
           </div>
           <div>
-            <label className="text-xs font-semibold text-ink-700 uppercase tracking-wider">Days overdue: <span className="text-brand-600">{days}</span></label>
-            <input type="range" min="1" max="120" value={days} onChange={(e) => setDays(Number(e.target.value))} className="w-full mt-2" />
+            <label className="text-xs font-semibold text-ink-700 uppercase tracking-wider" htmlFor="dunning-demo-f2">Days overdue: <span className="text-brand-600">{days}</span></label>
+            <input id="dunning-demo-f2" type="range" min="1" max="120" value={days} onChange={(e) => setDays(Number(e.target.value))} className="w-full mt-2" />
           </div>
           <div>
             <label className="text-xs font-semibold text-ink-700 uppercase tracking-wider">Tone</label>
             <div className="mt-1.5 grid grid-cols-3 gap-2">
               {(['friendly', 'firm', 'final'] as Tone[]).map((t) => (
-                <button key={t} onClick={() => setTone(t)} className={`px-3 py-2 rounded-lg text-sm font-medium capitalize border transition-colors ${tone === t ? 'border-brand-500 bg-brand-50 text-brand-900' : 'border-ink-200 hover:border-ink-300'}`}>
+                <button key={t} type="button" aria-pressed={tone === t} onClick={() => setTone(t)} className={`px-3 py-2 rounded-lg text-sm font-medium capitalize border transition-colors ${tone === t ? 'border-brand-500 bg-brand-50 text-brand-900' : 'border-ink-200 hover:border-ink-300'}`}>
                   {t}
                 </button>
               ))}
@@ -79,10 +79,10 @@ export function DunningDemo() {
           <div>
             <label className="text-xs font-semibold text-ink-700 uppercase tracking-wider">Channel</label>
             <div className="mt-1.5 grid grid-cols-2 gap-2">
-              <button onClick={() => setChannel('email')} className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 border transition-colors ${channel === 'email' ? 'border-brand-500 bg-brand-50 text-brand-900' : 'border-ink-200 hover:border-ink-300'}`}>
+              <button type="button" aria-pressed={channel === 'email'} onClick={() => setChannel('email')} className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 border transition-colors ${channel === 'email' ? 'border-brand-500 bg-brand-50 text-brand-900' : 'border-ink-200 hover:border-ink-300'}`}>
                 <Mail className="h-4 w-4" /> Email
               </button>
-              <button onClick={() => setChannel('sms')} className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 border transition-colors ${channel === 'sms' ? 'border-brand-500 bg-brand-50 text-brand-900' : 'border-ink-200 hover:border-ink-300'}`}>
+              <button type="button" aria-pressed={channel === 'sms'} onClick={() => setChannel('sms')} className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 border transition-colors ${channel === 'sms' ? 'border-brand-500 bg-brand-50 text-brand-900' : 'border-ink-200 hover:border-ink-300'}`}>
                 <MessageSquare className="h-4 w-4" /> SMS
               </button>
             </div>
