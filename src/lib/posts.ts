@@ -2,6 +2,76 @@ type Post = { slug: string; title: string; date: string; read: string; excerpt: 
 
 export const POSTS: Post[] = [
   {
+    slug: 'bookkeeper-invoice-follow-up-service',
+    title: 'How a bookkeeper can offer invoice follow-up as a paid service',
+    date: '2026-10-03', read: '6 min',
+    excerpt: 'Many clients have overdue invoices and nobody chasing them. Here is how to scope it, price it and run it as a service, without becoming a collections agency.',
+    tags: ['bookkeeping', 'QuickBooks', 'accounts receivable', 'client services'],
+    body: `Ask a few of your clients who follows up when an invoice goes overdue, and a common answer is "nobody, really." The owner is busy, the invoice sits, and the cash they were counting on arrives a month late. You already see those invoices every time you reconcile. Following up on them is a natural thing to offer.
+
+It is also easy to do badly: scope creep, awkward conversations with your client's customers, and a pile of unpaid hours. This is a way to set it up so it stays a clean service.
+
+## Decide what you are actually offering
+
+There is a wide gap between "I will send reminders" and "I will collect your debts." Pick the narrow end and say so in writing.
+
+A reasonable scope for a bookkeeper:
+
+- You draft and send polite payment reminders on the client's behalf, on a schedule you agree up front.
+- You report each month on what is overdue, what was paid after a reminder, and what needs the owner's attention.
+- You flag disputes and send them to the owner. You do not argue them.
+
+What stays out of scope: threats, legal letters, calls to a customer who has stopped replying, anything about credit reporting. If it gets that far, it goes back to the owner, who can decide whether to involve a collections firm or a lawyer. This is not legal advice, and the rules on contacting debtors vary by place, so check yours.
+
+## Get three things agreed before you send anything
+
+1. **Whose name is on the email.** Reminders land better from the client's business name than from a bookkeeper nobody has heard of. Agree on the sender name and, if you can, the address.
+2. **Who approves.** For the first month, have the owner see every message. After that, agree which customers or amounts you can handle yourself. Keep a record of the agreement.
+3. **What counts as "stop."** A customer who replies, a customer who disputes, a customer the owner calls a friend: decide in advance that any of these pauses the chase until a person has looked.
+
+## Pricing it
+
+There are a few common ways to charge. None is right for everyone.
+
+- **A flat monthly fee per client.** Predictable for both sides, and easy to explain. The risk is a client with a lot of overdue invoices turning a cheap fee into a lot of work.
+- **A fee tied to volume,** such as the number of customers followed up. Fairer when clients vary a lot, but harder to quote.
+- **A share of what is recovered.** It sounds appealing, but it blurs the line toward collections and invites arguments over what would have been paid anyway. Think hard before offering it.
+
+Whatever you choose, put the scope and the price in the engagement letter. The reminders themselves cost little. The hours go on setup, on the monthly report and on the conversations with the owner.
+
+## A weekly rhythm that fits around the rest of your work
+
+A short, fixed routine is easier to sustain than ad hoc chasing.
+
+1. **Monday:** open the aged receivables report for each client. Our [guide to reading one](/blog/read-an-aged-receivables-report) covers what to look for.
+2. **Review the reminders due this week** and edit anything that does not sound like the client.
+3. **Send,** then note the replies. A reply that says "I'll pay Friday" is worth writing down, and following up if Friday passes.
+4. **Once a month,** send the owner a one-page summary: overdue total, what moved, and the two or three accounts that need a personal call.
+
+One reminder per customer per week, listing everything they owe, is kinder and clearer than three separate emails about three invoices.
+
+## Do not let the accounting software send them for you
+
+If your clients are on QuickBooks, be careful about turning on its built-in reminders without the owner knowing. Plenty of owners have been surprised to learn their customers were emailed on their behalf. We wrote about [why that happens and how to stop it](/blog/stop-quickbooks-emailing-your-customers). The point of this service is that a person chose to send each message.
+
+## Where a tool helps
+
+You can run all of this with a spreadsheet and your own email. It stops scaling at around a handful of clients. At that point you want one place that shows every client's overdue invoices and holds the drafted reminders until you approve them.
+
+That is what [Mugavi](/for/bookkeepers) is built for. It drafts reminders for each client book from QuickBooks, waits for your approval, and gives you thirty seconds to undo after you press send. A customer who holds a credit that covers what they owe is not chased, and a reply pauses the chase. It is $399 a month for ten client books. The QuickBooks integration is in beta, so start with one client book and check what it shows before you add more. And it does not write late fees back to QuickBooks yet.
+
+## A short checklist before you offer this
+
+- [ ] Scope written down, including what you will not do
+- [ ] Sender name and address agreed with each client
+- [ ] An approval rule agreed, and what pauses a chase
+- [ ] Price and what it covers in the engagement letter
+- [ ] A monthly one-page summary you can reuse for every client
+- [ ] A place to look up the rules on contacting debtors where you work
+
+Start with one client who already complains about late payers. Run it for a month, see how many hours it really takes, and price the service from that.`,
+  },
+  {
     slug: 'why-hasnt-my-invoice-reminder-gone-out',
     title: "Why hasn't my invoice reminder gone out? Ten things to check",
     date: '2026-10-02', read: '5 min',
