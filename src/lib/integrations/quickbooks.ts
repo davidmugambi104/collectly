@@ -323,7 +323,8 @@ export async function qboListCustomers(orgId: string) {
 
 /**
  * Credit memos that still have credit left. A credit memo's Balance is what the
- * customer has not yet had applied. Unapplied payments are not read here.
+ * customer has not yet had applied. Payments with an unapplied amount (money
+ * received but not matched to an invoice) count as credit too.
  */
 type QboCreditMemo = { Id?: string; Balance?: number; CustomerRef?: { value?: string }; CurrencyRef?: { value?: string } };
 async function qboListCreditMemosFrom(orgId: string, startPosition: number): Promise<QboCreditMemo[]> {
@@ -332,12 +333,27 @@ async function qboListCreditMemosFrom(orgId: string, startPosition: number): Pro
   return res?.QueryResponse?.CreditMemo ?? [];
 }
 
+type QboPayment = { Id?: string; UnappliedAmt?: number; CustomerRef?: { value?: string }; CurrencyRef?: { value?: string } };
+async function qboListUnappliedPaymentsFrom(orgId: string, startPosition: number): Promise<QboPayment[]> {
+  const query = `SELECT Id, CustomerRef, UnappliedAmt, CurrencyRef FROM Payment WHERE UnappliedAmt > '0' STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Payment', QboPayment>;
+  return res?.QueryResponse?.Payment ?? [];
+}
+
 export async function qboListCredits(orgId: string): Promise<{ credits: Array<{ customerExternalId: string; currency: string; amount: number }>; truncated: boolean }> {
   const all = await fetchAllPages((page) => qboListCreditMemosFrom(orgId, 1 + (page - 1) * QBO_PAGE), QBO_PAGE, QBO_MAX_PAGES);
   const credits = all.items
     .filter((m: QboCreditMemo) => Number(m.Balance ?? 0) > 0 && m.CustomerRef?.value)
     .map((m: QboCreditMemo) => ({ customerExternalId: String(m.CustomerRef!.value), currency: String(m.CurrencyRef?.value ?? 'USD'), amount: Number(m.Balance) }));
-  return { credits, truncated: all.truncated };
+  // A failed payments read throws, so the caller keeps the credit it already had
+  // instead of storing a total that is missing unapplied payments.
+  const pays = await fetchAllPages((page) => qboListUnappliedPaymentsFrom(orgId, 1 + (page - 1) * QBO_PAGE), QBO_PAGE, QBO_MAX_PAGES);
+  for (const p of pays.items as QboPayment[]) {
+    if (Number(p.UnappliedAmt ?? 0) > 0 && p.CustomerRef?.value) {
+      credits.push({ customerExternalId: String(p.CustomerRef.value), currency: String(p.CurrencyRef?.value ?? 'USD'), amount: Number(p.UnappliedAmt) });
+    }
+  }
+  return { credits, truncated: all.truncated || pays.truncated };
 }
 
 /** Customers past the first 1000. Same approach as qboListOpenInvoicesFrom. */
@@ -596,9 +612,9 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   try {
     const found = await qboListCredits(orgId);
     if (!found.truncated) await replaceCredits(orgId, found.credits);
-    else errors.push('credit memos: too many to read in one sync, so credit was left as it was');
+    else errors.push('credit (memos or unapplied payments): too many to read in one sync, so credit was left as it was');
   } catch (e: unknown) {
-    errors.push(`credit memos: ${errorMessage(e)}`);
+    errors.push(`credit (memos or unapplied payments): ${errorMessage(e)}`);
   }
 
   // 3. Touch lastSyncAt

@@ -11,11 +11,14 @@ const open = Array.from({ length: 2300 }, (_, i) => ({ Id: `q${i}`, DocNumber: `
 const byId: Record<string, any> = { 'pq1': { Id: 'pq1', DocNumber: 'PQ1', CustomerRef: { value: 'c1' }, TotalAmt: 500, Balance: 0, DueDate: '2026-07-01', TxnDate: '2026-06-01', CurrencyRef: { value: 'USD' } } };
 const calls: string[] = [];
 let creditsDown = false;
+let paymentsDown = false;
+const payments = [{ Id: 'p1', CustomerRef: { value: 'c5' }, UnappliedAmt: 30, CurrencyRef: { value: 'USD' } }, { Id: 'p2', CustomerRef: { value: 'c7' }, UnappliedAmt: 75, CurrencyRef: { value: 'USD' } }, { Id: 'p3', CustomerRef: { value: 'c8' }, UnappliedAmt: 0, CurrencyRef: { value: 'USD' } }];
 const memos = [{ Id: 'm1', CustomerRef: { value: 'c5' }, Balance: 150, CurrencyRef: { value: 'USD' } }, { Id: 'm2', CustomerRef: { value: 'c5' }, Balance: 250, CurrencyRef: { value: 'USD' } }, { Id: 'm3', CustomerRef: { value: 'c6' }, Balance: 0, CurrencyRef: { value: 'USD' } }];
 const server = http.createServer((req, res) => {
   const u = new URL(req.url!, 'http://x'); const q = u.searchParams.get('query') ?? ''; calls.push(q.replace(/SELECT .* FROM/, 'SELECT * FROM').slice(0, 90));
   const send = (o: unknown) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(o)); };
   const start = Number(/STARTPOSITION (\d+)/.exec(q)?.[1] ?? 1); const max = Number(/MAXRESULTS (\d+)/.exec(q)?.[1] ?? 100);
+  if (/FROM Payment/.test(q)) { if (paymentsDown) { res.writeHead(500); res.end('{}'); return; } return send({ QueryResponse: { Payment: payments.filter((m) => m.UnappliedAmt > 0).slice(start - 1, start - 1 + max) } }); }
   if (/FROM CreditMemo/.test(q)) { if (creditsDown) { res.writeHead(500); res.end('{}'); return; } return send({ QueryResponse: { CreditMemo: memos.filter((m) => m.Balance > 0).slice(start - 1, start - 1 + max) } }); }
   if (/FROM Customer/.test(q)) return send({ QueryResponse: { Customer: customers.slice(start - 1, start - 1 + max) } });
   if (/Id IN \(/.test(q)) { const ids = [...q.matchAll(/'([^']+)'/g)].map((m) => m[1]); return send({ QueryResponse: { Invoice: ids.map((i) => byId[i]).filter(Boolean) } }); }
@@ -42,7 +45,7 @@ async function main() {
   for (const e of ['pq1', 'q5', 'q6', 'q7', 'q2299', 'q1000', 'q1001']) console.log('STATUS', e, await st(e));
   const { customerCredits } = await import('@/db/schema');
   const credit = async () => (await db.select({ a: customerCredits.amount, cu: customerCredits.customerId }).from(customerCredits).where(eq(customerCredits.orgId, org.id))).map((c: { a: string }) => c.a).join(',');
-  console.log('CREDITS after sync (expect 400.00):', await credit());
+  console.log('CREDITS after sync (expect memos 400 + unapplied payment 30 = 430.00 for c5, 75.00 for c7):', await credit());
   // The scheduler's real credit condition: c5 holds 400 and owes 300, so its invoice must be excluded; others must remain.
   { const { notCoveredByCredit } = await import('@/lib/dunning/credit-sql'); const { sql } = await import('drizzle-orm');
     const [c5] = await db.select().from(ct).where(and(eq(ct.orgId, org.id), eq(ct.externalId, 'c5'))).limit(1);
@@ -50,9 +53,13 @@ async function main() {
     await db.insert(invoices).values({ orgId: org.id, customerId: c5.id, externalId: 'x-own', number: 'X1', status: 'overdue', amount: '300', amountPaid: '0', currency: 'USD', issueDate: new Date(), dueDate: new Date(Date.now() - 864e5 * 10) });
     const kept = await db.select({ n: invoices.number, cust: customers_.externalId }).from(invoices).innerJoin(customers_, sql`${customers_.id} = ${invoices.customerId}`).where(and(eq(invoices.orgId, org.id), eq(invoices.status, 'overdue'), notCoveredByCredit));
     console.log('SCHEDULER credit rule: c5 invoice excluded =', !kept.some((k: { cust: string | null }) => k.cust === 'c5'), '| other overdue invoices kept =', kept.length); }
+  paymentsDown = true;
+  const rp = await syncQboForOrg(org.id);
+  console.log('CREDITS after failed payments read (expect unchanged 430.00,75.00):', await credit(), '| errors:', rp.errors.filter((e: string) => e.startsWith('credit')).join(';').slice(0, 80));
+  paymentsDown = false;
   creditsDown = true;
   const r2 = await syncQboForOrg(org.id);
-  console.log('CREDITS after failed credit read (expect still 400.00):', await credit(), '| errors:', r2.errors.filter((e: string) => e.startsWith('credit')).join(';').slice(0, 80));
+  console.log('CREDITS after failed credit read (expect unchanged):', await credit(), '| errors:', r2.errors.filter((e: string) => e.startsWith('credit')).join(';').slice(0, 80));
   console.log('CALLS', calls.join('\nCALLS '));
   server.close(); process.exit(0);
 }
