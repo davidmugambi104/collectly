@@ -73,7 +73,7 @@ Start with one client who already complains about late payers. Run it for a mont
   },
   {
     slug: 'payment-reminder-emails-bookkeepers-send-for-clients',
-    title: "Payment reminder emails you can send on a client's behalf (4 templates)",
+    title: "4 payment reminder emails to send on a client's behalf",
     date: '2026-10-03', read: '6 min',
     excerpt: "Four copy-ready emails for a bookkeeper chasing a client's late invoices: a heads-up, a due-date note, a first overdue reminder and a firm one. With rules for when to send each.",
     tags: ['bookkeepers', 'templates', 'QuickBooks', 'invoice reminders'],
@@ -189,7 +189,7 @@ Mugavi drafts reminders like these for QuickBooks and Xero and holds each one un
   },
   {
     slug: 'customer-says-never-got-invoice-or-disputes-it',
-    title: "A client's customer says they never got the invoice, or disputes it. What to do.",
+    title: "Customer says they never got the invoice, or disputes it",
     date: '2026-10-03', read: '6 min',
     excerpt: "Two different problems with two short processes: the invoice that never arrived, and the invoice the customer says is wrong. Includes wording you can copy.",
     tags: ['bookkeepers', 'disputes', 'QuickBooks', 'collections'],
