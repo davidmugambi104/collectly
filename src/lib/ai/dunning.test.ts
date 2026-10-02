@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { fallbackDunningMessage, type DunningContext } from './dunning.ts';
+import { fallbackDunningMessage, buildPromiseLink, PROMISE_LINE_LABEL, type DunningContext } from './dunning.ts';
 
 function ctx(overrides: Partial<DunningContext> = {}): DunningContext {
   return {
@@ -93,15 +93,18 @@ describe('fallbackDunningMessage — channel-specific formatting', () => {
   });
 });
 
+const THREATS = /suspend|legal|collections|credit report|penalt|lawyer|court|late fee|final notice/i;
+
 describe('fallbackDunningMessage — tone content', () => {
   test('friendly tone has no threat of collections/escalation', () => {
     const { body } = fallbackDunningMessage(ctx({ tone: 'friendly' }));
     assert.ok(!/collections|legal|escalat/i.test(body));
   });
 
-  test('final tone mentions collections escalation', () => {
+  test('final tone is plain and threat free', () => {
     const { body } = fallbackDunningMessage(ctx({ tone: 'final', priorMessages: 2 }));
-    assert.match(body, /collections/i);
+    assert.match(body, /few reminders/i);
+    assert.doesNotMatch(body, THREATS);
   });
 
   test('firm tone states the days overdue', () => {
@@ -136,5 +139,67 @@ describe('fallbackDunningMessage — heads-up before the due date', () => {
 
   test('an overdue invoice is unchanged', () => {
     assert.match(fallbackDunningMessage(ctx({ daysOverdue: 14, tone: 'firm' })).body, /14 days past due/);
+  });
+});
+
+describe('fallbackDunningMessage - required facts, no threats, promise link', () => {
+  const tones = ['friendly', 'firm', 'final'] as const;
+  const channels = ['email', 'sms'] as const;
+  const days = [-5, 3, 14, 75]; // heads-up, early, mid, very late
+
+  for (const tone of tones) {
+    for (const channel of channels) {
+      for (const d of days) {
+        const name = `${tone}/${channel}/${d}d`;
+        const c = () => ctx({ tone, channel, daysOverdue: d, priorMessages: 2, invoiceNumber: 'INV-4242', amount: '980.50', dueDate: '2026-05-20' });
+
+        test(`${name}: has invoice number, amount, due date and exactly one pay link`, () => {
+          const { body } = fallbackDunningMessage(c());
+          assert.ok(body.includes('INV-4242'), body);
+          assert.match(body, /USD\s980\.50/, body);
+          assert.ok(body.includes('2026-05-20'), body);
+          const payLinks = body.match(/https:\/\/mugavi\.com\/pay\/inv_nanoid_abc123(?![?\w])/g) ?? [];
+          assert.equal(payLinks.length, 1, body);
+        });
+
+        test(`${name}: no threat words, no dashes, no urgency`, () => {
+          const { subject, body } = fallbackDunningMessage(c());
+          const text = `${subject ?? ''}\n${body}`;
+          assert.doesNotMatch(text, THREATS);
+          assert.doesNotMatch(text, /[\u2013\u2014]/);
+          assert.doesNotMatch(text, /act now|immediately|last chance|today only|hurry/i);
+        });
+
+        test(`${name}: promise link only where intended`, () => {
+          const { body } = fallbackDunningMessage(c());
+          const expected = channel === 'email' && d >= 0;
+          assert.equal(body.includes(buildPromiseLink('inv_nanoid_abc123')), expected, body);
+          assert.equal(body.includes(PROMISE_LINE_LABEL), expected, body);
+          if (channel === 'sms') assert.ok(body.length <= 320);
+        });
+      }
+    }
+  }
+
+  test('promise link points at the real pay route with the query and anchor the page reads', () => {
+    assert.equal(buildPromiseLink('abc'), 'https://mugavi.com/pay/abc?promise=1#promise-to-pay');
+  });
+
+  test('sms with long names still keeps the pay link', () => {
+    const { body } = fallbackDunningMessage(ctx({
+      channel: 'sms', businessName: 'B'.repeat(200), contactName: 'C'.repeat(200), invoiceNumber: 'N'.repeat(100),
+    }));
+    assert.ok(body.length <= 320);
+    assert.ok(body.includes('https://mugavi.com/pay/inv_nanoid_abc123'));
+  });
+
+  test('later tones escalate in wording, not in threats', () => {
+    const f = fallbackDunningMessage(ctx({ tone: 'friendly' })).body;
+    const m = fallbackDunningMessage(ctx({ tone: 'firm' })).body;
+    const l = fallbackDunningMessage(ctx({ tone: 'final', priorMessages: 2 })).body;
+    assert.notEqual(f, m);
+    assert.notEqual(m, l);
+    assert.match(f, /quick nudge/i);
+    assert.match(l, /few reminders/i);
   });
 });

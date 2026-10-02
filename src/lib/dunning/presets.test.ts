@@ -33,3 +33,19 @@ test('standard is the schedule accounts always started with', () => {
   assert.equal(STANDARD_STEPS.length, 4);
   assert.equal(findPreset('nope'), undefined);
 });
+
+test('no preset wording pressures, threatens or uses dashes', () => {
+  for (const p of PRESETS) for (const s of p.steps) {
+    const text = `${s.subject ?? ''} ${s.template}`;
+    assert.doesNotMatch(text, /final notice|action required|immediately|this week|today|suspend|legal|collections|penalt|credit report/i, `${p.id}/${s.id}`);
+    assert.doesNotMatch(text, /[\u2013\u2014]/, `${p.id}/${s.id}`);
+  }
+});
+
+test('every preset step names the invoice number, the amount and the due date or days late', () => {
+  for (const p of PRESETS) for (const s of p.steps) {
+    assert.match(s.template, /\{\{number\}\}/, `${p.id}/${s.id}`);
+    assert.match(s.template, /\{\{amount\}\}/, `${p.id}/${s.id}`);
+    assert.match(s.template, /\{\{due_date\}\}|\d+\+? days|two weeks/, `${p.id}/${s.id}`);
+  }
+});

@@ -98,14 +98,14 @@ describe('generateDunningMessage — payment link wording', () => {
     mockGeminiText(t, JSON.stringify({ subject: 'Reminder', body: `Hi Jane, please complete the balance using our secure payment link ${url}. Thanks.` }));
     const result = await generateDunningMessage(ctx({ channel: 'email' }));
     assert.ok(result.body.includes('secure payment link ' + url), `got: ${result.body}`);
-    assert.equal(result.body.split(url).length - 1, 1, `link should appear once, got: ${result.body}`);
+    assert.equal(result.body.split(url + '?').join('').split(url).length - 1, 1, `link should appear once, got: ${result.body}`);
   });
 
   test('email: a placeholder next to the real link is removed instead of doubling the link', async (t) => {
     const url = 'https://mugavi.com/pay/inv_nanoid_abc123';
     mockGeminiText(t, JSON.stringify({ subject: 'Reminder', body: `Hi Jane, pay here: ${url} or via [payment_link]. Thanks.` }));
     const result = await generateDunningMessage(ctx({ channel: 'email' }));
-    assert.equal(result.body.split(url).length - 1, 1, `link should appear once, got: ${result.body}`);
+    assert.equal(result.body.split(url + '?').join('').split(url).length - 1, 1, `link should appear once, got: ${result.body}`);
     assert.ok(!/payment_link/i.test(result.body));
   });
 });
@@ -272,5 +272,36 @@ describe('generateCashFlowForecast', () => {
     mockGeminiThrows(t, new Error('Gemini timeout'));
     const result = await generateCashFlowForecast(input);
     assert.deepEqual(result, { week1: 0, week2: 0, week3: 0, week4: 0, confidence: 'low', narrative: 'Insufficient data' });
+  });
+});
+
+describe('generateDunningMessage - required facts and the promise line', () => {
+  test('email: a body missing the number, amount and date gets a details line, and an overdue email gets the promise line', async (t) => {
+    mockGeminiText(t, JSON.stringify({ subject: 'Reminder', body: 'Hi Jane, just checking in.' }));
+    const r = await generateDunningMessage(ctx({ channel: 'email', daysOverdue: 10 }));
+    assert.match(r.body, /INV-2370/);
+    assert.match(r.body, /USD\s1,250\.00/);
+    assert.match(r.body, /2026-06-01/);
+    assert.match(r.body, /Cannot pay by this date\? Tell us when you can: https:\/\/mugavi\.com\/pay\/inv_nanoid_abc123\?promise=1#promise-to-pay/);
+  });
+
+  test('email: a heads-up before the due date has no promise line', async (t) => {
+    mockGeminiText(t, JSON.stringify({ subject: 'Heads-up', body: 'Hi Jane, invoice INV-2370 is coming up.' }));
+    const r = await generateDunningMessage(ctx({ channel: 'email', daysOverdue: -5 }));
+    assert.doesNotMatch(r.body, /Cannot pay by this date/);
+  });
+
+  test('email: the promise line is added once', async (t) => {
+    mockGeminiText(t, JSON.stringify({ subject: 'Reminder', body: 'Hi Jane.' }));
+    const r = await generateDunningMessage(ctx({ channel: 'email', daysOverdue: 10 }));
+    assert.equal(r.body.split('promise=1').length - 1, 1);
+  });
+
+  test('sms: no promise line, and an over-long result falls back to the short template', async (t) => {
+    mockGeminiText(t, JSON.stringify({ body: 'x'.repeat(300) }));
+    const r = await generateDunningMessage(ctx({ channel: 'sms' }));
+    assert.ok(r.body.length <= 320);
+    assert.ok(r.body.includes('https://mugavi.com/pay/inv_nanoid_abc123'));
+    assert.doesNotMatch(r.body, /promise=1/);
   });
 });

@@ -17,10 +17,10 @@ export type PresetStep = {
 export type Preset = { id: 'gentle' | 'headsup' | 'standard' | 'firm'; name: string; blurb: string; steps: PresetStep[] };
 
 export const STANDARD_STEPS: PresetStep[] = [
-  { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder — Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
-  { id: 's2', daysFromDue: 7, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is now 7 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 7 days past due. Please review and settle at your earliest convenience: {{payment_link}}' },
-  { id: 's3', daysFromDue: 14, channel: 'email', tone: 'firm', subject: 'Action required: Invoice {{number}}', template: 'Hi {{contact_name}}, our records show Invoice {{number}} for {{amount}} is 14 days overdue. Please confirm payment status or settle the balance: {{payment_link}}' },
-  { id: 's4', daysFromDue: 30, channel: 'sms', tone: 'final', template: 'Final notice: Invoice {{number}} for {{amount}} is 30+ days overdue. Please reply or settle: {{payment_link}}' },
+  { id: 's1', daysFromDue: 1, channel: 'email', tone: 'friendly', subject: 'Quick reminder about Invoice {{number}}', template: 'Hi {{contact_name}}, just a quick nudge that Invoice {{number}} for {{amount}} was due on {{due_date}}. You can settle it here: {{payment_link}}' },
+  { id: 's2', daysFromDue: 7, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is now 7 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 7 days past due. Could you take a look? You can pay here: {{payment_link}}' },
+  { id: 's3', daysFromDue: 14, channel: 'email', tone: 'firm', subject: 'Checking in on Invoice {{number}}', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}}, due on {{due_date}}, is 14 days overdue. Could you confirm where it stands, or pay here: {{payment_link}}' },
+  { id: 's4', daysFromDue: 30, channel: 'sms', tone: 'final', template: 'Invoice {{number}} for {{amount}}, due {{due_date}}, is 30+ days overdue. Pay here or reply to tell us when you can: {{payment_link}}' },
 ];
 
 export const PRESETS: Preset[] = [
@@ -42,7 +42,7 @@ export const PRESETS: Preset[] = [
       { id: 's0', daysFromDue: -5, channel: 'email', tone: 'friendly', subject: 'Invoice {{number}} is due in 5 days', template: 'Hi {{contact_name}}, a friendly heads-up that Invoice {{number}} for {{amount}} is due on {{due_date}}. If it is already on its way, thank you. You can pay it here: {{payment_link}}' },
       { id: 's1', daysFromDue: 3, channel: 'email', tone: 'friendly', subject: 'A quick reminder about Invoice {{number}}', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} was due on {{due_date}}. It may have slipped through, and you can settle it here: {{payment_link}}' },
       { id: 's2', daysFromDue: 10, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is 10 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 10 days past due. Please settle it or tell us when we can expect payment: {{payment_link}}' },
-      { id: 's3', daysFromDue: 21, channel: 'email', tone: 'final', subject: 'Action required: Invoice {{number}}', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is 21 days overdue. We need payment or a firm payment date this week: {{payment_link}}' },
+      { id: 's3', daysFromDue: 21, channel: 'email', tone: 'final', subject: 'Following up on Invoice {{number}}', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}}, due on {{due_date}}, is 21 days overdue. Could you pay it, or tell us the day you can? Pay here: {{payment_link}}' },
     ],
   },
   {
@@ -56,10 +56,10 @@ export const PRESETS: Preset[] = [
     name: 'Firm and quick',
     blurb: 'Four emails, at 1, 5, 10 and 20 days past due, getting firmer each time. No texts. For late payers.',
     steps: [
-      { id: 's1', daysFromDue: 1, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} was due yesterday', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} was due on {{due_date}}. Please settle it today: {{payment_link}}' },
-      { id: 's2', daysFromDue: 5, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is 5 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 5 days past due. Please pay it now or tell us today when it will be paid: {{payment_link}}' },
-      { id: 's3', daysFromDue: 10, channel: 'email', tone: 'final', subject: 'Action required: Invoice {{number}}', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is 10 days overdue. We need payment or a firm payment date this week: {{payment_link}}' },
-      { id: 's4', daysFromDue: 20, channel: 'email', tone: 'final', subject: 'Final notice: Invoice {{number}}', template: 'Hi {{contact_name}}, this is our final notice for Invoice {{number}}, {{amount}}, now 20 days overdue. Please settle it immediately: {{payment_link}}' },
+      { id: 's1', daysFromDue: 1, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} was due on {{due_date}}', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} was due on {{due_date}}. Pay here: {{payment_link}}' },
+      { id: 's2', daysFromDue: 5, channel: 'email', tone: 'firm', subject: 'Invoice {{number}} is 5 days past due', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}} is now 5 days past due. Please pay it, or tell us the day you can: {{payment_link}}' },
+      { id: 's3', daysFromDue: 10, channel: 'email', tone: 'final', subject: 'Following up on Invoice {{number}}', template: 'Hi {{contact_name}}, Invoice {{number}} for {{amount}}, due on {{due_date}}, is 10 days overdue. Could you pay it, or tell us the day you can? Pay here: {{payment_link}}' },
+      { id: 's4', daysFromDue: 20, channel: 'email', tone: 'final', subject: 'Still open: Invoice {{number}}', template: 'Hi {{contact_name}}, we have sent a few reminders about Invoice {{number}}, {{amount}}, due on {{due_date}} and now 20 days overdue. We would like to sort it out with you. Pay here, or reply with a date or any problem: {{payment_link}}' },
     ],
   },
 ];

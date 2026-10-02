@@ -9,8 +9,9 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
  * For the person paying: tell the business when you will pay, or that something
  * is wrong, without writing an email. Either one pauses the reminders.
  */
-export function PortalHelp({ invoiceId, orgName }: { invoiceId: string; orgName: string }) {
-  const [open, setOpen] = useState<'promise' | 'problem' | null>(null);
+export function PortalHelp({ invoiceId, orgName, defaultOpen = null }: { invoiceId: string; orgName: string; defaultOpen?: 'promise' | 'problem' | null }) {
+  // A reminder email links here with ?promise=1, which opens the date form.
+  const [open, setOpen] = useState<'promise' | 'problem' | null>(defaultOpen);
   const [date, setDate] = useState('');
   const [reason, setReason] = useState('');
   const [note, setNote] = useState('');
@@ -40,20 +41,20 @@ export function PortalHelp({ invoiceId, orgName }: { invoiceId: string; orgName:
 
   if (done) {
     return (
-      <div className="card" role="status">
+      <div className="card" id="promise-to-pay" role="status">
         <p className="flex items-start gap-2 text-sm text-ink-800"><CheckCircle2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />{done}</p>
       </div>
     );
   }
 
   return (
-    <div className="card">
-      <h2 className="font-semibold text-ink-900">Can&apos;t pay right now?</h2>
-      <p className="mt-1 text-sm text-ink-600">Tell {orgName} and they will pause the reminders. No email needed.</p>
+    <div className="card" id="promise-to-pay">
+      <h2 className="font-semibold text-ink-900">Need more time, or is something wrong?</h2>
+      <p className="mt-1 text-sm text-ink-600">Either one lets {orgName} know without you writing an email. Reminders pause until the day you choose, or while they look into a problem.</p>
 
       <div className="mt-3 space-y-2">
         <button type="button" className="btn-secondary w-full justify-start text-sm" aria-expanded={open === 'promise'} onClick={() => { setOpen(open === 'promise' ? null : 'promise'); setError(null); }}>
-          <CalendarClock aria-hidden="true" className="h-4 w-4" /> I will pay on a set day
+          <CalendarClock aria-hidden="true" className="h-4 w-4" /> Tell us the day I will pay
         </button>
         {open === 'promise' && (
           <div className="rounded-lg border border-ink-200 p-3">
@@ -67,7 +68,7 @@ export function PortalHelp({ invoiceId, orgName }: { invoiceId: string; orgName:
         )}
 
         <button type="button" className="btn-secondary w-full justify-start text-sm" aria-expanded={open === 'problem'} onClick={() => { setOpen(open === 'problem' ? null : 'problem'); setError(null); }}>
-          <Flag aria-hidden="true" className="h-4 w-4" /> Something is not right
+          <Flag aria-hidden="true" className="h-4 w-4" /> Something about this invoice is not right
         </button>
         {open === 'problem' && (
           <div className="rounded-lg border border-ink-200 p-3">

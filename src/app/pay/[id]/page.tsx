@@ -45,9 +45,9 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-export default async function PaymentPortal({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ paid?: string; session_id?: string; cancelled?: string }> }) {
+export default async function PaymentPortal({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ paid?: string; session_id?: string; cancelled?: string; promise?: string }> }) {
   const { id } = await params;
-  const { paid, cancelled, session_id } = await searchParams;
+  const { paid, cancelled, session_id, promise } = await searchParams;
 
   const [row] = await db
     .select({
@@ -165,9 +165,9 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
                 <h1 className="h3">Pay invoice #{invoice.number}</h1>
                 <p className="mt-1 text-sm text-ink-600">Amount due: <span className="font-display font-semibold text-ink-950">{formatCurrency(balance, invoice.currency)}</span></p>
                 {isOverdue && (
-                  <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start gap-2">
+                  <div className="mt-4 rounded-lg border border-ink-200 bg-ink-50 p-3 text-sm text-ink-700 flex items-start gap-2">
                     <Clock className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <div>This invoice is <b>{days} day{days === 1 ? '' : 's'}</b> past due. Settling now will close the account.</div>
+                    <div>This invoice was due on {formatDate(invoice.dueDate)} and is {days} day{days === 1 ? '' : 's'} past due. You can pay below{canSelfServe(invoice.status) ? <>, or <a className="link" href="#promise-to-pay">tell {org.name} when you can</a></> : null}.</div>
                   </div>
                 )}
                 <div className="mt-6">
@@ -192,7 +192,7 @@ export default async function PaymentPortal({ params, searchParams }: { params: 
             {invoice.description && <p className="mt-3 text-sm text-ink-600">{invoice.description}</p>}
           </div>
 
-          {balance > 0 && canSelfServe(invoice.status) && <PortalHelp invoiceId={invoice.id} orgName={org.name} />}
+          {balance > 0 && canSelfServe(invoice.status) && <PortalHelp invoiceId={invoice.id} orgName={org.name} defaultOpen={promise === '1' ? 'promise' : null} />}
 
           <div className="card">
             <h2 className="font-semibold text-ink-900">Questions?</h2>

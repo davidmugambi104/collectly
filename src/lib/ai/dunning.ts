@@ -33,7 +33,7 @@ function getModel(): GenerativeModel {
 export type DunningTone = 'friendly' | 'firm' | 'final';
 
 export interface DunningContext {
-  /** nanoid PK — used to build the payment portal link. Required. */
+  /** nanoid PK - used to build the payment portal link. Required. */
   invoiceId: string;
   businessName: string;
   contactName: string | null;
@@ -53,10 +53,11 @@ export interface DunningContext {
 }
 
 const TONE_GUIDANCE: Record<DunningTone, string> = {
-  friendly: 'Polite, warm, assumes good intent. The reminder framing. Use "just a quick nudge" or "wanted to make sure this reached you." No mention of late fees or consequences. Keep it brief and human.',
-  firm: 'Direct, professional, factual. State the amount, the date, and the next step clearly. Do not threaten, but make the consequences clear. Avoid hedging language. One short paragraph.',
-  final: 'Last notice before escalation. Clear, professional, and matter-of-fact. State the specific action (collections, legal, service suspension) without being abusive. Include the contact information for resolution. Leave the door open for immediate resolution.',
+  friendly: 'Warm and plain. Assume the invoice slipped through, which is the most common reason. A quick nudge, no pressure, easy to act on. No mention of fees or consequences. Keep it brief and human.',
+  firm: 'Direct, courteous and factual. State the invoice number, amount, due date and how many days it is past due, and ask for payment or a date. Offer help if something is wrong. Do not threaten and do not describe consequences. One short paragraph.',
+  final: 'The last step in this sequence, so say plainly that earlier reminders have been sent and that you would like to sort it out directly. Matter-of-fact and respectful, never sharp. Ask for payment, or for a date they can pay, or to hear about any problem. Do not mention collections, legal action, fees, credit reporting or service suspension, and do not say what happens next.',
 };
+
 
 
 // Same portal link builder used everywhere else in the codebase (see
@@ -65,6 +66,41 @@ const TONE_GUIDANCE: Record<DunningTone, string> = {
 function buildPaymentLink(invoiceId: string): string {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
   return `${base}/pay/${invoiceId}`;
+}
+
+/**
+ * Opens the "I will pay on a set day" form on the payment page. The page reads
+ * `?promise=1` and the #promise-to-pay anchor (src/app/pay/[id]/page.tsx).
+ */
+export function buildPromiseLink(invoiceId: string): string {
+  return `${buildPaymentLink(invoiceId)}?promise=1#promise-to-pay`;
+}
+
+export const PROMISE_LINE_LABEL = 'Cannot pay by this date? Tell us when you can:';
+
+/** One plain line, email only, for reminders about an invoice that is already due. */
+function promiseLine(invoiceId: string): string {
+  return `${PROMISE_LINE_LABEL} ${buildPromiseLink(invoiceId)}`;
+}
+
+function clip(text: string, max: number): string {
+  return text.length <= max ? text : text.slice(0, max).trimEnd();
+}
+
+/**
+ * Models sometimes drop a required fact or reword the date. Rather than send a
+ * message a person cannot act on, add one plain details line with the missing
+ * pieces, written by us from the invoice record.
+ */
+function ensureRequiredFacts(body: string, label: string, formattedAmount: string, dueDate: string, channel: 'email' | 'sms'): string {
+  const hasAmount = body.replace(/\u00a0/g, ' ').includes(formattedAmount.replace(/\u00a0/g, ' '));
+  const missing: string[] = [];
+  if (!body.includes(label)) missing.push(`invoice ${label}`);
+  if (!hasAmount) missing.push(formattedAmount);
+  if (!body.includes(dueDate)) missing.push(`due ${dueDate}`);
+  if (missing.length === 0) return body;
+  const line = `Details: ${missing.join(', ')}.`;
+  return channel === 'sms' ? `${body} ${line}` : `${body}\n\n${line}`;
 }
 
 // Real invoices synced from Xero/QuickBooks can have an empty-string
@@ -166,16 +202,18 @@ export async function generateDunningMessage(ctx: DunningContext): Promise<{ sub
 
   // A negative daysOverdue is a heads-up before the due date. It must never say "overdue".
   const preDue = ctx.daysOverdue < 0;
-  const systemPrompt = `You are the collections copywriter for ${ctx.businessName}. Write a ${ctx.tone} ${ctx.channel === 'email' ? 'email' : 'SMS'} ${preDue ? 'heads-up that an invoice will be due soon. It is NOT overdue: never say or imply it is late' : 'reminder about an unpaid invoice'}. Tone: ${toneGuide}
+  const systemPrompt = `You write payment reminders on behalf of ${ctx.businessName}. Write a ${ctx.tone} ${ctx.channel === 'email' ? 'email' : 'SMS'} ${preDue ? 'heads-up that an invoice will be due soon. It is NOT overdue: never say or imply it is late' : 'reminder about an unpaid invoice'}. Tone: ${toneGuide}
+Most late payment is forgetfulness, a slow internal process or tight cash, not bad faith. Assume good intent, be specific, make it easy to act today, and never shame the reader.
 Output rules:
 - ${ctx.channel === 'email' ? 'Email: subject line (max 60 chars), then body. Body max 600 chars.' : 'SMS only: max 320 characters. No subject.'}
-- Never invent details not given in the context. Use only the invoice number, amount, currency, due date, and contact name provided.
-- Reference payment history only if it's relevant to the tone (e.g. "We usually get this settled within a few days — wanted to make sure this didn't slip through.")
-- No exclamation points. No emoji. No all-caps. No pleading.
-- Never threaten a consequence the context does not state: no suspending services, legal action, fees or collections.
-- Include a clear next step. Use the exact payment link given below, verbatim — never write a placeholder like "[payment link]" or invent your own URL.
+- Always state all four facts: the invoice number "${invoiceLabel}", the amount, the due date exactly as given, and the one payment link. Never invent details not given in the context.
+- Reference payment history only if it is relevant and kind (e.g. "We usually get this settled within a few days, so I wanted to make sure it did not slip through."). Never quote a paid rate or imply a bad record.
+- No exclamation points. No emoji. No all-caps. No pleading. No em dashes or en dashes.
+- Never threaten or hint at a consequence. Do not mention suspending services or accounts, legal action, collections, credit reporting, fees, penalties or interest. Do not create urgency that the context does not state.
+- Use the exact payment link given below, once, verbatim. Never write a placeholder like "[payment link]" or invent your own URL.${ctx.channel === 'email' && !preDue ? '\n- Do not write a line about paying later or a promise date. One is added after your text.' : ''}
+- Invite a reply if something about the invoice is not right.
 - Currency formatting: the amount is pre-formatted for you as "${formattedAmount}". Use it verbatim.
-- Sound like a thoughtful operations person, not a debt collector.
+- Sound like a thoughtful person at the business, not a debt collector.
 - Output as ${ctx.channel === 'email' ? 'JSON: {"subject": "...", "body": "..."}' : 'JSON: {"body": "..."}'}`;
 
   const userPrompt = `Context:
@@ -197,13 +235,19 @@ Write the message.`;
   try {
     if (ctx.channel === 'email') {
       const parsed = await callGeminiValidated(systemPrompt, userPrompt, emailMsgSchema);
-      return { subject: parsed.subject, body: ensurePaymentLink(parsed.body, paymentLink, 'email') };
+      let body = ensurePaymentLink(parsed.body, paymentLink, 'email');
+      body = ensureRequiredFacts(body, invoiceLabel, formattedAmount, ctx.dueDate, 'email');
+      if (!preDue && !body.includes(buildPromiseLink(ctx.invoiceId))) body = `${body}\n\n${promiseLine(ctx.invoiceId)}`;
+      return { subject: parsed.subject, body };
     } else {
       const parsed = await callGeminiValidated(systemPrompt, userPrompt, smsMsgSchema);
-      return { body: ensurePaymentLink(parsed.body, paymentLink, 'sms') };
+      const body = ensurePaymentLink(ensureRequiredFacts(parsed.body, invoiceLabel, formattedAmount, ctx.dueDate, 'sms'), paymentLink, 'sms');
+      // Too long to carry every fact and the link in one text: use the short template instead.
+      if (body.length > 320 || !body.includes(paymentLink)) return fallbackDunningMessage(ctx);
+      return { body };
     }
   } catch (e) {
-    // Gemini unavailable / invalid key / schema mismatch — fall back to a deterministic template.
+    // Gemini unavailable / invalid key / schema mismatch: fall back to a deterministic template.
     console.error('[dunning] Gemini call failed, using fallback:', e instanceof Error ? e.message : e);
     return fallbackDunningMessage(ctx);
   }
@@ -212,53 +256,54 @@ Write the message.`;
 export function fallbackDunningMessage(ctx: DunningContext): { subject?: string; body: string } {
   // The payment portal resolves by invoice.id (nanoid PK), NOT invoice.number
   // (a human-readable display string). Building the URL from invoiceNumber
-  // was a bug — it shipped broken links to every paying customer. See
-  // src/app/pay/[id]/page.tsx:21 which does `eq(invoices.id, id)`.
+  // was a bug: it shipped broken links to every paying customer. See
+  // src/app/pay/[id]/page.tsx, which does `eq(invoices.id, id)`.
   const link = buildPaymentLink(ctx.invoiceId);
   const num = resolveInvoiceLabel(ctx);
-  const linkFragment = ctx.channel === 'email' ? `\n\nPay here: ${link}` : ` ${link}`;
-  // Was raw `${ctx.currency} ${ctx.amount}` in every branch below — no
-  // thousands separator, inconsistent decimal places, and visibly
-  // different formatting from the AI path (which pre-formats via this
-  // same function) every time this fallback fires, i.e. every time
-  // Gemini is down or unconfigured.
   const amount = formatAmount(ctx.amount, ctx.currency);
-  // Threatening a fixed "after 60 days" threshold regardless of how
-  // overdue the invoice actually is reads as self-contradictory once
-  // daysOverdue has already passed 60.
-  const collectionsThreshold = ctx.daysOverdue >= 60
-    ? 'This is now significantly overdue and will be referred to collections.'
-    : 'After 60 days unpaid, we will need to refer this to collections.';
+  const who = ctx.contactName ?? 'there';
+  const payBlock = `Pay here: ${link}`;
+  // Email reminders about an invoice already due carry one plain line to the
+  // promise form on the payment page. Heads-ups and texts do not.
+  const promiseBlock = promiseLine(ctx.invoiceId);
+
+  // SMS must keep every fact and the link inside 320 characters, so the free
+  // text parts are clipped, never the link.
+  if (ctx.channel === 'sms') {
+    const name = ctx.contactName ? clip(ctx.contactName, 30) : 'Hi';
+    const biz = clip(ctx.businessName, 40);
+    const status = ctx.daysOverdue < 0
+      ? `is due in ${-ctx.daysOverdue} day${ctx.daysOverdue === -1 ? '' : 's'} (${ctx.dueDate})`
+      : `was due on ${ctx.dueDate} and is ${ctx.daysOverdue}d overdue`;
+    return { body: `${name}, invoice ${clip(num, 40)} for ${amount} ${status}. Pay here: ${link} ${biz}`.slice(0, 320) };
+  }
+
   if (ctx.daysOverdue < 0) {
     const inDays = -ctx.daysOverdue;
     const when = `${inDays} day${inDays === 1 ? '' : 's'}`;
-    if (ctx.channel === 'sms') {
-      return { body: `${ctx.contactName ?? 'Hi'} — invoice ${num} for ${amount} is due in ${when} (${ctx.dueDate}).${linkFragment} — ${ctx.businessName}`.slice(0, 320) };
-    }
     return {
       subject: `Invoice ${num} is due in ${when}`,
-      body: `Hi ${ctx.contactName ?? 'there'},\n\nA friendly heads-up that invoice ${num} for ${amount} is due on ${ctx.dueDate}, in ${when}. If it is already on its way, thank you.${linkFragment}\n\n${ctx.businessName}`,
+      body: `Hi ${who},\n\nA friendly heads-up that invoice ${num} for ${amount} is due on ${ctx.dueDate}, in ${when}. If it is already on its way, thank you.\n\n${payBlock}\n\n${ctx.businessName}`,
     };
   }
-  let body: string;
+
+  const overdue = `${ctx.daysOverdue} day${ctx.daysOverdue === 1 ? '' : 's'}`;
   if (ctx.tone === 'friendly') {
-    body = `Hi ${ctx.contactName ?? 'there'},\n\nJust a quick nudge — invoice ${num} for ${amount} was due on ${ctx.dueDate}. No rush, but if you can settle it today, that'd help us out.${linkFragment}\n\nThanks for being a great customer.\n\n${ctx.businessName}`;
-  } else if (ctx.tone === 'firm') {
-    body = `Hi ${ctx.contactName ?? 'there'},\n\nInvoice ${num} for ${amount} is now ${ctx.daysOverdue} day${ctx.daysOverdue === 1 ? '' : 's'} past due (originally due ${ctx.dueDate}).\n\nPlease review and settle at your earliest convenience. If there's an issue with the work, just reply and we'll sort it out.${linkFragment}\n\n${ctx.businessName}`;
-  } else {
-    body = `Final notice: invoice ${num} for ${amount} is ${ctx.daysOverdue} days overdue. ${collectionsThreshold}${linkFragment}\n\nIf you'd like to discuss payment arrangements, please reply today.\n\n${ctx.businessName}`;
+    return {
+      subject: `Quick reminder about invoice ${num}`,
+      body: `Hi ${who},\n\nA quick nudge: invoice ${num} for ${amount} was due on ${ctx.dueDate}. These things slip through, so if it is already on its way, thank you.\n\n${payBlock}\n\n${promiseBlock}\n\nThanks,\n${ctx.businessName}`,
+    };
   }
-  if (ctx.channel === 'sms') {
-    // SMS: shorter, no newlines
-    const short = `${ctx.contactName ?? 'Hi'} — invoice ${num} for ${amount} is ${ctx.daysOverdue}d overdue.${linkFragment} — ${ctx.businessName}`;
-    return { body: short.slice(0, 320) };
+  if (ctx.tone === 'firm') {
+    return {
+      subject: `Invoice ${num} is ${overdue} past due`,
+      body: `Hi ${who},\n\nInvoice ${num} for ${amount} was due on ${ctx.dueDate} and is now ${overdue} past due. Could you arrange payment soon? If something is not right with the invoice, reply and tell us, and we will look into it.\n\n${payBlock}\n\n${promiseBlock}\n\nThanks,\n${ctx.businessName}`,
+    };
   }
-  const subject = ctx.tone === 'friendly'
-    ? `Quick reminder — invoice ${num}`
-    : ctx.tone === 'firm'
-    ? `Invoice ${num} — ${ctx.daysOverdue} days overdue`
-    : `Final notice — invoice ${num}`;
-  return { subject, body };
+  return {
+    subject: `Following up on invoice ${num}`,
+    body: `Hi ${who},\n\nWe have sent a few reminders about invoice ${num} for ${amount}, which was due on ${ctx.dueDate} and is now ${overdue} past due. We would like to sort it out with you directly. If you can pay now, the link is below. If something is not right with the invoice, reply and tell us.\n\n${payBlock}\n\n${promiseBlock}\n\nThanks,\n${ctx.businessName}`,
+  };
 }
 
 export async function predictPaymentLikelihood(ctx: {
