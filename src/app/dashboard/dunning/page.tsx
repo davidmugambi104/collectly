@@ -135,7 +135,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   let chaseRules = { minGapDays: 7, minBalance: 0 };
   let listOthers = true;
   let stmtSchedule = { enabled: false, day: 1 };
-  let stmtDrafts: StatementDraftItem[] = [];
+  const stmtDrafts: StatementDraftItem[] = [];
   let sendWindow = { enabled: false, startHour: 9, endHour: 17, days: 31, timezone: 'UTC' };
   let senderContext: SenderContext = { businessName: '', ownDomain: null };
   let notices: SenderNotice[] = [];
