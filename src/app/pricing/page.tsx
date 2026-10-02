@@ -78,7 +78,7 @@ export default function PricingPage() {
               // under prefers-reduced-motion.
               <Reveal key={k} delay={i * 0.06}>
               <div className={`card-lg relative h-full ${p.popular ? 'ring-2 ring-brand-500' : ''}`}>
-                {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><span className="badge-success"><Sparkles className="h-3 w-3 mr-1" />Most popular</span></div>}
+                {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><span className="badge-success"><Sparkles className="h-3 w-3 mr-1" />Built for practices</span></div>}
                 <div className="text-sm text-ink-500">{p.name}</div>
                 <div className="mt-1 text-5xl font-display font-bold text-ink-950">${p.monthly}<span className="text-base font-normal text-ink-500">/mo</span></div>
                 {k !== 'scale' && <div className="mt-1 text-sm font-medium text-brand-700">${FOUNDING.monthly(k)}/mo for your first {FOUNDING.months} months as a founding customer</div>}
