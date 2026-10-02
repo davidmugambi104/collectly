@@ -1,20 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { paystackSignatureValid } from '@/lib/webhook-auth';
 import { db } from '@/db';
 import { invoices, payments, customers } from '@/db/schema';
 import { and, eq, sql } from 'drizzle-orm';
 import { nanoid, errorMessage } from '@/lib/utils';
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
-
-function verifySignature(body: string, signature: string | null): boolean {
-  if (!PAYSTACK_SECRET || !signature) return false;
-  const hash = crypto
-    .createHmac('sha512', PAYSTACK_SECRET)
-    .update(body)
-    .digest('hex');
-  return hash === signature;
-}
 
 /**
  * Paystack webhook handler.
@@ -48,7 +39,7 @@ export async function POST(req: NextRequest) {
   const signature = req.headers.get('x-paystack-signature');
   const body = await req.text();
 
-  if (!verifySignature(body, signature)) {
+  if (!paystackSignatureValid(body, signature, PAYSTACK_SECRET)) {
     return NextResponse.json({ error: 'invalid signature' }, { status: 401 });
   }
 

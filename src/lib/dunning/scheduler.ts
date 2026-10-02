@@ -24,6 +24,7 @@ import { recordEvent } from '@/lib/events';
 import { maySendSms } from '@/lib/sms-consent';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
 import { nanoid, errorMessage, formatCurrency } from '@/lib/utils';
+import { renderEmailHtml } from '@/lib/email-html';
 
 // Mirrors the inline element type of dunningSequences.steps's jsonb
 // $type<Array<{...}>>() in schema.ts. That inline type has no exported name
@@ -686,14 +687,4 @@ export async function processDunning(opts: ProcessOptions = {}) {
   return { scheduled, sent, errors, awaitingApproval, outsideWindow, statementDrafts };
 }
 
-/** `extraHtml` is already-escaped markup from multi-invoice.ts, placed under the message. */
-export function renderEmailHtml({ body, invoice, businessName, extraHtml = '' }: { body: string; invoice: Invoice; businessName: string; extraHtml?: string }) {
-  return `
-    <!doctype html>
-    <html><body style="font-family: -apple-system, system-ui, sans-serif; color: #16171c; max-width: 560px; margin: 0 auto; padding: 24px;">
-      <p style="font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${body}</p>${extraHtml}
-      <hr style="border: 0; border-top: 1px solid #eeeef0; margin: 24px 0;" />
-      <p style="font-size: 12px; color: #6c6e76;">${businessName} · Invoice #${invoice.number} for ${invoice.currency} ${invoice.amount}</p>
-    </body></html>
-  `;
-}
+export { renderEmailHtml };

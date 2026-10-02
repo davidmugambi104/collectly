@@ -15,13 +15,11 @@ import { db } from '@/db';
 import { users, organizations, deletedOrgsLog, subscriptions } from '@/db/schema';
 import { nanoid } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
+import { parseAdminEmails, isAdminEmail } from '@/lib/admin-allowlist';
 
 // Admin emails allowed to hit internal/admin-only routes (lead exports,
 // upgrade-request review, etc). Same allowlist as src/app/admin/upgrade-requests.
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? 'davie@getcollectly.app')
-  .split(',')
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
+const ADMIN_EMAILS = parseAdminEmails(process.env.ADMIN_EMAILS);
 
 // SECURITY: refuse to enable the dev shim in production. We check this
 // lazily (on first call) rather than at module load, because Next.js
@@ -224,13 +222,15 @@ export async function getAuthWithOrg() {
 export async function requireAdminEmail(): Promise<{ ok: true; email: string } | { ok: false; email?: string }> {
   const { userId } = await getAuth();
   if (!userId) return { ok: false };
-  const [u] = await db.select({ email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
-  let email = u?.email?.toLowerCase();
-  // The local users row can be missing or have no email (a new Clerk instance, a row
-  // created before emails were stored). Fall back to the signed-in user's PRIMARY
-  // email, and only when Clerk has verified it, so an unverified address can never
-  // pass the allowlist.
-  if (!email) {
+  let email: string | undefined;
+  if (process.env.USE_DEV_AUTH === '1') {
+    // Dev shim only: there is no Clerk session, so the local users row is the only identity.
+    const [u] = await db.select({ email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
+    email = u?.email?.toLowerCase();
+  } else {
+    // Real sessions: trust only the signed-in user's PRIMARY email, and only when Clerk has verified
+    // it. The local users row is a copy taken at first sight (the first address on the account,
+    // verified or not), so it must never be what opens an admin page.
     try {
       const cu = await currentUser();
       const primary = cu?.emailAddresses?.find((a) => a.id === cu.primaryEmailAddressId) ?? cu?.emailAddresses?.[0];
@@ -240,7 +240,7 @@ export async function requireAdminEmail(): Promise<{ ok: true; email: string } |
   // On failure we still hand back the email (when we know it) so the admin
   // page can render "ask Davie to add <you> to ADMIN_EMAILS" instead of
   // duplicating this lookup. Callers that only branch on `.ok` are unaffected.
-  if (!email || !ADMIN_EMAILS.includes(email)) return { ok: false, email };
+  if (!email || !isAdminEmail(email, ADMIN_EMAILS)) return { ok: false, email };
   return { ok: true, email };
 }
 

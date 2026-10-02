@@ -7,10 +7,11 @@ import { maySendSms } from '@/lib/sms-consent';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { resolveFrom, isDefaultSequence } from '@/lib/dunning/org-settings';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
-import { nanoid } from '@/lib/utils';
+import { nanoid, escapeHtml } from '@/lib/utils';
 import { z } from 'zod';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { parseJsonBody } from '@/lib/parse-body';
+import { rateLimit } from '@/lib/rate-limit';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
 
 const bodySchema = z.object({
@@ -27,6 +28,11 @@ export async function POST(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+
+  // Every call sends a real message from our sending domain. A person using the composer sends a
+  // handful an hour; a compromised or abusive account must not be able to spray from here.
+  const rl = await rateLimit(orgId, { max: 100, windowMs: 3_600_000, key: 'dunning-send' });
+  if (!rl.allowed) return NextResponse.json({ error: 'Too many messages sent from this workspace. Try again later.' }, { status: 429, headers: { 'retry-after': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } });
 
   const _parsed = await parseJsonBody(req, bodySchema);
   if (!_parsed.ok) return _parsed.response;
@@ -84,7 +90,7 @@ export async function POST(req: NextRequest) {
       const sendResult = await sendEmail({
         to: cust.email,
         subject: data.subject ?? `Invoice ${inv.number}`,
-        html: withUnsubscribeFooter(`<p style="white-space:pre-wrap;font-family:system-ui;">${data.body}</p>`, cust.email),
+        html: withUnsubscribeFooter(`<p style="white-space:pre-wrap;font-family:system-ui;">${escapeHtml(data.body)}</p>`, cust.email),
         headers: dunningListUnsubscribeHeaders(cust.email),
         from: await resolveFrom(orgId, org?.name),
         replyTo: getDunningReplyToAddress(),

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cronAuthorized, configuredSecrets } from '@/lib/cron-auth';
 import { pollInboxReplies } from '@/lib/inbox-imap-poll';
 
 // Scheduled daily in vercel.json, but pollInboxReplies() itself no-ops
@@ -7,14 +8,13 @@ import { pollInboxReplies } from '@/lib/inbox-imap-poll';
 // cold-outreach mailbox — see src/lib/infra.ts:getDunningReplyToAddress).
 // Safe to run on schedule either way; it's a fast no-op until then.
 export async function GET(req: NextRequest) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) {
+  const secrets = configuredSecrets(process.env.CRON_SECRET);
+  if (secrets.length === 0) {
     // Fail-closed, same as /api/cron/dunning: refuse to run rather than
     // silently skip the auth check if the env var is missing.
     return NextResponse.json({ error: 'cron not configured' }, { status: 503 });
   }
-  const auth = req.headers.get('authorization');
-  if (auth !== `Bearer ${secret}`) {
+  if (!cronAuthorized(req.headers.get('authorization'), secrets)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
   const t0 = Date.now();

@@ -7,6 +7,7 @@ import { rateLimit, getIp } from '@/lib/rate-limit';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { getAuth } from '@/lib/auth-helper';
 import { sendEmail } from '@/lib/infra';
+import { parseAdminEmails } from '@/lib/admin-allowlist';
 
 /**
  * Durable capture for crashes caught by src/app/error.tsx and
@@ -17,10 +18,7 @@ import { sendEmail } from '@/lib/infra';
  * for this (see the conversation that led here); this table doesn't expire.
  */
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? 'davie@getcollectly.app')
-  .split(',')
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
+const ADMIN_EMAILS = parseAdminEmails(process.env.ADMIN_EMAILS);
 
 const body = z.object({
   message: z.string().min(1).max(2000),
