@@ -81,6 +81,7 @@ export function MarketingFooter() {
               <p className="text-sm font-semibold text-ink-900">Who it is for</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
                 <li><Link href="/for/agencies" className="inline-block py-1.5 hover:text-ink-900">Agencies</Link></li>
+                <li><Link href="/for/bookkeepers" className="inline-block py-1.5 hover:text-ink-900">Bookkeepers</Link></li>
                 <li><Link href="/for/consultancies" className="inline-block py-1.5 hover:text-ink-900">Consultancies</Link></li>
                 <li><Link href="/for/uk-agencies" className="inline-block py-1.5 hover:text-ink-900">UK agencies</Link></li>
               </ul>

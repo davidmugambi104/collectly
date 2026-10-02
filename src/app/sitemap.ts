@@ -42,6 +42,7 @@ export const FIXED: Array<{
   { path: '/compare', priority: 0.9, changefreq: 'monthly' },
   // Industry beachheads (long-tail keyword clusters)
   { path: '/for/agencies', priority: 0.8, changefreq: 'monthly' },
+  { path: '/for/bookkeepers', priority: 0.9, changefreq: 'monthly' },
   { path: '/for/consultancies', priority: 0.8, changefreq: 'monthly' },
   { path: '/for/uk-agencies', priority: 0.9, changefreq: 'monthly' },
   // High-intent tools
