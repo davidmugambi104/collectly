@@ -225,7 +225,18 @@ export async function requireAdminEmail(): Promise<{ ok: true; email: string } |
   const { userId } = await getAuth();
   if (!userId) return { ok: false };
   const [u] = await db.select({ email: users.email }).from(users).where(eq(users.id, userId)).limit(1);
-  const email = u?.email?.toLowerCase();
+  let email = u?.email?.toLowerCase();
+  // The local users row can be missing or have no email (a new Clerk instance, a row
+  // created before emails were stored). Fall back to the signed-in user's PRIMARY
+  // email, and only when Clerk has verified it, so an unverified address can never
+  // pass the allowlist.
+  if (!email) {
+    try {
+      const cu = await currentUser();
+      const primary = cu?.emailAddresses?.find((a) => a.id === cu.primaryEmailAddressId) ?? cu?.emailAddresses?.[0];
+      if (primary?.verification?.status === 'verified') email = primary.emailAddress.toLowerCase();
+    } catch { /* no Clerk session: stay unauthorised */ }
+  }
   // On failure we still hand back the email (when we know it) so the admin
   // page can render "ask Davie to add <you> to ADMIN_EMAILS" instead of
   // duplicating this lookup. Callers that only branch on `.ok` are unaffected.
