@@ -44,7 +44,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
         `Imported ${data.customersUpserted} customers, ${data.invoicesUpserted} invoices` +
           (data.invoicesMarkedPaid ? ` (${data.invoicesMarkedPaid} marked paid)` : '') +
           ` in ${data.durationMs}ms` +
-          (errorCount > 0 ? ` — ${errorCount} error${errorCount === 1 ? '' : 's'}: ${data.errors.slice(0, 3).join('; ')}${errorCount > 3 ? '…' : ''}` : ''),
+          (errorCount > 0 ? `. ${errorCount} error${errorCount === 1 ? '' : 's'}: ${data.errors.slice(0, 3).join('; ')}${errorCount > 3 ? '…' : ''}` : ''),
       );
       router.refresh();
     } catch (e: unknown) {
@@ -96,7 +96,11 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
           <span className="text-xs text-ink-500">Last sync {new Date(lastSyncAt).toLocaleString()}</span>
         )}
       </div>
+      {syncing && <p role="status" className="text-xs text-ink-600">Syncing your books. Keep this page open until it says it is done. Nothing is sent to anyone.</p>}
       {syncResult && <p className={`text-xs ${syncHadErrors ? 'text-red-600' : 'text-ink-600'}`}>{syncResult}</p>}
+      {syncResult && !syncHadErrors && (
+        <a href="/dashboard/dunning#starter-heading" className="btn-primary btn-sm w-fit">Next: draft your first reminders</a>
+      )}
     </div>
   );
 }

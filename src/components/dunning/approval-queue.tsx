@@ -27,7 +27,7 @@ export type QueuedReminder = {
  * approved (sent) or skipped. Nothing here goes out until a person clicks, and
  * even then it waits 30 seconds so the click can be undone.
  */
-export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: boolean; items: QueuedReminder[] }) {
+export function ApprovalQueue({ approvalRequired, items, smsConfigured = true }: { approvalRequired: boolean; items: QueuedReminder[]; smsConfigured?: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -112,6 +112,7 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
             const skipping = busy === `${it.runId}:skip`;
             const left = hold.secondsLeft(it.runId);
             const holding = left !== null;
+            const noSms = it.channel === 'sms' && !smsConfigured;
             return (
               <li key={it.runId} className="rounded-[10px] border bg-white p-3 [border-color:var(--hair)]">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -135,6 +136,7 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
                     />
                   </>
                 )}
+                {noSms && <div role="status" className="app-meta mt-2 font-normal">Text messages are not set up on this account, so this one cannot be sent.</div>}
                 <label htmlFor={`body-${it.runId}`} className="label mt-3">Message</label>
                 <textarea
                   id={`body-${it.runId}`}
@@ -159,7 +161,7 @@ export function ApprovalQueue({ approvalRequired, items }: { approvalRequired: b
                         {skipping ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" /> : <SkipForward aria-hidden="true" className="h-3.5 w-3.5" />}
                         Skip this one
                       </button>
-                      <button className="btn-primary btn-sm" disabled={!!busy} onClick={() => hold.start(it.runId, () => act(it, 'approve'))} aria-busy={sending}>
+                      <button className="btn-primary btn-sm" disabled={!!busy || noSms} onClick={() => hold.start(it.runId, () => act(it, 'approve'))} aria-busy={sending}>
                         {sending ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" /> : <Send aria-hidden="true" className="h-3.5 w-3.5" />}
                         Approve and send
                       </button>

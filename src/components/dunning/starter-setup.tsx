@@ -24,13 +24,20 @@ export function StarterSetup({ presets, approvalRequired }: { presets: PresetVie
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? 'Something went wrong');
       const n: number = data.drafted ?? 0;
+      if (n > 0) {
+        // Take them straight to the drafts: the queue replaces this card on refresh,
+        // and its own heading says nothing has been sent.
+        router.refresh();
+        setTimeout(() => document.getElementById('approvals')?.scrollIntoView({ block: 'start' }), 400);
+        return;
+      }
       setMsg({
         kind: 'ok',
         text: n === 0
           ? 'Your schedule is set. No invoices are overdue yet, so there is nothing to draft. Reminders will be drafted as invoices go past due.'
-          : `${n} reminder${n === 1 ? ' is' : 's are'} drafted and waiting in the approval queue. Nothing has been sent.${data.capped ? ' That is the first batch; the daily run drafts the rest.' : ''}`,
+          : '',
       });
-      setDone(true); // refreshing now would drop this card, and the message with it
+      setDone(true);
     } catch (e: unknown) {
       setMsg({ kind: 'err', text: e instanceof Error ? e.message : String(e) });
     } finally { setBusy(false); }
@@ -66,7 +73,6 @@ export function StarterSetup({ presets, approvalRequired }: { presets: PresetVie
             </div>
           )}
           {msg && <div role={msg.kind === 'err' ? 'alert' : 'status'} className={`mt-3 ${msg.kind === 'err' ? 'alert-danger' : 'text-sm text-success-700'}`}>{msg.text}</div>}
-          {done && <button className="btn-primary btn-sm mt-3" onClick={() => router.refresh()}>Show the drafts</button>}
         </div>
       </div>
     </section>

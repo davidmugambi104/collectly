@@ -245,7 +245,7 @@ export async function getCustomerInsights(orgId: string, limit = 50): Promise<Cu
       recommendedAction = `Pause new work. Call the customer directly to confirm payment plan. ${cur.oldestDays}-day-old invoice is at risk of write-off.`;
       recommendedChannel = 'phone';
     } else if (riskLevel === 'high') {
-      recommendedAction = `Send a firm-tone email + SMS reminder today. ${cur.oldestDays}-day-old invoice needs immediate attention.`;
+      recommendedAction = `Draft a firm reminder and read it before it goes out. ${cur.oldestDays}-day-old invoice needs immediate attention.`;
       recommendedChannel = c.phone ? 'sms' : 'email';
     } else if (riskLevel === 'medium') {
       recommendedAction = `Send a friendly-tone email reminder. Invoice is past due but customer has good payment history overall.`;
@@ -313,7 +313,7 @@ export async function getAIInsights(orgId: string): Promise<AIInsight[]> {
         priority: 1,
         category: 'action',
         title: 'Connect QuickBooks or Xero to get started',
-        detail: 'We pull in your customers, invoices, and payment history. 60-second setup. Or load sample data to explore the product first.',
+        detail: 'We pull in your customers, invoices, and payment history. Or load sample data to look around first.',
         cta: { href: '/dashboard/integrations', label: 'Connect or load demo data' },
       },
     ];
@@ -392,8 +392,8 @@ export async function getAIInsights(orgId: string): Promise<AIInsight[]> {
         priority: 2,
         category: 'risk',
         title: `${overduePct}% of your A/R is overdue`,
-        detail: `$${totalOverdue.toLocaleString()} sitting past due across ${aging.invoiceCount} invoice${aging.invoiceCount === 1 ? '' : 's'}. Industry best-in-class is <20%. Turning on AI dunning typically cuts this by 40% in 30 days.`,
-        cta: { href: '/dashboard/dunning', label: 'Enable AI dunning' },
+        detail: `$${totalOverdue.toLocaleString()} sitting past due across ${aging.invoiceCount} invoice${aging.invoiceCount === 1 ? '' : 's'}. Reminders you approve first are drafted from the Dunning page.`,
+        cta: { href: '/dashboard/dunning', label: 'Draft reminders' },
         amount: totalOverdue,
       });
     }

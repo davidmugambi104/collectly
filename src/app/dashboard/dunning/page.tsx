@@ -375,7 +375,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       ) : (
         <>
         {recentRuns.length === 0 && queue.length === 0 && <StarterSetup presets={PRESETS.map(({ id, name, blurb }) => ({ id, name, blurb }))} approvalRequired={approvalRequired} />}
-        <ApprovalQueue approvalRequired={approvalRequired} items={queue} />
+        <ApprovalQueue approvalRequired={approvalRequired} items={queue} smsConfigured={!!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM_NUMBER)} />
         <StatementDraftsQueue items={stmtDrafts} />
         </>
       )}

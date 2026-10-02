@@ -133,7 +133,7 @@ export function AIInsightsPanel({ insights }: { insights: AIInsight[] }) {
        
       >
         <Lightbulb className="mt-px h-3.5 w-3.5 shrink-0 text-ink-400" />
-        <span className="max-w-[76ch]">Insights are recomputed in real time on every page load. Powered by your actual A/R data — no mock numbers.</span>
+        <span className="max-w-[76ch]">Insights are recomputed in real time on every page load. Built from your actual A/R data.</span>
       </div>
     </div>
   );

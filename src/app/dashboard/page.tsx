@@ -3,12 +3,13 @@ export const dynamic = 'force-dynamic';
 import { AppShell } from '@/components/app/shell';
 import { db } from '@/db';
 import * as schema from '@/db/schema';
-import { invoices, customers, payments, integrations } from '@/db/schema';
+import { invoices, customers, payments, integrations, dunningRuns, dunningApprovals } from '@/db/schema';
+import { firstSessionView, type FirstSessionView } from '@/lib/first-session';
 import { eq, and, sql, lte, desc } from 'drizzle-orm';
 import { getAgingReport, getCashFlowSnapshot, getAIInsights, getCustomerInsights } from '@/lib/analytics';
 import { getAuthWithOrg as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
-import { DollarSign, TrendingUp, AlertCircle, CheckCircle2, Sparkles, ArrowRight, ArrowUpRight, ArrowDownRight, ChevronRight, Activity, Wallet, Lightbulb, Clock } from 'lucide-react';
+import { DollarSign, TrendingUp, AlertCircle, CheckCircle2, Sparkles, ArrowRight, ArrowUpRight, ArrowDownRight, ChevronRight, Wallet, Lightbulb, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency, daysOverdue } from '@/lib/utils';
 import { AIInsightsPanel } from '@/components/dashboard/ai-insights-panel';
@@ -26,7 +27,7 @@ export default async function DashboardPage() {
   const [aging, cash, aiInsights, topRiskCustomers, connectedIntegrations, recentPayments] = await Promise.all([
     getAgingReport(orgId),
     getCashFlowSnapshot(orgId),
-    getAIInsights(orgId),
+    getAIInsights(orgId).then((all) => all.filter((i) => i.id !== 'no-data')),
     getCustomerInsights(orgId, 5),
     db.select().from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.status, 'connected'))),
     db
@@ -47,8 +48,33 @@ export default async function DashboardPage() {
     .orderBy(invoices.dueDate)
     .limit(5);
 
+  // First-session state: every number is a real count, so the checklist ticks only when it is true.
+  const [runCounts] = await db
+    .select({
+      ever: sql<number>`count(*)::int`,
+      approved: sql<number>`count(*) FILTER (WHERE ${dunningRuns.status} IN ('sent','delivered','opened','clicked','replied','paid'))::int`,
+      paid: sql<number>`count(*) FILTER (WHERE ${dunningRuns.status} = 'paid')::int`,
+    })
+    .from(dunningRuns)
+    .where(eq(dunningRuns.orgId, orgId));
+  const [waitingRow] = await db.select({ n: sql<number>`count(*)::int` }).from(dunningApprovals).where(eq(dunningApprovals.orgId, orgId));
+  const [invoiceRow] = await db.select({ n: sql<number>`count(*)::int` }).from(invoices).where(eq(invoices.orgId, orgId));
+  // The sample-data loader inserts a stand-in QuickBooks row (realm demo-realm-1); it is not a real connection.
+  const books = connectedIntegrations.filter((i: { provider: string; realmId: string | null }) => (i.provider === 'quickbooks' || i.provider === 'xero') && i.realmId !== 'demo-realm-1');
+  const first = firstSessionView({
+    booksConnected: books.length > 0,
+    hasSynced: books.some((i: { lastSyncAt: Date | null }) => !!i.lastSyncAt),
+    invoiceCount: Number(invoiceRow?.n ?? 0),
+    overdueCount: aging.invoiceCount,
+    draftsWaiting: Number(waitingRow?.n ?? 0),
+    remindersEver: Number(runCounts?.ever ?? 0),
+    approvedCount: Number(runCounts?.approved ?? 0),
+    paidAfterReminder: Number(runCounts?.paid ?? 0),
+  });
+
   return (
-    <AppShell title="Overview" subtitle="Real-time view of your accounts receivable, with AI-prioritized actions.">
+    <AppShell title="Overview" subtitle="Your accounts receivable, and what to do next.">
+      {first.showChecklist ? <FirstSessionCard view={first} /> : first.next && <WaitingStrip view={first} />}
       <DashboardKpiGrid aging={aging} cash={cash} />
 
       {/* Content column (cards) beside an action rail (no chrome). One spacing
@@ -61,7 +87,6 @@ export default async function DashboardPage() {
         <div className="space-y-6">
           <QuickActions
             hasData={aging.hasData}
-            hasIntegrations={connectedIntegrations.length > 0}
             overdueCount={aging.invoiceCount}
             totalOverdue={aging.buckets['1-30'].amount + aging.buckets['31-60'].amount + aging.buckets['61-90'].amount + aging.buckets['90+'].amount}
             aiCount={aiInsights.length}
@@ -77,8 +102,7 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {!aging.hasData && <FirstRunChecklist />}
-    </AppShell>
+          </AppShell>
   );
 }
 
@@ -131,21 +155,21 @@ function DashboardKpiGrid({ aging, cash }: { aging: Awaited<ReturnType<typeof ge
         icon={<AlertCircle className="h-4 w-4 text-danger-500" />}
         label="Overdue"
         value={formatCurrency(overdueAmount)}
-        sub={aging.hasData ? `${aging.invoiceCount} invoice${aging.invoiceCount === 1 ? '' : 's'} need attention` : '—'}
+        sub={aging.hasData ? `${aging.invoiceCount} invoice${aging.invoiceCount === 1 ? '' : 's'} need attention` : 'None yet'}
         danger={overdueAmount > 0}
       />
       <KpiCard
         icon={<Clock className={`h-4 w-4 ${dsoBand === 'poor' ? 'text-danger-500' : dsoBand === 'watch' ? 'text-warn-500' : 'text-success-600'}`} />}
         label="DSO"
-        value={dso === null ? '—' : `${dso} days`}
+        value={dso === null ? 'n/a' : `${dso} days`}
         sub={
           dso === null
             ? 'Needs paid invoices to calculate'
             : dsoBand === 'healthy'
-              ? 'Healthy — at or under 30 days'
+              ? 'Healthy: at or under 30 days'
               : dsoBand === 'watch'
-                ? 'Watch — 31–45 days is slow for services'
-                : 'Poor — over 45 days ties up cash'
+                ? 'Watch: 31 to 45 days is slow for services'
+                : 'Poor: over 45 days ties up cash'
         }
         danger={dsoBand === 'poor'}
       />
@@ -161,7 +185,7 @@ function DashboardKpiGrid({ aging, cash }: { aging: Awaited<ReturnType<typeof ge
         icon={<TrendingUp className="h-4 w-4 text-success-600" />}
         label="Forecast next 30d"
         value={formatCurrency(cash.forecast30d)}
-        sub={cash.forecastReliable ? 'AI-calibrated from history' : 'Low confidence — need 5+ paid invoices'}
+        sub={cash.forecastReliable ? 'Estimated from your payment history' : 'Low confidence: needs 5 or more paid invoices'}
         icon2={cash.forecastReliable ? <Sparkles className="h-3 w-3 text-brand-500" /> : null}
       />
     </div>
@@ -244,9 +268,9 @@ function TrendChip({ label, positive, dir }: { label: string; positive?: boolean
 // colour and status colour stay independent of each other.
 const AGING_BUCKETS = [
   { k: 'current', label: 'Current', fill: 'bg-aging-current' },
-  { k: '1-30', label: '1–30 days', fill: 'bg-aging-1-30' },
-  { k: '31-60', label: '31–60 days', fill: 'bg-aging-31-60' },
-  { k: '61-90', label: '61–90 days', fill: 'bg-aging-61-90' },
+  { k: '1-30', label: '1 to 30 days', fill: 'bg-aging-1-30' },
+  { k: '31-60', label: '31 to 60 days', fill: 'bg-aging-31-60' },
+  { k: '61-90', label: '61 to 90 days', fill: 'bg-aging-61-90' },
   { k: '90+', label: '90+ days', fill: 'bg-aging-90plus' },
 ] as const;
 
@@ -301,7 +325,7 @@ function AgingCard({ aging }: { aging: Awaited<ReturnType<typeof getAgingReport>
           r.pct > 0 ? (
             <div key={r.k} className={`h-full ${r.fill} first:rounded-l-full last:rounded-r-full`}
               style={{ width: `${r.pct}%`, boxShadow: 'inset 0 1px 0 0 rgb(255 255 255 / 0.25)' }}
-              title={`${r.label} — ${formatCurrency(r.amount)}`} />
+              title={`${r.label}: ${formatCurrency(r.amount)}`} />
           ) : null,
         )}
       </div>
@@ -335,7 +359,7 @@ function AgingCard({ aging }: { aging: Awaited<ReturnType<typeof getAgingReport>
   );
 }
 
-function QuickActions({ hasData, hasIntegrations, overdueCount, totalOverdue, aiCount }: { hasData: boolean; hasIntegrations: boolean; overdueCount: number; totalOverdue: number; aiCount: number }) {
+function QuickActions({ hasData, overdueCount, totalOverdue, aiCount }: { hasData: boolean; overdueCount: number; totalOverdue: number; aiCount: number }) {
   return (
     // `.section`, not `.card` — every ActionRow below is already a surface of
     // its own, so wrapping them in another one produced card-inside-card and put
@@ -345,18 +369,6 @@ function QuickActions({ hasData, hasIntegrations, overdueCount, totalOverdue, ai
         <h2 className="app-heading">Next best actions</h2>
       </div>
       <div className="space-y-2">
-        {!hasData && (
-          <>
-            <ActionRow href="/dashboard/integrations" icon={<Sparkles className="h-4 w-4 text-brand-600" />} title="Connect QuickBooks or Xero" subtitle="60-second setup" priority="high" />
-            <ActionRow href="/dashboard/integrations" icon={<Activity className="h-4 w-4 text-brand-600" />} title="Or load sample data" subtitle="Try every feature with realistic numbers" />
-          </>
-        )}
-        {hasData && !hasIntegrations && (
-          <ActionRow href="/dashboard/integrations" icon={<Sparkles className="h-4 w-4 text-brand-600" />} title="Connect your accounting tool" subtitle="Stop entering invoices by hand" />
-        )}
-        {hasData && hasIntegrations && (
-          <ActionRow href="/dashboard/dunning" icon={<Sparkles className="h-4 w-4 text-brand-600" />} title="Turn on AI dunning" subtitle="Save 5+ hours/week" />
-        )}
         {overdueCount > 0 && (
           <ActionRow href="/dashboard/invoices?filter=overdue" icon={<AlertCircle className="h-4 w-4 text-danger-500" />} title={`${overdueCount} overdue invoice${overdueCount === 1 ? '' : 's'}`} subtitle={formatCurrency(totalOverdue)} danger />
         )}
@@ -596,64 +608,53 @@ function RecentPaymentsCard({ payments }: { payments: Array<{ payment: typeof sc
   );
 }
 
-function FirstRunChecklist() {
+function FirstSessionCard({ view }: { view: FirstSessionView }) {
   return (
-    // The focal surface of an empty dashboard, so it takes `.card-primary` —
-    // the same accent hairline and deep lift the AI panel uses when there IS
-    // data. It used to be a brand-to-success diagonal gradient with a matching
-    // gradient icon tile: two hues blending across a card is the single most
-    // dated decoration in the file, and it also put two semantic colours
-    // (accent and "success") into a surface that means neither.
-    <div className="card-primary mt-6 overflow-hidden">
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-40"
-        style={{ background: 'radial-gradient(480px 160px at 6% -30%, rgb(var(--brand-500) / 0.08), transparent 70%)' }}
-      />
-      <div className="relative flex items-start gap-3.5">
-        <div
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-[11px] bg-brand-600"
-          style={{ boxShadow: 'inset 0 1px 0 0 rgb(255 255 255 / 0.3), 0 2px 8px -2px rgb(var(--brand-700) / 0.55)' }}
-        >
-          <Sparkles className="h-5 w-5 text-white" />
+    <section className="card-primary mb-6" aria-labelledby="first-session-heading">
+      <h2 id="first-session-heading" className="app-title">Your first reminder</h2>
+      <p className="app-body mt-1 text-ink-600">
+        {view.doneCount} of {view.steps.length} done. Mugavi drafts, you read and approve, nothing goes out without you.
+      </p>
+      <ol className="mt-4 space-y-2.5">
+        {view.steps.map((st) => (
+          <li key={st.id} className="flex items-start gap-3">
+            <span
+              aria-hidden="true"
+              className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${st.done ? 'bg-success-600 text-white' : 'border border-ink-300 bg-white'}`}
+            >
+              {st.done && <CheckCircle2 className="h-3.5 w-3.5" />}
+            </span>
+            <div className="min-w-0">
+              <div className="app-label">
+                {st.label}
+                <span className="sr-only">{st.done ? ', done' : ', not done yet'}</span>
+              </div>
+              <div className="app-meta font-normal">{st.note}</div>
+            </div>
+          </li>
+        ))}
+      </ol>
+      {view.next ? (
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <Link href={view.next.href} className="btn-primary">
+            {view.next.label} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
+          <span className="app-meta font-normal">{view.next.detail}</span>
         </div>
-        <div className="min-w-0 flex-1">
-          <h2 className="app-title">Welcome to Mugavi</h2>
-          <p className="app-body mt-1 text-ink-600">Get set up in 3 steps.</p>
-          <ol className="mt-5 space-y-3.5">
-            <Step n={1} title="Connect QuickBooks, Xero, or load sample data" desc="Pulls in customers, invoices, and payment history automatically." cta="Connect or load sample data" href="/dashboard/integrations" />
-            <Step n={2} title="See your A/R aging and AI insights" desc="We'll score every customer for risk and recommend the next action." cta="Go to dashboard" href="/dashboard" />
-            <Step n={3} title="Turn on AI dunning" desc="Tone-aware email + SMS reminders, auto-pause on payment or reply." cta="Set up dunning" href="/dashboard/dunning" />
-          </ol>
-          <p className="app-meta mt-5 max-w-[76ch] font-normal">
-            <Lightbulb className="mr-1 inline h-3 w-3 text-ink-400" />
-            Don&apos;t have a QuickBooks account handy? <Link href="/dashboard/integrations" className="font-medium text-brand-600 hover:text-brand-700">Load sample data</Link> to explore the product with realistic A/R.
-          </p>
-        </div>
-      </div>
-    </div>
+      ) : (
+        view.idleNote && <p className="app-meta mt-5 font-normal" role="status">{view.idleNote}</p>
+      )}
+    </section>
   );
 }
 
-function Step({ n, title, desc, cta, href }: { n: number; title: string; desc: string; cta: string; href: string }) {
+/** For accounts past their first approval: one quiet line when reminders are waiting, nothing otherwise. */
+function WaitingStrip({ view }: { view: FirstSessionView }) {
+  if (!view.next) return null;
   return (
-    <li className="flex items-start gap-3">
-      {/* A filled numeral, lit like every other small surface in the app. The
-          2px brand ring it used to wear made three empty circles the loudest
-          thing in the card. */}
-      <div
-        className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-600 text-2xs font-semibold tabular-nums text-white"
-        style={{ boxShadow: 'inset 0 1px 0 0 rgb(255 255 255 / 0.3), 0 1px 3px -1px rgb(var(--brand-700) / 0.5)' }}
-      >
-        {n}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="app-label">{title}</div>
-        <div className="app-meta mt-0.5 font-normal">{desc}</div>
-        <Link href={href} className="link-quiet mt-1.5">
-          {cta} <ArrowRight className="h-3 w-3" />
-        </Link>
-      </div>
-    </li>
+    <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-[10px] border bg-white px-4 py-3 [border-color:var(--hair)]">
+      <span className="app-label">{view.next.label}</span>
+      <Link href={view.next.href} className="btn-secondary btn-sm">Open the queue <ArrowRight className="h-3 w-3" aria-hidden="true" /></Link>
+    </div>
   );
 }
