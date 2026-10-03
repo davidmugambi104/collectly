@@ -838,7 +838,7 @@ Your bookkeeper's spreadsheet almost certainly uses straight-line aging. That's 
 
 The fix isn't complicated, it's just not the default in a spreadsheet. Some AR tools do it. Mugavi's cash-flow forecast weights your open invoices by each customer's payment history, which is the same idea.
 
-If you want to try it: https://mugavi.com, 14-day free trial, no credit card, 10-minute setup.
+If you want to try it: https://mugavi.com, 14-day free trial, no credit card.
 
 Davie
 `,
@@ -1002,7 +1002,7 @@ Total recovery: **70-90%** of invoices paid within 30 days. Industry baseline wi
 
 **That's the difference between a healthy business and a constant cash-flow crisis.**
 
-If you want to test these templates without building the system: mugavi.com automates all 7 in 10 minutes, from $79/mo. 14-day free trial.
+If you want to test these templates without building the system: mugavi.com can run these reminders for you, from $79/mo. 14-day free trial.
 
 Davie
 `,

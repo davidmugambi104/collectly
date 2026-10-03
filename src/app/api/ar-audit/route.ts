@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
         `<h2 style="margin:0 0 8px;font-size:18px">Thanks, ${escapeHtml(data.name)}</h2>`,
         `<p style="margin:0 0 16px;font-size:14px;line-height:1.5">We received your A/R audit request for <strong>${escapeHtml(data.company)}</strong>. A real person will review it and reply within 24 hours with 3 specific fixes you can apply this week.</p>`,
         `<p style="margin:0 0 16px;font-size:14px;line-height:1.5">If you have questions, reply to this email or contact us at <a href="mailto:hello@getcollectly.app">hello@getcollectly.app</a>.</p>`,
-        `<p style="margin:0;font-size:12px;color:#6c6e76">Mugavi · Built in Nairobi · Used globally</p>`,
+        `<p style="margin:0;font-size:12px;color:#6c6e76">Mugavi</p>`,
         `</body></html>`,
       ].join('\n'),
     });

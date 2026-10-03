@@ -29,7 +29,7 @@ export function MarketingFooter() {
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Small businesses and bookkeepers</span>
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Xero · QuickBooks Online (beta)</span>
             </div>
-            <p className="mt-6 text-xs text-ink-500">© 2026 Mugavi, Inc. · Built in Nairobi.</p>
+            <p className="mt-6 text-xs text-ink-500">© 2026 Mugavi, Inc.</p>
           </div>
           <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
             <div>

@@ -96,8 +96,14 @@ const DIFFS = [
   {
     icon: Users,
     label: 'Users',
-    collectly: 'Unlimited on Practice and above',
+    collectly: '3 on a single business, unlimited on Practice and above',
     competitor: 'Unlimited on Pro; 2 on Essentials',
+  },
+  {
+    icon: FileText,
+    label: 'Approval before sending',
+    collectly: 'On by default. Each reminder waits for you, with 30 seconds to undo after you press send. Automatic sending is a per-book choice',
+    competitor: 'Also supported: drafts wait for approval, and Safe Mode holds all automatic processing for the whole account',
   },
 ];
 

@@ -5,12 +5,12 @@ import { pageMetadata, personJsonLd, webPageJsonLd } from '@/lib/seo';
 export const metadata = pageMetadata({
   title: 'About: built by a founder, not a Series-B committee',
   description:
-    'Mugavi is built by Davie in Nairobi for small agencies and ' +
+    'Mugavi is built by Davie for small agencies and ' +
     'consultancies on Xero and QuickBooks. Read about the founding story, ' +
     'why we focus on the 5-30 person business long tail, and what we\'re ' +
     'not doing.',
   path: '/about',
-  keywords: ['Mugavi team', 'Mugavi founder', 'AR automation story', 'Nairobi startup'],
+  keywords: ['Mugavi team', 'Mugavi founder', 'AR automation story'],
 });
 
 // E-E-A-T page: Person schema for the founder + AboutPage schema. Helps
@@ -18,7 +18,7 @@ export const metadata = pageMetadata({
 // about page for branded query "Mugavi founder" / "who built Mugavi".
 const aboutJsonLd = JSON.stringify([
   webPageJsonLd({
-    title: 'About Mugavi: built in Nairobi for small agencies',
+    title: 'About Mugavi: built by a founder for small agencies',
     description:
       'The founding story behind Mugavi: a small SaaS built for the ' +
       '5-30 person agency and consultancy long tail on Xero and QuickBooks.',

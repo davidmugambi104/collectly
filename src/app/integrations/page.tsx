@@ -101,16 +101,6 @@ const categories = [
           'Production approval required from Square',
         ],
       },
-      {
-        name: 'Paystack',
-        slug: 'paystack',
-        status: 'disabled',
-        bullets: [
-          'Temporarily disabled while we build per-business payout routing',
-          'Best for Nigeria, Ghana, Kenya, and South Africa once live',
-          'Card, bank transfer, and mobile money where supported',
-        ],
-      },
     ],
   },
   {
@@ -234,7 +224,7 @@ export default function IntegrationsPage() {
         </p>
         <p className="mt-3 text-sm text-ink-500">
           Status means what is wired today. Some integrations need production credentials swapped in before they collect real money.
-          Customer payments settle by wire transfer today. Stripe is in test mode until live keys are added, and Paystack is temporarily disabled.
+          Customer payments settle by wire transfer today. Stripe is in test mode until live keys are added.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link href="/sign-up" className="btn-primary">
