@@ -221,7 +221,7 @@ export function SendSettings({ window: initial, domain, emailConfigured, rules: 
               <summary className="cursor-pointer font-medium text-ink-900">Also add a DMARC record (recommended)</summary>
               <p className="mt-2">Gmail and Yahoo expect a DMARC record from anyone sending mail. It is separate from the records above and is not needed for verification. Add this once at your registrar:</p>
               <p className="mt-2 font-mono break-all">TXT  _dmarc.{domain.domain}  v=DMARC1; p=none</p>
-              <p className="mt-2">p=none only watches, so it cannot block your own mail. If your domain already has a _dmarc record, keep it and do not add a second one. Full guide: docs/email-deliverability.md in the repository.</p>
+              <p className="mt-2">p=none only watches, so it cannot block your own mail. If your domain already has a _dmarc record, keep it and do not add a second one. Full guide: <a className="underline" href="/help/send-from-your-domain">Send from your own domain</a>.</p>
             </details>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {domain.status !== 'verified' && (
