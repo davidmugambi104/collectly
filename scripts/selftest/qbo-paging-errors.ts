@@ -4,8 +4,6 @@
 // real behaviour is checked by the sandbox plan in 34-qbo-sandbox-test-plan.md.
 import http from 'node:http';
 import { eq } from 'drizzle-orm';
-const PORT = 4829;
-process.env.QBO_API_BASE = `http://127.0.0.1:${PORT}`;
 process.env.USE_PGLITE = '1';
 process.env.QBO_CLIENT_ID = 'id'; process.env.QBO_CLIENT_SECRET = 'secret';
 
@@ -42,7 +40,8 @@ const server = http.createServer((req, res) => {
 const starts = (re: RegExp) => queries.filter((q) => re.test(q)).map((q) => Number(/STARTPOSITION (\d+)/.exec(q)?.[1] ?? 0));
 
 async function main() {
-  await new Promise<void>((r) => server.listen(PORT, '127.0.0.1', () => r()));
+  await new Promise<void>((r) => server.listen(0, '127.0.0.1', () => r()));
+  process.env.QBO_API_BASE = `http://127.0.0.1:${(server.address() as import('node:net').AddressInfo).port}`; // random port, set before quickbooks.ts is imported
   // Intercept only Intuit's token endpoint; everything else (the local stand-in) passes through.
   const realFetch = globalThis.fetch;
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
