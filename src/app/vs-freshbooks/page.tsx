@@ -12,7 +12,7 @@ import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs FreshBooks: from simple invoicing to real AR automation',
+  title: 'Mugavi vs FreshBooks: simple invoicing vs AR automation',
   description:
     'FreshBooks is easy invoicing for freelancers and small agencies. ' +
     'Mugavi adds AI tone-aware dunning, AR aging, cash-flow forecasting, ' +

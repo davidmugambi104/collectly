@@ -3,7 +3,7 @@ type Post = { slug: string; title: string; date: string; read: string; excerpt: 
 export const POSTS: Post[] = [
   {
     slug: 'bookkeeper-invoice-follow-up-service',
-    title: 'How a bookkeeper can offer invoice follow-up as a paid service',
+    title: 'How a bookkeeper can sell invoice follow-up as a service',
     date: '2026-10-03', read: '6 min',
     excerpt: 'Many clients have overdue invoices and nobody chasing them. Here is how to scope it, price it and run it as a service, without becoming a collections agency.',
     tags: ['bookkeeping', 'QuickBooks', 'accounts receivable', 'client services'],
@@ -320,7 +320,7 @@ For wording on the gentler end of the same problem, see [the dunning templates p
   },
   {
     slug: 'onboard-client-to-invoice-follow-up-first-week',
-    title: "How to onboard a client to invoice follow-up in the first week",
+    title: "Onboard a client to invoice follow-up in the first week",
     date: '2026-10-03', read: '6 min',
     excerpt: "A day-by-day checklist for the first week of an A/R follow-up service: access, customer list clean-up, the call with the client, the schedule, a dry run and the first report.",
     tags: ['bookkeepers', 'onboarding', 'checklist', 'QuickBooks'],

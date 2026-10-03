@@ -52,7 +52,7 @@ const FAQS: FaqItem[] = [
   ];
 
 export const metadata = pageMetadata({
-  title: 'A/R automation for agencies on Xero: stop chasing late invoices',
+  title: 'A/R automation for agencies on Xero: stop chasing invoices',
   description:
     'AR automation built for 5-30 person agencies and consultancies on Xero. ' +
     'Tone-aware AI reminders, reply-or-pay pause, promise-to-pay tracking, and ' +

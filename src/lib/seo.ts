@@ -296,7 +296,9 @@ export function articleJsonLd(input: {
 export function pricingProductJsonLd(): JsonLdThing {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'SoftwareApplication',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
     name: `${BRAND}: invoice reminders you approve first`,
     image: `${SITE.url}/og-pricing.png`,
     url: `${SITE.url}/pricing`,
@@ -305,8 +307,6 @@ export function pricingProductJsonLd(): JsonLdThing {
       'Each reminder waits for your approval, the sequence pauses when a customer replies or pays, ' +
       'promised-payment dates are tracked, and disputes are separated from ordinary late payment. ' +
       'Works with Xero and QuickBooks Online (beta).',
-    brand: { '@type': 'Brand', name: BRAND },
-    category: 'BusinessApplication > Accounts Receivable Automation',
     offers: [
       {
         '@type': 'Offer',
