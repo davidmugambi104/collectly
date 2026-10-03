@@ -50,9 +50,9 @@ export default function TourPage() {
       <section className="container-page pb-16">
         <div className="max-w-4xl mx-auto">
           <video
-            className="w-full rounded-2xl border border-ink-200 bg-ink-900"
+            className="w-full aspect-video rounded-2xl border border-ink-200 bg-ink-900"
             controls
-            preload="metadata"
+            preload="none"
             playsInline
             poster="/video/mugavi-walkthrough-poster.jpg"
             aria-label="Mugavi walkthrough, 76 seconds, narrated, with captions: connect your books, see overdue invoices, approve each reminder before it sends"
