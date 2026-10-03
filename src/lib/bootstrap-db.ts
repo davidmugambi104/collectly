@@ -78,6 +78,8 @@ CREATE TABLE IF NOT EXISTS statement_drafts (id text PRIMARY KEY, org_id text NO
 CREATE UNIQUE INDEX IF NOT EXISTS statement_drafts_customer_period_uniq ON statement_drafts(customer_id, period);
 CREATE INDEX IF NOT EXISTS statement_drafts_org_status_idx ON statement_drafts(org_id, status);
 CREATE TABLE IF NOT EXISTS task_outcomes (run_id text PRIMARY KEY REFERENCES dunning_runs(id) ON DELETE CASCADE, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, outcome text, note text, created_by text, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS usage_events (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, kind text NOT NULL, units integer NOT NULL DEFAULT 1, model text, est_cost_micros bigint NOT NULL DEFAULT 0, created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS usage_events_org_time_idx ON usage_events(org_id, created_at);
 CREATE TABLE IF NOT EXISTS saved_views (id text PRIMARY KEY, org_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, page text NOT NULL, name text NOT NULL, query text NOT NULL DEFAULT '', created_by text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE UNIQUE INDEX IF NOT EXISTS saved_views_org_page_name_uniq ON saved_views(org_id, page, name);
 CREATE INDEX IF NOT EXISTS promises_cust_idx ON promises_to_pay(customer_id);

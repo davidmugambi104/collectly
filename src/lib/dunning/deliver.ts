@@ -30,6 +30,7 @@ import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { renderEmailHtml } from '@/lib/dunning/scheduler';
 import { isSmsConfigured } from '@/lib/dunning/sms-config';
 import { approvalBlocker, applyEdits, type ApprovalEdits } from '@/lib/dunning/approval';
+import { recordUsage, smsSegments } from '@/lib/usage-meter';
 
 export type DeliverResult =
   | { ok: true; status: 'sent' | 'skipped' }
@@ -131,6 +132,7 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
         replyTo: getDunningReplyToAddress(),
       });
       if (sendResult.status === 'skipped') throw new Error('email is not configured (no API key)');
+      await recordUsage({ orgId, kind: 'email_sent' });
       await db.update(dunningRuns).set({ status: 'sent', sentAt: now, subject: final.subject, body: final.body, error: null }).where(eq(dunningRuns.id, runId));
       try {
         const msgId = sendResult.id ? await fetchResendMessageId(sendResult.id) : null;
@@ -147,6 +149,7 @@ export async function approveRun(opts: { orgId: string; runId: string; actorId?:
     } else {
       const sms = await sendSms({ to: customer.phone as string, body: final.body });
       if (sms.status === 'skipped') throw new Error('SMS is not configured');
+      await recordUsage({ orgId, kind: 'sms_sent', units: smsSegments(final.body) });
       await db.update(dunningRuns).set({ status: 'sent', sentAt: now, body: final.body, externalMessageId: sms.sid, error: null }).where(eq(dunningRuns.id, runId));
     }
   } catch (e: unknown) {

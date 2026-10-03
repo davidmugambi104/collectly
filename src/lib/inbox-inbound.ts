@@ -3,6 +3,7 @@ import { invoices, customers, organizations, inboxMessages, timelineEvents } fro
 import { eq } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { classifyInboundReply } from '@/lib/ai/inbox';
+import { recordUsage } from '@/lib/usage-meter';
 import { autoReplyClassification, parseValidDate } from '@/lib/ai/inbox-rules';
 
 /**
@@ -42,6 +43,8 @@ export async function handleArCustomerReply(opts: {
     currency: invoice.currency,
     dueDate: invoice.dueDate ? new Date(invoice.dueDate).toISOString().slice(0, 10) : null,
   });
+
+  if (!opts.autoReply) await recordUsage({ orgId: invoice.orgId, kind: 'ai_reply_classify' });
 
   const [inboxMessage] = await db.insert(inboxMessages).values({
     id: nanoid(),

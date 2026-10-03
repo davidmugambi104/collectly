@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { invoices, customers, organizations, dunningRuns, dunningSequences } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
+import { recordUsage, smsSegments } from '@/lib/usage-meter';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders } from '@/lib/infra';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { nanoid, escapeHtml } from '@/lib/utils';
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
         paidRate: row.customer.paymentBehavior?.paidRate ?? 0.85,
       },
     });
+    await recordUsage({ orgId, kind: 'ai_draft' });
 
     if (!data.sendReal) {
       // Dry run: just return the generated message
@@ -110,6 +112,7 @@ export async function POST(req: NextRequest) {
           html: withUnsubscribeFooter(`<p style="white-space: pre-wrap; font-family: -apple-system, sans-serif;">${escapeHtml(result.body)}</p>`, row.customer.email),
           headers: dunningListUnsubscribeHeaders(row.customer.email),
         });
+        if (sendResult.status !== 'skipped') await recordUsage({ orgId, kind: 'test_email' });
         await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));
         return NextResponse.json({ ok: true, sent: true, dryRun: false, runId: run.id, ...result, sendResult });
       } else {
@@ -122,6 +125,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ ok: false, error: 'customer has not opted in to SMS', dryRun: false, ...result }, { status: 409 });
         }
         const sms = await sendSms({ to: row.customer.phone, body: result.body });
+        if (sms.status !== 'skipped') await recordUsage({ orgId, kind: 'sms_sent', units: smsSegments(result.body) });
         await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date() }).where(eq(dunningRuns.id, run.id));
         return NextResponse.json({ ok: true, sent: true, dryRun: false, runId: run.id, ...result, smsSid: sms.sid });
       }

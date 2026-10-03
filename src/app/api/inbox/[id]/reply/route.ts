@@ -11,6 +11,7 @@ import { rateLimit } from '@/lib/rate-limit';
 import { recordEvent } from '@/lib/events';
 import { cleanReplyBody, renderReplyHtml, replySubject, replyTarget } from '@/lib/inbox-reply';
 import { errorMessage } from '@/lib/utils';
+import { recordUsage } from '@/lib/usage-meter';
 
 /**
  * POST { body } writes back to the customer who sent this message.
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
     if (sent.status === 'skipped') return NextResponse.json({ error: 'Email is not set up on this server, so nothing was sent.' }, { status: 502 });
     externalId = sent.id ?? null;
+    await recordUsage({ orgId, kind: 'inbox_reply_email' });
   } catch (e: unknown) {
     return NextResponse.json({ error: `Could not send: ${errorMessage(e)}` }, { status: 502 });
   }
