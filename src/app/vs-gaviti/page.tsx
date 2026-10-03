@@ -69,7 +69,7 @@ export default function VsGavitiPage() {
         subtitle={`Gaviti is a powerful invoice-to-cash platform built for mid-market and enterprise finance teams. Mugavi takes the parts that matter most to small B2B services (smart dunning, cash-flow forecasting, and risk scoring) and packages them in a $${PLAN_PRICING.starter.monthly}/mo tool you can set up before you turn anything on.`}
         competitorName="Gaviti"
       />
-      <ComparisonChecked competitor="Gaviti" date="2026-10-02" source="gaviti.com" href="https://www.gaviti.com" note="Gaviti does not publish prices." />
+      <ComparisonChecked competitor="Gaviti" date="2026-10-03" source="gaviti.com" href="https://www.gaviti.com" note="Gaviti does not publish prices." />
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Gaviti" />
         {/* No table: this competitor is outside the matrix's scope (see
             comparison-table.tsx), so rendering it here would fill the page

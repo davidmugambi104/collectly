@@ -14,7 +14,7 @@ import { ComparisonChecked } from '@/components/marketing/comparison-section';
 export const metadata = pageMetadata({
   title: 'Mugavi vs QuickBooks: smarter AR automation for QBO users',
   description:
-    'QuickBooks handles invoicing and payments but not smart collections. ' +
+    'QuickBooks handles invoicing, payments and built-in reminders. ' +
     'Mugavi adds AI tone-aware AI dunning, AR aging, cash-flow forecasting, ' +
     'and a branded payment portal while keeping your QuickBooks data in sync.',
   path: '/vs-quickbooks',
@@ -23,7 +23,7 @@ export const metadata = pageMetadata({
 });
 
 const DIFFS = [
-  { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'Basic payment reminders' },
+  { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'Payment reminders, with Intuit Assist drafting reminder text for you to review' },
   { icon: DollarSign, label: 'Cost', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees`, quickbooks: 'Reminders come with your QuickBooks plan (from $38/mo list, before promotions); payments carry processing fees' },
   { icon: LineChart, label: 'Forecasting', collectly: '4-week AR cash-flow forecast', quickbooks: 'Reports, and a cash flow planner on some plans' },
   { icon: Target, label: 'Best for', collectly: 'Businesses serious about reducing DSO', quickbooks: 'Businesses already living in QBO' },
@@ -49,8 +49,8 @@ export default function VsQuickbooksPage() {
         <p className="eyebrow">Comparison</p>
         <h1 className="mt-3 h1">Mugavi vs QuickBooks</h1>
         <p className="mt-5 lead">
-          QuickBooks is the default for small-business invoicing and payments. But its collections features
-          are basic: reminders, not real dunning. Mugavi sits on top of Xero (production-ready today) or
+          QuickBooks is the default for small-business invoicing and payments. It sends reminders, and Intuit now
+          markets AI-drafted ones. Mugavi sits on top of Xero (production-ready today) or
           QuickBooks (integration in beta) to add AI tone-aware follow-ups, AR aging, cash-flow forecasting,
           and risk scoring, without forcing you to migrate.
         </p>
@@ -64,7 +64,7 @@ export default function VsQuickbooksPage() {
         </div>
       </section>
 
-      <ComparisonChecked competitor="QuickBooks" date="2026-10-03" source="quickbooks.intuit.com/pricing" href="https://quickbooks.intuit.com/pricing/" />
+      <ComparisonChecked competitor="QuickBooks" date="2026-10-03" source="quickbooks.intuit.com/pricing" href="https://quickbooks.intuit.com/pricing/" note="The Intuit Assist reminder feature is taken from Intuit announcements, not tested by us." />
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {DIFFS.map((d) => (
