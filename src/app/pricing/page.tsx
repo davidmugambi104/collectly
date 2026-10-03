@@ -20,6 +20,8 @@ const FAQS: FaqItem[] = [
             { q: 'What payment methods does the portal accept?', a: 'Wire transfer today, for every customer. Card, ACH, and mobile-money rails are built but temporarily disabled while we finish routing payments to your own account instead of ours. No timeline promises until that\'s done.' },
             { q: 'Is there really a free trial?', a: `Yes. 14 days, full access to ${PLAN_PRICING.growth.name}-tier features, no credit card required.` },
             { q: 'How does billing work?', a: `Founding customers get a manual invoice after the 14-day trial (bank transfer, Wise, or PayPal) at $${FOUNDING.monthly('growth')}/mo for ${PLAN_PRICING.growth.name}. Self-serve card checkout isn't live yet. No committed date.` },
+            { q: 'Do text reminders cost extra?', a: 'Email reminders and AI drafts are included in every plan. Text messages cost money to send, so if you turn them on we pass on the message cost from our provider at cost, with no markup, and show the count on your invoice. Texts only go to customers who have opted in, and nothing sends until you approve it unless you have chosen automatic sending.' },
+            { q: 'Is there a limit on invoices?', a: 'No published limit. Plans are priced per client book, not per invoice. We expect ordinary use for a business\'s own receivables; if your use is ever far beyond that, we will talk to you first and agree what to do before we limit or charge anything.' },
             { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
             { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing: David reviews and sends an invoice within one business day. Not yet automatic or self-serve.' },
             { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD, EUR in ${PLAN_PRICING.growth.name}. KES, NGN, ZAR in ${PLAN_PRICING.scale.name} or custom.` },
@@ -120,7 +122,7 @@ export default function PricingPage() {
         <div className="container-page py-16 max-w-4xl">
           <h2 className="h2 text-center">What you will never pay for</h2>
           <div className="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-ink-700">
-            {['Per-invoice fees', 'Per-email or per-SMS fees', 'Implementation consulting', 'Required onboarding calls', 'Annual contracts', "Hidden fees (you pay your payment provider's own ~0.4% processing cost, passed through at cost)", 'Cancellation fees', '"Premium" support tiers'].map((item) => (
+            {['Per-invoice fees', 'Per-email fees or any markup on text messages', 'Implementation consulting', 'Required onboarding calls', 'Annual contracts', "Hidden fees (you pay your payment provider's own ~0.4% processing cost, passed through at cost; and if you turn on text reminders, the carrier cost of each message, also at cost)", 'Cancellation fees', '"Premium" support tiers'].map((item) => (
               // Was danger-red on a list whose entire point is good news (fees
               // you will NEVER pay). Red signals "wrong" or "error" everywhere
               // else on the site; here nothing is wrong, so the mark is
