@@ -134,7 +134,7 @@ export default function PlaybookPage() {
           <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {STEPS.map((s) => (
               <div key={s.n} className="card">
-                <div className="text-4xl font-display font-bold text-brand-200">{s.n}</div>
+                <div className="text-4xl font-display font-bold text-brand-600">{s.n}</div>
                 <h3 className="mt-2 font-semibold text-ink-900">{s.title}</h3>
                 <p className="mt-2 text-sm text-ink-600 leading-relaxed">{s.body}</p>
               </div>
@@ -145,7 +145,7 @@ export default function PlaybookPage() {
         {/* Proof */}
         <section className="container-page py-14 sm:py-20">
           <div className="max-w-3xl mx-auto card-lg bg-gradient-to-br from-brand-600 to-emerald-600 text-white text-center">
-            <TrendingDown className="h-8 w-8 mx-auto text-brand-200" />
+            <TrendingDown className="h-8 w-8 mx-auto text-brand-50" />
             {/* No real customer testimonials yet (founding-customer program
                 still open). A fabricated quote with a made-up name + company
                 was previously here — that's the single fastest way to lose
@@ -159,7 +159,7 @@ export default function PlaybookPage() {
               <div className="h-10 w-10 rounded-full bg-white/20" />
               <div className="text-left">
                 <div className="font-semibold">Davie Mugambi</div>
-                <div className="text-sm text-brand-100">Founder, Mugavi · building in public</div>
+                <div className="text-sm text-brand-50">Founder, Mugavi · building in public</div>
               </div>
             </div>
           </div>

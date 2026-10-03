@@ -258,7 +258,7 @@ export default function DsoCalculatorPage() {
       <section className="bg-brand-600 text-white">
         <div className="container-page py-12 max-w-3xl">
           <h2 className="h2">Now cut it.</h2>
-          <p className="mt-4 lead text-brand-100">
+          <p className="mt-4 lead text-brand-50">
             Most small-business A/R processes operate 5-15 days slower than
             what they should. A free 24-hour audit shows you the three
             specific things slowing your cash flow.

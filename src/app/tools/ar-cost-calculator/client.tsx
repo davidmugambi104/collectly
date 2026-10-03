@@ -113,17 +113,17 @@ export function ArCostCalculator() {
 
       <div className="space-y-4">
         <div className="card bg-gradient-to-br from-brand-600 to-brand-700 text-white">
-          <div className="text-xs uppercase tracking-wider font-semibold text-brand-200">Estimated annual drag</div>
+          <div className="text-xs uppercase tracking-wider font-semibold text-brand-50">Estimated annual drag</div>
           <div className="mt-2 text-5xl font-display font-bold">{formatCurrency(result.total, currency)}</div>
-          <div className="mt-1 text-sm text-brand-100">per year in revenue at risk + time cost</div>
+          <div className="mt-1 text-sm text-brand-50">per year in revenue at risk + time cost</div>
 
           <div className="mt-5 grid grid-cols-2 gap-3 text-xs">
             <div>
-              <div className="text-brand-200">Revenue at risk</div>
+              <div className="text-brand-50">Revenue at risk</div>
               <div className="mt-1 font-mono font-semibold text-lg">{formatCurrency(result.annualRevenueAtRisk, currency)}</div>
             </div>
             <div>
-              <div className="text-brand-200">Time cost / year</div>
+              <div className="text-brand-50">Time cost / year</div>
               <div className="mt-1 font-mono font-semibold text-lg">{formatCurrency(result.annualTimeCost, currency)}</div>
             </div>
           </div>

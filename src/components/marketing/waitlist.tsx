@@ -34,7 +34,7 @@ export function WaitlistForm({ variant, source = 'homepage', compact }: { varian
 
   if (status === 'ok') {
     return (
-      <div className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+      <div role="status" className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
         <Check className="h-4 w-4" /> {message}
       </div>
     );
@@ -61,7 +61,7 @@ export function WaitlistForm({ variant, source = 'homepage', compact }: { varian
           {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : compact ? 'Subscribe' : <>Join waitlist <ArrowRight className="h-4 w-4" /></>}
         </button>
       </div>
-      {status === 'error' && <div className="mt-2 text-xs text-red-600">{message}</div>}
+      {status === 'error' && <div role="alert" className="mt-2 text-xs text-red-700">{message}</div>}
       {!compact && !message && (
         <p className={`mt-2 text-xs ${dark ? 'text-ink-400' : 'text-ink-500'}`}>
           Or <Link href="/sign-up" className="link">create an account</Link> to start now.

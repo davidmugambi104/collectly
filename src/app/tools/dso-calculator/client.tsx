@@ -49,13 +49,13 @@ export function DsoCalculator({ benchmarks }: { benchmarks: Array<{ region: stri
         </div>
       </div>
       <div className="rounded-lg bg-gradient-to-br from-brand-600 to-brand-700 text-white p-5">
-        <div className="text-xs uppercase tracking-wider font-semibold text-brand-200">Your DSO</div>
+        <div className="text-xs uppercase tracking-wider font-semibold text-brand-50">Your DSO</div>
         <div className="mt-2 text-5xl font-display font-bold">{dso.toFixed(1)} <span className="text-2xl font-normal">days</span></div>
-        <div className="mt-3 text-sm text-brand-100 font-mono">
+        <div className="mt-3 text-sm text-brand-50 font-mono">
           ({formatCurrency(ar)} ÷ {formatCurrency(revenue)}) × {periodDays} = {dso.toFixed(1)}
         </div>
         {nearest && revenue > 0 && (
-          <div className="mt-4 text-sm text-brand-100">
+          <div className="mt-4 text-sm text-brand-50">
             Closest to the <span className="font-semibold text-white">{nearest.region}</span> benchmark ({nearest.dso} days) — {dso > nearest.dso ? `${(dso - nearest.dso).toFixed(1)} days slower` : dso < nearest.dso ? `${(nearest.dso - dso).toFixed(1)} days faster` : 'right in line'}.
           </div>
         )}

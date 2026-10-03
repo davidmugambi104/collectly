@@ -169,6 +169,7 @@
   .badge-info { @apply badge bg-info-50 text-info-700 border border-info-200; }
   .badge-neutral { @apply badge bg-ink-100 text-ink-700 border border-ink-200; }
   .link { @apply text-brand-600 hover:text-brand-700 underline-offset-2 hover:underline; }
+  p .link, li .link, td .link { @apply underline; }
   .h1 { @apply text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-ink-950 leading-[1.05]; }
   .h2 { @apply text-3xl sm:text-4xl font-display font-bold tracking-tight text-ink-950; }
   .h3 { @apply text-xl sm:text-2xl font-display font-semibold text-ink-950; }
@@ -577,7 +578,7 @@
   /* Keyboard hint chip, e.g. the ⌘K affordance in the header. */
   .kbd {
     @apply inline-flex items-center rounded border border-ink-200 bg-ink-100
-           px-1.5 py-0.5 font-sans text-2xs font-medium text-ink-500;
+           px-1.5 py-0.5 font-sans text-2xs font-medium text-ink-600;
   }
 }
 
