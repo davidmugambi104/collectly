@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { xeroExchangeCode, saveXeroConnection } from '@/lib/integrations/xero';
 import { getAuth } from '@/lib/auth-helper';
 import { consumeOAuthState } from '@/lib/oauth-state';
+import { recordFunnelEvent } from '@/lib/funnel-events';
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -36,6 +37,7 @@ export async function GET(req: NextRequest) {
       expires_in: tokens.expires_in,
       tenant_id: tokens.xero_tenant_id ?? tokens.tenant_id,
     });
+    await recordFunnelEvent(consumed.orgId, 'integration.connected', session.userId, { provider: 'xero' });
     return NextResponse.redirect(new URL(`/dashboard/integrations?ok=xero`, req.url));
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });

@@ -63,6 +63,8 @@ export type EventType =
   | 'auth.signed_up'
   | 'integration.connected'
   | 'integration.disconnected'
+  | 'integration.synced'
+  | 'billing.cancel_requested'
   | 'data.exported'
   | 'data.imported_removed';
 

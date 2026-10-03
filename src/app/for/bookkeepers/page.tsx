@@ -6,6 +6,7 @@ import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY } from '@/lib/utils';
 import { CheckCircle2, ArrowRight, MailCheck, Layers, Scale } from 'lucide-react';
 import Link from 'next/link';
+import { TrackView } from '@/components/marketing/track-view';
 
 // Every claim on this page is one the marketing brief backs (file 15). The
 // QuickBooks integration is in beta and says so; the limits section lists what
@@ -87,6 +88,7 @@ const jsonLd = JSON.stringify([
 export default function ForBookkeepersPage() {
   return (
     <div className="min-h-screen">
+      <TrackView event="audience_page_view" eventProps={{ audience: 'bookkeepers' }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <StructuredBreadcrumbs
         items={[

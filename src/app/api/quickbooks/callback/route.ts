@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { qboExchangeCode, saveQboConnection } from '@/lib/integrations/quickbooks';
 import { getAuth } from '@/lib/auth-helper';
 import { consumeOAuthState } from '@/lib/oauth-state';
+import { recordFunnelEvent } from '@/lib/funnel-events';
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -29,6 +30,7 @@ export async function GET(req: NextRequest) {
   try {
     const tokens = await qboExchangeCode(code, realmId);
     await saveQboConnection(consumed.orgId, { ...tokens, realmId });
+    await recordFunnelEvent(consumed.orgId, 'integration.connected', session.userId, { provider: 'quickbooks' });
     return NextResponse.redirect(new URL(`/dashboard/integrations?ok=quickbooks`, req.url));
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });

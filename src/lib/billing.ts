@@ -5,6 +5,7 @@ import { subscriptions, organizations, invoices, payments, events, disputes, tim
 import { eq, and, desc } from 'drizzle-orm';
 import { nanoid, PLAN_PRICING } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
+import { recordFunnelEvent } from '@/lib/funnel-events';
 import { applyPayment, applyRefund } from '@/lib/billing-math';
 
 export type PlanKey = keyof typeof PLAN_PRICING;
@@ -379,7 +380,7 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
 
   // Load the invoice to compute the running balance (supports partial payments)
   const [inv] = await db
-    .select({ amount: invoices.amount, amountPaid: invoices.amountPaid })
+    .select({ amount: invoices.amount, amountPaid: invoices.amountPaid, lastReminderAt: invoices.lastReminderAt })
     .from(invoices)
     .where(eq(invoices.id, args.invoiceId))
     .limit(1);
@@ -417,7 +418,9 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
       id: nanoid(),
       orgId: args.orgId,
       type: isPaidInFull ? 'payment.succeeded' : 'invoice.partial',
-      payload: { invoiceId: args.invoiceId, amount: args.amount, method: args.method, totalDue, newAmountPaid },
+      // afterReminder: a reminder had gone out before this payment. The funnel's
+      // "first payment after a reminder" counts this flag; it says nothing about cause.
+      payload: { invoiceId: args.invoiceId, amount: args.amount, method: args.method, totalDue, newAmountPaid, afterReminder: !!inv.lastReminderAt },
     });
   });
 
@@ -618,5 +621,6 @@ export async function recordCancelRequest(opts: { orgId: string; kind: import('@
       console.error('[recordCancelRequest] customer email failed (non-fatal):', e instanceof Error ? e.message : e);
     }
   }
+  await recordFunnelEvent(opts.orgId, 'billing.cancel_requested', undefined, { kind: opts.kind, plan, detailGiven: !!opts.note?.trim() });
   return { requestId: created.id, duplicate: false };
 }

@@ -6,6 +6,7 @@ import { FaqSection, type FaqItem } from '@/components/marketing/faq-section';
 import { PLAN_PRICING, PRACTICE_INCLUDED_ORGS } from '@/lib/utils';
 import { CheckCircle2, ArrowRight, MessageSquare, ShieldCheck, FileText } from 'lucide-react';
 import Link from 'next/link';
+import { TrackView } from '@/components/marketing/track-view';
 
 // Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports. Both the FAQPage markup and the visible
@@ -90,6 +91,7 @@ const consultanciesJsonLd = JSON.stringify([
 export default function ForConsultanciesPage() {
   return (
     <div className="min-h-screen">
+      <TrackView event="audience_page_view" eventProps={{ audience: 'consultancies' }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: consultanciesJsonLd }} />
       <StructuredBreadcrumbs
         items={[

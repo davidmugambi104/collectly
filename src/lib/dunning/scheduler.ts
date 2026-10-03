@@ -580,7 +580,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
               await recordEvent({
                 orgId: seq.orgId,
                 type: 'dunning.run.sent',
-                payload: { runId: run.id, invoiceId: invoice.id, channel: 'email', customer: customer.email, days },
+                payload: { runId: run.id, invoiceId: invoice.id, channel: 'email', customerId: customer.id, days },
               });
               const digest = orgDigest.get(seq.orgId) ?? [];
               digest.push({ customerName: customer.name, channel: 'email', invoiceNumber: invoice.number, amount: invoice.amount, currency: invoice.currency });
@@ -624,7 +624,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
               await recordEvent({
                 orgId: seq.orgId,
                 type: 'dunning.run.sent',
-                payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', customer: customer.phone, days },
+                payload: { runId: run.id, invoiceId: invoice.id, channel: 'sms', customerId: customer.id, days },
               });
               const digest = orgDigest.get(seq.orgId) ?? [];
               digest.push({ customerName: customer.name, channel: 'sms', invoiceNumber: invoice.number, amount: invoice.amount, currency: invoice.currency });

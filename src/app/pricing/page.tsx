@@ -6,6 +6,7 @@ import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONT
 import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
 import { type FaqItem } from '@/components/marketing/faq-section';
 import { Reveal } from '@/components/marketing/reveal';
+import { TrackView } from '@/components/marketing/track-view';
 import { TrackedLink } from '@/components/marketing/tracked-link';
 
 // The questions this page actually shows, now also the ones it declares.
@@ -53,6 +54,7 @@ const pricingJsonLd = JSON.stringify([
 export default function PricingPage() {
   return (
     <div className="min-h-screen">
+      <TrackView event="pricing_page_view" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: pricingJsonLd }} />
       <MarketingHeader />
       {/* Laid out the way Paidnice, Chaser and Upflow lay theirs out, on purpose:
@@ -96,7 +98,7 @@ export default function PricingPage() {
                 <TrackedLink
                   href={k === 'scale' ? '/contact' : '/sign-up'}
                   event="pricing_tier_click"
-                  eventProps={{ tier: k, plan_name: p.name, monthly: p.monthly }}
+                  eventProps={{ tier: k, monthly: p.monthly }}
                   className={`mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${p.popular ? 'bg-brand-600 text-white hover:bg-brand-700' : 'bg-ink-900 text-white hover:bg-ink-800'}`}
                 >
                   {k === 'scale' ? 'Talk to sales' : 'Start free trial'} <ArrowRight className="h-4 w-4" />

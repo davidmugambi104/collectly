@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
-import { track, type EventProps, type MarketingEvent } from '@/lib/track';
+import { track, type MarketingEvent, type MarketingProps } from '@/lib/track';
 
 /**
  * A next/link that reports a named event when it is followed.
@@ -12,20 +12,20 @@ import { track, type EventProps, type MarketingEvent } from '@/lib/track';
  * server component does not have to become a client component just to attach
  * one handler — only this link hydrates.
  */
-export function TrackedLink({
+export function TrackedLink<E extends MarketingEvent>({
   event,
   eventProps,
   onClick,
   ...props
 }: ComponentProps<typeof Link> & {
-  event: MarketingEvent;
-  eventProps?: EventProps;
+  event: E;
+  eventProps?: MarketingProps<E>;
 }) {
   return (
     <Link
       {...props}
       onClick={(e) => {
-        track(event, eventProps);
+        (track as (e: MarketingEvent, p?: unknown) => void)(event, eventProps);
         onClick?.(e);
       }}
     />

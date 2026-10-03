@@ -17,6 +17,7 @@ import { nanoid } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
 import { parseAdminEmails, isAdminEmail } from '@/lib/admin-allowlist';
 import { recordMembership } from '@/lib/clerk-books';
+import { recordFunnelEvent } from '@/lib/funnel-events';
 
 // Admin emails allowed to hit internal/admin-only routes (lead exports,
 // upgrade-request review, etc). Same allowlist as src/app/admin/upgrade-requests.
@@ -113,6 +114,7 @@ export async function ensureOrgProvisioned(userId: string, orgId: string): Promi
     plan: 'starter',
     trialEndsAt,
   }).onConflictDoNothing();
+  await recordFunnelEvent(orgId, 'auth.signed_up', userId);
 
   // Without this, the trial nudge in the dashboard sidebar
   // (src/components/app/shell.tsx, via /api/billing/trial-status) and the

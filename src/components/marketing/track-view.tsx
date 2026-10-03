@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { track, type EventProps, type MarketingEvent } from '@/lib/track';
+import { track, type MarketingEvent, type MarketingProps } from '@/lib/track';
 
 /**
  * Fires a named event once when the page it sits on is mounted.
@@ -10,12 +10,12 @@ import { track, type EventProps, type MarketingEvent } from '@/lib/track';
  * development, and without it every view would be double-counted locally and
  * the numbers would disagree with production for no visible reason.
  */
-export function TrackView({ event, eventProps }: { event: MarketingEvent; eventProps?: EventProps }) {
+export function TrackView<E extends MarketingEvent>({ event, eventProps }: { event: E; eventProps?: MarketingProps<E> }) {
   const fired = useRef(false);
   useEffect(() => {
     if (fired.current) return;
     fired.current = true;
-    track(event, eventProps);
+    (track as (e: MarketingEvent, p?: unknown) => void)(event, eventProps);
   }, [event, eventProps]);
   return null;
 }

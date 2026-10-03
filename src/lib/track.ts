@@ -1,4 +1,8 @@
 import { getLoadedPostHog } from '@/lib/posthog-client';
+import { MARKETING_EVENTS, prepareEvent, type MarketingEvent, type MarketingProps, type PropsArg } from '@/lib/track-events';
+
+export { MARKETING_EVENTS, prepareEvent };
+export type { MarketingEvent, MarketingProps };
 
 /**
  * The marketing site's product events, in one place.
@@ -14,15 +18,7 @@ import { getLoadedPostHog } from '@/lib/posthog-client';
  * near-identical event name quietly accumulating in the dashboard for a
  * month.
  */
-export type MarketingEvent =
-  | 'homepage_cta_click'
-  | 'tour_page_view'
-  | 'pricing_tier_click'
-  | 'signup_started';
-
-export type EventProps = Record<string, string | number | boolean | null | undefined>;
-
-export function track(event: MarketingEvent, props?: EventProps): void {
+export function track<E extends MarketingEvent>(event: E, ...args: PropsArg<E>): void {
   // Guard rather than assume: posthog.init() only runs when
   // NEXT_PUBLIC_POSTHOG_KEY is set AND analytics consent has been granted, so
   // in local dev, in previews without the key, and for anyone who declined,
@@ -37,5 +33,11 @@ export function track(event: MarketingEvent, props?: EventProps): void {
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
   const posthog = getLoadedPostHog();
   if (!posthog || !(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  const { props, problems } = prepareEvent(event, args[0] as Record<string, unknown> | undefined);
+  if (!(event in MARKETING_EVENTS)) return;
+  if (problems.length && process.env.NODE_ENV !== 'production') {
+    console.warn(`[track] ${event}: ${problems.join('; ')}`);
+  }
+  // Only keys that passed the guard are sent; the rest are dropped, never the whole event.
   posthog.capture(event, props);
 }

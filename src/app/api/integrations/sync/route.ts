@@ -6,6 +6,7 @@ import { and, eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { syncQboForOrg, disconnectQbo } from '@/lib/integrations/quickbooks';
 import { syncXeroForOrg, disconnectXero } from '@/lib/integrations/xero';
+import { recordFunnelEvent } from '@/lib/funnel-events';
 import { syncSquareForOrg, disconnectSquare } from '@/lib/integrations/square';
 
 export const dynamic = 'force-dynamic';
@@ -33,7 +34,7 @@ async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xer
  */
 export async function POST(req: NextRequest) {
   await ensureBootstrapped();
-  const { orgId } = await getAuth();
+  const { orgId, userId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
@@ -66,6 +67,13 @@ export async function POST(req: NextRequest) {
         { status: 502 },
       );
     }
+    await recordFunnelEvent(orgId, 'integration.synced', userId ?? undefined, {
+      provider,
+      customers: result.customersUpserted,
+      invoices: result.invoicesUpserted,
+      rowErrors: result.errors.length,
+      hadInvoices: result.invoicesUpserted > 0,
+    });
     return NextResponse.json({ ok: true, provider, ...result });
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 502 });
