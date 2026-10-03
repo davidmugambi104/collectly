@@ -9,6 +9,8 @@ import {
 import { DollarSign, Layers, Users, FileText } from 'lucide-react';
 import { pageMetadata, comparisonFaqJsonLd } from '@/lib/seo';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
+import { PracticeCostCalculator } from '@/components/marketing/practice-cost-calculator';
+import { crossoverBooks, mugaviCost, paidniceCost, PAIDNICE_ENTITY_MONTHLY, type MugaviPrices } from '@/lib/practice-cost';
 import {
   PLAN_PRICING,
   PRACTICE_INCLUDED_ORGS,
@@ -22,45 +24,29 @@ import {
  * derived from their own two published rates: the Pro tier price for a given
  * monthly invoice volume, and $29/month for each entity beyond the first.
  *
- * The honest finding this page is built on: below roughly a dozen client books
- * Paidnice costs less than we do, and above it we cost less. Saying so is the
+ * The honest finding this page is built on: below some number of client books
+ * Paidnice costs less than we do, and above it we cost less. That number depends
+ * on how many invoices each book sends: about a dozen at 30 a month, nearer 20 at
+ * 10 a month (practice-cost.test.ts pins the values). Saying so is the
  * point -- a practice can check the arithmetic in a minute, and a comparison
  * page that loses that check loses the reader with it.
  */
-const PAIDNICE_ENTITY_MONTHLY = 29;
-const PAIDNICE_ESSENTIALS_MONTHLY = 69;
-const PAIDNICE_ESSENTIALS_INVOICES = 150;
-const PAIDNICE_PRO_TIERS: Array<[invoices: number, monthly: number]> = [
-  [300, 99],
-  [600, 179],
-  [1000, 279],
-  [2000, 489],
-  [3000, 649],
-  [4000, 799],
-];
+const MUGAVI_PRICES: MugaviPrices = {
+  single: PLAN_PRICING.starter.monthly,
+  practice: PLAN_PRICING.growth.monthly,
+  practiceBooks: PRACTICE_INCLUDED_ORGS,
+  extraBook: PRACTICE_EXTRA_ORG_MONTHLY,
+  scale: PLAN_PRICING.scale.monthly,
+  scaleBooks: PRACTICE_SCALE_INCLUDED_ORGS,
+};
 
-/** Paidnice monthly cost for a practice of `books`, at ~30 invoices per book. */
-function paidniceMonthly(books: number, invoicesPerBook = 30): number | null {
-  const totalInvoices = books * invoicesPerBook;
-  // One business under 150 invoices a month buys Essentials, $69. Essentials has
-  // no multiple-entity support, so it only applies to a single book.
-  if (books === 1 && totalInvoices <= PAIDNICE_ESSENTIALS_INVOICES) return PAIDNICE_ESSENTIALS_MONTHLY;
-  const tier = PAIDNICE_PRO_TIERS.find(([cap]) => totalInvoices <= cap);
-  if (!tier) return null;
-  return tier[1] + PAIDNICE_ENTITY_MONTHLY * (books - 1);
-}
-
-/** Our monthly cost for the same practice. */
-function mugaviMonthly(books: number): number {
-  if (books <= 1) return PLAN_PRICING.starter.monthly;
-  if (books <= PRACTICE_INCLUDED_ORGS) return PLAN_PRICING.growth.monthly;
-  const onPractice = PLAN_PRICING.growth.monthly + PRACTICE_EXTRA_ORG_MONTHLY * (books - PRACTICE_INCLUDED_ORGS);
-  return Math.min(onPractice, PLAN_PRICING.scale.monthly);
-}
+/** Books at which we become cheaper, at a few invoice volumes per book (see practice-cost.test.ts). */
+const CROSSOVER_30 = crossoverBooks(30, MUGAVI_PRICES);
+const CROSSOVER_10 = crossoverBooks(10, MUGAVI_PRICES);
 
 const ROWS = [1, 5, 10, 15, 20, 30, 50, 100].map((books) => {
-  const them = paidniceMonthly(books);
-  const us = mugaviMonthly(books);
+  const them = paidniceCost(books, 30)?.monthly ?? null;
+  const us = mugaviCost(books, MUGAVI_PRICES)?.monthly ?? 0;
   return { books, them, us, cheaper: them !== null && them < us ? 'Paidnice' : 'Mugavi' };
 });
 
@@ -69,7 +55,7 @@ export const metadata = pageMetadata({
   description:
     'Paidnice charges by invoice volume plus $29 per extra entity. Mugavi ' +
     `charges per client book: $${PLAN_PRICING.growth.monthly}/mo for ${PRACTICE_INCLUDED_ORGS} of them. ` +
-    'Below about a dozen books Paidnice costs less. Above it we do. The full arithmetic, both ways.',
+    'Below about a dozen books at 30 invoices each a month, Paidnice costs less; above it we do. Fewer invoices per book moves that point up. A calculator and the full arithmetic.',
   path: '/vs-paidnice',
   keywords: ['Mugavi vs Paidnice', 'Paidnice alternative', 'Paidnice pricing', 'AR automation for bookkeepers', 'Xero AR automation for practices'],
 });
@@ -127,7 +113,7 @@ const STRATEGY = [
 ];
 
 const CHOOSE_US = [
-  { label: `You run more than about a dozen client books, the arithmetic flips there` },
+  { label: `You run more than about a dozen client books with a normal invoice load (about 30 a month each); with fewer invoices per book the flip comes later` },
   { label: 'You want one predictable number per month, not a bill that moves with invoice volume' },
   { label: 'A busy month should not cost more than a quiet one' },
   { label: 'You want consolidated AR across every client book in one view' },
@@ -164,6 +150,18 @@ export default function VsPaidnicePage() {
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Paidnice" />
 
       <section className="container-page py-14 max-w-3xl">
+        <h2 className="h2">What would you pay?</h2>
+        <p className="mt-3 app-body text-ink-600">
+          Put in your own numbers. The invoice count matters: Paidnice prices by invoice volume, so a practice whose
+          books send few invoices stays cheaper there for longer. At 30 invoices per book a month we become cheaper
+          from {CROSSOVER_30} books; at 10 a month, from {CROSSOVER_10}.
+        </p>
+        <div className="mt-6">
+          <PracticeCostCalculator prices={MUGAVI_PRICES} checkedOn="2026-10-03" />
+        </div>
+      </section>
+
+      <section className="container-page pb-14 max-w-3xl">
         <h2 className="h2">The arithmetic, both ways</h2>
         <p className="mt-3 app-body text-ink-600">
           Paidnice&apos;s published Pro rate for the invoice volume (Essentials, $69, for one business under 150 invoices), plus ${PAIDNICE_ENTITY_MONTHLY}/mo for each entity
