@@ -24,6 +24,7 @@ import { db } from '@/db';
 import { customers, smsConsentEvents, organizations } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { sendSms } from '@/lib/infra';
+import { recordUsage, smsSegments } from '@/lib/usage-meter';
 import { BRAND } from '@/lib/seo';
 import { classifyInboundSms, type SmsIntent } from '@/lib/sms-consent-keywords';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
@@ -98,6 +99,7 @@ export async function sendConsentInvite(customerId: string): Promise<ConsentInvi
   if (result.status === 'skipped') {
     return { ok: false, error: 'Twilio is not configured' };
   }
+  await recordUsage({ orgId: org.id, kind: 'sms_consent_sms', units: smsSegments(body) });
 
   await db
     .update(customers)
@@ -188,6 +190,7 @@ export async function handleInboundSms(from: string, body: string): Promise<Inbo
     // A failed confirmation must not unwind a recorded consent.
     try {
       await sendSms({ to: from, body: reply });
+      await recordUsage({ orgId: row.customer.orgId, kind: 'sms_consent_sms', units: smsSegments(reply) });
     } catch (e: unknown) {
       console.error('[sms-consent] confirmation send failed:', e instanceof Error ? e.message : e);
     }
@@ -198,6 +201,7 @@ export async function handleInboundSms(from: string, body: string): Promise<Inbo
   const reply = helpMessage(row.org.name);
   try {
     await sendSms({ to: from, body: reply });
+    await recordUsage({ orgId: row.customer.orgId, kind: 'sms_consent_sms', units: smsSegments(reply) });
   } catch (e: unknown) {
     console.error('[sms-consent] help send failed:', e instanceof Error ? e.message : e);
   }

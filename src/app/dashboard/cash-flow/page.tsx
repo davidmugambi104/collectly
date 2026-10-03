@@ -9,6 +9,7 @@ import { db } from '@/db';
 import { invoices, customers } from '@/db/schema';
 import { eq, and, ne } from 'drizzle-orm';
 import { generateCashFlowForecast } from '@/lib/ai/dunning';
+import { recordUsage } from '@/lib/usage-meter';
 import { TrendingUp, Calendar, AlertCircle } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
@@ -61,6 +62,7 @@ export default async function CashFlowPage() {
       };
     });
     const ai = await generateCashFlowForecast({ openInvoices, monthlyBurn: 0, currentCash: 0 });
+    await recordUsage({ orgId, kind: 'ai_forecast' });
     // generateCashFlowForecast catches its own errors and RETURNS a zeroed
     // sentinel ({week1..4: 0, narrative: 'Insufficient data'}) rather than
     // throwing, so the catch below never fired on a Gemini failure and this

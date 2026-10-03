@@ -13,6 +13,7 @@ import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { parseJsonBody } from '@/lib/parse-body';
 import { rateLimit } from '@/lib/rate-limit';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
+import { recordUsage, smsSegments } from '@/lib/usage-meter';
 
 const bodySchema = z.object({
   invoiceId: z.string(),
@@ -95,6 +96,7 @@ export async function POST(req: NextRequest) {
         from: await resolveFrom(orgId, org?.name),
         replyTo: getDunningReplyToAddress(),
       });
+      if (sendResult.status !== 'skipped') await recordUsage({ orgId, kind: 'email_sent' });
       try {
         const msgId = sendResult.id ? await fetchResendMessageId(sendResult.id) : null;
         if (msgId) await db.update(dunningRuns).set({ externalMessageId: msgId }).where(eq(dunningRuns.id, run.id));
@@ -112,6 +114,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Customer has not opted in to SMS. Send them an opt-in invite first.' }, { status: 409 });
       }
       const sms = await sendSms({ to: cust.phone, body: data.body });
+      if (sms.status !== 'skipped') await recordUsage({ orgId, kind: 'sms_sent', units: smsSegments(data.body) });
       await db.update(dunningRuns).set({ status: 'sent', sentAt: new Date(), externalMessageId: sms.sid }).where(eq(dunningRuns.id, run.id));
     }
     await db.update(invoices).set({ lastReminderAt: new Date() }).where(eq(invoices.id, data.invoiceId));

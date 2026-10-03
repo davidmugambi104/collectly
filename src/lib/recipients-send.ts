@@ -8,6 +8,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '@/db';
 import { customerRecipients, emailSuppressions, reminderCopies } from '@/db/schema';
 import { sendEmail, withUnsubscribeFooter, dunningListUnsubscribeHeaders, fetchResendMessageId } from '@/lib/infra';
+import { recordUsage } from '@/lib/usage-meter';
 import { pickCopyTargets } from '@/lib/recipients';
 import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
@@ -46,6 +47,7 @@ export async function sendCopies(o: {
       });
       if (res.status === 'skipped') { failed += 1; continue; }
       sent += 1;
+      await recordUsage({ orgId: o.orgId, kind: 'extra_recipient_email' });
       if (o.runId) {
         let msgId: string | null = null;
         try { msgId = res.id ? await fetchResendMessageId(res.id) : null; } catch (e) { console.error('[copies] fetchResendMessageId failed:', errorMessage(e)); }

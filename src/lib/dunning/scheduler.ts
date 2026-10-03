@@ -6,6 +6,7 @@ import { db } from '@/db';
 import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, customerGroupMembers, groupSequences, type Invoice } from '@/db/schema';
 import { eq, and, sql, lte, inArray, gte } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
+import { recordUsage, smsSegments } from '@/lib/usage-meter';
 import { sendEmail, sendSms, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress, fetchResendMessageId } from '@/lib/infra';
 import { loadSendWindow, resolveFrom, loadChaseRules } from '@/lib/dunning/org-settings';
 import { leadDays } from '@/lib/dunning/step-timing';
@@ -458,6 +459,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
           // actually shapes the real, scheduled message, not just a look.
           brandVoice: lastStep.template || undefined,
         });
+        await recordUsage({ orgId: seq.orgId, kind: 'ai_draft' });
 
         // Wrap the dedup select + insert in a single transaction so a
       // concurrent cron invocation cannot double-schedule the same
@@ -563,6 +565,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
             } else {
               await db.update(dunningRuns).set({ status: 'sent', sentAt: now }).where(eq(dunningRuns.id, run.id));
               sent += 1;
+              await recordUsage({ orgId: seq.orgId, kind: 'email_sent' });
               // Best-effort: capture the real Message-ID so a reply to this
               // email can be matched back to this run via In-Reply-To.
               // Awaited (not fire-and-forget) — a serverless function's
@@ -621,6 +624,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
             } else {
               await db.update(dunningRuns).set({ status: 'sent', sentAt: now, externalMessageId: sms.sid }).where(eq(dunningRuns.id, run.id));
               sent += 1;
+              await recordUsage({ orgId: seq.orgId, kind: 'sms_sent', units: smsSegments(result.body) });
               await recordEvent({
                 orgId: seq.orgId,
                 type: 'dunning.run.sent',

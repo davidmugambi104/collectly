@@ -6,6 +6,7 @@ import { invoices, customers } from '@/db/schema';
 import { eq, and, ne } from 'drizzle-orm';
 import { generateCashFlowForecast } from '@/lib/ai/dunning';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
+import { recordUsage } from '@/lib/usage-meter';
 
 export async function POST(req: NextRequest) {
   await ensureBootstrapped();
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const forecast = await generateCashFlowForecast({ openInvoices, monthlyBurn, currentCash });
+    await recordUsage({ orgId, kind: 'ai_forecast' });
     return NextResponse.json(forecast);
   } catch (e: unknown) {
     // Fallback is intentionally simple: weighted by customer paid rate, no LLM.

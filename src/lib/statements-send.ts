@@ -7,6 +7,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { customers, organizations, statementLog } from '@/db/schema';
 import { sendEmail, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress } from '@/lib/infra';
+import { recordUsage } from '@/lib/usage-meter';
 import { resolveFrom } from '@/lib/dunning/org-settings';
 import { recordEvent } from '@/lib/events';
 import { errorMessage } from '@/lib/utils';
@@ -39,6 +40,7 @@ export async function sendStatementEmail(o: { orgId: string; userId: string | nu
     const sent = await sendEmail({ to: target.to, subject, html, headers: dunningListUnsubscribeHeaders(target.to), from: fromLine, replyTo: getDunningReplyToAddress() });
     if (sent.status === 'skipped') return { ok: false, status: 502, error: 'Email is not set up on this server, so nothing was sent.' };
     externalId = sent.id ?? null;
+    await recordUsage({ orgId, kind: 'statement_email' });
   } catch (e: unknown) {
     return { ok: false, status: 502, error: `Could not send: ${errorMessage(e)}` };
   }
