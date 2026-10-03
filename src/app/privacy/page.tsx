@@ -20,6 +20,9 @@ export default function PrivacyPage() {
         <p className="lead">Mugavi is a business-to-business accounts-receivable tool. This policy describes the data we collect, how we use it, and the choices you have. It&apos;s written in plain English, not legalese, but it&apos;s a real policy, not a draft. If you have questions, email {CONTACT.privacy}.</p>
         <h2 className="font-display font-semibold text-xl mt-8">What we collect</h2>
         <p>Email, name, billing info, and the data you put in our platform (customers, invoices, payment records).</p>
+        <h2 className="font-display font-semibold text-xl mt-8">Data from your accounting software</h2>
+        <p>If you connect QuickBooks Online, Mugavi reads your customers, your open invoices, credit memos that still have a balance, and payments that have an unapplied amount. It asks for the QuickBooks accounting permission only. It writes one thing back: when your customer pays an invoice through Mugavi, we record that payment against the invoice in QuickBooks. We do not create or edit customers or invoices, and nothing is sent to your customers without your approval.</p>
+        <p>You can disconnect at any time from the Integrations page. Disconnecting asks Intuit to revoke Mugavi&apos;s access, deletes the connection tokens we hold and stops syncing. Customers and invoices already imported stay in Mugavi until you remove them or delete your account. Deleting your account also asks Intuit to revoke access.</p>
         <h2 className="font-display font-semibold text-xl mt-8">How we use it</h2>
         <p>To provide the service. To send you transactional emails. To send you product updates if you opt in.</p>
         <h2 className="font-display font-semibold text-xl mt-8">What we never do</h2>

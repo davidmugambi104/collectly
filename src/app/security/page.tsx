@@ -31,6 +31,11 @@ const principles = [
     body: 'Mugavi runs on Vercel (compute) and managed Postgres (data). Secrets live in Vercel environment variables, not in the code or the client bundle.',
   },
   {
+    icon: KeyRound,
+    title: 'Connected accounting software',
+    body: 'Connecting QuickBooks starts with a single-use, time-limited sign-in check tied to your session, so nobody can attach their books to your organization. Disconnect, from the Integrations page, asks Intuit to revoke our access and deletes the stored tokens.',
+  },
+  {
     icon: Eye,
     title: 'Audit logging',
     body: 'Key actions, such as reminders sent and integrations connected, are recorded in an events log scoped to your organization, and you can read it on the Activity page in your dashboard.',
@@ -42,7 +47,7 @@ const controls = [
   { label: 'Encrypted at rest (managed Postgres provider)', status: 'enforced' },
   { label: 'Database backups (managed Postgres provider)', status: 'enforced' },
   { label: 'Secrets in environment variables only', status: 'enforced' },
-  { label: 'Org-scoped queries (no cross-tenant reads)', status: 'enforced' },
+  { label: 'Queries scoped by organization in the application', status: 'enforced' },
   { label: 'Sign in with Google or email (via Clerk)', status: 'available' },
   { label: 'SOC 2 Type II', status: 'not yet' },
   { label: 'GDPR + UK GDPR + CCPA-aligned DPA', status: 'available' },

@@ -139,6 +139,11 @@ const sections = [
           On termination of your account, Mugavi will delete all Customer Data within 30 days, except where
           retention is required by law (e.g. tax records, AML logs). Backups rotate on a 30-day cycle.
         </p>
+        <p>
+          Disconnecting an accounting system from the Integrations page asks the provider to revoke our access and
+          deletes the stored tokens. Customer Data already imported stays until you remove it or delete the account,
+          which also asks the provider to revoke access.
+        </p>
       </>
     ),
   },
