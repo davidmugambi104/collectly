@@ -49,7 +49,7 @@ const FAQS: FaqItem[] = [
 //   3. Funnel into the audit or the founding-cohort.
 
 export const metadata = pageMetadata({
-  title: 'Free invoice-dispute email template: works for missing PO and pricing',
+  title: 'Free invoice dispute email template: missing PO, pricing',
   description:
     '5 free, copy-paste email templates for the most common invoice ' +
     'disputes: missing PO, wrong amount, wrong billing details, not yet ' +

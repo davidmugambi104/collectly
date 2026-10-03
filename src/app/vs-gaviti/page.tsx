@@ -12,7 +12,7 @@ import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
 import { PLAN_PRICING } from '@/lib/utils';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs Gaviti: SMB AR automation without enterprise complexity',
+  title: 'Mugavi vs Gaviti: SMB AR automation, no enterprise setup',
   description:
     'Gaviti is AI-powered invoice-to-cash for mid-market and enterprise. ' +
     'Mugavi is the simple, transparent, self-serve alternative for ' +

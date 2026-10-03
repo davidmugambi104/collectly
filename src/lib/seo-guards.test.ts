@@ -14,7 +14,7 @@ test('structured data only claims the US and UK as served markets', () => {
   for (const a of m) assert.equal(a.replace(/[\s']/g, ''), 'US,GB');
 });
 
-test('pricing Product schema has an image and no dash characters in its text', () => {
+test('pricing SoftwareApplication schema has an image and no dash characters in its text', () => {
   const start = seo.indexOf('export function pricingProductJsonLd');
   const end = seo.indexOf('// ─── Competitor facts');
   const block = code(seo.slice(start, end));

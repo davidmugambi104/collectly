@@ -61,7 +61,7 @@ const FAQS: FaqItem[] = [
 // industries Mugavi targets.
 
 export const metadata = pageMetadata({
-  title: 'DSO calculator + benchmark for small agencies and consultancies',
+  title: 'DSO calculator and benchmark for small agencies',
   description:
     'Calculate your Days Sales Outstanding (DSO) instantly and compare ' +
     'to UK, US, AU, and CA benchmarks for small agencies and consultancies. ' +
@@ -82,7 +82,7 @@ export const metadata = pageMetadata({
 
 const dsoJsonLd = JSON.stringify([
   webPageJsonLd({
-    title: 'DSO calculator + benchmark for small agencies and consultancies',
+    title: 'DSO calculator and benchmark for small agencies',
     description:
       'Calculate DSO and compare to industry benchmarks for small agencies ' +
       'and consultancies.',
