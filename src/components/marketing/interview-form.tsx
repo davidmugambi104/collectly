@@ -91,7 +91,7 @@ export function InterviewForm() {
         <textarea id="interview-form-f10" value={pain} onChange={(e) => setPain(e.target.value)} required rows={3} className="input" placeholder="e.g. Awkward phone calls, cash flow gaps, manual chasing..." />
       </div>
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+        <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
           {error}
         </div>
       )}

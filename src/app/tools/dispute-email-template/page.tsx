@@ -185,7 +185,7 @@ export default function DisputeTemplatePage() {
       <section className="bg-brand-600 text-white">
         <div className="container-page py-12 max-w-3xl">
           <h2 className="h2">Don&apos;t keep writing these by hand.</h2>
-          <p className="mt-4 lead text-brand-100">
+          <p className="mt-4 lead text-brand-50">
             Mugavi classifies incoming replies automatically and pauses the
             reminder sequence on every disputed invoice. No more chasing the
             customer who already told you they have an issue.

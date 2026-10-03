@@ -105,20 +105,20 @@ export function RoiCalculator() {
 
       <div className="space-y-4">
         <div className="card bg-gradient-to-br from-brand-600 to-brand-700 text-white">
-          <div className="text-xs uppercase tracking-wider font-semibold text-brand-200">You could free up</div>
+          <div className="text-xs uppercase tracking-wider font-semibold text-brand-50">You could free up</div>
           <div className="mt-2 text-5xl font-display font-bold">{formatCurrency(result.total, currency)}</div>
-          <div className="mt-1 text-sm text-brand-100">per year in cash + lost productivity</div>
+          <div className="mt-1 text-sm text-brand-50">per year in cash + lost productivity</div>
           <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <div className="text-brand-200">Freed cash</div>
+              <div className="text-brand-50">Freed cash</div>
               <div className="mt-1 font-mono font-semibold text-base sm:text-lg tabular-nums">{formatCurrency(result.freedUpAr, currency)}</div>
             </div>
             <div>
-              <div className="text-brand-200">Carry cost saved</div>
+              <div className="text-brand-50">Carry cost saved</div>
               <div className="mt-1 font-mono font-semibold text-base sm:text-lg tabular-nums">{formatCurrency(result.annualCost, currency)}</div>
             </div>
             <div>
-              <div className="text-brand-200">Lost revenue recovered</div>
+              <div className="text-brand-50">Lost revenue recovered</div>
               <div className="mt-1 font-mono font-semibold text-base sm:text-lg tabular-nums">{formatCurrency(result.lostRevenue, currency)}</div>
             </div>
           </div>
@@ -126,7 +126,7 @@ export function RoiCalculator() {
               is a claim; with its assumptions beside it, it is evidence the
               reader can argue with — which is the only kind that persuades a
               finance-literate buyer. */}
-          <p className="mt-5 text-xs text-brand-100 leading-relaxed">
+          <p className="mt-5 text-xs text-brand-50 leading-relaxed">
             Assumes you reach the target DSO you set above, that freed cash is worth your stated
             cost of capital, that {Math.round(result.redeploymentRate * 100)}% of it gets redeployed
             into billable work at your margin, and that 2% of the balance is written off today.
@@ -233,7 +233,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 function Mini({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string; accent?: 'brand' }) {
   return (
     <div className={`card ${accent ? 'border-brand-200 bg-brand-50' : ''}`}>
-      <div className="flex items-center gap-1.5 text-xs text-ink-500"><div className={accent ? 'text-brand-600' : 'text-ink-400'}>{icon}</div>{label}</div>
+      <div className="flex items-center gap-1.5 text-xs text-ink-600"><div className={accent ? 'text-brand-600' : 'text-ink-400'}>{icon}</div>{label}</div>
       <div className={`mt-1 font-mono font-semibold ${accent ? 'text-brand-900' : 'text-ink-900'}`}>{value}</div>
     </div>
   );
