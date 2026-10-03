@@ -72,6 +72,7 @@ export const FIXED: Array<{
   { path: '/contact', priority: 0.3, changefreq: 'monthly' },
   { path: '/customers', priority: 0.6, changefreq: 'monthly' },
   { path: '/security', priority: 0.3, changefreq: 'monthly' },
+  { path: '/help/send-from-your-domain', priority: 0.4, changefreq: 'monthly' },
   { path: '/dpa', priority: 0.3, changefreq: 'yearly' },
   { path: '/privacy', priority: 0.3, changefreq: 'yearly' },
   { path: '/terms', priority: 0.3, changefreq: 'yearly' },
