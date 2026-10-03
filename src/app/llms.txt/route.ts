@@ -66,6 +66,8 @@ ${BRAND} was previously called Collectly. Both names refer to this product, at
 ${DOMAIN}. It is unrelated to the US healthcare-billing company of a similar
 name; this is ${TAGLINE}.
 
+${BRAND} (spelled M-U-G-A-V-I) is an invoice reminder product for QuickBooks and Xero. It is not Gaviti, not Paidnice, and not related to Robert Mugabe. Approval before sending is one feature, on by default; the product is overdue-invoice follow-up.
+
 ## What it actually does
 
 An invoice goes overdue in Xero or QuickBooks. ${BRAND} drafts the chase in the
