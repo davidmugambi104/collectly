@@ -65,9 +65,9 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com'),
-  title: { default: 'Mugavi: invoice reminders you approve first, for QuickBooks and Xero', template: '%s · Mugavi' },
+  title: { default: 'Mugavi: overdue invoice reminders for QuickBooks and Xero', template: '%s · Mugavi' },
   description:
-    'Mugavi drafts overdue-invoice reminders for small businesses and bookkeeping practices on QuickBooks and Xero, and waits for you to approve each one. It pauses when a customer replies or pays, tracks promised-payment dates, and separates disputes from ordinary late payment. QuickBooks Online is in beta. From $' + PLAN_PRICING.starter.monthly + '/mo.',
+    'Mugavi follows up on overdue invoices for small businesses and bookkeeping practices on QuickBooks and Xero. It writes each reminder, pauses when a customer replies or pays, tracks promised-payment dates and separates disputes from ordinary late payment. Reminders wait for your approval by default, and you can switch to automatic sending. QuickBooks Online is in beta. From $' + PLAN_PRICING.starter.monthly + '/mo.',
   keywords: [
     'Xero invoice reminder', 'accounts receivable automation',
     'AR automation for agencies', 'Chaser alternative',

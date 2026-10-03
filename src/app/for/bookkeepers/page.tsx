@@ -59,10 +59,10 @@ const FAQS: FaqItem[] = [
 ];
 
 export const metadata = pageMetadata({
-  title: 'Invoice reminders for bookkeepers: QuickBooks, approve first',
+  title: 'Invoice reminders for bookkeepers on QuickBooks Online',
   description:
-    'Run overdue-invoice follow-up across your clients’ QuickBooks books. Every ' +
-    'reminder waits for your approval, in your words. ' +
+    'Run overdue-invoice follow-up across your clients’ QuickBooks books, in one ' +
+    'place. Reminders go out in your words, and wait for your approval by default. ' +
     `$${PLAN_PRICING.growth.monthly}/mo for ${PRACTICE_INCLUDED_ORGS} client books. QuickBooks Online integration is in beta.`,
   path: '/for/bookkeepers',
   keywords: [
@@ -121,9 +121,9 @@ export default function ForBookkeepersPage() {
         <div className="grid md:grid-cols-3 gap-5 max-w-5xl">
           <div className="card">
             <MailCheck className="h-6 w-6 text-brand-600" />
-            <h2 className="mt-3 text-lg font-semibold text-ink-900">Approve first, every time.</h2>
+            <h2 className="mt-3 text-lg font-semibold text-ink-900">Approval is built in.</h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              Mugavi writes the reminder and waits. Edit it, skip it, or approve it, and after you press send
+              By default Mugavi writes the reminder and waits. Edit it, skip it, or approve it, and after you press send
               you have thirty seconds to undo. Switching to automatic sending is your choice, per book.
             </p>
           </div>

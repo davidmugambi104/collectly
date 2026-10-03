@@ -13,8 +13,8 @@ import { ComparisonChecked } from '@/components/marketing/comparison-section';
 export const metadata = pageMetadata({
   title: 'Mugavi vs Chaser: AR automation for small B2B services',
   description:
-    `Chaser starts around $259/mo. Mugavi starts at $${PLAN_PRICING.starter.monthly}/mo with reminders you ` +
-    'approve first, no per-invoice fees and a pause when a customer replies.',
+    `Chaser starts around $259/mo. Mugavi starts at $${PLAN_PRICING.starter.monthly}/mo with automatic ` +
+    'reminders, no per-invoice fees, a pause when a customer replies and optional approval before sending.',
   path: '/vs-chaser',
   image: '/og-vs-chaser.png',
   keywords: ['Mugavi vs Chaser', 'Chaser alternative', 'Xero invoice reminder', 'Chaser vs Mugavi'],

@@ -299,12 +299,12 @@ export function pricingProductJsonLd(): JsonLdThing {
     '@type': 'SoftwareApplication',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
-    name: `${BRAND}: invoice reminders you approve first`,
+    name: `${BRAND}: overdue invoice reminders for QuickBooks and Xero`,
     image: `${SITE.url}/og-pricing.png`,
     url: `${SITE.url}/pricing`,
     description:
       'Overdue-invoice reminders for bookkeeping practices and small businesses. ' +
-      'Each reminder waits for your approval, the sequence pauses when a customer replies or pays, ' +
+      'The sequence pauses when a customer replies or pays, reminders wait for your approval by default, ' +
       'promised-payment dates are tracked, and disputes are separated from ordinary late payment. ' +
       'Works with Xero and QuickBooks Online (beta).',
     offers: [

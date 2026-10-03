@@ -58,8 +58,8 @@ const FAQS: FaqItem[] = [
 export const metadata = pageMetadata({
   title: 'Features: tone-aware AR automation for small agencies',
   description:
-    'Reminders you approve before they send, pause on reply or payment, ' +
-    'promise-to-pay tracking, dispute handling, Xero sync (QuickBooks in beta).',
+    'Automatic overdue-invoice reminders that pause on reply or payment, ' +
+    'promise-to-pay tracking, dispute handling, optional approval before sending, Xero sync (QuickBooks in beta).',
   path: '/features',
   image: '/og-features.png',
   keywords: [
