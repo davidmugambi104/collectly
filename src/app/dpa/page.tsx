@@ -62,7 +62,7 @@ const sections = [
         </p>
         <ul className="mt-3 space-y-2 list-disc pl-5">
           <li><b>Vercel</b>: application hosting.</li>
-          <li><b>DigitalOcean</b>: managed Postgres database.</li>
+          <li><b>Microsoft Azure</b>: managed Postgres database (Azure Database for PostgreSQL).</li>
           <li><b>Clerk</b>: authentication and identity.</li>
           <li><b>Resend</b>: transactional email delivery.</li>
           <li><b>Twilio</b>: SMS delivery.</li>
