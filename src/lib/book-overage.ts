@@ -19,3 +19,14 @@ export function bookOverage(opts: { books: number; included: number | 'unlimited
   const extra = books - included;
   return { kind: 'extra', extra, monthly: extra * extraMonthly };
 }
+
+/**
+ * What a plan costs a month for a given number of books, by the one rule used
+ * everywhere (billing page, upgrade-request email, ops sheet): the plan's price,
+ * plus the per-book price for each book past the included count. Never blocks.
+ * `cheaperPlan` is set when a flatter plan would cost less for this many books.
+ */
+export function planMonthly(opts: { books: number; monthly: number; included: number | 'unlimited'; extraMonthly: number }): number {
+  const o = bookOverage(opts);
+  return o.kind === 'extra' ? opts.monthly + o.monthly : opts.monthly;
+}
