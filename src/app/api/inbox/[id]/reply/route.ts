@@ -53,13 +53,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     target.to,
   );
 
+  // Thread the answer under the customer's own message, so their follow-up carries
+  // that message id in References and the poller can file it against the same invoice.
+  const theirId = (message.rawPayload as { messageId?: unknown } | null)?.messageId;
+  const threadHeaders: Record<string, string> = typeof theirId === 'string' && theirId.trim()
+    ? (() => { const id = theirId.trim().replace(/^<|>$/g, ''); return { 'In-Reply-To': `<${id}>`, References: `<${id}>` }; })()
+    : {};
+
   let externalId: string | null = null;
   try {
     const sent = await sendEmail({
       to: target.to,
       subject,
       html,
-      headers: dunningListUnsubscribeHeaders(target.to),
+      headers: { ...dunningListUnsubscribeHeaders(target.to), ...threadHeaders },
       from: await resolveFrom(orgId, org?.name),
       replyTo: getDunningReplyToAddress(),
     });

@@ -1,6 +1,6 @@
 import { db } from '@/db';
-import { dunningRuns, inboxPollState, reminderCopies } from '@/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { dunningRuns, inboxMessages, inboxPollState, reminderCopies } from '@/db/schema';
+import { eq, inArray, sql } from 'drizzle-orm';
 import { handleArCustomerReply } from '@/lib/inbox-inbound';
 import { pollMailbox, resolveImapConfig, type PollResult } from '@/lib/inbox-imap-core';
 
@@ -50,6 +50,13 @@ export async function pollInboxReplies(): Promise<PollResult> {
           if (r) return r.invoiceId as string;
         }
       } catch { /* the copies table may not exist yet: no copies were ever sent */ }
+      // A follow-up to a manual Inbox reply: References still holds the customer's own
+      // message id, which we stored on the inbox message we answered.
+      try {
+        const [prior] = await db.select({ invoiceId: inboxMessages.invoiceId }).from(inboxMessages)
+          .where(inArray(sql`${inboxMessages.rawPayload}->>'messageId'`, candidateIds)).limit(1);
+        if (prior?.invoiceId) return prior.invoiceId as string;
+      } catch { /* no prior message */ }
       return null;
     },
     handleReply: (r) => handleArCustomerReply({
