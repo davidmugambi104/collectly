@@ -141,7 +141,7 @@ export default function ForBookkeepersPage() {
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               ${PLAN_PRICING.growth.monthly}/mo for {PRACTICE_INCLUDED_ORGS} books, then ${PRACTICE_EXTRA_ORG_MONTHLY} for each
               extra book. Past that, <Link href="/pricing" className="link">Practice Scale</Link> is cheaper.
-              Comparing tools? See <Link href="/vs-paidnice" className="link">Mugavi vs Paidnice</Link>.
+              Comparing tools? Put your own client books and invoice volume into the <Link href="/vs-paidnice#cost" className="link">cost calculator</Link>, which shows where Paidnice is cheaper and where we are.
             </p>
           </div>
         </div>

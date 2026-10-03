@@ -150,7 +150,7 @@ export default function VsPaidnicePage() {
       <ComparisonDiffGrid diffs={DIFFS} competitorName="Paidnice" />
 
       <section className="container-page py-14 max-w-3xl">
-        <h2 className="h2">What would you pay?</h2>
+        <h2 id="cost" className="h2">What would you pay?</h2>
         <p className="mt-3 app-body text-ink-600">
           Put in your own numbers. The invoice count matters: Paidnice prices by invoice volume, so a practice whose
           books send few invoices stays cheaper there for longer. At 30 invoices per book a month we become cheaper
