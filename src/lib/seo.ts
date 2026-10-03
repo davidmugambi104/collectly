@@ -350,8 +350,8 @@ export function pricingProductJsonLd(): JsonLdThing {
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
         description:
-          `${PLAN_PRICING.scale.audience}. Up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations, plus API ` +
-          'access, SSO, custom workflows, and priority support.',
+          `${PLAN_PRICING.scale.audience}. Up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations ` +
+          'and priority support.',
         url: `${SITE.url}/pricing`,
       },
     ],

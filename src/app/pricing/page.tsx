@@ -15,7 +15,7 @@ import { TrackedLink } from '@/components/marketing/tracked-link';
 // only for now, manual invoicing for founding customers, card checkout not
 // live. The visible set is the better content, so it is the source.
 const FAQS: FaqItem[] = [
-            { q: 'Do you support multi-entity or multiple companies?', a: `That is what the ${PLAN_PRICING.growth.name} plan is: up to ${PRACTICE_INCLUDED_ORGS} client organizations under one account with consolidated AR reporting, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. ${PLAN_PRICING.scale.name} adds per-entity workflows and role isolation.` },
+            { q: 'Do you support multi-entity or multiple companies?', a: `That is what the ${PLAN_PRICING.growth.name} plan is: up to ${PRACTICE_INCLUDED_ORGS} client organizations under one account with consolidated AR reporting, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. ${PLAN_PRICING.scale.name} is a flat $${PLAN_PRICING.scale.monthly}/mo for up to ${PRACTICE_SCALE_INCLUDED_ORGS} books.` },
             { q: 'What payment methods does the portal accept?', a: 'Wire transfer today, for every customer. Card, ACH, and mobile-money rails are built but temporarily disabled while we finish routing payments to your own account instead of ours. No timeline promises until that\'s done.' },
             { q: 'Is there really a free trial?', a: `Yes. 14 days, full access to ${PLAN_PRICING.growth.name}-tier features, no credit card required.` },
             { q: 'How does billing work?', a: `Founding customers get a manual invoice after the 14-day trial (bank transfer, Wise, or PayPal) at $${FOUNDING.monthly('growth')}/mo for ${PLAN_PRICING.growth.name}. Self-serve card checkout isn't live yet. No committed date.` },
@@ -28,8 +28,8 @@ const FAQS: FaqItem[] = [
 export const metadata = pageMetadata({
   title: `Pricing: A/R automation priced per client book, from $${PLAN_PRICING.starter.monthly}/mo`,
   description:
-    `$${PLAN_PRICING.starter.monthly}/mo for one business, $${PLAN_PRICING.growth.monthly}/mo for a practice with up to 10 client ` +
-    'organizations. No per-invoice or setup fees. Cancel anytime.',
+    `$${PLAN_PRICING.starter.monthly}/mo for one business, $${PLAN_PRICING.growth.monthly}/mo for a practice with up to ${PRACTICE_INCLUDED_ORGS} client ` +
+    `organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY} per extra book. No per-invoice or setup fees. Cancel anytime.`,
   path: '/pricing',
   image: '/og-pricing.png',
   keywords: [
@@ -87,13 +87,12 @@ export default function PricingPage() {
                 <div className="mt-1 text-sm text-ink-500">{p.orgs}</div>
                 <ul className="mt-6 space-y-2.5 text-sm text-ink-700">
                   {/* The Scale tier is sold by conversation, so only the parts that
-                      are plain fact are listed as ticks. API access, SSO and custom
-                      workflows are scoped with the founder before anyone signs. */}
+                      are plain fact are listed as ticks. */}
                   {(k === 'scale' ? p.features.filter((f) => f === 'Everything in Practice' || f === 'Priority support') : p.features).map((f) => (
                     <li key={f} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />{f}</li>
                   ))}
                 </ul>
-                {k === 'scale' && <p className="mt-4 text-sm text-ink-600">API access, SSO and custom workflows are scoped with you before you sign.</p>}
+                {k === 'scale' && <p className="mt-4 text-sm text-ink-600">Sold by conversation: we agree the setup with you before you sign.</p>}
                 <TrackedLink
                   href={k === 'scale' ? '/contact' : '/sign-up'}
                   event="pricing_tier_click"
@@ -110,7 +109,7 @@ export default function PricingPage() {
 
         <div className="mt-10 max-w-2xl mx-auto text-center">
           <p className="text-sm text-ink-600">Comparing tools? See <Link href="/vs-paidnice" className="link">Mugavi vs Paidnice</Link>, <Link href="/vs-chaser" className="link">vs Chaser</Link>, <Link href="/vs-quickbooks" className="link">vs QuickBooks</Link>, or <Link href="/compare" className="link">all comparisons</Link>.</p>
-          <p className="mt-3 text-sm text-ink-600">{PLAN_PRICING.growth.name} keeps going past {PRACTICE_INCLUDED_ORGS} books at ${PRACTICE_EXTRA_ORG_MONTHLY} each, and stays the cheaper option until {PRACTICE_SCALE_CROSSOVER_ORGS}. Past that, {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo flat for up to {PRACTICE_SCALE_INCLUDED_ORGS} books, and adds API access and SSO. <Link href="/contact" className="link">Talk to sales</Link>.</p>
+          <p className="mt-3 text-sm text-ink-600">{PLAN_PRICING.growth.name} keeps going past {PRACTICE_INCLUDED_ORGS} books at ${PRACTICE_EXTRA_ORG_MONTHLY} each, and stays the cheaper option until {PRACTICE_SCALE_CROSSOVER_ORGS}. Past that, {PLAN_PRICING.scale.name} is ${PLAN_PRICING.scale.monthly}/mo flat for up to {PRACTICE_SCALE_INCLUDED_ORGS} books. <Link href="/contact" className="link">Talk to sales</Link>.</p>
           <p className="mt-3 text-sm text-ink-600">A bookkeeper or accountant running several client books? See <Link href="/for/bookkeepers" className="link">how Mugavi works for a practice</Link>.</p>
         </div>
       </section>

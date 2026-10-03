@@ -91,7 +91,7 @@ per-invoice fees, no per-reminder fees, no platform fee on payments.
 
 - ${p.starter.name}: $${p.starter.monthly}/mo. ${p.starter.orgs}. Unlimited invoices, ${p.starter.users} users.
 - ${p.growth.name}: $${p.growth.monthly}/mo. Up to ${PRACTICE_INCLUDED_ORGS} client organizations, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. Unlimited users.
-- ${p.scale.name}: $${p.scale.monthly}/mo flat, up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations. Adds API access and SSO.
+- ${p.scale.name}: $${p.scale.monthly}/mo flat, up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations.
 - ${p.enterprise.name}: $${p.enterprise.monthly.toLocaleString()}/mo. Unlimited client organizations.
 
 ${p.growth.name} stays the cheaper option until ${PRACTICE_SCALE_CROSSOVER_ORGS} client books

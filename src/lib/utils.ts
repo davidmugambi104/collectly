@@ -159,11 +159,11 @@ export const PLAN_PRICING: Record<'starter' | 'growth' | 'scale' | 'enterprise',
   scale: {
     monthly: PRACTICE_SCALE_MONTHLY,
     name: 'Practice Scale',
-    audience: `Practices past ${PRACTICE_SCALE_CROSSOVER_ORGS} client books, or any practice that needs API access and SSO`,
+    audience: `Practices past ${PRACTICE_SCALE_CROSSOVER_ORGS} client books, at one flat price`,
     orgs: `Up to ${PRACTICE_SCALE_INCLUDED_ORGS} client organizations`,
     includedOrgs: PRACTICE_SCALE_INCLUDED_ORGS,
     users: 'unlimited',
-    features: ['Everything in Practice', 'AI collections concierge', 'Custom workflows', 'API access', 'SSO', 'Priority support'],
+    features: ['Everything in Practice', 'Flat price up to the book limit', 'Priority support'],
   },
   enterprise: {
     monthly: 2499,

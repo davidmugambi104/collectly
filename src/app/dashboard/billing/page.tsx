@@ -282,7 +282,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               <input type="hidden" name="plan" value={k} />
               <div className={`card relative h-full flex flex-col ${isCurrent ? 'ring-2 ring-brand-500' : ''} ${p.popular ? 'border-brand-300' : ''}`}>
                 {isCurrent && <div className="absolute -top-3 right-4"><span className="badge-success">Current</span></div>}
-                {p.popular && !isCurrent && <div className="absolute -top-3 right-4"><span className="badge-warn"><Sparkles className="h-3 w-3 mr-1" />Popular</span></div>}
+                {p.popular && !isCurrent && <div className="absolute -top-3 right-4"><span className="badge-warn"><Sparkles className="h-3 w-3 mr-1" />Built for practices</span></div>}
                 <div className="font-display font-semibold text-ink-900">{p.name}</div>
                 <div className="mt-1 text-3xl font-display font-bold">${p.monthly}<span className="text-sm font-normal text-ink-500">/mo</span></div>
                 <ul className="mt-4 space-y-1.5 text-sm text-ink-600 flex-1">

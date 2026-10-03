@@ -487,6 +487,19 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
 
   const customerEmail = `${org.slug}@getcollectly.app`;
 
+  // Books the owner belongs to and what the rule says the plan costs for that many,
+  // so the invoice is right the first time. The owner is who pays for the plan.
+  const { loadBookCount } = await import('@/lib/practice-load');
+  const { planMonthly } = await import('@/lib/book-overage');
+  const { PRACTICE_EXTRA_ORG_MONTHLY } = await import('@/lib/utils');
+  let bookLine = '';
+  try {
+    const books = await loadBookCount(org.ownerId);
+    const total = planMonthly({ books, monthly: planInfo.monthly, included: planInfo.includedOrgs, extraMonthly: PRACTICE_EXTRA_ORG_MONTHLY });
+    bookLine = `Books the owner belongs to: ${books}. Monthly by the book rule: $${total}.`;
+  } catch { /* the request still goes through without the line */ }
+  if (bookLine) opts = { ...opts, notes: [opts.notes, bookLine].filter(Boolean).join('\n') };
+
   const [created] = await db
     .insert(upgradeRequests)
     .values({
