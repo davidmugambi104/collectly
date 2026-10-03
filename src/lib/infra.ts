@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 import { Twilio } from 'twilio';
 import Stripe from 'stripe';
+import { makeStripe } from '@/lib/stripe-client';
 import { Redis } from '@upstash/redis';
 
 let _resend: Resend | null = null;
@@ -27,7 +28,7 @@ export function getTwilio() {
   return _twilio;
 }
 export function getStripe() {
-  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? 'PLACEHOLDER_FROM_ENV', { apiVersion: '2025-02-24.acacia' });
+  if (!_stripe) _stripe = makeStripe(process.env);
   return _stripe;
 }
 

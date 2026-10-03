@@ -3,6 +3,8 @@ export const dynamic = 'force-dynamic';
 import { AppShell } from '@/components/app/shell';
 import { requireAdminEmail } from '@/lib/auth-helper';
 import { configStatus, todoOrder } from '@/lib/config-status';
+import { stripeBillingStatus } from '@/lib/stripe-billing-config';
+import { StripeStatus } from '@/components/billing/stripe-status';
 import { EncryptTokensButton } from '@/components/dunning/encrypt-tokens-button';
 
 const LABEL = { now: 'Needed now', soon: 'Needed soon', later: 'Later or dormant' } as const;
@@ -33,6 +35,8 @@ export default async function ConfigPage() {
   return (
     <AppShell title="Services" subtitle={todo.length === 0 ? 'Everything is configured' : `${todo.length} not configured yet`}>
       {status.find((x) => x.id === 'tokens')?.configured && <EncryptTokensButton />}
+
+      <div className="mb-6"><StripeStatus status={stripeBillingStatus(process.env)} showVars /></div>
 
       {todo.length > 0 && (
         <div className="card-primary mb-6">

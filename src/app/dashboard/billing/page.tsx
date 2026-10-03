@@ -10,7 +10,9 @@ import { eq, and, gte, sql, desc } from 'drizzle-orm';
 import { CheckCircle2, Sparkles, ArrowUpRight, CreditCard, Calendar, AlertCircle, ExternalLink, FileText, X } from 'lucide-react';
 import { PLAN_PRICING, PRACTICE_EXTRA_ORG_MONTHLY, formatCurrency, formatDate } from '@/lib/utils';
 import { bookOverage } from '@/lib/book-overage';
-import { createCustomerPortal } from '@/lib/billing';
+import { stripeBillingStatus, isManualBilling, extraBooks } from '@/lib/stripe-billing-config';
+import { StripeStatus } from '@/components/billing/stripe-status';
+import { requireAdminEmail } from '@/lib/auth-helper';
 import Link from 'next/link';
 import { parseCancelKind } from '@/lib/cancel-request';
 import { CONTACT } from '@/lib/site-contact';
@@ -20,9 +22,8 @@ import { CONTACT } from '@/lib/site-contact';
 // moved to unlimited invoices and 3 users, so a paying customer was shown a
 // ceiling they had not actually bought.
 
-const stripeConfigured = !!process.env.STRIPE_SECRET_KEY;
 
-export default async function BillingPage({ searchParams }: { searchParams: Promise<{ upgraded?: string; cancelled?: string; requested?: string; plan?: string; req?: string; leave?: string; dup?: string }> }) {
+export default async function BillingPage({ searchParams }: { searchParams: Promise<{ checkout?: string; books?: string; upgraded?: string; cancelled?: string; requested?: string; plan?: string; req?: string; leave?: string; dup?: string }> }) {
   const { userId, orgId } = await auth();
   if (!userId) redirect('/sign-in');
   if (!orgId) redirect('/sign-in');
@@ -94,20 +95,12 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
     redirect(`/dashboard/billing?leave=${kind}${result.duplicate ? '&dup=1' : ''}#cancel`);
   }
 
-  async function openPortal() {
-    'use server';
-    const actorOrgId = await requireOrgId();
-    if (!actorOrgId) return;
-    try {
-      const session = await createCustomerPortal(
-        actorOrgId,
-        `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
-      );
-      if (session.url) redirect(session.url);
-    } catch {
-      // No Stripe customer yet, or Stripe not configured — fail silently
-    }
-  }
+  const stripeStatus = stripeBillingStatus(process.env);
+  const isAdmin = (await requireAdminEmail().catch(() => ({ ok: false as const }))).ok;
+  // Card and bank checkout is offered only when Stripe is fully set up AND this account is not billed by hand.
+  const manual = isManualBilling(sub);
+  const checkoutOn = stripeStatus.checkoutReady && !manual;
+  const extraNow = extraBooks(plan, bookCount);
 
   const trialDaysLeft = sub?.currentPeriodEnd
     ? Math.max(0, Math.ceil((new Date(sub.currentPeriodEnd).getTime() - Date.now()) / 86400000))
@@ -168,21 +161,33 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         </div>
       )}
 
-      {/* Soft-launch billing banner */}
-      <div className="mb-6 rounded-[10px] border border-brand-200/70 bg-brand-50/60 p-4 text-[13px] text-brand-900 lift-1">
-        <div className="flex items-start gap-3">
-          <Sparkles className="h-4 w-4 text-brand-600 mt-0.5 shrink-0" />
-          <div>
-            <div className="font-semibold text-brand-950">You&apos;re in the private beta</div>
-            <p className="mt-1 text-brand-900/80">
-              Card checkout opens with the public beta in a few weeks. During the
-              private beta, plan upgrades are handled by manual invoice (bank
-              transfer, Wise, or PayPal) so David can support setup personally
-              for the first customer batch.
-            </p>
+      <div className="mb-3"><StripeStatus status={stripeStatus} showVars={isAdmin} /></div>
+      {sp.checkout === 'off' && <div role="status" className="mb-3 text-[13px] text-warn-800">Card checkout is not switched on yet. Use the request button and David will invoice you.</div>}
+      {sp.checkout === 'manual' && <div role="status" className="mb-3 text-[13px] text-warn-800">Your plan is billed by manual invoice. To move to card or bank billing, email David.</div>}
+      {sp.books && <div role="status" className="mb-3 text-[13px] text-success-800">Extra client books on your subscription: {sp.books === 'none' ? 'already up to date' : 'updated'}.</div>}
+
+      {!checkoutOn && (
+        <div className="mb-6 rounded-[10px] border border-brand-200/70 bg-brand-50/60 p-4 text-[13px] text-brand-900 lift-1">
+          <div className="flex items-start gap-3">
+            <Sparkles className="h-4 w-4 text-brand-600 mt-0.5 shrink-0" />
+            <div>
+              <div className="font-semibold text-brand-950">{manual ? 'Your plan is billed by manual invoice' : "You're in the private beta"}</div>
+              <p className="mt-1 text-brand-900/80">
+                {manual
+                  ? 'David sends your invoice (bank transfer, Wise, or PayPal). Nothing is charged automatically.'
+                  : 'Card checkout is not live yet. During the private beta, plan upgrades are handled by manual invoice (bank transfer, Wise, or PayPal) so David can support setup personally for the first customer batch.'}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+      {checkoutOn && (
+        <div className="mb-6 rounded-[10px] border border-brand-200/70 bg-brand-50/60 p-4 text-[13px] text-brand-900 lift-1">
+          {stripeStatus.mode === 'test'
+            ? 'Checkout is in test mode: it takes Stripe test cards only and no real money moves.'
+            : 'Pay by card or US bank account (ACH). You can cancel or change your payment method from Manage billing. There is no contract.'}
+        </div>
+      )}
 
       {/* Current plan + usage */}
       <div className="mb-6 grid gap-6 lg:grid-cols-3">
@@ -213,16 +218,21 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               </div>
             </div>
             <div className="flex flex-col gap-2 shrink-0">
-              {stripeConfigured && sub?.stripeCustomerId ? (
-                <form action={openPortal}>
+              {stripeStatus.mode !== 'not_configured' && sub?.stripeCustomerId ? (
+                <form action="/api/billing/portal" method="post">
                   <button type="submit" className="btn-secondary btn-sm">
-                    <ExternalLink className="h-3.5 w-3.5" />Manage in Stripe
+                    <ExternalLink className="h-3.5 w-3.5" />Manage billing
                   </button>
                 </form>
               ) : (
-                <button disabled className="btn-secondary btn-sm opacity-60 cursor-not-allowed" title="Stripe not configured">
-                  <ExternalLink className="h-3.5 w-3.5" />Manage in Stripe
+                <button disabled className="btn-secondary btn-sm opacity-60 cursor-not-allowed" title="Available once you pay by card or bank">
+                  <ExternalLink className="h-3.5 w-3.5" />Manage billing
                 </button>
+              )}
+              {stripeStatus.checkoutReady && sub?.stripeSubscriptionId && plan === 'growth' && (
+                <form action="/api/billing/sync-books" method="post">
+                  <button type="submit" className="btn-secondary btn-sm">Update extra books ({extraNow})</button>
+                </form>
               )}
             </div>
           </div>
@@ -278,7 +288,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           const p = PLAN_PRICING[k];
           const isCurrent = k === plan;
           return (
-            <form action={upgrade} key={k}>
+            <form action={checkoutOn && k !== 'enterprise' ? '/api/billing/checkout' : upgrade} method={checkoutOn && k !== 'enterprise' ? 'post' : undefined} key={k}>
               <input type="hidden" name="plan" value={k} />
               <div className={`card relative h-full flex flex-col ${isCurrent ? 'ring-2 ring-brand-500' : ''} ${p.popular ? 'border-brand-300' : ''}`}>
                 {isCurrent && <div className="absolute -top-3 right-4"><span className="badge-success">Current</span></div>}
@@ -289,7 +299,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                   {p.features.map((f) => <li key={f} className="flex items-start gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-success-500 mt-0.5 flex-shrink-0" />{f}</li>)}
                 </ul>
                 <button disabled={isCurrent} className={`mt-4 w-full ${isCurrent ? 'btn-secondary opacity-50' : 'btn-primary'} text-sm`} type="submit">
-                  {isCurrent ? 'Current plan' : <>Start {p.name} at ${p.monthly}/mo <ArrowUpRight className="h-3.5 w-3.5" /></>}
+                  {isCurrent ? 'Current plan' : checkoutOn && k !== 'enterprise' ? <>Pay for {p.name} at ${p.monthly}/mo <ArrowUpRight className="h-3.5 w-3.5" /></> : <>Request {p.name} at ${p.monthly}/mo <ArrowUpRight className="h-3.5 w-3.5" /></>}
                 </button>
               </div>
             </form>
@@ -297,13 +307,14 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         })}
       </div>
 
-      {/* Founder note about the manual flow */}
-      <div className="mt-3 text-xs text-ink-500 text-center max-w-2xl mx-auto">
-        Card checkout is coming soon. For the first customer batch, David handles
-        upgrades manually by invoice (bank transfer, Wise, or PayPal) so he can
-        support setup personally. Same price, same plan — just a short
-        wait (up to one business day) between click and confirmation.
-      </div>
+      {!checkoutOn && (
+        <div className="mt-3 text-xs text-ink-500 text-center max-w-2xl mx-auto">
+          Card checkout is not live yet. For the first customer batch, David handles
+          upgrades manually by invoice (bank transfer, Wise, or PayPal) so he can
+          support setup personally. Same price, same plan, with a short
+          wait (up to one business day) between click and confirmation.
+        </div>
+      )}
 
       {/* Cancel or change plan. Plain on purpose: no survey, no discount offer, no guilt. */}
       <div id="cancel" className="mt-8 card scroll-mt-20">
@@ -315,6 +326,9 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           you can download your <Link href="/dashboard/dunning/history" className="link">reminder history</Link> and
           {' '}<Link href="/dashboard/reports/aged" className="link">aged receivables report</Link> as CSV first.
         </p>
+        {stripeStatus.mode !== 'not_configured' && sub?.stripeSubscriptionId && (
+          <p className="mt-2 text-sm text-ink-700">Paying by card or bank? You can also cancel or change your plan yourself under Manage billing above.</p>
+        )}
         <form action={requestLeave} className="mt-4 space-y-3 max-w-xl">
           <label className="block text-sm text-ink-700">
             Anything we should know (optional)

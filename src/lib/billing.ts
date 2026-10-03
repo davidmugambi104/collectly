@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { getStripe } from '@/lib/infra';
 import { db } from '@/db';
-import { subscriptions, organizations, invoices, payments, events, disputes, timelineEvents, users, subStatus } from '@/db/schema';
+import { subscriptions, organizations, invoices, payments, events, disputes, timelineEvents, users } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { nanoid, PLAN_PRICING } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
@@ -10,97 +10,18 @@ import { applyPayment, applyRefund } from '@/lib/billing-math';
 
 export type PlanKey = keyof typeof PLAN_PRICING;
 
-type SubStatus = (typeof subStatus.enumValues)[number];
-
-/**
- * Map Stripe's subscription status to our db's sub_status enum. Not a
- * 1:1 rename -- Stripe spells it "canceled" (US), our enum has
- * "cancelled" (UK), and Stripe has three statuses ('incomplete_expired',
- * 'paused', 'unpaid') our enum doesn't model at all. This used to be a
- * blind `sub.status as any` cast straight into the DB column, which
- * means every real Stripe cancellation webhook was silently trying to
- * write the literal string "canceled" into a column whose CHECK
- * constraint only allows "cancelled" -- a guaranteed Postgres
- * constraint violation on the one event (subscription actually
- * canceled) this table most needs to reflect correctly.
- */
-function mapStripeSubscriptionStatus(status: Stripe.Subscription.Status): SubStatus {
-  switch (status) {
-    case 'canceled': return 'cancelled';
-    case 'incomplete_expired': return 'cancelled'; // never activated, treat like cancelled
-    case 'unpaid': return 'past_due';
-    case 'paused': return 'past_due'; // closest "needs attention" state we model
-    default: return status;
-  }
-}
-
-export async function createCheckoutSession(opts: { orgId: string; plan: PlanKey; customerEmail: string; successUrl: string; cancelUrl: string }) {
-  const plan = PLAN_PRICING[opts.plan];
-  if (!plan) throw new Error('Invalid plan');
-  const stripe = getStripe();
-
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    customer_email: opts.customerEmail,
-    line_items: [{
-      price_data: {
-        currency: 'usd',
-        recurring: { interval: 'month' },
-        product_data: { name: `Mugavi ${plan.name}` },
-        unit_amount: plan.monthly * 100,
-      },
-      quantity: 1,
-    }],
-    metadata: { orgId: opts.orgId, plan: opts.plan },
-    subscription_data: { metadata: { orgId: opts.orgId, plan: opts.plan } },
-    success_url: opts.successUrl,
-    cancel_url: opts.cancelUrl,
-  });
-  return session;
-}
-
-export async function createCustomerPortal(orgId: string, returnUrl: string) {
-  const stripe = getStripe();
-  const [sub] = await db.select().from(subscriptions).where(eq(subscriptions.orgId, orgId)).limit(1);
-  if (!sub?.stripeCustomerId) throw new Error('No Stripe customer');
-  const portal = await stripe.billingPortal.sessions.create({ customer: sub.stripeCustomerId, return_url: returnUrl });
-  return portal;
-}
+// Mugavi's own subscription billing (checkout, portal, webhook state) lives in
+// stripe-billing-config.ts, stripe-checkout.ts and stripe-webhook.ts. This file keeps
+// the customer-payment path (invoice payments, refunds, disputes) and the manual requests.
 
 export async function handleStripeEvent(event: Stripe.Event) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-      const orgId = session.metadata?.orgId;
-      const plan = session.metadata?.plan as PlanKey | undefined;
       const invoiceId = session.metadata?.invoiceId;
       // One-time invoice payment from the customer payment portal
       if (invoiceId && session.mode === 'payment') {
         await markInvoicePaidFromSession(session, invoiceId);
-        break;
-      }
-      // Subscription checkout (new customer subscribing to a Mugavi plan)
-      if (orgId && plan && PLAN_PRICING[plan]) {
-        const existing = await db.select().from(subscriptions).where(eq(subscriptions.orgId, orgId)).limit(1);
-        if (existing[0]) {
-          await db.update(subscriptions).set({
-            plan, status: 'active',
-            stripeCustomerId: typeof session.customer === 'string' ? session.customer : session.customer?.id,
-            stripeSubscriptionId: typeof session.subscription === 'string' ? session.subscription : session.subscription?.id,
-            currentPeriodStart: new Date(),
-            currentPeriodEnd: new Date(Date.now() + 30 * 86400000),
-            updatedAt: new Date(),
-          }).where(eq(subscriptions.id, existing[0].id));
-        } else {
-          await db.insert(subscriptions).values({
-            id: nanoid(), orgId, plan, status: 'active',
-            stripeCustomerId: typeof session.customer === 'string' ? session.customer : session.customer?.id,
-            stripeSubscriptionId: typeof session.subscription === 'string' ? session.subscription : session.subscription?.id,
-            currentPeriodStart: new Date(),
-            currentPeriodEnd: new Date(Date.now() + 30 * 86400000),
-          });
-        }
-        await db.update(organizations).set({ plan, updatedAt: new Date() }).where(eq(organizations.id, orgId));
       }
       break;
     }
@@ -112,21 +33,6 @@ export async function handleStripeEvent(event: Stripe.Event) {
       const invoiceId = pi.metadata?.invoiceId;
       if (invoiceId) {
         await markInvoicePaidFromPaymentIntent(pi, invoiceId);
-      }
-      break;
-    }
-    case 'customer.subscription.updated':
-    case 'customer.subscription.deleted': {
-      const sub = event.data.object as Stripe.Subscription;
-      const orgId = sub.metadata?.orgId;
-      if (orgId) {
-        await db.update(subscriptions).set({
-          status: mapStripeSubscriptionStatus(sub.status),
-          currentPeriodStart: new Date(sub.current_period_start * 1000),
-          currentPeriodEnd: new Date(sub.current_period_end * 1000),
-          cancelAt: sub.cancel_at ? new Date(sub.cancel_at * 1000) : null,
-          updatedAt: new Date(),
-        }).where(eq(subscriptions.orgId, orgId));
       }
       break;
     }
@@ -160,17 +66,6 @@ export async function handleStripeEvent(event: Stripe.Event) {
       const refundAmount = (charge.amount_refunded ?? 0) / 100;
       if (refundAmount <= 0) break;
       await reversePaymentForInvoice({ invoiceId, refundAmount, reason: 'stripe-refund' });
-      break;
-    }
-    case 'invoice.payment_failed': {
-      // Stripe-subscription invoice failed (recurring billing retry, not our customer invoices).
-      // We surface this in logs and let the existing subscription.dunning flow pick it up.
-      const inv = event.data.object as Stripe.Invoice;
-      const orgId = inv.subscription_details?.metadata?.orgId;
-      console.warn(`[stripe-webhook] invoice.payment_failed subscription=${inv.subscription} orgId=${orgId} amount=${inv.amount_due}`);
-      if (orgId) {
-        await db.update(subscriptions).set({ status: 'past_due', updatedAt: new Date() }).where(eq(subscriptions.orgId, orgId));
-      }
       break;
     }
   }

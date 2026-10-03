@@ -5,6 +5,8 @@
  * `needed` says when it matters: 'now' stops the product working or the plan going
  * forward, 'soon' is needed before real customers, 'later' is optional or dormant.
  */
+import { REQUIRED_STRIPE_ENV } from './stripe-billing-config.ts';
+
 export type Needed = 'now' | 'soon' | 'later';
 
 export type ServiceDef = {
@@ -35,7 +37,7 @@ export const SERVICES: ServiceDef[] = [
   { id: 'ai', name: 'Gemini AI', why: 'Drafts the reminder wording.', needed: 'now', vars: ['GEMINI_API_KEY'], where: 'aistudio.google.com', without: 'Reminders fall back to plain templates.' },
   { id: 'posthog', name: 'PostHog analytics', why: 'Product analytics, after the visitor consents.', needed: 'soon', vars: ['NEXT_PUBLIC_POSTHOG_KEY'], where: 'posthog.com', without: 'No usage analytics.' },
   { id: 'twilio', name: 'Twilio SMS', why: 'Text reminders for customers who opted in.', needed: 'later', vars: ['TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'TWILIO_FROM_NUMBER'], where: 'twilio.com (toll-free numbers need verification)', without: 'No SMS reminders.' },
-  { id: 'billing', name: 'Card billing', why: 'Charging customers automatically. Billing is manual (bank transfer) until this exists.', needed: 'soon', vars: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'], where: 'Stripe, or a merchant of record such as Paddle that handles US and UK sales tax. Pick whichever can pay out to your business entity', without: 'Every customer is invoiced by hand.' },
+  { id: 'billing', name: 'Stripe billing', why: 'Charging Mugavi subscriptions by card or US bank account (ACH). Billing stays manual (invoice) until every one of these is set.', needed: 'soon', vars: [...REQUIRED_STRIPE_ENV], where: 'dashboard.stripe.com: API keys, Webhooks, and one price per plan under Product catalog (steps in the r-stripe notes)', without: 'Every customer is invoiced by hand.' },
   { id: 'paystack', name: 'Paystack', why: 'African card payments. Not a target market, so leave it dormant.', needed: 'later', vars: ['PAYSTACK_SECRET_KEY'], where: 'paystack.com', without: 'Nothing the product relies on.' },
   { id: 'plaid', name: 'Plaid', why: 'Bank link. Not used by the forecast yet.', needed: 'later', vars: ['PLAID_CLIENT_ID', 'PLAID_SECRET', 'PLAID_ENV'], where: 'plaid.com', without: 'Nothing the product relies on.' },
   { id: 'square', name: 'Square', why: 'Sync from Square. Not a target market.', needed: 'later', vars: ['SQUARE_CLIENT_ID', 'SQUARE_CLIENT_SECRET', 'SQUARE_REDIRECT_URI'], where: 'developer.squareup.com', without: 'Nothing the product relies on.' },

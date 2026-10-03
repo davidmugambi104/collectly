@@ -1,77 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { getStripe } from '@/lib/infra';
 import { handleStripeEvent } from '@/lib/billing';
-import { pool } from '@/db';
+import { processStripeWebhook } from '@/lib/stripe-webhook';
+import { dbSubStore, pgEventStore } from '@/lib/stripe-webhook-db';
 
 /**
- * Idempotency guard keyed on Stripe's own event id — Stripe explicitly
- * documents at-least-once delivery (redelivery isn't only an
- * error-retry thing, it happens in normal operation). Without this,
- * handleStripeEvent()'s dispute-created branch inserted a fresh
- * `disputes` row and sent a fresh "chargeback opened" email on every
- * redelivery, and its refund-reversal branch re-applied the same refund
- * against amountPaid every time — same idempotency gap already fixed for
- * the outreach-inbound webhook (src/lib/outreach-inbound.ts), same
- * self-creating-table approach for the same reason: no reliable way to
- * run a migration against production from outside the running app.
+ * One endpoint for two jobs. Mugavi's own subscription events (checkout.session.completed
+ * for a plan, customer.subscription.updated/deleted, invoice.paid, invoice.payment_failed)
+ * are handled in lib/stripe-webhook.ts: signature checked first, each event id processed once,
+ * and rows billed by hand are never touched. Everything else (customer invoice payments,
+ * refunds, disputes) goes to handleStripeEvent in lib/billing.ts, behind the same guards.
  */
-async function alreadySeenStripeEvent(eventId: string): Promise<boolean> {
-  const client = await pool().connect();
-  try {
-    const [row] = (await client.query(`SELECT 1 FROM webhook_events_seen WHERE svix_id = $1`, [eventId]).catch((e: unknown) => {
-      const code = (e as { code?: string })?.code;
-      if (code !== '42P01') throw e; // 42P01 = undefined_table — nothing recorded yet either way
-      return { rows: [] };
-    })).rows;
-    return !!row;
-  } finally {
-    client.release();
-  }
-}
-
-// Marks an event processed only after handleStripeEvent() returns
-// successfully — never before. Marking first would mean a genuine
-// failure (a real DB hiccup, a Stripe API error) gets recorded as
-// "handled" and Stripe's legitimate retry of that same event is then
-// silently skipped forever, turning a transient failure into permanent
-// data loss instead of the harmless no-op this guard is meant to be.
-async function markStripeEventProcessed(eventId: string): Promise<void> {
-  const client = await pool().connect();
-  try {
-    const insert = () => client.query(`INSERT INTO webhook_events_seen (svix_id) VALUES ($1) ON CONFLICT DO NOTHING`, [eventId]);
-    try {
-      await insert();
-    } catch (e: unknown) {
-      const code = (e as { code?: string })?.code;
-      if (code !== '42P01') throw e;
-      await client.query(`CREATE TABLE IF NOT EXISTS webhook_events_seen (svix_id TEXT PRIMARY KEY, received_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
-      await insert();
-    }
-  } finally {
-    client.release();
-  }
-}
-
 export async function POST(req: NextRequest) {
-  const sig = req.headers.get('stripe-signature');
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!sig || !secret) return NextResponse.json({ error: 'missing signature' }, { status: 400 });
   const body = await req.text();
-  let event: Stripe.Event;
-  try {
-    event = getStripe().webhooks.constructEvent(body, sig, secret);
-  } catch (e: unknown) {
-    return NextResponse.json({ error: `webhook signature failed: ${e instanceof Error ? e.message : e}` }, { status: 400 });
-  }
-  try {
-    if (await alreadySeenStripeEvent(event.id)) {
-      return NextResponse.json({ received: true, deduped: true });
-    }
-    await handleStripeEvent(event);
-    await markStripeEventProcessed(event.id);
-    return NextResponse.json({ received: true });
-  } catch (e: unknown) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
-  }
+  const result = await processStripeWebhook({
+    rawBody: body,
+    signature: req.headers.get('stripe-signature'),
+    secret: process.env.STRIPE_WEBHOOK_SECRET,
+    events: pgEventStore,
+    subs: dbSubStore,
+    env: process.env,
+    handleOther: handleStripeEvent,
+  });
+  return NextResponse.json(result.body, { status: result.status });
 }
