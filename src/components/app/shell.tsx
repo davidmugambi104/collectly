@@ -30,8 +30,9 @@ function NavLink({
 }) {
   const active = isActive(pathname, item.href);
   const Icon = item.icon;
-  const { pendingCount, taskCount, bookCount } = useWorkspace();
+  const { pendingCount, taskCount, bookCount, isAdmin } = useWorkspace();
   if (item.onlyWithManyBooks && bookCount < 2) return null;
+  if (item.adminOnly && !isAdmin) return null;
   return (
     <>
       <Link

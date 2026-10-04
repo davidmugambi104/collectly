@@ -1,5 +1,5 @@
 import { loadCachedBookCount } from '@/lib/practice-load';
-import { getAuth as auth } from '@/lib/auth-helper';
+import { getAuth as auth, requireAdminEmail } from '@/lib/auth-helper';
 import { ClerkProvider } from '@/components/clerk-provider';
 import { IdentifyUser } from '@/components/app/identify-user';
 import { WorkspaceProvider, type WorkspaceChrome } from '@/components/app/workspace-context';
@@ -26,6 +26,7 @@ async function loadChrome(orgId: string | null | undefined, userId?: string | nu
     pendingCount: 0,
     taskCount: 0,
     bookCount: 0,
+    isAdmin: false,
   };
   if (!orgId) return base;
 
@@ -70,6 +71,10 @@ async function loadChrome(orgId: string | null | undefined, userId?: string | nu
     let bookCount = 0;
     try { if (userId) bookCount = await loadCachedBookCount(userId); } catch { /* the Client books link just stays hidden */ }
 
+    let isAdmin = false;
+    // Only ask Clerk when an allowlist exists at all.
+    try { if (userId && process.env.ADMIN_EMAILS) isAdmin = (await requireAdminEmail()).ok; } catch { /* link stays hidden */ }
+
     return {
       orgName: org?.name ?? null,
       plan: sub?.plan ?? org?.plan ?? null,
@@ -80,6 +85,7 @@ async function loadChrome(orgId: string | null | undefined, userId?: string | nu
       pendingCount,
       taskCount,
       bookCount,
+      isAdmin,
     };
   } catch {
     return base;
