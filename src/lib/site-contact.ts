@@ -20,4 +20,15 @@ export const CONTACT = {
   dpa: at('dpa'),
   privacy: at('privacy'),
   david: at('david'),
+  // Where lead and upgrade notifications go when LEAD_NOTIFY_EMAIL is unset.
+  notify: at('davie'),
 } as const;
+
+/**
+ * Synthetic "customer email" stored on upgrade requests when an org has no real address.
+ * Never mailed to; it only has to be a well-formed, unique-per-org string.
+ */
+export const placeholderEmail = (orgSlug: string) => at(orgSlug);
+
+/** The dev-login prefill. Dev auth only. */
+export const DEV_LOGIN_EMAIL = at('dev');

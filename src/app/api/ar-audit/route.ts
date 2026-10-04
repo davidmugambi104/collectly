@@ -6,6 +6,7 @@ import { captureLead } from '@/lib/lead-capture';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { parseJsonBody } from '@/lib/parse-body';
 import { isHoneypotHit, leadOutcome, LEAD_FAILED_MESSAGE } from '@/lib/lead-guard';
+import { CONTACT } from '@/lib/site-contact';
 
 const schema = z.object({
   email: z.string().trim().email().max(254),
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
         `<!doctype html><html><body style="font-family:-apple-system,system-ui,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#16171c">`,
         `<h2 style="margin:0 0 8px;font-size:18px">Thanks, ${escapeHtml(data.name)}</h2>`,
         `<p style="margin:0 0 16px;font-size:14px;line-height:1.5">We received your A/R audit request for <strong>${escapeHtml(data.company)}</strong>. A real person will review it and reply within 24 hours with 3 specific fixes you can apply this week.</p>`,
-        `<p style="margin:0 0 16px;font-size:14px;line-height:1.5">If you have questions, reply to this email or contact us at <a href="mailto:hello@getcollectly.app">hello@getcollectly.app</a>.</p>`,
+        `<p style="margin:0 0 16px;font-size:14px;line-height:1.5">If you have questions, reply to this email or contact us at <a href="mailto:${CONTACT.hello}">${CONTACT.hello}</a>.</p>`,
         `<p style="margin:0;font-size:12px;color:#6c6e76">Mugavi</p>`,
         `</body></html>`,
       ].join('\n'),

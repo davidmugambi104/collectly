@@ -7,6 +7,7 @@ import { upgradeRequests, organizations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { sendEmail } from '@/lib/infra';
 import { PLAN_PRICING, escapeHtml } from '@/lib/utils';
+import { CONTACT, placeholderEmail } from '@/lib/site-contact';
 
 // SECURITY: `orgId` is deliberately NOT in this schema. It used to be read
 // straight off the request body, which let any signed-in user file an
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid plan' }, { status: 400 });
   }
 
-  const customerEmail = `${org.slug}@getcollectly.app`;
+  const customerEmail = placeholderEmail(org.slug);
 
   // Record the request
   const [created] = await db
@@ -85,7 +86,7 @@ export async function POST(req: NextRequest) {
   // Notify Davie (best-effort — don't fail the request if email fails)
   try {
     await sendEmail({
-      to: process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app',
+      to: process.env.LEAD_NOTIFY_EMAIL ?? CONTACT.notify,
       subject: `[Upgrade request] ${org.name} → ${planInfo.name} ($${planInfo.monthly}/mo)`,
       html: [
         `<p><strong>New upgrade request.</strong></p>`,
