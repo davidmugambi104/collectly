@@ -10,6 +10,7 @@ import { eq, and, gte, sql, desc } from 'drizzle-orm';
 import { CheckCircle2, Sparkles, ArrowUpRight, CreditCard, Calendar, AlertCircle, ExternalLink, FileText, X } from 'lucide-react';
 import { PLAN_PRICING, PRACTICE_EXTRA_ORG_MONTHLY, formatCurrency, formatDate } from '@/lib/utils';
 import { bookOverage } from '@/lib/book-overage';
+import { billingCopy } from '@/lib/billing-copy';
 import { stripeBillingStatus, isManualBilling, extraBooks } from '@/lib/stripe-billing-config';
 import { StripeStatus } from '@/components/billing/stripe-status';
 import { requireAdminEmail } from '@/lib/auth-helper';
@@ -96,6 +97,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   }
 
   const stripeStatus = stripeBillingStatus(process.env);
+  const copy = billingCopy(stripeStatus.checkoutReady);
   const isAdmin = (await requireAdminEmail().catch(() => ({ ok: false as const }))).ok;
   // Card and bank checkout is offered only when Stripe is fully set up AND this account is not billed by hand.
   const manual = isManualBilling(sub);
@@ -121,7 +123,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                 Here&apos;s what happens next:
               </p>
               <ol className="mt-2 space-y-1 text-success-900/80 list-decimal list-inside">
-                <li>David emails your invoice <b>within one business day</b> (bank transfer, Wise, or PayPal — your choice).</li>
+                <li>David emails your invoice <b>within one business day</b>.</li>
                 <li>Once paid, your account is upgraded manually and you&apos;ll get a confirmation email.</li>
                 <li>You can keep using Mugavi during this window — no interruption.</li>
               </ol>
@@ -174,8 +176,8 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
               <div className="font-semibold text-brand-950">{manual ? 'Your plan is billed by manual invoice' : "You're in the private beta"}</div>
               <p className="mt-1 text-brand-900/80">
                 {manual
-                  ? 'David sends your invoice (bank transfer, Wise, or PayPal). Nothing is charged automatically.'
-                  : 'Card checkout is not live yet. During the private beta, plan upgrades are handled by manual invoice (bank transfer, Wise, or PayPal) so David can support setup personally for the first customer batch.'}
+                  ? 'David emails your invoice. Nothing is charged automatically.'
+                  : copy.dashboardNote}
               </p>
             </div>
           </div>
@@ -309,10 +311,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
 
       {!checkoutOn && (
         <div className="mt-3 text-xs text-ink-500 text-center max-w-2xl mx-auto">
-          Card checkout is not live yet. For the first customer batch, David handles
-          upgrades manually by invoice (bank transfer, Wise, or PayPal) so he can
-          support setup personally. Same price, same plan, with a short
-          wait (up to one business day) between click and confirmation.
+          {copy.dashboardFootnote}
         </div>
       )}
 

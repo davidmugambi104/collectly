@@ -1,3 +1,5 @@
+import { billingCopy } from '@/lib/billing-copy';
+import { stripeBillingStatus } from '@/lib/stripe-billing-config';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
@@ -12,6 +14,7 @@ import { TrackView } from '@/components/marketing/track-view';
 // QuickBooks integration is in beta and says so; the limits section lists what
 // is not built. Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports.
+const billing = billingCopy(stripeBillingStatus(process.env).checkoutReady);
 const FAQS: FaqItem[] = [
   {
     q: 'Will Mugavi email my clients’ customers without my say-so?',
@@ -46,8 +49,7 @@ const FAQS: FaqItem[] = [
     q: 'What does it cost, and how do I pay?',
     a: `$${PLAN_PRICING.growth.monthly}/mo covers ${PRACTICE_INCLUDED_ORGS} client books, and ` +
        `each extra book is $${PRACTICE_EXTRA_ORG_MONTHLY}/mo. There are no per-invoice fees. ` +
-       'For now we set Practice accounts up with you by hand and invoice you directly; ' +
-       'card checkout is not live yet.',
+       `Billing: ${billing.forPagesLine}.`,
   },
   {
     q: 'Does it write late fees back to QuickBooks?',
@@ -170,7 +172,7 @@ export default function ForBookkeepersPage() {
           <li>Late fees are reviewed and applied by you. They are not automatic, not written back to QuickBooks and not on the payment page.</li>
           <li>There is no read-only team role: anyone you add has the same access you do.</li>
           <li>No payment plans, no tags on customers, and statements are sent by you, not on a schedule.</li>
-          <li>Card checkout is not live. We invoice Practice accounts directly for now.</li>
+          <li>{billing.checkoutReady ? 'Card and US bank (ACH) checkout is on. Accounts set up on a manual invoice stay on it until they ask to move.' : 'Billing is a manual invoice for everyone today. Card and US bank (ACH) checkout is built but not switched on yet.'}</li>
         </ul>
         <h2 className="mt-12 h2">Leaving is easy.</h2>
         <ul className="mt-6 space-y-3 text-sm text-ink-700">

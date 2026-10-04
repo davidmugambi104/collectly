@@ -255,8 +255,8 @@ export const subscriptions = pgTable('subscriptions', {
 
 /* ----------------------------- UPGRADE REQUESTS (no-Stripe path) ----------------------------- */
 // Captures "user wants to upgrade to X plan" when we can't take payment online.
-// Davie reviews these manually and invoices via bank transfer / Wise / PayPal.
-// Replaced by Stripe checkout when Stripe Atlas is set up.
+// Davie reviews these manually and sends an invoice by email.
+// Stripe checkout takes over once the Stripe settings are present.
 
 export const upgradeRequests = pgTable('upgrade_requests', {
   id: text('id').primaryKey().$defaultFn(() => nanoid()),

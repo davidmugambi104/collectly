@@ -97,7 +97,6 @@ const BENCHMARKS = [
   { region: 'United States', dso: 39, days: '2025', source: 'Atradius payment practices' },
   { region: 'Australia', dso: 26, days: '2025', source: 'Xero Australia SMB data' },
   { region: 'Canada', dso: 31, days: '2024', source: 'Sage Canada report' },
-  { region: 'Kenya / East Africa', dso: 51, days: '2024', source: 'FSD Africa SMB survey' },
 ];
 
 const FORMULA_BREAKDOWN = [
@@ -147,7 +146,7 @@ export default function DsoCalculatorPage() {
         </p>
         <ul className="mt-6 space-y-2 text-sm text-ink-700">
           <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Free, no email gate, runs in your browser.</li>
-          <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Benchmarked against actual SMB data for UK, US, AU, CA, and East Africa.</li>
+          <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Benchmarked against actual SMB data for UK, US, AU and CA.</li>
           <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Worked examples for agencies, consultancies, and SaaS businesses.</li>
         </ul>
       </section>

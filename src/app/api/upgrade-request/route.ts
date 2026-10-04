@@ -22,9 +22,8 @@ const body = z.object({
 /**
  * Capture an "I want to upgrade to plan X" request.
  *
- * Why this exists: Stripe isn't available for the Kenya-based founder
- * (Stripe doesn't operate in KE; Stripe Atlas path is 2-4 weeks).
- * For the soft-launch window, we record the request in the DB, email
+ * Why this exists: Stripe checkout is built but stays off until the owner sets
+ * the Stripe keys (see stripe-billing-config.ts). Until then, we record the request in the DB, email
  * Davie, and show the customer a "we'll be in touch within 1 business
  * day with a manual invoice" confirmation.
  *

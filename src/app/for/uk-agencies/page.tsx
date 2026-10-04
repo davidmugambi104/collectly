@@ -1,3 +1,5 @@
+import { billingCopy } from '@/lib/billing-copy';
+import { stripeBillingStatus } from '@/lib/stripe-billing-config';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { StructuredBreadcrumbs } from '@/components/seo/structured-breadcrumbs';
@@ -11,6 +13,7 @@ import { TrackView } from '@/components/marketing/track-view';
 // Module-local, not exported: a Next.js page may only carry the
 // framework's own named exports. Both the FAQPage markup and the visible
 // <FaqSection> read this one array.
+const billing = billingCopy(stripeBillingStatus(process.env).checkoutReady);
 const FAQS: FaqItem[] = [
     {
       q: 'Why are UK agencies owed so much in unpaid invoices?',
@@ -38,9 +41,10 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'Does Mugavi support UK-specific payment rails?',
-      a: 'Yes. The branded payment portal supports BACS, Faster Payments, and ' +
-         'GoCardless direct debit. Card payments are supported via Stripe. ' +
-         'Settlement timing and fees follow your chosen processor.',
+      a: 'Not yet. Customers pay through the payment page by wire transfer today, ' +
+         'which works with UK bank accounts. Card and US bank (ACH) payments are built ' +
+         'but switched off for now. There is no BACS, Faster Payments or direct debit ' +
+         'option, and no date for adding one.',
     },
     {
       q: 'Is Mugavi GDPR-compliant for UK customers?',
@@ -54,7 +58,7 @@ const FAQS: FaqItem[] = [
       a: `A single organisation is $${PLAN_PRICING.starter.monthly}/mo (around ` +
          `£${Math.round(PLAN_PRICING.starter.monthly * 0.8)}/mo at current FX rates) and a ` +
          `practice covering up to ${PRACTICE_INCLUDED_ORGS} client books is ` +
-         `$${PLAN_PRICING.growth.monthly}/mo, invoiced by hand in US dollars (bank transfer, Wise or PayPal), with card checkout not live yet. No per-invoice ` +
+         `$${PLAN_PRICING.growth.monthly}/mo, in US dollars. ${billing.checkoutReady ? billing.howBillingWorks : 'Billing is a manual invoice for everyone today and card checkout is not switched on yet.'} No per-invoice ` +
          `fees, no setup fees, no SMS markup. Cancel any time. The first ${FOUNDING.seats} ` +
          `founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months.`,
     },
@@ -169,7 +173,7 @@ export default function ForUkAgenciesPage() {
             for {FOUNDING.months} months, ${FOUNDING.monthly('growth')}/mo for a practice
             covering up to {PRACTICE_INCLUDED_ORGS} client organisations, then
             ${PLAN_PRICING.growth.monthly}/mo. A single organisation is
-            ${PLAN_PRICING.starter.monthly}/mo. Billing is a manual invoice in US dollars for now (bank transfer, Wise or PayPal); cancel any time.
+            ${PLAN_PRICING.starter.monthly}/mo. Prices are in US dollars, {billing.forPagesLine}. Cancel any time.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-ink-700">
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> One Xero organisation, unlimited invoices.</li>

@@ -1,3 +1,5 @@
+import { billingCopy } from '@/lib/billing-copy';
+import { stripeBillingStatus } from '@/lib/stripe-billing-config';
 import { FIXED } from '@/app/sitemap';
 import { POSTS } from '@/lib/posts';
 import { BRAND, COMPETITORS, DOMAIN, SITE, TAGLINE } from '@/lib/seo';
@@ -101,8 +103,7 @@ ${p.growth.name} stays the cheaper option until ${PRACTICE_SCALE_CROSSOVER_ORGS}
 
 The first ${FOUNDING.seats} founding customers take ${FOUNDING.discountPct}% off for ${FOUNDING.months} months
 ($${FOUNDING.monthly('growth')}/mo for ${p.growth.name}), then the price reverts to list. 14-day
-trial, no credit card. Billing during the private beta is founder-invoiced
-rather than self-serve.
+trial, no credit card. ${billingCopy(stripeBillingStatus(process.env).checkoutReady).llms}
 
 ## Integration status, stated honestly
 
@@ -111,7 +112,7 @@ rather than self-serve.
 - Resend email: live
 - Plaid bank feeds: beta, not used by the forecast yet
 - Stripe, Square, Twilio: wired and tested, production credentials swapped in on the first setup call
-- Customer payments today settle by wire; card and ACH rails are built but disabled until payouts route to the customer's own account
+- Customer payments on the payment page settle by wire today; card and US bank (ACH) payments are built but disabled until payouts route to the customer's own Stripe account
 
 There are no published case studies and no customer-count claims, because there
 are no customers to cite yet. Anything attributing revenue results to ${BRAND}

@@ -369,8 +369,7 @@ async function markInvoicePaidInDb(args: { invoiceId: string; customerId: string
 /**
  * Record an "I want to upgrade to plan X" request from a logged-in org.
  * Used during the soft-launch window when Stripe isn't available for the
- * Kenya-based founder. Davie reviews these manually and invoices via
- * bank transfer / Wise / PayPal. Replaced by Stripe checkout redirect
+ * founder. Davie reviews these manually and sends an invoice by email. Replaced by Stripe checkout redirect
  * once Stripe Atlas (or a payment partner) is wired.
  */
 export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey; customerName?: string; country?: string; notes?: string }) {
@@ -431,7 +430,7 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
           `<p>Hi ${owner.name?.split(' ')[0] ?? 'there'},</p>`,
           `<p>I just received your <strong>${planInfo.name}</strong> upgrade request for <strong>${org.name}</strong>. Here's what happens next:</p>`,
           `<ol>`,
-          `<li>I'll email your invoice within one business day (bank transfer, Wise, or PayPal — your call).</li>`,
+          `<li>I'll email your invoice within one business day.</li>`,
           `<li>Once paid, I'll upgrade your account manually and confirm by email.</li>`,
           `<li>You can keep using Mugavi during this window — no interruption.</li>`,
           `</ol>`,

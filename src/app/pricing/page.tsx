@@ -3,6 +3,8 @@ import { MarketingFooter } from '@/components/marketing/footer';
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, Sparkles, X } from 'lucide-react';
 import { PLAN_PRICING, FOUNDING, PRACTICE_INCLUDED_ORGS, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_INCLUDED_ORGS, PRACTICE_SCALE_CROSSOVER_ORGS } from '@/lib/utils';
+import { billingCopy, PORTAL_PAYMENT_ANSWER } from '@/lib/billing-copy';
+import { stripeBillingStatus } from '@/lib/stripe-billing-config';
 import { pageMetadata, faqJsonLd, pricingProductJsonLd } from '@/lib/seo';
 import { type FaqItem } from '@/components/marketing/faq-section';
 import { Reveal } from '@/components/marketing/reveal';
@@ -15,16 +17,17 @@ import { TrackedLink } from '@/components/marketing/tracked-link';
 // eight entirely different and considerably more honest ones — wire transfer
 // only for now, manual invoicing for founding customers, card checkout not
 // live. The visible set is the better content, so it is the source.
+const billing = billingCopy(stripeBillingStatus(process.env).checkoutReady);
 const FAQS: FaqItem[] = [
             { q: 'Do you support multi-entity or multiple companies?', a: `That is what the ${PLAN_PRICING.growth.name} plan is: up to ${PRACTICE_INCLUDED_ORGS} client organizations under one account with consolidated AR reporting, then $${PRACTICE_EXTRA_ORG_MONTHLY} per additional book. ${PLAN_PRICING.scale.name} is a flat $${PLAN_PRICING.scale.monthly}/mo for up to ${PRACTICE_SCALE_INCLUDED_ORGS} books.` },
-            { q: 'What payment methods does the portal accept?', a: 'Wire transfer today, for every customer. Card, ACH, and mobile-money rails are built but temporarily disabled while we finish routing payments to your own account instead of ours. No timeline promises until that\'s done.' },
+            { q: 'What payment methods does the portal accept?', a: PORTAL_PAYMENT_ANSWER },
             { q: 'Is there really a free trial?', a: `Yes. 14 days, full access to ${PLAN_PRICING.growth.name}-tier features, no credit card required.` },
-            { q: 'How does billing work?', a: `Founding customers get a manual invoice after the 14-day trial (bank transfer, Wise, or PayPal) at $${FOUNDING.monthly('growth')}/mo for ${PLAN_PRICING.growth.name}. Self-serve card checkout isn't live yet. No committed date.` },
+            { q: 'How does billing work?', a: billing.howBillingWorks },
             { q: 'Do text reminders cost extra?', a: 'Email reminders and AI drafts are included in every plan. Text messages cost money to send, so if you turn them on we pass on the message cost from our provider at cost, with no markup, and show the count on your invoice. Texts only go to customers who have opted in, and nothing sends until you approve it unless you have chosen automatic sending.' },
             { q: 'Is there a limit on invoices?', a: 'No published limit. Plans are priced per client book, not per invoice. We expect ordinary use for a business\'s own receivables; if your use is ever far beyond that, we will talk to you first and agree what to do before we limit or charge anything.' },
             { q: 'Do you take a cut of payments?', a: 'No. We don\'t apply a platform fee on top of what your payment processor already charges.' },
-            { q: 'What if I outgrow my plan?', a: 'Request an upgrade from Billing: David reviews and sends an invoice within one business day. Not yet automatic or self-serve.' },
-            { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD, EUR in ${PLAN_PRICING.growth.name}. KES, NGN, ZAR in ${PLAN_PRICING.scale.name} or custom.` },
+            { q: 'What if I outgrow my plan?', a: billing.outgrow },
+            { q: 'Do you support multi-currency?', a: `Yes. USD, GBP, AUD, CAD and EUR.` },
             { q: 'Can I switch from another tool?', a: 'Mugavi reads invoices and customers from QuickBooks Online (beta) and Xero. If your books are somewhere else, ask first and we will tell you honestly whether it will work. We do not run migrations for you.' },
 ];
 
