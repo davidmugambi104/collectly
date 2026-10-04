@@ -48,3 +48,25 @@ export function ensureReplyClassificationSchema(): Promise<void> {
   }
   return applied;
 }
+
+/** Per-mailbox UIDVALIDITY table; a new table on purpose (see schema.ts). */
+export const POLL_VALIDITY_DDL = `CREATE TABLE IF NOT EXISTS inbox_poll_validity (
+  mailbox text PRIMARY KEY,
+  uid_validity bigint NOT NULL,
+  last_reset_at timestamptz,
+  last_reset_reason text,
+  updated_at timestamptz NOT NULL DEFAULT now()
+)`;
+
+let validityApplied: Promise<void> | null = null;
+export function ensurePollValiditySchema(): Promise<void> {
+  if (process.env.USE_PGLITE === '1') return Promise.resolve();
+  if (!validityApplied) {
+    validityApplied = (async () => {
+      const { pool } = await import('@/db');
+      const client = await pool().connect();
+      try { await client.query(POLL_VALIDITY_DDL); } finally { client.release(); }
+    })().catch((e) => { validityApplied = null; throw e; });
+  }
+  return validityApplied;
+}

@@ -37,3 +37,17 @@ test('a text column (no enum) is left alone', async () => {
   assert.equal(await ensureReplyClassificationEnum((q) => db.query(q) as never), 'no_enum');
   await db.close();
 });
+
+test('drizzle/0021 runs twice on a live-like database and on a text-column one', async () => {
+  const { readFileSync } = await import('node:fs');
+  const sql = readFileSync(new URL('../../drizzle/0021_inbox_poll_validity.sql', import.meta.url), 'utf8');
+  const { db } = await liveLikeDb();
+  await db.exec(sql);
+  await db.exec(sql);
+  await db.query(`INSERT INTO inbox_messages (id, classification) VALUES ('c','unsubscribe')`);
+  const plain = new PGlite();
+  await plain.exec(sql);
+  await plain.exec(sql);
+  await db.close();
+  await plain.close();
+});

@@ -1,5 +1,5 @@
 import {
-  pgTable, text, varchar, timestamp, integer, smallint, boolean, decimal, jsonb, index, uniqueIndex, pgEnum, primaryKey, customType,
+  pgTable, text, varchar, timestamp, integer, smallint, bigint, boolean, decimal, jsonb, index, uniqueIndex, pgEnum, primaryKey, customType,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
@@ -332,6 +332,19 @@ export const deletedOrgsLog = pgTable('deleted_orgs_log', {
 export const inboxPollState = pgTable('inbox_poll_state', {
   mailbox: text('mailbox').primaryKey(),
   lastUid: integer('last_uid').notNull().default(0),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// UIDVALIDITY per polled mailbox (a separate table, not columns on
+// inbox_poll_state, so deploying before the DDL has run cannot break the
+// select-all in the outreach poller). If the server reports a different
+// value the saved UID cursor is meaningless; the poller resets it and
+// records why in last_reset_reason. See src/lib/inbox-imap-core.ts.
+export const inboxPollValidity = pgTable('inbox_poll_validity', {
+  mailbox: text('mailbox').primaryKey(),
+  uidValidity: bigint('uid_validity', { mode: 'number' }).notNull(),
+  lastResetAt: timestamp('last_reset_at', { withTimezone: true }),
+  lastResetReason: text('last_reset_reason'),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

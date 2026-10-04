@@ -1,7 +1,8 @@
 import { db } from '@/db';
-import { dunningRuns, inboxMessages, inboxPollState, reminderCopies } from '@/db/schema';
+import { dunningRuns, inboxMessages, inboxPollState, inboxPollValidity, reminderCopies } from '@/db/schema';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { handleArCustomerReply } from '@/lib/inbox-inbound';
+import { ensurePollValiditySchema } from '@/lib/inbox-schema';
 import { pollMailbox, resolveImapConfig, type PollResult } from '@/lib/inbox-imap-core';
 
 /**
@@ -30,7 +31,32 @@ export async function pollInboxReplies(): Promise<PollResult> {
   // Namespaced apart from the outreach poller's cursor.
   const cursorKey = `ar-dunning:${cfg.user}`;
 
+  // The table is new; a failure here must not stop reply polling, it only disables the UIDVALIDITY check.
+  let validityOk = true;
+  try { await ensurePollValiditySchema(); } catch (e) {
+    validityOk = false;
+    console.error('[inbox-poll] inbox_poll_validity unavailable, UIDVALIDITY not checked:', e instanceof Error ? e.message : e);
+  }
+
   return pollMailbox(cfg, {
+    ...(validityOk ? {
+      async getUidValidity() {
+        const [row] = await db.select().from(inboxPollValidity).where(eq(inboxPollValidity.mailbox, cursorKey)).limit(1);
+        return row ? row.uidValidity : null;
+      },
+      async recordUidValidity(validity: number, reset) {
+        const now = new Date();
+        const set = reset
+          ? { uidValidity: validity, lastResetAt: now, lastResetReason: `${reset.reason}. Cursor ${reset.oldCursor ?? 'none'} -> ${reset.newCursor}.`.slice(0, 500), updatedAt: now }
+          : { uidValidity: validity, updatedAt: now };
+        await db.insert(inboxPollValidity).values({ mailbox: cursorKey, ...set }).onConflictDoUpdate({ target: inboxPollValidity.mailbox, set });
+      },
+    } : {}),
+    async isKnownMessageId(messageId: string) {
+      const [row] = await db.select({ id: inboxMessages.id }).from(inboxMessages)
+        .where(sql`${inboxMessages.rawPayload}->>'messageId' = ${messageId}`).limit(1);
+      return !!row;
+    },
     async getCursor() {
       const [row] = await db.select().from(inboxPollState).where(eq(inboxPollState.mailbox, cursorKey)).limit(1);
       return row ? row.lastUid : null;
