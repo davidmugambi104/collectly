@@ -12,6 +12,8 @@ export const REPLY_CLASSIFICATIONS = [
   'general_question',
   'no_action',
   'unclassified',
+  // Added after launch. The live enum needs ALTER TYPE ... ADD VALUE; see src/lib/inbox-schema.ts.
+  'unsubscribe',
 ] as const;
 export type ReplyClassification = (typeof REPLY_CLASSIFICATIONS)[number];
 
@@ -71,4 +73,39 @@ export function parseValidDate(value: string | null | undefined): Date | null {
   if (Number.isNaN(d.getTime())) return null;
   if (d.getUTCMonth() !== Number(m[2]) - 1 || d.getUTCDate() !== Number(m[3])) return null;
   return d;
+}
+
+/**
+ * A customer asking to stop hearing from us. Deliberately plain rules, not the
+ * AI: honouring an opt-out must not depend on a model call or its mood.
+ * Looks only at what the customer typed (quoted text is already stripped).
+ * Errs towards missing a vague message over silencing someone who did not ask,
+ * except that a bare "stop" / "unsubscribe" always counts.
+ */
+const UNSUBSCRIBE_PATTERNS: RegExp[] = [
+  /^\W*(stop|stopall|unsubscribe|opt[ -]?out|remove)\W*$/i,
+  /\bunsubscribe\b/i,
+  /\bopt(?:ing)?[ -]?out\b/i,
+  /\b(?:please\s+)?stop\s+(?:all\s+)?(?:e-?mail(?:ing|s)?|send(?:ing)?|contact(?:ing)?|messag(?:e|ing)|writ(?:e|ing)|reminding|bothering|texting|calling)\b/i,
+  /\bremove\s+(?:me|my\s+(?:e-?mail|address|name|details))\b/i,
+  /\btake\s+(?:me|my\s+(?:e-?mail|address|name))\s+off\b/i,
+  /\b(?:do\s*not|don't|dont)\s+(?:e-?mail|contact|message|write\s+to)\s+me\b/i,
+  /\bno\s+more\s+(?:e-?mails?|reminders?|messages?)\b/i,
+  /\bdelete\s+(?:me|my\s+(?:e-?mail|address))\s+from\b/i,
+];
+
+export function detectUnsubscribeRequest(body: string): boolean {
+  const text = body.replace(/\s+/g, ' ').trim().slice(0, 2000);
+  if (!text) return false;
+  return UNSUBSCRIBE_PATTERNS.some((re) => re.test(text));
+}
+
+export function unsubscribeClassification(): InboxClassification {
+  return {
+    classification: 'unsubscribe',
+    confidence: 1,
+    summary: 'The customer asked to stop receiving reminders.',
+    recommendedAction: 'They are now marked do not disturb. No more reminders will be sent to this customer.',
+    suggestedPromiseDate: null,
+  };
 }

@@ -1,10 +1,11 @@
 import { db } from '@/db';
 import { invoices, customers, organizations, inboxMessages, timelineEvents } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
 import { classifyInboundReply } from '@/lib/ai/inbox';
 import { recordUsage } from '@/lib/usage-meter';
-import { autoReplyClassification, parseValidDate } from '@/lib/ai/inbox-rules';
+import { autoReplyClassification, detectUnsubscribeRequest, unsubscribeClassification, parseValidDate } from '@/lib/ai/inbox-rules';
+import { ensureReplyClassificationSchema } from '@/lib/inbox-schema';
 
 /**
  * Handle an inbound reply from an AR customer (someone who owes an
@@ -33,7 +34,10 @@ export async function handleArCustomerReply(opts: {
   const [customer] = await db.select().from(customers).where(eq(customers.id, invoice.customerId)).limit(1);
   const [org] = await db.select().from(organizations).where(eq(organizations.id, invoice.orgId)).limit(1);
 
-  const classification = opts.autoReply ? autoReplyClassification(opts.body) : await classifyInboundReply({
+  // An opt-out is matched by rules first, so it never waits on (or is lost to) the AI call.
+  const optedOut = !opts.autoReply && detectUnsubscribeRequest(opts.body);
+
+  const rawClassification = opts.autoReply ? autoReplyClassification(opts.body) : optedOut ? unsubscribeClassification() : await classifyInboundReply({
     subject: opts.subject || null,
     body: opts.body,
     customerName: customer?.name ?? null,
@@ -44,7 +48,24 @@ export async function handleArCustomerReply(opts: {
     dueDate: invoice.dueDate ? new Date(invoice.dueDate).toISOString().slice(0, 10) : null,
   });
 
-  if (!opts.autoReply) await recordUsage({ orgId: invoice.orgId, kind: 'ai_reply_classify' });
+  if (!opts.autoReply && !optedOut) await recordUsage({ orgId: invoice.orgId, kind: 'ai_reply_classify' });
+
+  // The model can also say 'unsubscribe' (e.g. "please don't write again").
+  const unsubscribe = rawClassification.classification === 'unsubscribe';
+  let classification = rawClassification;
+  if (unsubscribe) {
+    try {
+      await ensureReplyClassificationSchema();
+    } catch (e) {
+      // Never lose the opt-out because the enum could not be widened: file it as unclassified.
+      console.error('[inbox] could not add unsubscribe to reply_classification:', e instanceof Error ? e.message : e);
+      classification = { ...rawClassification, classification: 'unclassified' };
+    }
+    // Same switch as the unsubscribe link and a hard bounce. Keep the first timestamp.
+    const now = new Date();
+    await db.update(customers).set({ dndAt: now, updatedAt: now })
+      .where(and(eq(customers.id, invoice.customerId), isNull(customers.dndAt)));
+  }
 
   const [inboxMessage] = await db.insert(inboxMessages).values({
     id: nanoid(),
@@ -74,6 +95,18 @@ export async function handleArCustomerReply(opts: {
     title: `Customer replied — ${classification.classification.replace(/_/g, ' ')}`,
     description: classification.summary,
   });
+
+  if (unsubscribe) {
+    await db.insert(timelineEvents).values({
+      id: nanoid(),
+      orgId: invoice.orgId,
+      customerId: invoice.customerId,
+      invoiceId: invoice.id,
+      eventType: 'unsubscribed',
+      title: 'Customer asked to stop reminders — marked do not disturb',
+      description: opts.body.replace(/\s+/g, ' ').trim().slice(0, 200),
+    });
+  }
 
   return { handled: true, inboxMessageId: inboxMessage.id };
 }

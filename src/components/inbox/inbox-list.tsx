@@ -40,6 +40,7 @@ const CLASSIFICATION_STYLE: Record<string, { label: string; className: string }>
   needs_payment_plan: { label: 'Wants a payment plan', className: 'badge-info' },
   general_question: { label: 'General question', className: 'badge-neutral' },
   no_action: { label: 'No action needed', className: 'badge-neutral' },
+  unsubscribe: { label: 'Asked to stop', className: 'badge-warn' },
   unclassified: { label: 'Unclassified', className: 'badge-neutral' },
 };
 
