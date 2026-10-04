@@ -137,9 +137,39 @@ export type PollDeps = {
   /** The invoice a message id belongs to, or null when it is not one of our reminders. */
   findInvoiceId(candidateIds: string[]): Promise<string | null>;
   handleReply(r: ParsedReply & { invoiceId: string }): Promise<{ handled: boolean }>;
+  /** The UIDVALIDITY last seen for this mailbox, or null if never recorded. Optional: without it the poll cannot notice a renumbered mailbox. */
+  getUidValidity?(): Promise<number | null>;
+  /** Store the UIDVALIDITY now in force. `reset` is set when the cursor was moved because it changed, with why. */
+  recordUidValidity?(validity: number, reset: UidValidityReset | null): Promise<void>;
+  /** True when a message with this Message-ID was already filed, so it is never imported twice. */
+  isKnownMessageId?(messageId: string): Promise<boolean>;
 };
 
-export type PollResult = { scanned: number; matched: number; errors: number; skipped?: string };
+export type UidValidityReset = {
+  reason: string;
+  oldValidity: number | null;
+  newValidity: number;
+  oldCursor: number | null;
+  newCursor: number;
+};
+
+export type PollResult = { scanned: number; matched: number; errors: number; skipped?: string; uidValidityReset?: string };
+
+/**
+ * UIDs are only meaningful within one UIDVALIDITY. If the server reports a
+ * different value (mailbox restored, migrated, recreated) the saved cursor
+ * points at unrelated messages: either old mail would be read again or new
+ * mail skipped. Returns why the cursor must be reset, or null when it is safe.
+ */
+export function uidValidityProblem(o: { stored: number | null; current: number | null; lastUid: number; uidNext: number }): string | null {
+  if (o.current !== null && o.stored !== null && o.stored !== o.current) {
+    return `UIDVALIDITY changed from ${o.stored} to ${o.current}; saved UIDs no longer refer to the same messages`;
+  }
+  if (o.lastUid >= o.uidNext) {
+    return `saved cursor ${o.lastUid} is ahead of the mailbox (next UID ${o.uidNext}); the mailbox was probably renumbered`;
+  }
+  return null;
+}
 
 /**
  * Read-only: opens the mailbox with EXAMINE and never sets a flag, so mail the
@@ -164,10 +194,26 @@ export async function pollMailbox(cfg: ImapConfig, deps: PollDeps): Promise<Poll
     const box = await client.mailboxOpen(cfg.mailbox, { readOnly: true });
     const uidNext = box.uidNext;
     const lastUid = await deps.getCursor();
+    const current = Number.isFinite(Number(box.uidValidity)) && Number(box.uidValidity) > 0 ? Number(box.uidValidity) : null;
+    const stored = deps.getUidValidity ? await deps.getUidValidity() : null;
     if (lastUid === null) {
       await deps.setCursor(Math.max(0, uidNext - 1), true);
+      if (current !== null) await deps.recordUidValidity?.(current, null);
       return { scanned, matched, errors };
     }
+    const problem = uidValidityProblem({ stored, current, lastUid, uidNext });
+    if (problem) {
+      // Do not re-read the mailbox from UID 1: that would classify old mail as new.
+      // Start from the end, like a first run, and say why. Mail that arrived since
+      // the last poll but before this one is not read; the recorded reason tells the owner.
+      const newCursor = Math.max(0, uidNext - 1);
+      await deps.setCursor(newCursor, false);
+      if (current !== null) await deps.recordUidValidity?.(current, { reason: problem, oldValidity: stored, newValidity: current, oldCursor: lastUid, newCursor });
+      console.warn(`[inbox-poll] ${problem}; cursor reset to ${newCursor}`);
+      return { scanned, matched, errors, uidValidityReset: problem };
+    }
+    // First poll after this feature shipped: remember the value so a later change is caught.
+    if (stored === null && current !== null) await deps.recordUidValidity?.(current, null);
     const fromUid = lastUid + 1;
     if (fromUid >= uidNext) return { scanned, matched, errors };
 
@@ -190,6 +236,9 @@ export async function pollMailbox(cfg: ImapConfig, deps: PollDeps): Promise<Poll
         console.error(`[inbox-poll] unparseable uid ${msg.uid}:`, e instanceof Error ? e.message : e);
       }
       try {
+        if (reply && reply.messageId && deps.isKnownMessageId && (await deps.isKnownMessageId(reply.messageId))) {
+          reply = null; // already filed (a renumbered mailbox can show the same mail under a new UID)
+        }
         if (reply && reply.candidateIds.length > 0) {
           const invoiceId = await deps.findInvoiceId(reply.candidateIds);
           if (invoiceId) {

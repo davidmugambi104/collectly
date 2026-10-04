@@ -12,6 +12,7 @@ export class FakeImapServer {
   readonly commands: string[] = [];
   messages: FakeMessage[] = [];
   uidNext = 1;
+  uidValidity = 1;
   password = 'app-password-for-tests';
   user = 'replies@test.invalid';
   /** When set, UID FETCH replies NO, to exercise a failing mailbox. */
@@ -32,6 +33,13 @@ export class FakeImapServer {
   async stop(): Promise<void> {
     for (const s of this.sockets) s.destroy();
     await new Promise<void>((res) => this.server.close(() => res()));
+  }
+
+  /** Simulate the server renumbering the mailbox (restore, migration): new UIDVALIDITY, new UIDs. */
+  renumber(newValidity: number): void {
+    this.uidValidity = newValidity;
+    this.messages = this.messages.map((m, i) => ({ ...m, uid: i + 1 }));
+    this.uidNext = this.messages.length + 1;
   }
 
   /** Deliver a message; returns its UID. */
@@ -105,7 +113,7 @@ export class FakeImapServer {
         if (!authed) { sock.write(`${tag} NO login first\r\n`); break; }
         sock.write(
           `* ${this.messages.length} EXISTS\r\n* 0 RECENT\r\n* FLAGS (\\Seen \\Answered \\Flagged \\Deleted \\Draft)\r\n` +
-          `* OK [UIDVALIDITY 1] ok\r\n* OK [UIDNEXT ${this.uidNext}] ok\r\n`,
+          `* OK [UIDVALIDITY ${this.uidValidity}] ok\r\n* OK [UIDNEXT ${this.uidNext}] ok\r\n`,
         );
         sock.write(`${tag} OK [${cmd === 'EXAMINE' ? 'READ-ONLY' : 'READ-WRITE'}] ${cmd} completed\r\n`);
         break;

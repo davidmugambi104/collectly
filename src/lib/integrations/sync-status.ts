@@ -33,6 +33,12 @@ export function xeroSyncedStatus(o: { xeroStatus: string | undefined; total: num
   return statusFromAmounts(o);
 }
 
+/** QuickBooks has no status field; a voided or deleted invoice is closed at the source (written off, as with Xero's VOIDED/DELETED). Otherwise the amounts decide. */
+export function qboSyncedStatus(o: { closure: 'voided' | 'deleted' | null; total: number; due: number; dueDate: Date; now: Date }): SyncedStatus {
+  if (o.closure) return 'written_off';
+  return statusFromAmounts(o);
+}
+
 /** The status to store for an invoice we already have. Paid or closed at the source always wins; an owner's dispute or write-off holds while it is still open. */
 export function reconcileStatus(local: string | null | undefined, incoming: SyncedStatus): LocalStatus {
   if (local && OWNER_DECISIONS.has(local) && OPEN_AT_SOURCE.has(incoming)) return local as LocalStatus;

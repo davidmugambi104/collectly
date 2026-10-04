@@ -46,6 +46,7 @@ const CLASSIFICATION_GUIDE = `
 - needs_payment_plan: they ask for an installment plan or more time in general (no specific date given).
 - general_question: any other question that isn't about payment status.
 - no_action: acknowledgement, out-of-office, or anything not requiring a response.
+- unsubscribe: they ask to stop receiving emails/reminders (stop, unsubscribe, remove me, do not contact me).
 - unclassified: use only if none of the above fit at all.
 `.trim();
 

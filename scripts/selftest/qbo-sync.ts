@@ -10,6 +10,13 @@ const customers = Array.from({ length: 1500 }, (_, i) => ({ Id: `c${i}`, Display
 const open = Array.from({ length: 2300 }, (_, i) => ({ Id: `q${i}`, DocNumber: `Q-${i}`, CustomerRef: { value: `c${i % 1500}`, name: `Cust ${i % 1500}` }, TotalAmt: 100, Balance: 100, DueDate: '2026-07-01', TxnDate: '2026-06-01', CurrencyRef: { value: 'USD' } }));
 const byId: Record<string, any> = { 'pq1': { Id: 'pq1', DocNumber: 'PQ1', CustomerRef: { value: 'c1' }, TotalAmt: 500, Balance: 0, DueDate: '2026-07-01', TxnDate: '2026-06-01', CurrencyRef: { value: 'USD' } } };
 const calls: string[] = [];
+// Stand-ins for the new cases: a voided invoice (found by id, Balance 0, PrivateNote Voided), a deleted one
+// (absent from queries; the direct read answers Fault 610), one the direct read fails on with a 500, and a
+// company whose home currency is GBP (no CurrencyRef on its invoice).
+byId['vq1'] = { Id: 'vq1', DocNumber: 'V1', CustomerRef: { value: 'c1' }, TotalAmt: 0, Balance: 0, DueDate: '2026-07-01', TxnDate: '2026-06-01', PrivateNote: 'Voided' };
+byId['gbp1'] = { Id: 'gbp1', DocNumber: 'G1', CustomerRef: { value: 'c1' }, TotalAmt: 80, Balance: 80, DueDate: '2026-07-01', TxnDate: '2026-06-01' };
+open.push({ Id: 'gbp1', DocNumber: 'G1', CustomerRef: { value: 'c1', name: 'Cust 1' }, TotalAmt: 80, Balance: 80, DueDate: '2026-07-01', TxnDate: '2026-06-01' } as any);
+let homeCurrency: string | null = 'GBP'; // null: Preferences read fails, falls back
 let creditsDown = false;
 let paymentsDown = false;
 const payments = [{ Id: 'p1', CustomerRef: { value: 'c5' }, UnappliedAmt: 30, CurrencyRef: { value: 'USD' } }, { Id: 'p2', CustomerRef: { value: 'c7' }, UnappliedAmt: 75, CurrencyRef: { value: 'USD' } }, { Id: 'p3', CustomerRef: { value: 'c8' }, UnappliedAmt: 0, CurrencyRef: { value: 'USD' } }];
@@ -18,6 +25,10 @@ const server = http.createServer((req, res) => {
   const u = new URL(req.url!, 'http://x'); const q = u.searchParams.get('query') ?? ''; calls.push(q.replace(/SELECT .* FROM/, 'SELECT * FROM').slice(0, 90));
   const send = (o: unknown) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(o)); };
   const start = Number(/STARTPOSITION (\d+)/.exec(q)?.[1] ?? 1); const max = Number(/MAXRESULTS (\d+)/.exec(q)?.[1] ?? 100);
+  if (u.pathname.endsWith('/preferences')) { if (!homeCurrency) { res.writeHead(500); res.end('{}'); return; } return send({ Preferences: { CurrencyPrefs: { HomeCurrency: { value: homeCurrency }, MultiCurrencyEnabled: false } } }); }
+  if (/\/companyinfo\//.test(u.pathname)) return send({ CompanyInfo: { CompanyName: 'Stand-in Co', Country: 'GB' } });
+  const direct = /\/invoice\/([^/?]+)/.exec(u.pathname);
+  if (direct) { const id = direct[1]; if (id === 'dq-flaky') { res.writeHead(500); res.end('{}'); return; } if (byId[id]) return send({ Invoice: byId[id] }); res.writeHead(400, { 'content-type': 'application/json' }); res.end(JSON.stringify({ Fault: { Error: [{ Message: 'Object Not Found', code: '610' }], type: 'ValidationFault' } })); return; }
   if (/FROM Payment/.test(q)) { if (paymentsDown) { res.writeHead(500); res.end('{}'); return; } return send({ QueryResponse: { Payment: payments.filter((m) => m.UnappliedAmt > 0).slice(start - 1, start - 1 + max) } }); }
   if (/FROM CreditMemo/.test(q)) { if (creditsDown) { res.writeHead(500); res.end('{}'); return; } return send({ QueryResponse: { CreditMemo: memos.filter((m) => m.Balance > 0).slice(start - 1, start - 1 + max) } }); }
   if (/FROM Customer/.test(q)) return send({ QueryResponse: { Customer: customers.slice(start - 1, start - 1 + max) } });
@@ -38,11 +49,14 @@ async function main() {
   await db.insert(integrations).values({ orgId: org.id, provider: 'quickbooks', status: 'connected', accessToken: 't', refreshToken: 'r', expiresAt: new Date(Date.now() + 86_400_000), realmId: 'R1' });
   const [cust] = await db.select().from(ct).where(eq(ct.orgId, org.id)).limit(1);
   const hold = (ext: string, number: string, status: any) => db.insert(invoices).values({ orgId: org.id, customerId: cust.id, externalId: ext, number, status, amount: '500', amountPaid: '0', currency: 'USD', issueDate: new Date('2026-06-01'), dueDate: new Date('2026-07-01') });
-  await hold('pq1', 'PQ1', 'overdue'); await hold('q5', 'Q-5', 'disputed'); await hold('q6', 'Q-6', 'written_off');
+  await hold('pq1', 'PQ1', 'overdue'); await hold('vq1', 'V1', 'overdue'); await hold('dq1', 'D1', 'overdue'); await hold('dq-flaky', 'D2', 'overdue'); await hold('dq-disp', 'D3', 'disputed'); await hold('q5', 'Q-5', 'disputed'); await hold('q6', 'Q-6', 'written_off');
   const r = await syncQboForOrg(org.id);
   console.log('RESULT', JSON.stringify({ customers: r.customersUpserted, invoices: r.invoicesUpserted, errors: r.errors, truncated: r.truncated }));
   const st = async (e: string) => (await db.select({ s: invoices.status }).from(invoices).where(and(eq(invoices.orgId, org.id), eq(invoices.externalId, e))).limit(1))[0]?.s;
-  for (const e of ['pq1', 'q5', 'q6', 'q7', 'q2299', 'q1000', 'q1001']) console.log('STATUS', e, await st(e));
+  for (const e of ['pq1', 'vq1', 'dq1', 'dq-flaky', 'dq-disp', 'q5', 'q6', 'q7', 'q2299', 'q1000', 'q1001']) console.log('STATUS', e, await st(e));
+  console.log('CLOSED voided/deleted written off, flaky read left open:', JSON.stringify({ closed: r.invoicesClosed, voided: await st('vq1'), deleted: await st('dq1'), deletedDisputed: await st('dq-disp'), flakyStaysOpen: await st('dq-flaky'), flakyErrorReported: r.errors.some((e: string) => e.includes('dq-flaky')) }));
+  console.log('CURRENCY missing CurrencyRef -> home currency:', (await db.select({ c: invoices.currency }).from(invoices).where(and(eq(invoices.orgId, org.id), eq(invoices.externalId, 'gbp1'))).limit(1))[0]?.c);
+  console.log('CREDIT currency (stand-in memos have USD refs):', (await db.select({ c: (await import('@/db/schema')).customerCredits.currency }).from((await import('@/db/schema')).customerCredits).where(eq((await import('@/db/schema')).customerCredits.orgId, org.id)).limit(1))[0]?.c);
   const { customerCredits } = await import('@/db/schema');
   const credit = async () => (await db.select({ a: customerCredits.amount, cu: customerCredits.customerId }).from(customerCredits).where(eq(customerCredits.orgId, org.id))).map((c: { a: string }) => c.a).join(',');
   console.log('CREDITS after sync (expect memos 400 + unapplied payment 30 = 430.00 for c5, 75.00 for c7):', await credit());
@@ -60,6 +74,9 @@ async function main() {
   creditsDown = true;
   const r2 = await syncQboForOrg(org.id);
   console.log('CREDITS after failed credit read (expect unchanged):', await credit(), '| errors:', r2.errors.filter((e: string) => e.startsWith('credit')).join(';').slice(0, 80));
+  // Preferences unreadable: falls back to the CompanyInfo country (GB -> GBP), never silently USD for a UK company.
+  homeCurrency = null; await db.delete(invoices).where(eq(invoices.externalId, 'gbp1')); await syncQboForOrg(org.id);
+  console.log('CURRENCY with Preferences down (country fallback):', (await db.select({ c: invoices.currency }).from(invoices).where(and(eq(invoices.orgId, org.id), eq(invoices.externalId, 'gbp1'))).limit(1))[0]?.c);
   console.log('CALLS', calls.join('\nCALLS '));
   server.close(); process.exit(0);
 }
