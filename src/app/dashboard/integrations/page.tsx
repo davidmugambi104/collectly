@@ -14,6 +14,7 @@ import { IntegrationControls } from './integration-controls';
 import { RemoveImportedButton } from '@/components/dunning/remove-imported-button';
 import { previewImportedData } from '@/lib/integrations/imported-data-db';
 import { describeImported, type ImportProvider, type ImportedSummary } from '@/lib/integrations/imported-data';
+import { CONTACT } from '@/lib/site-contact';
 
 const PROVIDER_LABELS: Record<string, string> = {
   quickbooks: 'QuickBooks Online',
@@ -135,7 +136,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
                   <li key={k}><b className="capitalize">{k}:</b> {s.reason}</li>
                 ))}
               </ul>
-              <p className="app-meta mt-3 font-normal leading-4">For the production app, each provider needs: (1) a developer app on the platform&apos;s site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href="mailto:hello@getcollectly.app?subject=Integrations%20setup%20help">Email Davie</a> if you need help.</p>
+              <p className="app-meta mt-3 font-normal leading-4">For the production app, each provider needs: (1) a developer app on the platform&apos;s site, (2) the prod callback URL registered, (3) the client ID/secret set as env vars on Vercel. <a className="link" href={`mailto:${CONTACT.hello}?subject=Integrations%20setup%20help`}>Email Davie</a> if you need help.</p>
             </div>
           </div>
         </div>
@@ -149,7 +150,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
         <IntegrationCard logo="S" name="Stripe" description="Card payments through Stripe are not available yet." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt?.toISOString() ?? null} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
-        <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref="mailto:hello@getcollectly.app?subject=Integration%20request" docsHref="#" ctaLabel="Request" />
+        <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref={`mailto:${CONTACT.hello}?subject=Integration%20request`} docsHref="#" ctaLabel="Request" />
       </div>
 
       <div className="mt-8 card">

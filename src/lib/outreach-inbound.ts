@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { pool } from '@/db';
 import { errorMessage } from '@/lib/utils';
+import { CONTACT, placeholderEmail } from '@/lib/site-contact';
 
 /**
  * Resend inbound webhook handler for outreach replies.
@@ -174,7 +175,7 @@ export async function classifyAndPersistOutreachReply(opts: {
     );
 
     // Notify founder
-    const notifyEmail = process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app';
+    const notifyEmail = process.env.LEAD_NOTIFY_EMAIL ?? CONTACT.notify;
     try {
       const { sendEmail } = await import('@/lib/infra');
       await sendEmail({

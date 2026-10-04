@@ -33,7 +33,7 @@ export function PlaybookForm() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'collectly-dso-playbook.pdf';
+      a.download = 'mugavi-dso-playbook.pdf';
       a.click();
       URL.revokeObjectURL(url);
       setDone(true);

@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const summary = await getExecSummary(orgId);
   if (format === 'md' || format === 'markdown') {
     const md = renderMarkdown(summary);
-    return new NextResponse(md, { headers: { 'content-type': 'text/markdown; charset=utf-8', 'content-disposition': `attachment; filename="collectly-${summary.periodStart}.md"` } });
+    return new NextResponse(md, { headers: { 'content-type': 'text/markdown; charset=utf-8', 'content-disposition': `attachment; filename="mugavi-${summary.periodStart}.md"` } });
   }
   return NextResponse.json(summary);
 }

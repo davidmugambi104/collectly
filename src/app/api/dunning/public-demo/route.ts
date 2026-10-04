@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     // Rewrite the link to make it obviously a demo URL (don't use the
     // real prod domain so a curious visitor doesn't bookmark it).
     result.body = result.body.replace(
-      /https:\/\/getcollectly\.app\/pay\/demo-invoice-id/g,
+      /https:\/\/(?:getcollectly\.app|mugavi\.com)\/pay\/demo-invoice-id/g,
       'https://mugavi.com/pay/[your-invoice-id]'
     );
     return NextResponse.json(result);

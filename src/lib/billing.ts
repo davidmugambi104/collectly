@@ -7,6 +7,7 @@ import { nanoid, PLAN_PRICING } from '@/lib/utils';
 import { recordEvent } from '@/lib/events';
 import { recordFunnelEvent } from '@/lib/funnel-events';
 import { applyPayment, applyRefund } from '@/lib/billing-math';
+import { CONTACT, placeholderEmail } from '@/lib/site-contact';
 
 export type PlanKey = keyof typeof PLAN_PRICING;
 
@@ -383,7 +384,7 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
   const planInfo = PLAN_PRICING[opts.plan];
   if (!planInfo) throw new Error('invalid plan');
 
-  const customerEmail = `${org.slug}@getcollectly.app`;
+  const customerEmail = placeholderEmail(org.slug);
 
   // Books the owner belongs to and what the rule says the plan costs for that many,
   // so the invoice is right the first time. The owner is who pays for the plan.
@@ -448,7 +449,7 @@ export async function recordUpgradeRequest(opts: { orgId: string; plan: PlanKey;
   // Notify Davie (best-effort)
   try {
     await sendEmail({
-      to: process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app',
+      to: process.env.LEAD_NOTIFY_EMAIL ?? CONTACT.notify,
       subject: `[Upgrade request] ${org.name} → ${planInfo.name} ($${planInfo.monthly}/mo)`,
       html: [
         `<p><strong>New upgrade request.</strong></p>`,
@@ -496,14 +497,14 @@ export async function recordCancelRequest(opts: { orgId: string; kind: import('@
   const notes = buildCancelNotes(opts.kind, opts.note);
   const [created] = await db
     .insert(upgradeRequests)
-    .values({ orgId: opts.orgId, plan, customerEmail: `${org.slug}@getcollectly.app`, businessName: org.name, notes, status: 'pending' })
+    .values({ orgId: opts.orgId, plan, customerEmail: placeholderEmail(org.slug), businessName: org.name, notes, status: 'pending' })
     .returning();
 
   const [owner] = await db.select({ email: users.email, name: users.name }).from(users).where(eq(users.id, org.ownerId)).limit(1);
 
   try {
     await sendEmail({
-      to: process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app',
+      to: process.env.LEAD_NOTIFY_EMAIL ?? CONTACT.notify,
       ...founderEmail({ kind: opts.kind, orgName: org.name, orgSlug: org.slug, planName: planInfo.name, ownerEmail: owner?.email ?? null, notes, requestId: created.id, appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com' }),
     });
   } catch (e) {

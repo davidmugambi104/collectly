@@ -126,7 +126,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                 <li>You can keep using Mugavi during this window — no interruption.</li>
               </ol>
               <p className="mt-2 text-xs text-success-900/70">
-                Questions? Reply to the invoice email or reach David at <a href="mailto:david@getcollectly.app" className="underline">david@getcollectly.app</a>.
+                Questions? Reply to the invoice email or reach David at <a href={`mailto:${CONTACT.david}`} className="underline">{CONTACT.david}</a>.
               </p>
             </div>
           </div>

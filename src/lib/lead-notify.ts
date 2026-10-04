@@ -18,6 +18,7 @@
  */
 import { sendEmail } from '@/lib/infra';
 import { buildLeadEmail, type LeadNotification } from '@/lib/lead-email';
+import { CONTACT, placeholderEmail } from '@/lib/site-contact';
 
 export * from '@/lib/lead-email';
 
@@ -32,7 +33,7 @@ export async function sendLeadNotification(
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     const { subject, html } = buildLeadEmail(data);
-    const to = process.env.LEAD_NOTIFY_EMAIL ?? 'davie@getcollectly.app';
+    const to = process.env.LEAD_NOTIFY_EMAIL ?? CONTACT.notify;
     await sendEmail({ to, subject, html });
     return { ok: true };
   } catch (e: unknown) {

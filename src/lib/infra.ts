@@ -3,6 +3,7 @@ import { Twilio } from 'twilio';
 import Stripe from 'stripe';
 import { makeStripe } from '@/lib/stripe-client';
 import { Redis } from '@upstash/redis';
+import { CONTACT } from '@/lib/site-contact';
 
 let _resend: Resend | null = null;
 let _twilio: Twilio | null = null;
@@ -105,7 +106,7 @@ export type SendSmsResult =
 export function getDefaultFrom(): string {
   const configured = process.env.RESEND_FROM_EMAIL;
   if (configured && /<.*>/.test(configured)) return configured;
-  return `${process.env.RESEND_FROM_NAME ?? 'Mugavi'} <${configured ?? 'hello@getcollectly.app'}>`;
+  return `${process.env.RESEND_FROM_NAME ?? 'Mugavi'} <${configured ?? CONTACT.hello}>`;
 }
 
 export async function sendEmail(opts: { to: string; subject: string; html: string; from?: string; replyTo?: string; headers?: Record<string, string> }): Promise<SendEmailResult> {
