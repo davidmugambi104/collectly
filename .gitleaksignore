@@ -1,0 +1,2 @@
+# Test placeholder "sk_test_SECRETVALUE" used to prove the billing status never echoes a key. Not a real key.
+1bd7063dea15cd2fad1a411deb69d52eae023c3c:src/lib/stripe-billing-config.test.ts:stripe-access-token:35
