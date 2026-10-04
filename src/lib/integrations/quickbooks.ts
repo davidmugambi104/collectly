@@ -12,10 +12,11 @@ import { withMinorVersion } from './qbo-minor-version';
  *    of expiry, so callers can treat tokens as always-valid.
  */
 import { db } from '@/db';
-import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
+import { integrations, customers as customersTbl, invoices as invoicesTbl, organizations, timelineEvents } from '@/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 import { fetchAllPages, chunk } from '@/lib/integrations/paging';
-import { needsLookup, reconcileStatus, statusFromAmounts } from '@/lib/integrations/sync-status';
+import { needsLookup, reconcileStatus, qboSyncedStatus } from '@/lib/integrations/sync-status';
+import { qboClosure, isQboNotFound, resolveHomeCurrency } from '@/lib/integrations/qbo-sync-rules';
 import { nanoid, errorMessage } from '@/lib/utils';
 import { replaceCredits } from '@/lib/integrations/credits';
 
@@ -45,6 +46,10 @@ type QboInvoice = {
   Balance?: number;
   CurrencyRef?: { value?: string };
   CustomerRef?: { value?: string; name?: string };
+  /** QuickBooks writes "Voided" here when an invoice is voided. */
+  PrivateNote?: string;
+  /** Only change-data payloads carry this ("Deleted"). */
+  status?: string;
 };
 type QboQuery<K extends string, T> = { QueryResponse?: Partial<Record<K, T[]>> };
 
@@ -303,7 +308,7 @@ export async function qboFetchAgingReport(orgId: string) {
   return qboFetch(orgId, `/reports/AgedReceivables?${new URLSearchParams({ query: 'SELECT * FROM AgeingReport MAXRESULTS 1000' }).toString()}`);
 }
 
-const QBO_INVOICE_FIELDS = 'Id, DocNumber, CustomerRef, TotalAmt, Balance, DueDate, TxnDate, CurrencyRef, EmailStatus';
+const QBO_INVOICE_FIELDS = 'Id, DocNumber, CustomerRef, TotalAmt, Balance, DueDate, TxnDate, CurrencyRef, EmailStatus, PrivateNote';
 const QBO_PAGE = 1000;
 const QBO_MAX_PAGES = 10;
 
@@ -335,6 +340,26 @@ async function qboGetInvoicesByIds(orgId: string, ids: string[]): Promise<QboInv
   return out;
 }
 
+/**
+ * The company's home currency, read once per sync. QuickBooks leaves CurrencyRef
+ * off every transaction of a single-currency company, so a missing one means
+ * home currency. Either read can fail without stopping the sync; the fallbacks
+ * are in resolveHomeCurrency.
+ */
+export async function qboHomeCurrency(orgId: string): Promise<string> {
+  const integ = await getFreshQboToken(orgId);
+  let preferences: unknown = null;
+  let companyInfo: unknown = null;
+  try { preferences = await qboFetch(orgId, '/preferences'); } catch (e) { console.warn('[qbo] preferences read failed:', errorMessage(e)); }
+  try { companyInfo = await qboFetch(orgId, `/companyinfo/${integ.realmId}`); } catch (e) { console.warn('[qbo] companyinfo read failed:', errorMessage(e)); }
+  let orgBaseCurrency: string | null = null;
+  try {
+    const [o] = await db.select({ c: organizations.baseCurrency }).from(organizations).where(eq(organizations.id, orgId)).limit(1);
+    orgBaseCurrency = o?.c ?? null;
+  } catch { /* fall through to the default */ }
+  return resolveHomeCurrency({ preferences: preferences as never, companyInfo: companyInfo as never, orgBaseCurrency }).currency;
+}
+
 const QBO_CUSTOMER_FIELDS = 'Id, DisplayName, CompanyName, PrimaryEmailAddr, PrimaryPhone, CurrencyRef';
 
 /** List customers from QBO (first page). */
@@ -362,17 +387,17 @@ async function qboListUnappliedPaymentsFrom(orgId: string, startPosition: number
   return res?.QueryResponse?.Payment ?? [];
 }
 
-export async function qboListCredits(orgId: string): Promise<{ credits: Array<{ customerExternalId: string; currency: string; amount: number }>; truncated: boolean }> {
+export async function qboListCredits(orgId: string, homeCurrency = 'USD'): Promise<{ credits: Array<{ customerExternalId: string; currency: string; amount: number }>; truncated: boolean }> {
   const all = await fetchAllPages((page) => qboListCreditMemosFrom(orgId, 1 + (page - 1) * QBO_PAGE), QBO_PAGE, QBO_MAX_PAGES);
   const credits = all.items
     .filter((m: QboCreditMemo) => Number(m.Balance ?? 0) > 0 && m.CustomerRef?.value)
-    .map((m: QboCreditMemo) => ({ customerExternalId: String(m.CustomerRef!.value), currency: String(m.CurrencyRef?.value ?? 'USD'), amount: Number(m.Balance) }));
+    .map((m: QboCreditMemo) => ({ customerExternalId: String(m.CustomerRef!.value), currency: String(m.CurrencyRef?.value ?? homeCurrency), amount: Number(m.Balance) }));
   // A failed payments read throws, so the caller keeps the credit it already had
   // instead of storing a total that is missing unapplied payments.
   const pays = await fetchAllPages((page) => qboListUnappliedPaymentsFrom(orgId, 1 + (page - 1) * QBO_PAGE), QBO_PAGE, QBO_MAX_PAGES);
   for (const p of pays.items as QboPayment[]) {
     if (Number(p.UnappliedAmt ?? 0) > 0 && p.CustomerRef?.value) {
-      credits.push({ customerExternalId: String(p.CustomerRef.value), currency: String(p.CurrencyRef?.value ?? 'USD'), amount: Number(p.UnappliedAmt) });
+      credits.push({ customerExternalId: String(p.CustomerRef.value), currency: String(p.CurrencyRef?.value ?? homeCurrency), amount: Number(p.UnappliedAmt) });
     }
   }
   return { credits, truncated: all.truncated || pays.truncated };
@@ -432,6 +457,8 @@ interface QboSyncResult {
   customersUpserted: number;
   invoicesUpserted: number;
   invoicesMarkedPaid: number;
+  /** Invoices voided or deleted in QuickBooks that were written off here. */
+  invoicesClosed?: number;
   durationMs: number;
   errors: string[];
   /** True if a list query hit its MAXRESULTS cap — the sync completed
@@ -455,7 +482,11 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   let customersUpserted = 0;
   let invoicesUpserted = 0;
   let invoicesMarkedPaid = 0;
+  let invoicesClosed = 0;
   let truncated = false;
+  // Looked up once, the first time a currency is needed, and shared by invoices and credit.
+  let homeCurrencyP: Promise<string> | null = null;
+  const home = (): Promise<string> => (homeCurrencyP ??= qboHomeCurrency(orgId).catch(() => 'USD'));
   const QBO_PAGE_SIZE = 1000; // matches MAXRESULTS in qboListCustomers/qboListOpenInvoices
 
   // 1. Customers
@@ -516,9 +547,29 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
     errors.push(`invoices: ${errorMessage(e)}`);
   }
 
+  // Voided or deleted in QuickBooks: stop chasing it. Written off, as Xero's VOIDED/DELETED are.
+  // Amounts on our side are left as they were, and an invoice we never imported is not created.
+  const closeInvoice = async (externalId: string, closure: 'voided' | 'deleted'): Promise<void> => {
+    const [row] = await db
+      .select({ id: invoicesTbl.id, status: invoicesTbl.status, customerId: invoicesTbl.customerId, number: invoicesTbl.number })
+      .from(invoicesTbl)
+      .where(and(eq(invoicesTbl.orgId, orgId), eq(invoicesTbl.externalId, externalId)))
+      .limit(1);
+    if (!row || row.status === 'written_off') return;
+    await db.update(invoicesTbl).set({ status: qboSyncedStatus({ closure, total: 0, due: 0, dueDate: new Date(), now: new Date() }), paidAt: null, updatedAt: new Date() }).where(eq(invoicesTbl.id, row.id));
+    await db.insert(timelineEvents).values({
+      id: nanoid(), orgId, customerId: row.customerId, invoiceId: row.id, eventType: 'invoice_closed',
+      title: `Invoice ${row.number} was ${closure} in QuickBooks`,
+      description: 'Marked written off so no more reminders go out. Reopen it if this was a mistake.',
+    });
+    invoicesClosed++;
+  };
+
   const applyInvoice = async (inv: QboInvoice): Promise<void> => {
     try {
       const externalId = String(inv.Id);
+      const closure = qboClosure(inv);
+      if (closure) { await closeInvoice(externalId, closure); return; }
       const customerExternalId = String(inv.CustomerRef?.value ?? '');
       if (!customerExternalId) return;
 
@@ -552,11 +603,11 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
       const total = Number(inv.TotalAmt ?? 0);
       const balance = Number(inv.Balance ?? 0);
       const amountPaid = Math.max(0, total - balance);
-      const currency = inv.CurrencyRef?.value ?? 'USD';
+      const currency = inv.CurrencyRef?.value ?? (await home());
       const issueDate = inv.TxnDate ? new Date(inv.TxnDate) : new Date();
       const dueDate = inv.DueDate ? new Date(inv.DueDate) : issueDate;
       // In QBO, Balance=0 means Paid. Balance < Total means Partial.
-      const syncedStatus = statusFromAmounts({ total, due: balance, dueDate, now: new Date() });
+      const syncedStatus = qboSyncedStatus({ closure: null, total, due: balance, dueDate, now: new Date() });
 
       const existing = await db
         .select({ id: invoicesTbl.id, status: invoicesTbl.status, paidAt: invoicesTbl.paidAt })
@@ -623,7 +674,23 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
     const missing = held
       .filter((h: { externalId: string | null; status: string }) => h.externalId && needsLookup(h.status) && !seen.has(h.externalId))
       .map((h: { externalId: string | null }) => h.externalId as string);
-    if (missing.length > 0) for (const inv of await qboGetInvoicesByIds(orgId, missing)) await applyInvoice(inv);
+    if (missing.length > 0) {
+      const found = await qboGetInvoicesByIds(orgId, missing);
+      for (const inv of found) await applyInvoice(inv);
+      // A deleted invoice is not returned by any query. Ask for it directly and close it only on
+      // a clear "not found"; any other failure (throttle, auth, outage) leaves it open and is reported.
+      const returned = new Set(found.map((i) => String(i.Id)));
+      for (const id of missing.filter((m: string) => !returned.has(m))) {
+        try {
+          const one = (await qboGetInvoice(orgId, id)) as { Invoice?: QboInvoice };
+          if (one?.Invoice) await applyInvoice(one.Invoice);
+          else await closeInvoice(id, 'deleted');
+        } catch (e: unknown) {
+          if (isQboNotFound(e)) await closeInvoice(id, 'deleted');
+          else errors.push(`reconcile invoice ${id}: ${errorMessage(e)}`);
+        }
+      }
+    }
   } catch (e: unknown) {
     errors.push(`reconcile: ${errorMessage(e)}`);
   }
@@ -632,7 +699,7 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
   // 3a. Unapplied credit memos. Only stored when read in full, so a failed or
   // cut-off read never erases real credit and restarts the chasing.
   try {
-    const found = await qboListCredits(orgId);
+    const found = await qboListCredits(orgId, await home());
     if (!found.truncated) await replaceCredits(orgId, found.credits);
     else errors.push('credit (memos or unapplied payments): too many to read in one sync, so credit was left as it was');
   } catch (e: unknown) {
@@ -644,7 +711,7 @@ export async function syncQboForOrg(orgId: string): Promise<QboSyncResult> {
     .where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks')));
 
   if (truncated) errors.push('sync stopped at its limit (10,000 customers or open invoices), so some may not have been imported');
-  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, durationMs: Date.now() - t0, errors, truncated };
+  return { customersUpserted, invoicesUpserted, invoicesMarkedPaid, invoicesClosed, durationMs: Date.now() - t0, errors, truncated };
 }
 
 /**
