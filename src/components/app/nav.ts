@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Inbox, FileText, Building2, ArrowDownToLine,
-  Send, TrendingUp, History, BarChart3, PhoneCall, Percent, Plug, Settings, MessageSquareText, Layers, type LucideIcon,
+  Send, TrendingUp, History, BarChart3, PhoneCall, Percent, Plug, Settings, MessageSquareText, Layers, Filter, type LucideIcon,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -15,6 +15,8 @@ export type NavItem = {
   showTasks?: boolean;
   /** Only shown to people who belong to more than one organization (a practice with several client books). */
   onlyWithManyBooks?: boolean;
+  /** Only shown to Mugavi admins (ADMIN_EMAILS). The page itself re-checks. */
+  adminOnly?: boolean;
   /** Sub-destinations, revealed only while this section is active. */
   children?: { href: string; label: string }[];
 };
@@ -90,6 +92,7 @@ export const NAV_GROUPS: NavGroup[] = [
  * also absent by design; it hangs off the trial meter and Settings instead.
  */
 export const UTILITY_NAV: NavItem[] = [
+  { href: '/dashboard/admin/funnel', label: 'Funnel', icon: Filter, adminOnly: true },
   { href: '/dashboard/integrations', label: 'Integrations', icon: Plug },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];

@@ -34,6 +34,8 @@ export type WorkspaceChrome = {
   taskCount: number;
   /** How many organizations (client books) this person belongs to. */
   bookCount: number;
+  /** Mugavi team member on the ADMIN_EMAILS allowlist; shows the Funnel link. Pages still gate themselves. */
+  isAdmin: boolean;
 };
 
 const FALLBACK: WorkspaceChrome = {
@@ -46,6 +48,7 @@ const FALLBACK: WorkspaceChrome = {
   pendingCount: 0,
   taskCount: 0,
   bookCount: 0,
+  isAdmin: false,
 };
 
 const WorkspaceContext = createContext<WorkspaceChrome>(FALLBACK);
