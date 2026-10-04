@@ -1,3 +1,4 @@
+import { withMinorVersion } from './qbo-minor-version';
 /**
  * QuickBooks Online integration — OAuth, token refresh, customer/invoice
  * sync, and payment pushback.
@@ -136,7 +137,7 @@ const QBO_MAX_RETRIES = 3;
  */
 async function qboFetch(orgId: string, path: string) {
   let integ = await getFreshQboToken(orgId);
-  const url = path.startsWith('http') ? path : `${QBO_BASE}/v3/company/${integ.realmId}${path}`;
+  const url = path.startsWith('http') ? path : `${QBO_BASE}/v3/company/${integ.realmId}${withMinorVersion(path)}`;
   let refreshedOn401 = false;
 
   for (let attempt = 0; ; attempt++) {
