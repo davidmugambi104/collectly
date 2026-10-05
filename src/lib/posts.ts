@@ -1636,6 +1636,217 @@ Note the date you sent each message, who you sent it to and what they said. If t
 
 Mugavi is for small businesses and the bookkeepers who work with them. It drafts the reminder, you approve it, and it waits thirty seconds before sending so you can undo. It has no portal integrations, so it will not tell you whether a customer's portal has your invoice. We have not tested it with a UK QuickBooks company. The [UK page](/for/uk-agencies) has the details we are sure of.`,
   },
+  {
+    slug: 'which-overdue-quickbooks-invoices-to-chase-first',
+    title: 'Which overdue QuickBooks invoices to chase first',
+    date: '2026-10-06', read: '5 min',
+    excerpt: 'A client has forty overdue invoices and you have an afternoon. A simple way to sort the A/R Aging Summary so the first reminders go to the invoices most likely to turn into cash.',
+    tags: ['QuickBooks', 'bookkeeping', 'accounts receivable', 'prioritising'],
+    body: `Open a client's A/R Aging Summary in QuickBooks Online and the list can look like a wall. Forty overdue invoices, six customers you have never heard of, and one balance that has been there since spring. Chasing all of it at once is how the wrong person gets the wrong email.
+
+A better first step is to decide the order. This is the sorting method we would use by hand, and it needs nothing but the report.
+
+## Start with the customer, not the invoice
+
+Group the overdue invoices by customer. A customer with three small overdue invoices is one conversation, not three. If you send three separate reminders, the customer sees a stream of noise and tends to answer none of them.
+
+Write down for each customer the total overdue, the oldest invoice and the number of invoices. That is the whole table you need.
+
+## Sort into four piles
+
+1. **Recently overdue, large.** Late by a few days to a few weeks, and big enough to matter to your client's cash. These go first, and the first message should come from a person, in plain words. Most of these are simply forgotten.
+2. **Recently overdue, small.** Fine to send a short, polite reminder on a schedule. Not worth a phone call.
+3. **Old, any size.** Anything that has been overdue for months needs a different question: is it disputed, is the customer still trading, is it worth the effort? Ask your client before you send anything. Our post on [when to stop chasing](/blog/when-to-stop-chasing-write-off-bad-debt-quickbooks) covers what comes after that answer.
+4. **Not really overdue.** Part-paid invoices, unapplied payments and credit memos make an invoice look worse than it is. Check these before any reminder goes out, because a reminder for money already paid costs your client goodwill. See [unapplied payments and credit memos](/blog/quickbooks-unapplied-payments-credit-memos-chasing-paid-clients).
+
+## Set a floor
+
+Decide a balance below which you do not chase by email at all. Below that line, the time spent costs more than the invoice is worth, and the right move is a quick word from the owner or a decision to write it off. Put the number in the engagement letter so the client agrees to it in advance.
+
+## Check what is already in flight
+
+Before you send, look at whether the customer has replied, promised a date or raised a dispute. A reminder that lands after someone has said "I will pay on Friday" reads as nagging. Keep a note against the customer, even if it is just a line in a spreadsheet.
+
+## Send in order, and keep it short
+
+Send the first pile first, then wait a few days before the second. Each message should name the invoice numbers, the amounts, the due dates and one clear way to pay. Our [reminder email examples](/blog/payment-reminder-emails-bookkeepers-send-for-clients) show the tone.
+
+## Where Mugavi fits
+
+Mugavi can do the sorting step for you in a narrow way. You set a minimum balance below which an invoice is not chased. It sends one reminder per customer, with the other overdue invoices listed in a short table, then waits a gap you choose before the next. A filter shows customers who owe you but cannot be reminded, for example because there is no email address. Nothing reaches a customer until you approve it. The QuickBooks connection is in beta, so check the numbers against your own report before you rely on them.`,
+  },
+  {
+    slug: 'customer-promised-to-pay-friday-track-it',
+    title: 'When a customer says "I will pay on Friday", write it down',
+    date: '2026-10-06', read: '4 min',
+    excerpt: 'A promised date is the most useful thing a customer can tell you, and the first thing a reminder schedule ignores. How to record it, hold your reminders and know when to follow up.',
+    tags: ['QuickBooks', 'bookkeeping', 'promise to pay', 'accounts receivable'],
+    body: `"I will pay on Friday" is good news. It is also the sentence that most often gets lost. The reply lands in someone's inbox, the owner says "great", and then Friday arrives and the next automatic reminder goes out on Thursday, as if nobody had said a word.
+
+A promise to pay needs three things: a date, a place to write it down, and a plan for the day after.
+
+## Get the date in writing
+
+If the promise was made on the phone, send a one-line email back: "Thanks for the call. We have noted that invoice 1042 will be paid by Friday 14 March." That is not pushy. It gives the customer a date to meet and you a record to point to.
+
+## Pause the reminders, but only until that date
+
+A promise should stop the reminders that would contradict it. It should not stop them forever. Pause until the promised date, and make sure something wakes the invoice up again the day after. A pause with no end date is how invoices go quiet for three months.
+
+Keep a note of who made the promise. A comment from someone in accounts payable is different from a comment from the owner's contact.
+
+## Decide what a broken promise looks like
+
+Agree with your client in advance what happens when the date passes. A sensible default is one gentle follow-up the next working day, asking for a new date. A second broken promise is the moment for the owner to pick up the phone. It is not the moment for a firmer email.
+
+## Do not chase a payment that has already landed
+
+Before you follow up, check that the money has not already arrived and been recorded. In QuickBooks that means looking at the invoice itself and at undeposited funds and unapplied payments, not just at the report. See [unapplied payments and credit memos](/blog/quickbooks-unapplied-payments-credit-memos-chasing-paid-clients).
+
+## Where Mugavi fits
+
+On the payment page, the person paying can tap "I will pay on" and pick a day within 30 days. Reminders for that invoice pause until the day they chose, and you see it in your Inbox. They can also tap "Something is not right", which stops the reminders and tells you. A reply to a reminder pauses that invoice until you have read it. None of this replaces a phone call when a promise is broken. It makes sure the schedule does not talk over a promise while you are waiting. Mugavi reads your books, so the invoice closes when the payment is recorded in QuickBooks. The QuickBooks connection is in beta.`,
+  },
+  {
+    slug: 'part-paid-invoices-quickbooks-remind-for-the-balance',
+    title: 'Part-paid invoices in QuickBooks: remind for the balance, not the total',
+    date: '2026-10-06', read: '4 min',
+    excerpt: 'A customer pays half and the invoice stays open. If the next reminder quotes the full amount, you have just told them you did not notice. How to chase what is actually owed.',
+    tags: ['QuickBooks', 'bookkeeping', 'partial payments', 'reminders'],
+    body: `A customer pays half of an invoice. In QuickBooks Online the invoice stays open, with the balance showing what is left. Then the next reminder goes out, quoting the full original amount, and the customer's reply is the one you were hoping to avoid: "We already paid half of that."
+
+It is a small mistake with an outsized cost, because it tells the customer nobody is reading the account.
+
+## Always quote the balance
+
+Every reminder for a part-paid invoice should say three things: the original amount, what has been received, and what is still due. "Invoice 2208: 1,200 total, 600 received on 3 March, 600 still due" leaves nothing to argue with. It also shows the customer that you noticed the payment, which tends to make the rest of the message easier to accept.
+
+## Check where the first payment went
+
+When a payment is part-applied, it can be easy to find it in the wrong place. Check that the payment is linked to the right invoice, not sitting as an unapplied payment or against a different job. A customer who has paid in full across two invoices can look like they owe one of them.
+
+## Do not let the old due date do the talking
+
+The due date on a part-paid invoice is still the original one. If the customer paid half on time and the rest is a few days late, the tone should reflect that. A first reminder for the remaining balance does not need to read like a final notice.
+
+## Ask about the rest
+
+Sometimes a part payment is a signal. The customer may be disputing part of the invoice, waiting on a credit note, or short of cash and paying what they can. A short question works better than a demand: "We have received 600 of 1,200. Is the balance on its way, or is there a question about part of the invoice?"
+
+## Use a statement when there are several
+
+If a customer has a mix of paid, part-paid and open invoices, one statement is clearer than a string of reminders. It lists each open invoice with what has been paid and what is left. See [a statement instead of another reminder](/blog/customer-statement-vs-another-reminder).
+
+## Where Mugavi fits
+
+Mugavi has a customer statement that lists every open invoice with what is paid and what is left, the days late, and totals per currency. You can print it, download it as a CSV, or email it with a 30-second Undo and an optional line from you. Nothing is sent until you approve it. Check how a part-paid invoice looks in your own client book before you rely on reminders for it: the QuickBooks connection is in beta, and your own report is the source of truth.`,
+  },
+  {
+    slug: 'client-leaving-your-practice-invoice-follow-up-handover',
+    title: 'When a client leaves your practice: handing back invoice follow-up',
+    date: '2026-10-06', read: '5 min',
+    excerpt: 'A client moves to another bookkeeper or takes it in-house. What to do with the reminders you were running, the access you hold and the data you pulled from their books.',
+    tags: ['bookkeeping', 'QuickBooks', 'client offboarding', 'practice management'],
+    body: `Clients leave. They move to another bookkeeper, bring the books in-house, or close the business. If you were running invoice reminders for them, the handover has a few specific steps that are easy to forget, because the reminders keep going quietly in the background.
+
+## Stop what is scheduled, in this order
+
+1. **Pause the reminders.** Before anything else, so nothing goes out in the middle of the handover.
+2. **Tell the owner what is in flight.** A short list: customers who have promised a date, customers in dispute, and anything waiting for your client's approval. These are the items a new person would otherwise trip over.
+3. **Agree who picks it up.** If the client is handing over to someone else, give them the list. If the owner is taking it on, give them the list and the current schedule.
+
+## Hand over a record, not just access
+
+Export what you have: the customers, the open invoices, what has been sent and when. The new bookkeeper will want to see which reminders went out and what the customer said. A paper trail you can hand over is also protection for you if a customer later says they were never chased.
+
+## Remove your access
+
+Disconnect the QuickBooks connection you set up, and take yourself off any shared accounts. In QuickBooks Online you can also remove the app from the client's connected apps list. Do this on the date you agreed, and tell the client you have done it.
+
+## Delete what you no longer need
+
+If you pulled the client's invoices and customers into another tool, decide with the client what happens to that copy. Many practices keep nothing beyond what the engagement letter says they must retain. Put the answer in writing so it is the same for every client.
+
+## Write it into the engagement letter
+
+The easiest handover is the one agreed at the start. A short clause covers it: how much notice, what you hand over, in what format, and when your access ends. Our post on [onboarding a client to invoice follow-up](/blog/onboard-client-to-invoice-follow-up-first-week) has the matching start-of-engagement checklist.
+
+## Where Mugavi fits
+
+In Mugavi, the owner or an admin can download one ZIP from Settings with the customers, invoices, reminders, what each customer owes and the statements emailed, or each as a single CSV. After you disconnect QuickBooks, Integrations shows what the sync left behind. You see the counts and then confirm. Only rows with that provider's id format are removed, and anything typed in by hand stays. It is refused while the connection is still active, a customer who also has a hand-typed or other-provider invoice is kept, and it cannot be undone, so export first. It removes Mugavi's copy and does not change anything in QuickBooks itself.`,
+  },
+  {
+    slug: 'check-who-you-invoiced-uk-company-before-chasing',
+    title: 'Check who you actually invoiced before you chase a UK customer',
+    date: '2026-10-06', read: '5 min',
+    excerpt: 'A reminder to the wrong legal entity gets ignored, and a reminder to a dissolved company gets nothing. A short check on the registered name and status before the first chase.',
+    tags: ['UK', 'Companies House', 'invoicing', 'bookkeeping'],
+    body: `Some UK invoices go unpaid for a reason that has nothing to do with the customer's cash: the invoice names the wrong company. A trading name, a sister company, an old name from before a rebrand. The payables team cannot match it to an order, so it sits.
+
+This is a short check you can do before you send a first reminder. It is general guidance from a software company, not legal advice. For anything that matters, ask a solicitor.
+
+## Look up the company
+
+Companies House has a free public search. For a limited company, search the name or the company number and read three things: the **registered name**, the **registered office address** and the **company status**. Compare them with the name and address on your invoice.
+
+If they differ, the first thing to do is not a reminder. It is a short, friendly email: "We invoiced Smith Joinery. Our records show the registered company is Smith Joinery Contracts Ltd. Can you confirm which entity placed the order, so we can reissue the invoice correctly?"
+
+## Sole traders and partnerships
+
+A sole trader does not appear on Companies House. The person and the business are the same legal person, so use their name and the trading name together. A partnership is trickier, so keep the paperwork that shows who agreed to the work.
+
+## Read the status
+
+A company can be active, in liquidation, in administration, or dissolved. Check the status before you chase. If it is in an insolvency process, a reminder is the wrong tool and the owner should speak to the insolvency practitioner or a solicitor. If it is dissolved, tell the owner at once, because the options are limited and time matters.
+
+## Match the invoice to the order
+
+For larger customers, add the purchase order number and the name of whoever placed the order. If you did not have one, ask for it now. Our post on [chasing accounts payable at a large UK customer](/blog/chasing-accounts-payable-at-large-uk-customer) covers how to ask.
+
+## Fix the record once
+
+When you find the correct name, update the customer record in your books so the next invoice is right. Keep the old name in a note so you can match older invoices. See [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase) for what else belongs on the invoice.
+
+## Where Mugavi fits
+
+Mugavi reads the customer name and email from your books and drafts reminders for what is overdue. It does not check Companies House, so this step stays with you. What it does do is let you add other people at a customer, such as accounts payable, who also get their reminders and statements, and it pauses an invoice when anyone replies. Nothing is sent until you approve it. Mugavi is for small businesses and the bookkeepers who work with them, in the US and the UK.`,
+  },
+  {
+    slug: 'uk-payment-methods-when-is-an-invoice-really-late',
+    title: 'BACS, Faster Payments and CHAPS: when is a UK invoice really late?',
+    date: '2026-10-06', read: '4 min',
+    excerpt: 'A customer says they paid on the due date. Whether that is on time depends on how they paid and what day it was. A short guide to the dates before you send a reminder.',
+    tags: ['UK', 'payments', 'BACS', 'payment terms'],
+    body: `"We paid it on the due date" is often true and still means the money is not with you yet. In the UK the date a payment is made and the date it arrives can be different, and that gap decides whether your reminder is fair.
+
+This is general guidance from a software company, not legal advice. Check your bank's own timings, because they vary.
+
+## The three common methods
+
+- **Faster Payments.** Usually arrives within seconds, and in any case within a couple of hours, any day of the year. It is the default for most online banking transfers.
+- **BACS.** Takes three working days: submitted on day one, processed on day two, available on day three. Many payroll and supplier runs use it, and large customers' payables teams often pay this way.
+- **CHAPS.** Same-day, within the bank's cut-off, on working days only. Used for large or urgent sums.
+
+Working days exclude weekends and bank holidays. A BACS payment sent on a Thursday before a bank holiday weekend can land after the following Tuesday.
+
+## Work out the real date
+
+If the invoice is due on a Friday and the customer pays by BACS on that Friday, you will not see the money until the middle of the following week. A reminder on the Monday would be wrong, and it would tell the customer you do not understand how they pay.
+
+A simple rule: do not chase until a working day or two after the due date for Faster Payments, and until four or five working days after for a customer you know pays by BACS. Put it in your terms so it is agreed.
+
+## Put the payment method on the invoice
+
+State which method you prefer and give the bank details. A customer who pays by the method you asked for is easier to trace. Ask for a remittance advice, an email saying what was paid and for which invoices, because it lets you match a payment that arrives with no reference.
+
+## Check your bank before you write
+
+Before you send a reminder, look at the bank feed for anything that matches. A payment with the wrong reference, or one that came in as a lump for several invoices, is the usual cause of a customer who "has already paid". See [unapplied payments and credit memos](/blog/quickbooks-unapplied-payments-credit-memos-chasing-paid-clients) for how it shows up in QuickBooks.
+
+## Where Mugavi fits
+
+You choose when each step of a schedule goes out relative to the due date, so you can leave a few days for a slow payment method. There is also an option for a heads-up before the due date that never calls the invoice overdue. Nothing is sent until you approve it, and after you press send there is a 30-second window to change your mind. Mugavi does not see your bank feed, so it reads what has been recorded in your books. If a payment has arrived but not been recorded, record it first.`,
+  },
 ];
 
 export const POSTS_BY_SLUG: Record<string, Post> = POSTS.reduce((acc, p) => { acc[p.slug] = p; return acc; }, {} as Record<string, Post>);
