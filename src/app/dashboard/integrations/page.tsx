@@ -6,7 +6,8 @@ import { redirect } from 'next/navigation';
 import { db } from '@/db';
 import { integrations, customers } from '@/db/schema';
 import { eq, count } from 'drizzle-orm';
-import { CheckCircle2, AlertCircle, BookOpen, Database, ArrowRight } from 'lucide-react';
+import { CheckCircle2, AlertCircle, BookOpen, Database, ArrowRight, Plug } from 'lucide-react';
+import { TRADEMARK_NOTICE } from '@/lib/trademark';
 import Link from 'next/link';
 import { SampleDataButton } from './sample-data-button';
 import { PlaidCard } from './plaid-card';
@@ -17,7 +18,7 @@ import { describeImported, type ImportProvider, type ImportedSummary } from '@/l
 import { CONTACT } from '@/lib/site-contact';
 
 const PROVIDER_LABELS: Record<string, string> = {
-  quickbooks: 'QuickBooks Online',
+  quickbooks: 'QuickBooks',
   xero: 'Xero',
   stripe: 'Stripe',
   square: 'Square',
@@ -58,7 +59,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   const providerStatus: Record<string, { ready: boolean; reason?: string }> = {
     quickbooks: {
       ready: !!process.env.QBO_CLIENT_ID && !!process.env.QBO_CLIENT_SECRET,
-      reason: !process.env.QBO_CLIENT_ID ? 'QBO_CLIENT_ID not set in production env' : undefined,
+      reason: !process.env.QBO_CLIENT_ID ? 'QuickBooks developer app not yet configured' : undefined,
     },
     xero: {
       ready: !!process.env.XERO_CLIENT_ID && !!process.env.XERO_CLIENT_SECRET,
@@ -145,8 +146,8 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       {leftBehind.map((l) => <RemoveImportedButton key={l.provider} provider={l.provider} summary={l.summary} message={l.message} />)}
 
       <div id="providers" className="grid md:grid-cols-2 gap-4">
-        <IntegrationCard logo="QB" name="QuickBooks Online" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks Online" lastSyncAt={conn('quickbooks')?.lastSyncAt?.toISOString() ?? null} />
-        <IntegrationCard logo="X" name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" lastSyncAt={conn('xero')?.lastSyncAt?.toISOString() ?? null} detail={((conn('xero')?.metadata as { tenantName?: string | null } | null)?.tenantName) ? `Connected to ${(conn('xero')!.metadata as { tenantName: string }).tenantName}` : null} />
+        <IntegrationCard logo={<Plug className="h-5 w-5" aria-hidden="true" />} name="QuickBooks" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks" ctaLabel="Connect to QuickBooks" notice={TRADEMARK_NOTICE} lastSyncAt={conn('quickbooks')?.lastSyncAt?.toISOString() ?? null} />
+        <IntegrationCard logo={<Plug className="h-5 w-5" aria-hidden="true" />} name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" ctaLabel="Connect to Xero" lastSyncAt={conn('xero')?.lastSyncAt?.toISOString() ?? null} detail={((conn('xero')?.metadata as { tenantName?: string | null } | null)?.tenantName) ? `Connected to ${(conn('xero')!.metadata as { tenantName: string }).tenantName}` : null} />
         <IntegrationCard logo="S" name="Stripe" description="Card payments through Stripe are not available yet." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt?.toISOString() ?? null} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
@@ -156,21 +157,23 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       <div className="mt-8 card">
         <h2 className="app-heading">How integrations work</h2>
         <ol className="mt-3 space-y-2 text-sm text-ink-600 list-decimal pl-5">
-          <li>Click <b>Connect</b> on the provider you use.</li>
+          <li>Click the connect button on the provider you use, for example <b>Connect to QuickBooks</b>.</li>
           <li>Authorize Mugavi in the provider&apos;s OAuth flow.</li>
-          <li>We pull your customer, invoice, and payment history (read-only, scoped to A/R).</li>
+          <li>We pull your customer, invoice, and payment history (read access, scoped to A/R).</li>
           <li>You can disconnect any time. We ask the provider to revoke our access and delete the stored tokens. Data already imported stays in Mugavi until you remove it or delete your account.</li>
         </ol>
-        <p className="mt-4 text-xs text-ink-500">All integrations are encrypted at rest and in transit. We never modify your books without your explicit action.</p>
+        <p className="mt-4 text-xs text-ink-500">Connections use OAuth 2.0 over HTTPS. Mugavi reads your A/R data. The only thing it writes back is a payment record, when your customer pays an invoice through Mugavi.</p>
       </div>
     </AppShell>
   );
 }
 
-function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt, detail }: { detail?: string | null; logo: string; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero' | 'square'; label?: string; lastSyncAt?: string | null }) {
+function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt, detail, notice }: { detail?: string | null; notice?: string; logo: React.ReactNode; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero' | 'square'; label?: string; lastSyncAt?: string | null }) {
   const connected = status === 'connected';
   const errored = status === 'error';
   const paused = status === 'paused';
+  // QuickBooks and Xero: the connect button is replaced by the Disconnect link once connected.
+  const hideConnect = connected && (provider === 'quickbooks' || provider === 'xero');
   const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero' || provider === 'square');
   return (
     <div className={`card transition-all duration-200 hover:lift-2 ${errored ? 'row-urgent' : ''} ${paused ? 'opacity-65' : ''}`}>
@@ -191,7 +194,7 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
           <div className="mt-3 flex items-center gap-2">
             {paused ? (
               <span className="btn-secondary btn-sm opacity-60 cursor-not-allowed" aria-disabled="true">Paused</span>
-            ) : (
+            ) : hideConnect ? null : (
               <a href={connectHref} className={connected ? 'btn-secondary btn-sm' : 'btn-primary btn-sm'}>
                 {connected ? 'Manage' : ctaLabel ?? 'Connect'}
               </a>
@@ -203,6 +206,7 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
           {showControls && (
             <IntegrationControls provider={provider!} label={label!} lastSyncAt={lastSyncAt ?? null} />
           )}
+          {notice && <p className="mt-3 text-[11px] leading-4 text-ink-500">{notice}</p>}
         </div>
       </div>
     </div>

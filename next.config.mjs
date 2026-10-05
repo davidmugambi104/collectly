@@ -66,6 +66,17 @@ const nextConfig = {
         ],
       },
       {
+        // Explicit no-store on per-session surfaces. The rule below only stops
+        // the public cache header reaching them; this states the intent, which
+        // is what a security reviewer curls for.
+        source: '/:section(dashboard|admin|sign-in|sign-up|sso-callback)/:path*',
+        headers: [{ key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' }],
+      },
+      {
+        source: '/api/:provider(quickbooks|xero|square|stripe-connect|plaid|integrations)/:path*',
+        headers: [{ key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' }],
+      },
+      {
         // Public-cache Cache-Control must NOT reach /dashboard, /admin,
         // /api, /pay, or the auth routes — those are per-org or per-session
         // responses. A CDN edge cache is keyed by URL only, not by cookie,

@@ -1,3 +1,4 @@
+import { noStore } from '@/lib/no-store';
 import { NextResponse } from 'next/server';
 import { xeroAuthUrl } from '@/lib/integrations/xero';
 import { getAuth } from '@/lib/auth-helper';
@@ -5,7 +6,7 @@ import { mintOAuthState } from '@/lib/oauth-state';
 
 /** SECURITY (audit C-1): see quickbooks/connect — org comes from the session,
  * state is server-bound and expiring. */
-export async function GET() {
+async function getHandler() {
   const session = await getAuth();
   const orgId = session?.orgId;
   const userId = session?.userId;
@@ -27,4 +28,8 @@ export async function GET() {
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
+}
+
+export async function GET() {
+  return noStore(await getHandler());
 }

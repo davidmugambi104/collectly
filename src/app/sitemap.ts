@@ -27,6 +27,7 @@ export const FIXED: Array<{
   { path: '/pricing', priority: 1.0, changefreq: 'monthly' },
   { path: '/features', priority: 0.9, changefreq: 'monthly' },
   { path: '/integrations', priority: 0.9, changefreq: 'monthly' },
+  { path: '/integrations/quickbooks', priority: 0.6, changefreq: 'monthly' },
   // Compare (highest organic-intent pages we publish)
   { path: '/vs-bill', priority: 0.9, changefreq: 'monthly' },
   { path: '/vs-chaser', priority: 0.9, changefreq: 'monthly' },

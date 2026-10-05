@@ -9,7 +9,7 @@ import { errorMessage } from '@/lib/utils';
  * Inline controls for an already-connected accounting integration.
  * Provides:
  *  - "Sync now" — POST /api/integrations/sync, refreshes the page on success
- *  - "Disconnect" — DELETE /api/integrations/sync with confirmation
+ *  - "Disconnect from QuickBooks" / "Disconnect from Xero": DELETE /api/integrations/sync with confirmation
  */
 export function IntegrationControls({ provider, label, lastSyncAt }: { provider: 'quickbooks' | 'xero' | 'square'; label: string; lastSyncAt?: string | null }) {
   const router = useRouter();
@@ -90,7 +90,7 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
           type="button"
         >
           {disconnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Unlink className="h-3.5 w-3.5" />}
-          Disconnect
+          {provider === 'square' ? 'Disconnect' : `Disconnect from ${label}`}
         </button>
         {lastSyncAt && (
           <span className="text-xs text-ink-500">Last sync {new Date(lastSyncAt).toLocaleString()}</span>

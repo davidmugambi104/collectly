@@ -1,10 +1,11 @@
+import { noStore } from '@/lib/no-store';
 import { NextRequest, NextResponse } from 'next/server';
 import { xeroExchangeCode, saveXeroConnection } from '@/lib/integrations/xero';
 import { getAuth } from '@/lib/auth-helper';
 import { consumeOAuthState } from '@/lib/oauth-state';
 import { recordFunnelEvent } from '@/lib/funnel-events';
 
-export async function GET(req: NextRequest) {
+async function getHandler(req: NextRequest) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state'); // server-bound nonce (see oauth-state.ts)
@@ -42,4 +43,8 @@ export async function GET(req: NextRequest) {
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
+}
+
+export async function GET(req: NextRequest) {
+  return noStore(await getHandler(req));
 }

@@ -1,3 +1,4 @@
+import { noStore } from '@/lib/no-store';
 import { NextResponse } from 'next/server';
 import { qboAuthUrl } from '@/lib/integrations/quickbooks';
 import { getAuth } from '@/lib/auth-helper';
@@ -10,7 +11,7 @@ import { mintOAuthState } from '@/lib/oauth-state';
  * (Redis/cookie) for the state, so a third party cannot bind their
  * QuickBooks account to someone else's org.
  */
-export async function GET() {
+async function getHandler() {
   const session = await getAuth();
   const orgId = session?.orgId;
   const userId = session?.userId;
@@ -38,4 +39,8 @@ export async function GET() {
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
+}
+
+export async function GET() {
+  return noStore(await getHandler());
 }

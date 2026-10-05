@@ -241,7 +241,7 @@ export default function IntegrationsPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             { icon: Lock, label: 'OAuth 2.0 everywhere' },
-            { icon: Database, label: 'Read-only by default' },
+            { icon: Database, label: 'Writes back payments only' },
             { icon: Server, label: 'Redis-backed rate limits' },
             { icon: Lock, label: 'No password storage' },
           ].map(({ icon: Icon, label }) => (

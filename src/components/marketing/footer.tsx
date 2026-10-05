@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/brand/logo';
 import { ConsentLink } from '@/components/consent/consent-link';
 import { CONTACT } from '@/lib/site-contact';
+import { TRADEMARK_NOTICE } from '@/lib/trademark';
 
 export function MarketingFooter() {
   // No top margin. The old mt-32 stacked 128px on top of whatever bottom
@@ -30,6 +31,7 @@ export function MarketingFooter() {
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Xero · QuickBooks Online (beta)</span>
             </div>
             <p className="mt-6 text-xs text-ink-500">© 2026 Mugavi, Inc.</p>
+            <p className="mt-1 max-w-sm text-xs text-ink-500">{TRADEMARK_NOTICE}</p>
           </div>
           <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
             <div>

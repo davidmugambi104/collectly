@@ -1,3 +1,4 @@
+import { noStore } from '@/lib/no-store';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth-helper';
 import { db } from '@/db';
@@ -32,7 +33,7 @@ async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xer
  * Pulls invoices + customers from the connected accounting/payments system
  * and upserts them into our DB. Returns counts and any per-row errors.
  */
-export async function POST(req: NextRequest) {
+async function postHandler(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId, userId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
  * DELETE /api/integrations/sync?provider=quickbooks|xero|square
  * Disconnects the integration: revokes tokens and deletes the row.
  */
-export async function DELETE(req: NextRequest) {
+async function deleteHandler(req: NextRequest) {
   await ensureBootstrapped();
   const { orgId } = await getAuth();
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -102,4 +103,12 @@ export async function DELETE(req: NextRequest) {
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
+}
+
+export async function POST(req: NextRequest) {
+  return noStore(await postHandler(req));
+}
+
+export async function DELETE(req: NextRequest) {
+  return noStore(await deleteHandler(req));
 }
