@@ -137,7 +137,11 @@ export async function ensureOrgProvisioned(userId: string, orgId: string): Promi
 /** Fill the membership cache the Client books view reads. Never lets a failure break a request. */
 async function rememberMembership(userId: string, orgId: string): Promise<void> {
   try { await recordMembership(userId, orgId); }
-  catch (e: unknown) { console.error('[auth] could not record membership:', e instanceof Error ? e.message : e); }
+  catch (e: unknown) {
+    // drizzle wraps the driver error in a "Failed query" message; the code and detail that say why are on .cause.
+    const cause = (e as { cause?: { code?: string; message?: string; detail?: string } })?.cause;
+    console.error('[auth] could not record membership:', e instanceof Error ? e.message.slice(0, 120) : e, cause ? `cause=${cause.code ?? ''} ${cause.message ?? ''} ${cause.detail ?? ''}`.trim() : '');
+  }
 }
 
 export async function getAuth() {
