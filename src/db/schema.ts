@@ -19,7 +19,7 @@ const encryptedText = customType<{ data: string; driverData: string }>({
 
 export const userRole = pgEnum('user_role', ['owner', 'admin', 'member', 'viewer']);
 export const integrationStatus = pgEnum('integration_status', ['connected', 'disconnected', 'error', 'pending']);
-export const integrationProvider = pgEnum('integration_provider', ['quickbooks', 'xero', 'stripe', 'square', 'plaid']);
+export const integrationProvider = pgEnum('integration_provider', ['quickbooks', 'xero', 'stripe', 'square', 'plaid', 'freshbooks', 'zoho_books', 'sage', 'wave', 'csv']);
 export const invoiceStatus = pgEnum('invoice_status', ['draft', 'sent', 'viewed', 'partial', 'paid', 'overdue', 'disputed', 'written_off']);
 export const dunningChannel = pgEnum('dunning_channel', ['email', 'sms', 'phone', 'letter']);
 // SMS consent, tracked separately from customers.dndAt. dndAt is a blanket

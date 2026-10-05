@@ -12,13 +12,49 @@ export const QBO_ID_PATTERN = '^[0-9]{1,18}$';
 const RE = new RegExp(XERO_ID_PATTERN, 'i');
 const QBO_RE = new RegExp(QBO_ID_PATTERN);
 
-export type ImportProvider = 'xero' | 'quickbooks';
-export const IMPORT_PROVIDERS: readonly ImportProvider[] = ['xero', 'quickbooks'];
-export const PROVIDER_LABEL: Record<ImportProvider, string> = { xero: 'Xero', quickbooks: 'QuickBooks' };
-export const PROVIDER_ID_PATTERN: Record<ImportProvider, string> = { xero: XERO_ID_PATTERN, quickbooks: QBO_ID_PATTERN };
+/**
+ * Providers added after Xero and QuickBooks. Their rows are stored with a provider prefix on the external id
+ * ("freshbooks:123", "csv:inv:ab12..."), because their native ids (plain numbers, UUIDs) would collide with the
+ * QuickBooks and Xero patterns above and with each other. runSync and the CSV importer add the prefix with
+ * externalIdFor(); a provider adapter never writes a bare id. The purge matches on the prefix only.
+ */
+export const PREFIXED_PROVIDERS = ['freshbooks', 'zoho_books', 'sage', 'wave', 'csv'] as const;
+export type PrefixedProvider = (typeof PREFIXED_PROVIDERS)[number];
+
+export type ImportProvider = 'xero' | 'quickbooks' | PrefixedProvider;
+export const IMPORT_PROVIDERS: readonly ImportProvider[] = ['xero', 'quickbooks', ...PREFIXED_PROVIDERS];
+export const PROVIDER_LABEL: Record<ImportProvider, string> = {
+  xero: 'Xero', quickbooks: 'QuickBooks', freshbooks: 'FreshBooks', zoho_books: 'Zoho Books', sage: 'Sage', wave: 'Wave', csv: 'a spreadsheet',
+};
+/** "^freshbooks:" etc. Provider ids are fixed lowercase words and underscores, so there is nothing to escape. */
+export const prefixedIdPattern = (provider: PrefixedProvider): string => `^${provider}:`;
+export const PROVIDER_ID_PATTERN: Record<ImportProvider, string> = {
+  xero: XERO_ID_PATTERN,
+  quickbooks: QBO_ID_PATTERN,
+  freshbooks: prefixedIdPattern('freshbooks'),
+  zoho_books: prefixedIdPattern('zoho_books'),
+  sage: prefixedIdPattern('sage'),
+  wave: prefixedIdPattern('wave'),
+  csv: prefixedIdPattern('csv'),
+};
+
+export function isPrefixedProvider(v: unknown): v is PrefixedProvider {
+  return typeof v === 'string' && (PREFIXED_PROVIDERS as readonly string[]).includes(v);
+}
+
+/** The id to store for something a prefixed provider returned. Idempotent. */
+export function externalIdFor(provider: PrefixedProvider, rawId: string): string {
+  const prefix = `${provider}:`;
+  return rawId.startsWith(prefix) ? rawId : prefix + rawId;
+}
+
+/** True when this external id carries the provider's prefix. The same rule the SQL purge uses. */
+export function matchesProviderId(provider: ImportProvider, externalId: string | null | undefined): boolean {
+  return typeof externalId === 'string' && new RegExp(PROVIDER_ID_PATTERN[provider], 'i').test(externalId);
+}
 
 export function parseImportProvider(v: unknown): ImportProvider | null {
-  return v === 'xero' || v === 'quickbooks' ? v : null;
+  return typeof v === 'string' && (IMPORT_PROVIDERS as readonly string[]).includes(v) ? (v as ImportProvider) : null;
 }
 
 /** True for an id in QuickBooks' format (digits only, never a GUID). */

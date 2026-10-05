@@ -16,6 +16,9 @@ import { RemoveImportedButton } from '@/components/dunning/remove-imported-butto
 import { previewImportedData } from '@/lib/integrations/imported-data-db';
 import { describeImported, type ImportProvider, type ImportedSummary } from '@/lib/integrations/imported-data';
 import { CONTACT } from '@/lib/site-contact';
+import { PROVIDERS, providerCardState } from '@/lib/integrations/registry';
+import { getAdapter } from '@/lib/integrations/adapters';
+import { FileSpreadsheet } from 'lucide-react';
 
 const PROVIDER_LABELS: Record<string, string> = {
   quickbooks: 'QuickBooks',
@@ -23,6 +26,10 @@ const PROVIDER_LABELS: Record<string, string> = {
   stripe: 'Stripe',
   square: 'Square',
   plaid: 'Plaid',
+  freshbooks: 'FreshBooks',
+  zoho_books: 'Zoho Books',
+  sage: 'Sage',
+  wave: 'Wave',
 };
 
 export default async function IntegrationsPage(props: { searchParams?: Promise<{ ok?: string; err?: string; reason?: string }> }) {
@@ -41,7 +48,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   const customerCount = Number(customerCountRow[0]?.n ?? 0);
   // Data a disconnected Xero or QuickBooks left behind (a wrong organisation, or simply an owner who left).
   const leftBehind: Array<{ provider: ImportProvider; summary: ImportedSummary; message: string }> = [];
-  for (const provider of ['quickbooks', 'xero'] as const) {
+  for (const provider of ['quickbooks', 'xero', 'freshbooks', 'zoho_books', 'sage', 'wave', 'csv'] as const) {
     try {
       if (list.some((i: typeof list[number]) => i.provider === provider && i.status === 'connected')) continue;
       const summary = await previewImportedData(orgId, provider);
@@ -114,6 +121,9 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
               <p className="app-body mt-1.5">Connect your accounting tool to import customers, invoices, and payment history. Or load sample data to explore the product with realistic A/R — every dashboard, every AI insight, every workflow.</p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <SampleDataButton />
+                <Link href="/dashboard/integrations/import" className="link-quiet">
+                  Or import a spreadsheet export <ArrowRight className="h-3 w-3" />
+                </Link>
                 <Link href="#providers" className="link-quiet">
                   Or connect a provider below <ArrowRight className="h-3 w-3" />
                 </Link>
@@ -151,6 +161,22 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
         <IntegrationCard logo="S" name="Stripe" description="Card payments through Stripe are not available yet." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt?.toISOString() ?? null} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
+        {PROVIDERS.filter((p) => !p.native && p.kind === 'oauth').map((p) => {
+          const adapter = getAdapter(p.id);
+          const st = providerCardState(p, !!adapter, process.env);
+          const row = conn(p.id);
+          return <ProviderCard key={p.id} id={p.id} name={p.label} description={p.blurb} state={st.state} badge={st.badge} note={st.note} connectHref={adapter?.connectUrl(orgId) ?? null} status={row?.status ?? 'disconnected'} lastSyncAt={row?.lastSyncAt?.toISOString() ?? null} />;
+        })}
+        <div className="card transition-all duration-200 hover:lift-2">
+          <div className="flex items-start gap-3">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[10px] bg-ink-900 text-white"><FileSpreadsheet className="h-5 w-5" aria-hidden="true" /></div>
+            <div className="flex-1 min-w-0">
+              <h3 className="app-heading">Import from a spreadsheet</h3>
+              <p className="app-body mt-1">Works with an export from any accounting tool. No keys needed. Re-upload to refresh; it does not sync automatically.</p>
+              <div className="mt-3"><Link href="/dashboard/integrations/import" className="btn-primary btn-sm">Import a CSV</Link></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="mt-8 card">
@@ -206,6 +232,30 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
             <IntegrationControls provider={provider!} label={label!} lastSyncAt={lastSyncAt ?? null} />
           )}
           {notice && <p className="mt-3 text-[11px] leading-4 text-ink-500">{notice}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProviderCard({ id, name, description, state, badge, note, connectHref, status, lastSyncAt }: { id: string; name: string; description: string; state: 'file' | 'beta' | 'unavailable'; badge: string | null; note: string; connectHref: string | null; status: string; lastSyncAt: string | null }) {
+  const connected = status === 'connected';
+  const usable = state === 'beta' && !!connectHref;
+  return (
+    <div className={`card transition-all duration-200 hover:lift-2 ${usable || connected ? '' : 'opacity-80'}`}>
+      <div className="flex items-start gap-3">
+        <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-[10px] shadow-[inset_0_1px_0_0_rgb(255_255_255/0.18)] ${connected ? 'bg-success-600 text-white' : usable ? 'bg-ink-900 text-white' : 'bg-ink-200 text-ink-500'}`}>
+          <Plug className="h-5 w-5" aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="app-heading">{name}</h3>
+            {connected ? <span className="badge-success">Connected</span> : badge && <span className={usable ? 'badge-warn' : 'badge-neutral'}>{badge}</span>}
+          </div>
+          <p className="app-body mt-1">{description}</p>
+          {note && !connected && <p className="mt-1 text-xs text-ink-500">{note}</p>}
+          {usable && !connected && <div className="mt-3"><a href={connectHref!} className="btn-primary btn-sm">Connect to {name}</a></div>}
+          {connected && <IntegrationControls provider={id} label={name} lastSyncAt={lastSyncAt} />}
         </div>
       </div>
     </div>

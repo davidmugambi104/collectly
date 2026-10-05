@@ -1,0 +1,4 @@
+*ContactName,EmailAddress,*InvoiceNumber,Reference,*InvoiceDate,*DueDate,Total,Currency,Status,AmountDue
+Harbour Cafe,accounts@harbour.example,INV-0101,PO 77,15/03/2026,30/03/2026,480.00,GBP,Authorised,480.00
+Ivy Studio,billing@ivy.example,INV-0102,,18/03/2026,17/04/2026,1250.00,GBP,Authorised,250.00
+Jones Joinery,,INV-0103,,20/03/2026,19/04/2026,99.99,GBP,Paid,0.00

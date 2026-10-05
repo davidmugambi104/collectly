@@ -1,0 +1,4 @@
+Client Name,Email,Invoice #,Date Issued,Due Date,Currency,Invoice Amount,Amount Outstanding,Invoice Status
+Kestrel Design,pay@kestrel.example,FB-2001,2026-03-02,2026-04-01,USD,900.00,900.00,Sent
+Lumen Labs,ap@lumen.example,FB-2002,2026-03-05,2026-04-04,USD,1500.00,0.00,Paid
+Maple Movers,,FB-2003,2026-03-09,2026-04-08,CAD,640.00,640.00,Draft

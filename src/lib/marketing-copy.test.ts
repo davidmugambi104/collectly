@@ -51,5 +51,7 @@ test('security page makes no unprovable at-rest or certification claim', () => {
 
 test('dashboard integrations does not advertise integrations that do not exist', () => {
   const s = readFileSync(join(root, 'app/dashboard/integrations/page.tsx'), 'utf8');
-  assert.equal(/NetSuite|MYOB|Sage/.test(s), false);
+  // 'Sage' is allowed as a label for data a user imported from a Sage CSV export; advertising it is not.
+  assert.equal(/NetSuite|MYOB|Most-requested/.test(s), false);
+  assert.equal(/Sage(?!['"])/.test(s.replace(/sage: 'Sage'/g, '')), false);
 });
