@@ -1,0 +1,5 @@
+Date,Type,Num,Customer,Due date,Amount,Open balance,Status
+03/15/2026,Invoice,1001,Acme Plumbing,04/14/2026,"1,200.00","1,200.00",Overdue
+03/20/2026,Invoice,1002,Bright Dental,04/19/2026,850.00,350.00,Partially paid
+03/25/2026,Invoice,1003,"Cooper & Sons, LLC",04/24/2026,"2,400.50","2,400.50",Open
+04/01/2026,Invoice,1004,Delta Fitness,05/01/2026,310.00,0.00,Paid

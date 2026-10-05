@@ -6,6 +6,7 @@
  * forward, 'soon' is needed before real customers, 'later' is optional or dormant.
  */
 import { REQUIRED_STRIPE_ENV } from './stripe-billing-config.ts';
+import { registryServices } from './integrations/registry.ts';
 
 export type Needed = 'now' | 'soon' | 'later';
 
@@ -40,6 +41,8 @@ export const SERVICES: ServiceDef[] = [
   { id: 'billing', name: 'Stripe billing', why: 'Charging Mugavi subscriptions by card or US bank account (ACH). Billing stays manual (invoice) until every one of these is set.', needed: 'soon', vars: [...REQUIRED_STRIPE_ENV], where: 'dashboard.stripe.com: API keys, Webhooks, and one price per plan under Product catalog (steps in the r-stripe notes)', without: 'Every customer is invoiced by hand.' },
   { id: 'paystack', name: 'Paystack', why: 'African card payments. Not a target market, so leave it dormant.', needed: 'later', vars: ['PAYSTACK_SECRET_KEY'], where: 'paystack.com', without: 'Nothing the product relies on.' },
   { id: 'plaid', name: 'Plaid', why: 'Bank link. Not used by the forecast yet.', needed: 'later', vars: ['PLAID_CLIENT_ID', 'PLAID_SECRET', 'PLAID_ENV'], where: 'plaid.com', without: 'Nothing the product relies on.' },
+  // FreshBooks, Zoho Books, Sage, Wave: one row each, built from the provider registry (all 'later').
+  ...registryServices(),
   { id: 'square', name: 'Square', why: 'Sync from Square. Not a target market.', needed: 'later', vars: ['SQUARE_CLIENT_ID', 'SQUARE_CLIENT_SECRET', 'SQUARE_REDIRECT_URI'], where: 'developer.squareup.com', without: 'Nothing the product relies on.' },
 ];
 

@@ -9,6 +9,8 @@ import { syncQboForOrg, disconnectQbo } from '@/lib/integrations/quickbooks';
 import { syncXeroForOrg, disconnectXero } from '@/lib/integrations/xero';
 import { recordFunnelEvent } from '@/lib/funnel-events';
 import { syncSquareForOrg, disconnectSquare } from '@/lib/integrations/square';
+import { getAdapter } from '@/lib/integrations/adapters';
+import { runSync, type ProviderId } from '@/lib/integrations/adapter';
 
 export const dynamic = 'force-dynamic';
 // syncXeroForOrg/syncQboForOrg do sequential, unbatched per-row DB upserts on
@@ -18,7 +20,7 @@ export const dynamic = 'force-dynamic';
 // can log or respond). This is a real observed failure, not speculative.
 export const maxDuration = 60;
 
-async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xero' | 'square') {
+async function getConnectedProvider(orgId: string, provider: 'quickbooks' | 'xero' | 'square' | ProviderId) {
   const [row] = await db
     .select()
     .from(integrations)
@@ -40,17 +42,21 @@ async function postHandler(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const provider = body?.provider as string | undefined;
-  if (provider !== 'quickbooks' && provider !== 'xero' && provider !== 'square') {
+  // Xero, QuickBooks and Square keep their own sync code. Every other provider goes through its registered adapter and runSync.
+  const adapter = provider && provider !== 'csv' ? getAdapter(provider) : null;
+  if (provider !== 'quickbooks' && provider !== 'xero' && provider !== 'square' && !adapter) {
     return NextResponse.json({ error: 'invalid provider' }, { status: 400 });
   }
 
-  const integ = await getConnectedProvider(orgId, provider);
+  const integ = await getConnectedProvider(orgId, provider as 'quickbooks' | 'xero' | 'square' | ProviderId);
   if (!integ || integ.status !== 'connected') {
     return NextResponse.json({ error: `${provider} not connected` }, { status: 400 });
   }
 
   try {
-    const result = provider === 'quickbooks'
+    const result = adapter
+      ? await runSync(adapter, orgId)
+      : provider === 'quickbooks'
       ? await syncQboForOrg(orgId)
       : provider === 'xero'
         ? await syncXeroForOrg(orgId)
@@ -69,7 +75,7 @@ async function postHandler(req: NextRequest) {
       );
     }
     await recordFunnelEvent(orgId, 'integration.synced', userId ?? undefined, {
-      provider,
+      provider: provider as 'quickbooks' | 'xero' | 'square' | ProviderId,
       customers: result.customersUpserted,
       invoices: result.invoicesUpserted,
       rowErrors: result.errors.length,
@@ -91,12 +97,14 @@ async function deleteHandler(req: NextRequest) {
   if (!orgId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const provider = new URL(req.url).searchParams.get('provider');
-  if (provider !== 'quickbooks' && provider !== 'xero' && provider !== 'square') {
+  const adapter = provider && provider !== 'csv' ? getAdapter(provider) : null;
+  if (provider !== 'quickbooks' && provider !== 'xero' && provider !== 'square' && !adapter) {
     return NextResponse.json({ error: 'invalid provider' }, { status: 400 });
   }
 
   try {
-    if (provider === 'quickbooks') await disconnectQbo(orgId);
+    if (adapter) await adapter.disconnect(orgId);
+    else if (provider === 'quickbooks') await disconnectQbo(orgId);
     else if (provider === 'xero') await disconnectXero(orgId);
     else await disconnectSquare(orgId);
     return NextResponse.json({ ok: true, provider });

@@ -1,0 +1,3 @@
+Invoice Date,Invoice Number,Customer,Invoice Status,Currency,Total,Amount Due,Due Date
+Mar 4 2026,0000123,Sunrise Bakery,Sent,USD,$560.00,$560.00,Apr 3 2026
+Mar 9 2026,0000124,Tidewater Boats,Overdue,USD,"$2,000.00","$1,000.00",Mar 23 2026

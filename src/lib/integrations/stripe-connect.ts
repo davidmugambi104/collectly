@@ -22,6 +22,7 @@
  * /api/payment/create-checkout).
  */
 import { db } from '@/db';
+import { ensureIntegrationProviderSchema } from '@/lib/integrations/provider-enum';
 import { integrations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { nanoid } from '@/lib/utils';
@@ -101,6 +102,7 @@ export async function saveStripeConnectConnection(orgId: string, tokens: {
       .where(eq(integrations.id, existing[0].id));
     return existing[0].id;
   }
+  await ensureIntegrationProviderSchema();
   const [row] = await db
     .insert(integrations)
     .values({

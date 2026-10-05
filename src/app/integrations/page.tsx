@@ -12,7 +12,11 @@ import { CONTACT } from '@/lib/site-contact';
 const FAQS: FaqItem[] = [
     {
       q: 'Which accounting platforms does Mugavi integrate with?',
-      a: 'Xero is in production (live OAuth sync). QuickBooks Online is in beta: built and tested in sandbox, with production credentials pending the Intuit App Assessment Questionnaire review.',
+      a: 'Xero is in production (live OAuth sync). QuickBooks Online is in beta: built and tested in sandbox, with production credentials pending the Intuit App Assessment Questionnaire review. For any other accounting tool, you can import a CSV export from a spreadsheet; nothing syncs automatically.',
+    },
+    {
+      q: 'Can I use Mugavi if my accounting tool is not listed?',
+      a: 'Yes. Export your open invoices to a CSV file and upload it under Integrations, Import from a spreadsheet. You see a preview with any row-level problems before anything is saved. Uploading the same file again updates the same invoices instead of duplicating them. It does not sync automatically, so upload a fresh export when you want to refresh.',
     },
     {
       q: 'Do you integrate with Stripe?',
@@ -73,6 +77,16 @@ const categories = [
           'OAuth 2.0 callback and token-refresh flow, verified against a real external Xero organization',
           'Sync contacts, invoices, and payments',
           'Granular API scopes only. Invoices are read-only. Contacts and payments are requested with write access, and nothing beyond what dunning needs',
+        ],
+      },
+      {
+        name: 'Import from a spreadsheet (CSV)',
+        slug: 'csv',
+        status: 'live',
+        bullets: [
+          'Works with a CSV export from any accounting tool, no keys or sign-in to your books',
+          'Preview with row-level errors before anything is saved; up to 5 MB and 5,000 rows',
+          'Re-upload to refresh. It does not sync automatically, and importing the same file twice does not create duplicates',
         ],
       },
     ],
@@ -310,8 +324,7 @@ export default function IntegrationsPage() {
         <div className="rounded-2xl border border-ink-200 bg-ink-50 p-8">
           <h2 className="h3">Don&apos;t see what you need?</h2>
           <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-            We ship integrations based on user votes. The top three most-requested right now are Sage, NetSuite, and MYOB.
-            Tell us what&apos;s blocking you and we&apos;ll add it to the public roadmap.
+            If your accounting tool is not listed, you can import a CSV export today. Tell us what&apos;s blocking you and we&apos;ll weigh it when we pick the next integration.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <a href={`mailto:${CONTACT.hello}?subject=Integration%20request`} className="btn-primary">

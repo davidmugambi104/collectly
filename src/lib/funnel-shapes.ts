@@ -16,10 +16,10 @@ export const FUNNEL_EVENTS = {
   /** First time an org row is created for a signed-in user: sign-up completed. */
   'auth.signed_up': {},
   /** OAuth finished and the tokens were saved. */
-  'integration.connected': { provider: enumOf(['quickbooks', 'xero'] as const) },
+  'integration.connected': { provider: enumOf(['quickbooks', 'xero', 'freshbooks', 'zoho_books', 'sage', 'wave'] as const) },
   /** A manual or scheduled sync finished with a usable result. */
   'integration.synced': {
-    provider: enumOf(['quickbooks', 'xero', 'square'] as const),
+    provider: enumOf(['quickbooks', 'xero', 'square', 'freshbooks', 'zoho_books', 'sage', 'wave', 'csv'] as const),
     customers: int,
     invoices: int,
     rowErrors: int,

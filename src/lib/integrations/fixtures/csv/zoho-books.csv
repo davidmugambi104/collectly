@@ -1,0 +1,4 @@
+Invoice Date,Invoice Number,Invoice Status,Customer Name,Customer Email,Due Date,Currency Code,Total,Balance
+2026-03-03,INV-000301,Overdue,Nimbus IT,finance@nimbus.example,2026-03-18,USD,3200.00,3200.00
+2026-03-07,INV-000302,Sent,Orchard Farms,,2026-04-06,USD,780.00,780.00
+2026-03-10,INV-000303,Void,Pine Ridge,,2026-04-09,USD,120.00,120.00

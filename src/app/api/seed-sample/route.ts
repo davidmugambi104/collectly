@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { ensureIntegrationProviderSchema } from '@/lib/integrations/provider-enum';
 import { getAuth } from '@/lib/auth-helper';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { eq } from 'drizzle-orm';
@@ -123,6 +124,7 @@ export async function POST() {
     }
 
   // Mark a connection as connected so "Quick actions" doesn't nag
+  await ensureIntegrationProviderSchema();
   await db.insert(schema.integrations).values({
     id: nanoid(), orgId, provider: 'quickbooks', status: 'connected', realmId: 'demo-realm-1',
     lastSyncAt: now, createdAt: now, updatedAt: now,

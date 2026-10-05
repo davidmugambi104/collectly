@@ -12,6 +12,7 @@
  *    the first one (most Xero apps are single-tenant per connection).
  */
 import { db } from '@/db';
+import { ensureIntegrationProviderSchema } from '@/lib/integrations/provider-enum';
 import { integrations, customers as customersTbl, invoices as invoicesTbl } from '@/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 import { fetchAllPages, chunk } from '@/lib/integrations/paging';
@@ -298,6 +299,7 @@ export async function saveXeroConnection(orgId: string, tokens: {
       .where(eq(integrations.id, existing[0].id));
     return existing[0].id;
   }
+  await ensureIntegrationProviderSchema();
   const [row] = await db
     .insert(integrations)
     .values({
