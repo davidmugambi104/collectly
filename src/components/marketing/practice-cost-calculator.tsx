@@ -1,6 +1,7 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
+import { track } from '@/lib/track';
 import { crossoverBooks, mugaviCost, paidniceCost, PAIDNICE_ENTITY_MONTHLY, type MugaviPrices } from '@/lib/practice-cost';
 
 const PLAN_LABEL = {
@@ -29,6 +30,9 @@ export function PracticeCostCalculator({ prices, checkedOn }: { prices: MugaviPr
   const invId = useId();
   const [booksRaw, setBooksRaw] = useState('10');
   const [invRaw, setInvRaw] = useState('30');
+  const tracked = useRef(false);
+  // One event per page view, and no numbers: only that someone used it.
+  const used = () => { if (!tracked.current) { tracked.current = true; track('cost_calculator_used'); } };
 
   const books = toInt(booksRaw, 1, 100000);
   const inv = toInt(invRaw, 0, 1000);
@@ -52,7 +56,7 @@ export function PracticeCostCalculator({ prices, checkedOn }: { prices: MugaviPr
             min={1}
             max={100}
             value={booksRaw}
-            onChange={(e) => setBooksRaw(e.target.value)}
+            onChange={(e) => { used(); setBooksRaw(e.target.value); }}
           />
         </div>
         <div>
@@ -65,7 +69,7 @@ export function PracticeCostCalculator({ prices, checkedOn }: { prices: MugaviPr
             min={0}
             max={1000}
             value={invRaw}
-            onChange={(e) => setInvRaw(e.target.value)}
+            onChange={(e) => { used(); setInvRaw(e.target.value); }}
           />
         </div>
       </div>

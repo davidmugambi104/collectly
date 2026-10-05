@@ -18,6 +18,8 @@ export const MARKETING_EVENTS = {
   pricing_tier_click: { tier: enumOf(['starter', 'growth', 'scale', 'enterprise'] as const), monthly: optional(int) },
   /** An audience landing page (/for/...) was opened. */
   audience_page_view: { audience: enumOf(['bookkeepers', 'agencies', 'consultancies', 'uk-agencies'] as const) },
+  /** A visitor typed their own numbers into the Paidnice cost calculator (once per page view, no values sent). */
+  cost_calculator_used: {},
   /** Reached the sign-up form. Completion is the server event auth.signed_up. */
   signup_started: { source: optional(token) },
 } as const satisfies Record<string, Record<string, PropSpec>>;
