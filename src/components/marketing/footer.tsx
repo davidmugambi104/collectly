@@ -24,7 +24,7 @@ export function MarketingFooter() {
               <Logo className="h-7 w-7" />
               <span>Mugavi</span>
             </Link>
-            <p className="mt-3 max-w-sm text-sm text-ink-600">Overdue invoice reminders for small businesses and bookkeeping practices on QuickBooks and Xero. Built in Nairobi.</p>
+            <p className="mt-3 max-w-sm text-sm text-ink-600">Overdue invoice reminders for small businesses and bookkeeping practices on QuickBooks and Xero.</p>
             <div className="mt-5 inline-flex flex-wrap gap-2 text-xs text-ink-500">
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">US and UK</span>
               <span className="rounded-md border border-ink-200 bg-white px-2 py-1">Small businesses and bookkeepers</span>
