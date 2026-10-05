@@ -24,15 +24,15 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
   ['Multi-currency', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '✓', '—', '✓'],
   ['Multi-entity', `${PLAN_PRICING.growth.name}+`, 'Core+', 'Corporate+', '—', '—', '—'],
-  ['Cash-flow forecast', `${PLAN_PRICING.growth.name}+`, 'Complete+', 'QBO only', '—', 'Basic', 'Basic'],
+  ['Cash-flow forecast', `${PLAN_PRICING.growth.name}+`, 'Complete+', 'QuickBooks Online only', '—', 'Basic', 'Basic'],
   ['Customer risk scoring', '✓', '✓', '—', '—', '—', '—'],
   ['Branded payment portal', '✓', '✓', '✓', 'Invoices only', '✓', '✓'],
-  ['Free trial / self-serve', '14-day free', 'Free trial offered', 'Free trial', 'Free plan, 1 user', 'Within QBO', 'Not checked'],
+  ['Free trial / self-serve', '14-day free', 'Free trial offered', 'Free trial', 'Free plan, 1 user', 'Within QuickBooks', 'Not checked'],
   ['Time-to-value', '< 1 day', 'Not published', 'Not published', 'Not published', 'Not published', 'Not published'],
   ['AR analytics + DSO tracking', '✓', 'Complete+', 'Basic', '—', 'Basic', 'Basic'],
   // Ours is '—' on purpose: the app records promises to pay and spots a customer asking for a plan, but it does not run instalment plans.
   ['Payment plans / subscriptions', '—', '✓', '✓', '—', '✓', '—'],
-  ['Support model', 'Email + founder', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QBO help', 'Email + chat'],
+  ['Support model', 'Email + founder', 'Email + AM (Complete+)', 'Email + chat', 'Chat + help center', 'QuickBooks help', 'Email + chat'],
 ];
 
 

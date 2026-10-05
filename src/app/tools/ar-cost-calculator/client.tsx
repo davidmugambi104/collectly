@@ -129,10 +129,9 @@ export function ArCostCalculator() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Mini icon={<Clock className="h-4 w-4" />} label="Late days" value={`${lateDays} days`} />
           <Mini icon={<DollarSign className="h-4 w-4" />} label="Time cost / month" value={formatCurrency(result.monthlyTimeCost, currency)} />
-          <Mini icon={<TrendingUp className="h-4 w-4" />} label="Typical recovery" value="30–40%" accent="brand" />
           <Mini icon={<Download className="h-4 w-4" />} label="Save this report" value="Free" accent="brand" />
         </div>
 
@@ -163,9 +162,9 @@ export function ArCostCalculator() {
             </>
           ) : (
             <>
-              <h2 className="font-semibold text-ink-900">Want to cut this number in half?</h2>
+              <h2 className="font-semibold text-ink-900">Want to shorten that?</h2>
               <p className="mt-1 text-sm text-ink-600">
-                Agencies that automate polite, persistent follow-up typically recover 30–40% of this drag in the first 90 days.
+                Reminders that go out on time, and that you approve first, are how Mugavi helps you chase late invoices. We do not promise a recovery rate.
               </p>
               <div className="mt-4 flex flex-col sm:flex-row gap-3">
                 <button onClick={() => setShowCapture(true)} className="btn-brand w-full justify-center">

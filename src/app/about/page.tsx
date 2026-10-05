@@ -48,7 +48,7 @@ export default function AboutPage() {
           <li><b>Honest pricing wins.</b> No per-invoice fees. No setup costs. No annual contracts. No &quot;premium&quot; support tiers.</li>
         </ul>
         <h2 className="h3 mt-10">Where we are</h2>
-        <p>Mugavi is built in Nairobi. The team is small and ships fast. We&apos;re taking on our first founding cohort from agencies and consultancies in the US, UK, AU, and CA (ten of them), with founder-assisted setup and a direct line in.</p>
+        <p>Mugavi is built in Nairobi. The team is small and ships fast. We&apos;re taking on our first founding cohort from agencies and consultancies in the US and UK (ten of them), with founder-assisted setup and a direct line in.</p>
         <h2 className="h3 mt-10">Who we serve</h2>
         <p>5-30 person agencies and consultancies on Xero with 5+ open invoices at any time and no full-time credit controller. We&apos;re starting narrow on purpose. Accountants and bookkeepers are a future distribution channel, not today&apos;s primary customer.</p>
       </section>

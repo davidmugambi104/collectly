@@ -5,20 +5,20 @@ import { pageMetadata } from '@/lib/seo';
 import { CONTACT } from '@/lib/site-contact';
 
 export const metadata = pageMetadata({
-  title: 'Security: encryption, infrastructure, and access control',
+  title: 'Security: infrastructure and access control',
   description:
     'How Mugavi protects your data, your customers, and your money. ' +
-    'Encryption in transit + at rest, audit log, org-scoped data access, and ' +
-    'the compliance posture we hold today and what we are building toward.',
+    'Encryption in transit, audit log, org-scoped data access, and ' +
+    'what we do and do not hold today.',
   path: '/security',
-  keywords: ['Mugavi security', 'encryption at rest', 'SOC 2', 'data security', 'GDPR'],
+  keywords: ['Mugavi security', 'data security', 'GDPR'],
 });
 
 const principles = [
   {
     icon: Lock,
-    title: 'Encryption in transit and at rest',
-    body: 'All traffic is TLS 1.2+ (HSTS enabled). Data is encrypted at rest by our managed Postgres provider, which also runs the database backups.',
+    title: 'Encryption in transit',
+    body: 'All traffic is TLS 1.2+ (HSTS enabled). Our managed Postgres provider runs the database backups.',
   },
   {
     icon: KeyRound,
@@ -44,12 +44,11 @@ const principles = [
 
 const controls = [
   { label: 'TLS 1.2+ everywhere', status: 'enforced' },
-  { label: 'Encrypted at rest (managed Postgres provider)', status: 'enforced' },
   { label: 'Database backups (managed Postgres provider)', status: 'enforced' },
   { label: 'Secrets in environment variables only', status: 'enforced' },
   { label: 'Queries scoped by organization in the application', status: 'enforced' },
   { label: 'Sign in with Google or email (via Clerk)', status: 'available' },
-  { label: 'SOC 2 Type II', status: 'not yet' },
+  { label: 'SOC 2 report: we do not have one', status: 'not yet' },
   { label: 'GDPR + UK GDPR + CCPA-aligned DPA', status: 'available' },
   { label: 'DPA on request', status: 'available' },
 ];

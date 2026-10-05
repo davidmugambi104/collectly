@@ -151,7 +151,6 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
         <IntegrationCard logo="S" name="Stripe" description="Card payments through Stripe are not available yet." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt?.toISOString() ?? null} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
-        <IntegrationCard logo="+" name="Need another?" description="Tell us what to integrate next. Most-requested: Sage, NetSuite, MYOB." status="pending" connectHref={`mailto:${CONTACT.hello}?subject=Integration%20request`} docsHref="#" ctaLabel="Request" />
       </div>
 
       <div className="mt-8 card">

@@ -48,10 +48,9 @@ const FAQS: FaqItem[] = [
     },
     {
       q: 'Is Mugavi GDPR-compliant for UK customers?',
-      a: 'Yes. We are GDPR + UK GDPR compliant. Our DPA is published and includes ' +
-         'Standard Contractual Clauses for any third-party sub-processors. Customer ' +
-         'data is stored in EU regions by default; US-region storage is available ' +
-         'on request.',
+      a: 'We publish a data processing agreement that covers GDPR and UK GDPR, ' +
+         'with Standard Contractual Clauses for transfers. Customer data is ' +
+         'processed in the United States today. The DPA page has the details.',
     },
     {
       q: 'How much does Mugavi cost UK customers?',
@@ -86,15 +85,14 @@ export const metadata = pageMetadata({
 
 // UK-specific landing page. Targeted at the 90-day plan beachhead.
 // Uses GBP pricing (roughly 0.80 GBP to the USD at time of writing) and UK-specific
-// payment rail cues (BACS) without violating any FCA / ICO guidance —
+// payment wording without violating any FCA / ICO guidance —
 // Mugavi does not chase consumers, only B2B invoices for SMBs.
 const ukJsonLd = JSON.stringify([
   webPageJsonLd({
     title: 'A/R automation for UK agencies on Xero',
     description:
       'How Mugavi handles accounts receivable for UK agencies and ' +
-      'consultancies on Xero. BACS, Faster Payments, and GoCardless for ' +
-      'branded payment portals. £40/mo founding-customer rate.',
+      'consultancies on Xero. A payment page for your customers. £40/mo founding-customer rate.',
     path: '/for/uk-agencies',
   }),
   softwareAppJsonLd(),
@@ -118,8 +116,8 @@ export default function ForUkAgenciesPage() {
         <h1 className="mt-3 h1">A/R automation for UK agencies on Xero.</h1>
         <p className="mt-5 lead">
           Built for 5–30 person UK agencies and consultancies. Tone-aware AI
-          dunning, reply-or-pay pause, BACS and Faster Payments in the branded
-          payment portal, full GDPR / UK GDPR compliance. From
+          dunning, reply-or-pay pause, a branded payment page, and a published
+          GDPR / UK GDPR data processing agreement. From
           £{Math.round(PLAN_PRICING.starter.monthly * 0.8)}/mo, with {FOUNDING.discountPct}% off
           for {FOUNDING.months} months for the first {FOUNDING.seats} founding customers.
         </p>
@@ -146,20 +144,20 @@ export default function ForUkAgenciesPage() {
           </div>
           <div className="card">
             <ShieldCheck className="h-6 w-6 text-brand-600" />
-            <h2 className="mt-3 text-lg font-semibold text-ink-900">GDPR + UK GDPR by default.</h2>
+            <h2 className="mt-3 text-lg font-semibold text-ink-900">GDPR + UK GDPR data processing agreement.</h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              Customer data stored in EU regions. Sub-processors disclosed in a
+              Customer data is processed in the United States. Sub-processors are disclosed in a
               published DPA with Standard Contractual Clauses. Data subject
               requests handled within the 30-day statutory window.
             </p>
           </div>
           <div className="card">
             <FileText className="h-6 w-6 text-brand-600" />
-            <h2 className="mt-3 text-lg font-semibold text-ink-900">BACS in the payment portal.</h2>
+            <h2 className="mt-3 text-lg font-semibold text-ink-900">Paying by bank transfer.</h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              The branded payment portal supports BACS, Faster Payments,
-              GoCardless Direct Debit, and card payments via Stripe. Settlement
-              fees follow your chosen processor; we never mark up payment fees.
+              Customers pay through the payment page by wire transfer, which works with UK
+              bank accounts. Card and ACH are built but switched off for now. There is no BACS,
+              Faster Payments or direct debit option yet.
             </p>
           </div>
         </div>

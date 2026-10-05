@@ -727,7 +727,7 @@ All of it at **$79-399/mo**. 14-day free trial, no credit card.
 **Best fit:**
 - 5-30 person agencies and consultancies
 - Xero users (QuickBooks in beta)
-- US, UK, AU, CA for day one (more markets later)
+- US and UK
 - Sells on net-30 or net-60 terms
 - Founder/owner does AR today, with no full-time credit controller
 
@@ -1100,7 +1100,7 @@ The most-cited data point is from QuickBooks' 2025 *Small Business Late Payments
 
 The UK picture is similar. The *Late Payment Survey* from the Federation of Small Businesses puts the number at **£26 billion** owed to small businesses at any time, and roughly **14,000 UK businesses shut down each year** specifically because a customer didn't pay on time.
 
-The pattern is global. Australia, Canada, EU, Singapore, all in the same range when you adjust for business population. The 30-60 day net-terms default is the single most consequential business norm in B2B, and almost nobody has measured its real cost.
+The pattern is not just a US and UK one, but those are the two markets we serve. The 30-60 day net-terms default is the single most consequential business norm in B2B, and almost nobody has measured its real cost.
 
 ## The hidden costs nobody counts
 

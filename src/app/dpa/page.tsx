@@ -5,11 +5,11 @@ import { pageMetadata } from '@/lib/seo';
 import { CONTACT } from '@/lib/site-contact';
 
 export const metadata = pageMetadata({
-  title: 'Data Processing Agreement (DPA): GDPR + UK GDPR compliant',
+  title: 'Data Processing Agreement (DPA): GDPR + UK GDPR',
   description:
     'The contract that governs how Mugavi processes customer data on ' +
-    'your behalf. GDPR-compliant, US data residency with EU available on ' +
-    'enterprise request, and Standard Contractual Clauses available.',
+    'your behalf. covers GDPR and UK GDPR. Data is processed in the US, and ' +
+    'Standard Contractual Clauses are available.',
   path: '/dpa',
   keywords: ['GDPR DPA', 'data processing agreement', 'UK GDPR', 'Standard Contractual Clauses'],
 });
@@ -46,7 +46,7 @@ const sections = [
           <li>Syncing invoices, customers, and payments from connected systems (QuickBooks, Xero, Stripe, Square, Plaid).</li>
           <li>Generating dunning messages and cash-flow forecasts using a paid Google Gemini API. Google&apos;s terms for paid services state that submitted prompts and responses are not used to train its models; retention depends on the applicable service terms and account configuration.</li>
           <li>Sending emails and SMS on your behalf through Resend and Twilio.</li>
-          <li>Storing Customer Data encrypted at rest for as long as your account is active.</li>
+          <li>Storing Customer Data for as long as your account is active.</li>
         </ul>
       </>
     ),
@@ -79,8 +79,7 @@ const sections = [
     body: (
       <>
         <p>
-          Self-serve accounts are currently processed in a single region (US). EU-only data residency is
-          available for enterprise agreements on request. For transfers from the EEA, UK, or Switzerland to a
+          Self-serve accounts are currently processed in a single region (US). For transfers from the EEA, UK, or Switzerland to a
           third country, Mugavi relies on the European Commission&apos;s 2021 Standard Contractual Clauses
           (Module 2: Controller-to-Processor) and the UK International Data Transfer Addendum. A copy of the
           executed SCCs is available on request.
@@ -95,7 +94,7 @@ const sections = [
       <>
         <p>
           Mugavi implements technical and organizational measures to protect Customer Data, including:
-          TLS 1.2+ in transit, encryption at rest by our managed Postgres provider, org-scoped queries, sign-in through
+          TLS 1.2+ in transit, org-scoped queries, sign-in through
           Clerk, and an events log of key actions. The current security posture is published on our{' '}
           <a href="/security" className="link">Security page</a>.
         </p>
@@ -159,7 +158,7 @@ export default function DPAPage() {
         <h1 className="mt-3 h1">Data Processing Agreement</h1>
         <p className="mt-6 lead">
           The contract that governs how Mugavi processes your customer data on your behalf. Written
-          in plain English, GDPR-compliant, available in English (US) and English (UK).
+          in plain English, available in English (US) and English (UK).
         </p>
         <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-500">
           <span>Effective: 13 July 2026</span>
@@ -174,7 +173,7 @@ export default function DPAPage() {
           <div className="card text-center">
             <Globe2 className="mx-auto h-6 w-6 text-brand-600" />
             <div className="mt-2 text-sm font-semibold text-ink-900">US residency</div>
-            <div className="text-xs text-ink-500">EU on enterprise request</div>
+            <div className="text-xs text-ink-500">Single US region</div>
           </div>
           <div className="card text-center">
             <Server className="mx-auto h-6 w-6 text-brand-600" />

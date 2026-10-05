@@ -12,21 +12,21 @@ import { PLAN_PRICING } from '@/lib/utils';
 import { ComparisonChecked } from '@/components/marketing/comparison-section';
 
 export const metadata = pageMetadata({
-  title: 'Mugavi vs QuickBooks: smarter AR automation for QBO users',
+  title: 'Mugavi vs QuickBooks: smarter AR automation for QuickBooks users',
   description:
     'QuickBooks handles invoicing, payments and built-in reminders. ' +
     'Mugavi adds AI tone-aware AI dunning, AR aging, cash-flow forecasting, ' +
     'and a branded payment portal while keeping your QuickBooks data in sync.',
   path: '/vs-quickbooks',
   image: '/og-vs-quickbooks.png',
-  keywords: ['Mugavi vs QuickBooks', 'QuickBooks AR', 'QuickBooks invoice reminder', 'QBO dunning'],
+  keywords: ['Mugavi vs QuickBooks', 'QuickBooks AR', 'QuickBooks invoice reminder', 'QuickBooks dunning'],
 });
 
 const DIFFS = [
   { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'Payment reminders, with Intuit Assist drafting reminder text for you to review' },
   { icon: DollarSign, label: 'Cost', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees`, quickbooks: 'Reminders come with your QuickBooks plan (from $38/mo list, before promotions); payments carry processing fees' },
   { icon: LineChart, label: 'Forecasting', collectly: '4-week AR cash-flow forecast', quickbooks: 'Reports, and a cash flow planner on some plans' },
-  { icon: Target, label: 'Best for', collectly: 'Businesses serious about reducing DSO', quickbooks: 'Businesses already living in QBO' },
+  { icon: Target, label: 'Best for', collectly: 'Businesses serious about reducing DSO', quickbooks: 'Businesses already living in QuickBooks' },
 ];
 
 export default function VsQuickbooksPage() {
@@ -118,7 +118,7 @@ export default function VsQuickbooksPage() {
           <div className="mt-8 grid sm:grid-cols-2 gap-4 text-sm text-ink-700">
             <div className="card">
               <div className="font-semibold text-ink-900">Ecosystem lock-in</div>
-              <p className="mt-1">QBO users already have their customers, invoices, and books in one place, so Payments is the obvious next click.</p>
+              <p className="mt-1">QuickBooks users already have their customers, invoices, and books in one place, so Payments is the obvious next click.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Accountant + ProAdvisor network</div>
@@ -158,7 +158,7 @@ export default function VsQuickbooksPage() {
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />Your collections needs are simple and occasional</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You only want one tool and one login</li>
                 <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You already use QuickBooks Payments and don&apos;t want to switch</li>
-                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You want payment acceptance tightly embedded in QBO</li>
+                <li className="flex items-start gap-2"><Check className="h-4 w-4 text-ink-500 mt-0.5 flex-shrink-0" />You want payment acceptance tightly embedded in QuickBooks</li>
               </ul>
             </div>
           </div>

@@ -40,7 +40,7 @@ type Row = {
        constantly while scanning; anything stronger flickers. */
 // "Overdue" is derived from the due date, never read from invoice.status.
 // The stored status is only authoritative for the terminal states below: it is
-// written by the QBO/Xero sync and goes stale on its own, because an invoice
+// written by the QuickBooks/Xero sync and goes stale on its own, because an invoice
 // crosses into overdue purely through the passage of time, with no sync to
 // update it. Trusting it produced rows badged "Overdue" next to a due date
 // weeks in the future, which reads as a plain bug to the one user who checks.

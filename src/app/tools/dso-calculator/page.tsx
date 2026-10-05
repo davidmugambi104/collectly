@@ -64,7 +64,7 @@ export const metadata = pageMetadata({
   title: 'DSO calculator and benchmark for small agencies',
   description:
     'Calculate your Days Sales Outstanding (DSO) instantly and compare ' +
-    'to UK, US, AU, and CA benchmarks for small agencies and consultancies. ' +
+    'to UK and US benchmarks for small agencies and consultancies. ' +
     'Formula explained, worked examples included, and a free A/R audit ' +
     'to find what is slowing your cash flow.',
   path: '/tools/dso-calculator',
@@ -95,8 +95,6 @@ const dsoJsonLd = JSON.stringify([
 const BENCHMARKS = [
   { region: 'United Kingdom', dso: 29, days: 'early 2026', source: 'Xero SMB analysis' },
   { region: 'United States', dso: 39, days: '2025', source: 'Atradius payment practices' },
-  { region: 'Australia', dso: 26, days: '2025', source: 'Xero Australia SMB data' },
-  { region: 'Canada', dso: 31, days: '2024', source: 'Sage Canada report' },
 ];
 
 const FORMULA_BREAKDOWN = [
@@ -146,7 +144,7 @@ export default function DsoCalculatorPage() {
         </p>
         <ul className="mt-6 space-y-2 text-sm text-ink-700">
           <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Free, no email gate, runs in your browser.</li>
-          <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Benchmarked against actual SMB data for UK, US, AU and CA.</li>
+          <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Benchmarked against actual SMB data for the UK and US.</li>
           <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" /> Worked examples for agencies, consultancies, and SaaS businesses.</li>
         </ul>
       </section>

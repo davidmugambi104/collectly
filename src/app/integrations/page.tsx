@@ -86,9 +86,9 @@ const categories = [
         slug: 'stripe',
         status: 'test-mode',
         bullets: [
-          'ACH, card, and SEPA on the hosted portal',
+          'Card and ACH on the hosted portal',
           'Webhook reconciliation against invoices',
-          'Swap to live keys when you are ready to collect real payments in US/UK/AU/CA',
+          'Swap to live keys when you are ready to collect real payments',
         ],
       },
       {
@@ -310,8 +310,7 @@ export default function IntegrationsPage() {
         <div className="rounded-2xl border border-ink-200 bg-ink-50 p-8">
           <h2 className="h3">Don&apos;t see what you need?</h2>
           <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-            We ship integrations based on user votes. The top three most-requested right now are Sage, NetSuite, and MYOB.
-            Tell us what&apos;s blocking you and we&apos;ll add it to the public roadmap.
+            Mugavi connects to QuickBooks Online (beta) and Xero today. If your books are somewhere else, tell us what is blocking you.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <a href={`mailto:${CONTACT.hello}?subject=Integration%20request`} className="btn-primary">

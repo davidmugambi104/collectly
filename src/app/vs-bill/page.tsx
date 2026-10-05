@@ -108,7 +108,7 @@ export default function VsBillPage() {
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Deep ERP integrations</div>
-              <p className="mt-1">Two-way sync with QBO, Xero, NetSuite, Sage Intacct, and Dynamics makes switching friction low for mid-market.</p>
+              <p className="mt-1">Two-way sync with QuickBooks Online, Xero, NetSuite, Sage Intacct, and Dynamics makes switching friction low for mid-market.</p>
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
