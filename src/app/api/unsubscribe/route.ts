@@ -9,12 +9,9 @@
  *   → marks the email as unsubscribed (waitlist) and DND across any
  *     matching customers (for transactional dunning suppression).
  *
- * The token format is `base64url(email)` for now. This is NOT signed
- * (i.e. anyone who can guess an email can unsubscribe it). For a
- * production system, use HMAC-signed tokens. For a beta with low
- * volume, the trade-off is acceptable: an attacker can unsubscribe
- * arbitrary addresses (annoying) but cannot read or send anything
- * to them.
+ * Tokens are HMAC-signed (see src/lib/unsubscribe-token.ts). Old unsigned
+ * tokens in mail already sent are still accepted until
+ * UNSUBSCRIBE_REQUIRE_SIGNED=1 is set.
  *
  * The footer in every outreach email links here, so this is the
  * legal CAN-SPAM / UK PECR / AU Spam Act "real unsubscribe path".
@@ -24,18 +21,12 @@ import { z } from 'zod';
 import { pool } from '@/db';
 import { randomUUID } from 'crypto';
 import { parseJsonBody } from '@/lib/parse-body';
+import { readUnsubscribeToken } from '@/lib/unsubscribe-token';
 
 const bodySchema = z.object({ token: z.string().min(1) });
 
 function decodeToken(token: string): string | null {
-  try {
-    const decoded = Buffer.from(token, 'base64url').toString('utf8');
-    // basic email shape check
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(decoded)) return null;
-    return decoded.toLowerCase().trim();
-  } catch {
-    return null;
-  }
+  return readUnsubscribeToken(token);
 }
 
 export async function GET(req: NextRequest) {

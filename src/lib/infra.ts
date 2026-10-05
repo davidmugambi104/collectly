@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { makeUnsubscribeToken } from '@/lib/unsubscribe-token';
 import { Twilio } from 'twilio';
 import Stripe from 'stripe';
 import { makeStripe } from '@/lib/stripe-client';
@@ -176,7 +177,7 @@ export async function sendSms(opts: { to: string; body: string }): Promise<SendS
  * (annoying) but cannot read or send anything to them.
  */
 export function unsubscribeToken(email: string): string {
-  return Buffer.from(email.toLowerCase().trim(), 'utf8').toString('base64url');
+  return makeUnsubscribeToken(email);
 }
 
 /**
