@@ -9,11 +9,12 @@ import { organizations, memberships, invoices, integrations, inboxMessages, dunn
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import type { BookFacts, Money } from '@/lib/practice';
 import { reconcileBooks, type BookRef } from '@/lib/book-membership';
-import { listClerkBooks, dropMemberships } from '@/lib/clerk-books';
+import { listClerkBooks, dropMemberships, resolveUserRowId } from '@/lib/clerk-books';
 
 const devShim = () => process.env.USE_DEV_AUTH === '1';
 
-async function cachedBooks(userId: string): Promise<BookRef[]> {
+async function cachedBooks(clerkUserId: string): Promise<BookRef[]> {
+  const userId = (await resolveUserRowId(clerkUserId)) ?? clerkUserId;
   const rows: Array<{ id: string; name: string }> = await db
     .select({ id: organizations.id, name: organizations.name })
     .from(memberships).innerJoin(organizations, eq(organizations.id, memberships.orgId))
@@ -41,7 +42,8 @@ export async function loadBookCount(userId: string): Promise<number> {
   return (await listBooks(userId)).books.length;
 }
 
-export async function loadCachedBookCount(userId: string): Promise<number> {
+export async function loadCachedBookCount(clerkUserId: string): Promise<number> {
+  const userId = (await resolveUserRowId(clerkUserId)) ?? clerkUserId;
   const [row] = await db.select({ n: sql<number>`count(*)::int` }).from(memberships).where(eq(memberships.userId, userId));
   return Number(row?.n ?? 0);
 }
