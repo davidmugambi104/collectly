@@ -1,7 +1,7 @@
 /**
  * Load an export from /api/admin/export-database into an empty Postgres.
  *
- *   TARGET_DATABASE_URL=... npx tsx scripts/import-database-json.ts mugavi-data-YYYY-MM-DD.ndjson [--dry-run]
+ *   TARGET_DATABASE_URL=... npx tsx scripts/import-database-json.mts mugavi-data-YYYY-MM-DD.ndjson [--dry-run]
  *
  * The URL comes only from the environment and is never printed. Prints MATCH or
  * DIFFERENT with table names only. Credential columns are not in the file, so
@@ -11,13 +11,17 @@ import fs from 'node:fs';
 import readline from 'node:readline';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
-import { importRows, type Manifest } from '../src/lib/db-export.ts';
+import type { Manifest } from '../src/lib/db-export.ts';
+
+// Dynamic import: node treats the .ts source as CJS, so its named exports are not visible to a static ESM import.
+const dbExport = (await import('../src/lib/db-export.ts')) as typeof import('../src/lib/db-export.ts') & { default?: typeof import('../src/lib/db-export.ts') };
+const { importRows } = dbExport.importRows ? dbExport : dbExport.default!;
 
 const file = process.argv[2];
 const dry = process.argv.includes('--dry-run');
 const url = process.env.TARGET_DATABASE_URL;
 if (!file || (!url && !dry)) {
-  console.error('Usage: TARGET_DATABASE_URL=... npx tsx scripts/import-database-json.ts <file.ndjson> [--dry-run]');
+  console.error('Usage: TARGET_DATABASE_URL=... npx tsx scripts/import-database-json.mts <file.ndjson> [--dry-run]');
   process.exit(2);
 }
 
