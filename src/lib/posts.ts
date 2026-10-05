@@ -1290,7 +1290,7 @@ Davie
   },
   {
     slug: 'quickbooks-unapplied-payments-credit-memos-chasing-paid-clients',
-    title: 'Unapplied payments and credit memos: why QuickBooks clients get chased for money they already paid',
+    title: 'Unapplied payments and credit memos: why paid clients still get chased',
     date: '2026-10-03', read: '6 min',
     excerpt: 'A customer pays, the money lands in QuickBooks, and the invoice still shows as open. Where those payments hide, how to find them, and why a reminder tool needs to know.',
     tags: ['QuickBooks', 'bookkeeping', 'credit memos', 'unapplied payments'],
