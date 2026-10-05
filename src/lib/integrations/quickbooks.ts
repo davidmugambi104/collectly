@@ -188,7 +188,7 @@ function tidSuffix(res: Response): string {
 
 async function qboPost(orgId: string, path: string, body: unknown) {
   const integ = await getFreshQboToken(orgId);
-  const url = `${QBO_BASE}/v3/company/${integ.realmId}${path}`;
+  const url = `${QBO_BASE}/v3/company/${integ.realmId}${withMinorVersion(path)}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -414,7 +414,7 @@ async function qboListCustomersFrom(orgId: string, startPosition: number): Promi
 
 /** Fetch a single invoice by id (with line items). */
 export async function qboGetInvoice(orgId: string, invoiceId: string) {
-  return qboFetch(orgId, `/invoice/${invoiceId}?minorversion=70`);
+  return qboFetch(orgId, `/invoice/${invoiceId}`);
 }
 
 // -------------------------------------------------------------------
@@ -448,7 +448,7 @@ export async function qboRecordPayment(orgId: string, opts: {
     // Private note shows in QBO UI for the customer; useful for trace
     PrivateNote: `Mugavi payment ${opts.paymentRef}`,
   };
-  return qboPost(orgId, '/payment?minorversion=70', body);
+  return qboPost(orgId, '/payment', body);
 }
 
 // -------------------------------------------------------------------
