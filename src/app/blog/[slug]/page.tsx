@@ -7,6 +7,28 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { pageMetadata, articleJsonLd, breadcrumbJsonLd, truncate } from '@/lib/seo';
 
+// Posts are plain strings; turn [text](/path) into real links so internal links are crawlable.
+function renderInline(text: string): React.ReactNode[] {
+  const out: React.ReactNode[] = [];
+  const re = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    const href = m[2];
+    out.push(
+      href.startsWith('/') ? (
+        <Link key={m.index} href={href} className="text-brand-700 underline underline-offset-2 hover:text-brand-800">{m[1]}</Link>
+      ) : (
+        <a key={m.index} href={href} rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">{m[1]}</a>
+      ),
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+
 // Pre-render every known post at build time. New posts get picked up on the
 // next deploy — we don't need ISR for a publication cadence this slow.
 export async function generateStaticParams() {
@@ -102,12 +124,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             }
             if (p.startsWith('- ')) {
               const items = p.split('\n').map((l) => l.replace(/^- /, '').trim());
-              return <ul key={i} className="mt-4 list-disc pl-5 space-y-1.5 text-ink-700">{items.map((it, j) => <li key={j}>{it}</li>)}</ul>;
+              return <ul key={i} className="mt-4 list-disc pl-5 space-y-1.5 text-ink-700">{items.map((it, j) => <li key={j}>{renderInline(it)}</li>)}</ul>;
             }
             if (p.startsWith('**') && p.endsWith('**')) {
               return <p key={i} className="mt-4 font-semibold text-ink-900">{p.slice(2, -2)}</p>;
             }
-            return <p key={i} className="mt-4 text-ink-700 leading-relaxed whitespace-pre-wrap">{p}</p>;
+            return <p key={i} className="mt-4 text-ink-700 leading-relaxed whitespace-pre-wrap">{renderInline(p)}</p>;
           })}
         </div>
         <div className="mt-10 flex items-center gap-2 flex-wrap">
