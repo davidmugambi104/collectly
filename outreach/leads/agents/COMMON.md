@@ -37,3 +37,6 @@ invoices, and Kenya. Subreddit rules often ban promotion and lead generation: he
 Write `runs/<date>/<platform>.json` and `runs/<date>/drafts-<platform>.json` exactly as in `../README.md`. Keep 15 to 40
 items; quality over count. Final reply to the lead: 100 words max: files written, counts, what you skipped and why,
 anything that blocked you.
+
+## Disclosure
+If a draft names Mugavi, it must say the user is affiliated (for example "I work on Mugavi"). The lint rejects it otherwise. Never post, comment or message from any account; drafting only.

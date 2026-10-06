@@ -43,7 +43,8 @@ test('lint passes a plain draft and catches the usual problems', () => {
   assert.ok(lintDraft({ ...ok, reply: ok.reply + ' See https://mugavi.com' }).some((p) => /link/.test(p)));
   assert.ok(lintDraft({ ...ok, reply: ok.reply + ' Mugavi does this.' }).some((p) => /mentionsMugavi/.test(p)));
   assert.ok(lintDraft({ ...ok, mentionsMugavi: true, reply: ok.reply + ' Mugavi does this.' }).some((p) => /mentionReason/.test(p)));
-  assert.deepEqual(lintDraft({ ...ok, mentionsMugavi: true, mentionReason: 'they asked for a tool', reply: ok.reply + ' Mugavi drafts reminders and you approve each one.' }), []);
+  assert.deepEqual(lintDraft({ ...ok, mentionsMugavi: true, mentionReason: 'they asked for a tool', reply: ok.reply + ' I work on Mugavi, which drafts reminders and you approve each one.' }), []);
+  assert.ok(lintDraft({ ...ok, mentionsMugavi: true, mentionReason: 'they asked for a tool', reply: ok.reply + ' Mugavi drafts reminders and you approve each one.' }).some((p) => /affiliated/.test(p)));
   assert.ok(lintDraft({ ...ok, reply: 'x'.repeat(300) }, { platform: 'x' }).some((p) => /too long/.test(p)));
   assert.ok(lintDraft({ painPoint: '', reply: ok.reply }).some((p) => /painPoint/.test(p)));
 });

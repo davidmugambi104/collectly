@@ -19,6 +19,8 @@ export function lintDraft(d, { platform = 'reddit' } = {}) {
   if (mentions && !d.mentionsMugavi) out.push('mentions Mugavi but mentionsMugavi is not set');
   if (d.mentionsMugavi && !String(d.mentionReason ?? '').trim()) out.push('mentions Mugavi without a mentionReason');
   if (d.mentionsMugavi && !mentions) out.push('mentionsMugavi is set but the reply does not name it');
+  // Reddit's self-promotion rules: if you recommend something you own, say so.
+  if (d.mentionsMugavi && mentions && !/\b(i (build|built|work on|run|founded|make|made)|i'?m (building|the founder|the maker)|my (company|product|tool)|full disclosure|disclosure)\b/i.test(r)) out.push('names Mugavi without saying you are affiliated (add e.g. "I work on Mugavi")');
   if (!String(d.painPoint ?? '').trim()) out.push('missing painPoint');
   return out;
 }
