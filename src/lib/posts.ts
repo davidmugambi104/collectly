@@ -69,7 +69,9 @@ That is what [Mugavi](/for/bookkeepers) is built for. It drafts reminders for ea
 - [ ] A monthly one-page summary you can reuse for every client
 - [ ] A place to look up the rules on contacting debtors where you work
 
-Start with one client who already complains about late payers. Run it for a month, see how many hours it really takes, and price the service from that.`,
+Start with one client who already complains about late payers. Run it for a month, see how many hours it really takes, and price the service from that.
+
+Related reading: [handing over invoice follow-up when a client leaves your practice](/blog/client-leaving-your-practice-invoice-follow-up-handover).`,
   },
   {
     slug: 'payment-reminder-emails-bookkeepers-send-for-clients',
@@ -468,7 +470,9 @@ That last part is the real problem. Ten possible reasons, and the tool shows you
 
 ## Disclosure
 
-This article is from Mugavi, which makes accounts receivable software. In Mugavi, every invoice has a panel that answers "Why hasn't a reminder gone out?" in plain words, using the same rules the sender uses, and the invoice list has a Next reminder column that says what happens next and when. We wrote this list because the question comes up often, and every check above works without our product.`,
+This article is from Mugavi, which makes accounts receivable software. In Mugavi, every invoice has a panel that answers "Why hasn't a reminder gone out?" in plain words, using the same rules the sender uses, and the invoice list has a Next reminder column that says what happens next and when. We wrote this list because the question comes up often, and every check above works without our product.
+
+Related reading: [what to do when a customer says they never got the invoice or disputes it](/blog/customer-says-never-got-invoice-or-disputes-it).`,
   },
   {
     slug: 'read-an-aged-receivables-report',
@@ -514,7 +518,9 @@ Each customer gets a row, and each bucket shows how much of their balance falls 
 
 ## Disclosure
 
-This article is from Mugavi, which makes accounts receivable software. Mugavi has an aged receivables report with the same five buckets, shows it per customer, and exports it as a CSV. It matches the buckets above, and a customer's statement uses the same rules, so the two never disagree. Everything in this article works with the report your accounting software already has.`,
+This article is from Mugavi, which makes accounts receivable software. Mugavi has an aged receivables report with the same five buckets, shows it per customer, and exports it as a CSV. It matches the buckets above, and a customer's statement uses the same rules, so the two never disagree. Everything in this article works with the report your accounting software already has.
+
+Related reading: [which overdue QuickBooks invoices to chase first](/blog/which-overdue-quickbooks-invoices-to-chase-first), [an accounts receivable month-end checklist for QuickBooks Online](/blog/accounts-receivable-month-end-checklist-quickbooks-online), [how to forecast cash flow when you have 12 open invoices](/blog/cash-flow-forecasting-small-business).`,
   },
   {
     slug: 'late-payment-fees-when-to-charge',
@@ -555,7 +561,9 @@ Do not add a fee to an invoice you know is in dispute. Do not charge a fee to a 
 
 This article is from Mugavi, which makes accounts receivable software. Mugavi has a late fee rule you set yourself, with a grace period and an optional cap. It never applies a fee on its own: it lists the invoices that are due one, and you choose which to apply. It skips disputed invoices and invoices with a promise to pay. It does not write the fee back to your accounting software and does not add it to the payment page, so you collect it yourself and mark it paid. Everything above works without it.
 
-Fees are easier to stand behind when the invoice states its terms clearly. If you invoice in the UK, see [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase) for what belongs on the invoice.`,
+Fees are easier to stand behind when the invoice states its terms clearly. If you invoice in the UK, see [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase) for what belongs on the invoice.
+
+Related reading: [tracking a customer's promise to pay](/blog/customer-promised-to-pay-friday-track-it), [the true cost of late payments for small businesses](/blog/true-cost-of-late-payments-small-business-2026), [when a UK invoice is really late, by payment method](/blog/uk-payment-methods-when-is-an-invoice-really-late).`,
   },
   {
     slug: 'customer-statement-vs-another-reminder',
@@ -749,7 +757,8 @@ Reply to this email or book a 15-min call: https://cal.com/davie-collectly/15min
 Davie
 Founder, Mugavi
 https://mugavi.com
-`,
+
+Related reading: [the 5-step playbook for cutting DSO](/blog/cut-dso-5-step-playbook-2026), [how to forecast cash flow when you have 12 open invoices](/blog/cash-flow-forecasting-small-business).`,
   },
 
   {
@@ -1007,7 +1016,8 @@ Total recovery: **70-90%** of invoices paid within 30 days. Industry baseline wi
 If you want to test these templates without building the system: mugavi.com can run these reminders for you, from $79/mo. 14-day free trial.
 
 Davie
-`,
+
+Related reading: [the state of A/R automation for small businesses in 2026](/blog/ar-automation-for-small-business-2026).`,
   },
   {
     slug: 'cut-dso-5-step-playbook-2026',
@@ -1082,7 +1092,8 @@ Pick one of the 5 steps above and do it this week. Don't try to implement all 5 
 If you want help implementing the rest, that's what Mugavi does. 14-day free trial, no card required. → https://mugavi.com/sign-up
 
 Davie
-`,
+
+Related reading: [the state of A/R automation for small businesses in 2026](/blog/ar-automation-for-small-business-2026), [the true cost of late payments for small businesses](/blog/true-cost-of-late-payments-small-business-2026).`,
   },
   {
     slug: 'true-cost-of-late-payments-small-business-2026',
@@ -1157,7 +1168,8 @@ The reason late payments are so persistent is that **the cost is distributed and
 If you're a small business owner reading this and the math above feels familiar, that's because it is. The first step is the Monday morning A/R aging audit, 5 minutes, every Monday, sorted by amount, not by date. That single habit surfaces 80% of the problem.
 
 Davie
-`,
+
+Related reading: [the 5-step playbook for cutting DSO](/blog/cut-dso-5-step-playbook-2026), [how to forecast cash flow when you have 12 open invoices](/blog/cash-flow-forecasting-small-business).`,
   },
   {
     slug: 'final-notice-that-gets-paid-2026',
@@ -1347,7 +1359,9 @@ Because every reminder also waits for your approval by default, a wrong one can 
 
 Add this check to the engagement. Tell the client you will apply payments and credits that you can match, and that you will ask about the rest. It makes the first month of [invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service) much calmer, because the first reminders go out on invoices that really are open.
 
-The tool is [Mugavi for bookkeepers](/for/bookkeepers), $399 a month for ten client books. Start with one book and compare what it flags against what you already know is unapplied.`,
+The tool is [Mugavi for bookkeepers](/for/bookkeepers), $399 a month for ten client books. Start with one book and compare what it flags against what you already know is unapplied.
+
+Related reading: [reminding for the balance on part-paid QuickBooks invoices](/blog/part-paid-invoices-quickbooks-remind-for-the-balance).`,
   },
   {
     slug: 'accounts-receivable-month-end-checklist-quickbooks-online',
@@ -1530,7 +1544,9 @@ On price, it is $399 a month for ten client books, billed by hand for now while 
 
 ## Keep it a service, not a favour
 
-Whatever you roll out, say what you charge for it. We wrote about [pricing invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service) and the [reminder emails you might send on a client's behalf](/blog/payment-reminder-emails-bookkeepers-send-for-clients). Both fit a pilot like this. The page for practices is [Mugavi for bookkeepers](/for/bookkeepers).`,
+Whatever you roll out, say what you charge for it. We wrote about [pricing invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service) and the [reminder emails you might send on a client's behalf](/blog/payment-reminder-emails-bookkeepers-send-for-clients). Both fit a pilot like this. The page for practices is [Mugavi for bookkeepers](/for/bookkeepers).
+
+Related reading: [handing over invoice follow-up when a client leaves your practice](/blog/client-leaving-your-practice-invoice-follow-up-handover), [an accounts receivable month-end checklist for QuickBooks Online](/blog/accounts-receivable-month-end-checklist-quickbooks-online).`,
   },
   {
     slug: 'uk-invoice-payment-terms-you-can-chase',
@@ -1580,7 +1596,9 @@ With clear terms, a first reminder can be two sentences: the invoice, the amount
 
 ## Where Mugavi fits
 
-Mugavi drafts reminders from your accounting software, waits for you to approve each one, and lets you add payment details that print on statements. It is built and priced in dollars, and we have not tested it with a UK QuickBooks company. If you are in the UK, read the [UK page](/for/uk-agencies) and ask us before you commit. Everything in this post works without any tool.`,
+Mugavi drafts reminders from your accounting software, waits for you to approve each one, and lets you add payment details that print on statements. It is built and priced in dollars, and we have not tested it with a UK QuickBooks company. If you are in the UK, read the [UK page](/for/uk-agencies) and ask us before you commit. Everything in this post works without any tool.
+
+Related reading: [when a UK invoice is really late, by payment method](/blog/uk-payment-methods-when-is-an-invoice-really-late), [checking who you invoiced at a UK company before chasing](/blog/check-who-you-invoiced-uk-company-before-chasing).`,
   },
   {
     slug: 'chasing-accounts-payable-at-large-uk-customer',
@@ -1638,7 +1656,9 @@ Clear terms on the original invoice make this chase easier too. See [UK invoice 
 
 ## Where Mugavi fits
 
-Mugavi is for small businesses and the bookkeepers who work with them. It drafts the reminder, you approve it, and it waits thirty seconds before sending so you can undo. It has no portal integrations, so it will not tell you whether a customer's portal has your invoice. We have not tested it with a UK QuickBooks company. The [UK page](/for/uk-agencies) has the details we are sure of.`,
+Mugavi is for small businesses and the bookkeepers who work with them. It drafts the reminder, you approve it, and it waits thirty seconds before sending so you can undo. It has no portal integrations, so it will not tell you whether a customer's portal has your invoice. We have not tested it with a UK QuickBooks company. The [UK page](/for/uk-agencies) has the details we are sure of.
+
+Related reading: [checking who you invoiced at a UK company before chasing](/blog/check-who-you-invoiced-uk-company-before-chasing).`,
   },
   {
     slug: 'which-overdue-quickbooks-invoices-to-chase-first',
@@ -1679,7 +1699,9 @@ Send the first pile first, then wait a few days before the second. Each message 
 
 Mugavi can do the sorting step for you in a narrow way. You set a minimum balance below which an invoice is not chased. It sends one reminder per customer, with the other overdue invoices listed in a short table, then waits a gap you choose before the next. A filter shows customers who owe you but cannot be reminded, for example because there is no email address. Nothing reaches a customer until you approve it. The QuickBooks connection is in beta, so check the numbers against your own report before you rely on them.
 
-If you do this for several clients, see the [pilot plan for running reminders across many QuickBooks client books](/blog/run-invoice-reminders-across-many-quickbooks-client-books).`,
+If you do this for several clients, see the [pilot plan for running reminders across many QuickBooks client books](/blog/run-invoice-reminders-across-many-quickbooks-client-books).
+
+Related reading: [reminding for the balance on part-paid QuickBooks invoices](/blog/part-paid-invoices-quickbooks-remind-for-the-balance), [tracking a customer's promise to pay](/blog/customer-promised-to-pay-friday-track-it).`,
   },
   {
     slug: 'customer-promised-to-pay-friday-track-it',
@@ -1711,7 +1733,9 @@ Before you follow up, check that the money has not already arrived and been reco
 
 ## Where Mugavi fits
 
-On the payment page, the person paying can tap "I will pay on" and pick a day within 30 days. Reminders for that invoice pause until the day they chose, and you see it in your Inbox. They can also tap "Something is not right", which stops the reminders and tells you. A reply to a reminder pauses that invoice until you have read it. None of this replaces a phone call when a promise is broken. It makes sure the schedule does not talk over a promise while you are waiting. Mugavi reads your books, so the invoice closes when the payment is recorded in QuickBooks. The QuickBooks connection is in beta.`,
+On the payment page, the person paying can tap "I will pay on" and pick a day within 30 days. Reminders for that invoice pause until the day they chose, and you see it in your Inbox. They can also tap "Something is not right", which stops the reminders and tells you. A reply to a reminder pauses that invoice until you have read it. None of this replaces a phone call when a promise is broken. It makes sure the schedule does not talk over a promise while you are waiting. Mugavi reads your books, so the invoice closes when the payment is recorded in QuickBooks. The QuickBooks connection is in beta.
+
+Related reading: [what to do when a customer says they never got the invoice or disputes it](/blog/customer-says-never-got-invoice-or-disputes-it), [which overdue QuickBooks invoices to chase first](/blog/which-overdue-quickbooks-invoices-to-chase-first).`,
   },
   {
     slug: 'part-paid-invoices-quickbooks-remind-for-the-balance',
