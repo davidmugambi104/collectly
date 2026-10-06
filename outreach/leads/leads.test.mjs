@@ -57,7 +57,7 @@ test('report drops duplicates and excluded items, ranks the rest and flags missi
   assert.deepEqual(rep.shortlist[0].problems, ['no draft written']);
 });
 
-import { mapPost } from './sources/reddit-api.mjs';
+import { mapPost, inWindow } from './sources/reddit-api.mjs';
 import { mapTweet, QUERIES as XQ } from './sources/x-api.mjs';
 
 test('reddit and x mappers keep no author and give usable links', () => {
@@ -72,4 +72,12 @@ test('"not getting paid" style posts count as payment pain', () => {
   const s = scoreItem(item({ title: 'Not getting paid for an event', text: 'The organiser still has not paid and keeps saying next week.' }), { now });
   assert.ok(s.relevance >= 12, `got ${s.relevance}`);
   assert.equal(excludeReason(item({ title: 'Not getting paid for an event', text: 'He owes me 2k.' }), { now }), null);
+});
+
+test('inWindow keeps posts inside the day window and drops old or undated ones', () => {
+  const n = new Date('2026-10-06T12:00:00Z');
+  assert.equal(inWindow({ createdAt: '2026-10-05T12:00:00Z' }, 7, n), true);
+  assert.equal(inWindow({ createdAt: '2026-09-28T12:00:00Z' }, 7, n), false);
+  assert.equal(inWindow({ createdAt: 'nope' }, 7, n), false);
+  assert.equal(inWindow({ createdAt: '2026-10-09T12:00:00Z' }, 7, n), false);
 });
