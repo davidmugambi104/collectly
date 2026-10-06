@@ -471,12 +471,25 @@ export async function disconnectXero(orgId: string): Promise<{ ok: true; revokeF
     const list = await fetch(XERO_CONNECTIONS, { headers });
     let id: string | null = null;
     let deleteOk: boolean | undefined;
+    let deleteStatus: number | undefined;
+    let listed = 0;
     if (list.ok) {
-      id = connectionIdFor((await list.json()) as ConsentTenant[], fresh.tenantId);
-      if (id) deleteOk = (await fetch(`${XERO_CONNECTIONS}/${encodeURIComponent(id)}`, { method: 'DELETE', headers })).ok;
+      const all = (await list.json()) as ConsentTenant[];
+      listed = Array.isArray(all) ? all.length : 0;
+      id = connectionIdFor(all, fresh.tenantId);
+      if (id) {
+        const del = await fetch(`${XERO_CONNECTIONS}/${encodeURIComponent(id)}`, { method: 'DELETE', headers });
+        deleteOk = del.ok;
+        deleteStatus = del.status;
+      }
     }
     revokeFailed = xeroRevokeFailed(list.ok, id, deleteOk);
-  } catch { /* still remove the local connection */ }
+    // Statuses and counts only (no tokens, ids or names), so a failed disconnect can be read in the logs.
+    console.info('[xero] disconnect', { listStatus: list.status, listed, hadTenant: Boolean(fresh.tenantId), matched: Boolean(id), deleteStatus, revokeFailed });
+  } catch (e) {
+    // Still remove the local connection. Log the reason only (no tokens).
+    console.warn('[xero] disconnect could not revoke at Xero:', e instanceof Error ? e.message.slice(0, 120) : 'unknown error');
+  }
   await db.delete(integrations).where(eq(integrations.id, integ.id));
   return { ok: true, revokeFailed };
 }
