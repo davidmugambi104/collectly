@@ -65,6 +65,10 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
         alert(`Disconnect failed: ${data?.error ?? res.status}`);
         return;
       }
+      const done = await res.json().catch(() => ({}));
+      if (done?.revokeFailed) {
+        alert(`Disconnected from Mugavi, but ${label} did not confirm that it removed our access. To finish, open ${label}, go to Connected apps and disconnect the app there. It may be listed as Mugavi or collectly.`);
+      }
       router.refresh();
     } finally {
       setDisconnecting(false);

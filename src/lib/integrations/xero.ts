@@ -19,7 +19,7 @@ import { fetchAllPages, chunk } from '@/lib/integrations/paging';
 import { needsLookup, reconcileStatus, xeroSyncedStatus } from '@/lib/integrations/sync-status';
 import { nanoid, errorMessage } from '@/lib/utils';
 import { replaceCredits } from '@/lib/integrations/credits';
-import { authEventIdFromToken, pickTenant, connectionIdFor, type XeroTenant as ConsentTenant } from '@/lib/integrations/xero-tenant';
+import { authEventIdFromToken, pickTenant, connectionIdFor, xeroRevokeFailed, type XeroTenant as ConsentTenant } from '@/lib/integrations/xero-tenant';
 
 const XERO_OAUTH = 'https://identity.xero.com/connect/token';
 // Tests point this at a local stand-in. Never honoured in production.
@@ -457,23 +457,28 @@ export async function xeroRecordPayment(orgId: string, opts: {
  * QBO's /tokens/revoke endpoint for app-driven disconnect; tokens
  * expire naturally. The user can also revoke manually in Xero.)
  */
-export async function disconnectXero(orgId: string) {
+export async function disconnectXero(orgId: string): Promise<{ ok: true; revokeFailed: boolean }> {
   const [integ] = await db.select().from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'xero'))).limit(1);
-  if (!integ) return { ok: true };
+  if (!integ) return { ok: true, revokeFailed: false };
   // Revoke at Xero too, for this organisation only. Deleting just our row used to leave the organisation
   // "already connected" on Xero's side, which is how a stale one (Demo Company) kept being offered and picked.
-  // Best effort: if Xero cannot be reached or the token is dead, the local row is still removed.
+  // Best effort: if Xero cannot be reached or the token is dead, the local row is still removed, but the caller
+  // is told (revokeFailed) so the customer can remove the app in Xero themselves.
+  let revokeFailed = true;
   try {
     const fresh = await getFreshXero(orgId);
     const headers = { Authorization: `Bearer ${fresh.accessToken}`, Accept: 'application/json' };
     const list = await fetch(XERO_CONNECTIONS, { headers });
+    let id: string | null = null;
+    let deleteOk: boolean | undefined;
     if (list.ok) {
-      const id = connectionIdFor((await list.json()) as ConsentTenant[], fresh.tenantId);
-      if (id) await fetch(`${XERO_CONNECTIONS}/${encodeURIComponent(id)}`, { method: 'DELETE', headers });
+      id = connectionIdFor((await list.json()) as ConsentTenant[], fresh.tenantId);
+      if (id) deleteOk = (await fetch(`${XERO_CONNECTIONS}/${encodeURIComponent(id)}`, { method: 'DELETE', headers })).ok;
     }
+    revokeFailed = xeroRevokeFailed(list.ok, id, deleteOk);
   } catch { /* still remove the local connection */ }
   await db.delete(integrations).where(eq(integrations.id, integ.id));
-  return { ok: true };
+  return { ok: true, revokeFailed };
 }
 
 // -------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { authEventIdFromToken, newestTenant, pickTenant, connectionIdFor } from './xero-tenant.ts';
+import { authEventIdFromToken, newestTenant, pickTenant, connectionIdFor, xeroRevokeFailed } from './xero-tenant.ts';
 
 const jwt = (claims: object) => `h.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.s`;
 
@@ -45,4 +45,13 @@ test('the connection to revoke is the one for our organisation only', () => {
   assert.equal(connectionIdFor(all, 'T9'), null);
   assert.equal(connectionIdFor(all, null), null);
   assert.equal(connectionIdFor([{ tenantId: 'T1' }], 'T1'), null);
+});
+
+test('a revoke counts as failed unless Xero confirmed it or no longer lists the organisation', () => {
+  assert.equal(xeroRevokeFailed(true, 'c1', true), false);
+  assert.equal(xeroRevokeFailed(true, null), false);
+  assert.equal(xeroRevokeFailed(true, 'c1', false), true);
+  assert.equal(xeroRevokeFailed(true, 'c1'), true);
+  assert.equal(xeroRevokeFailed(false, null), true);
+  assert.equal(xeroRevokeFailed(false, 'c1', true), true);
 });

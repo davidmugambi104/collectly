@@ -283,23 +283,26 @@ export async function saveQboConnection(orgId: string, data: { accessToken: stri
  * Disconnect QBO: revoke the token at QBO and delete the integration row.
  * Idempotent — returns ok if not connected.
  */
-export async function disconnectQbo(orgId: string) {
+export async function disconnectQbo(orgId: string): Promise<{ ok: true; revokeFailed: boolean }> {
   const [integ] = await db.select().from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.provider, 'quickbooks'))).limit(1);
-  if (!integ) return { ok: true };
+  if (!integ) return { ok: true, revokeFailed: false };
+  // Best effort: the local row is removed either way, but the caller is told when Intuit did not confirm the revoke.
+  let revokeFailed = true;
   if (integ.accessToken && integ.refreshToken) {
     const basic = Buffer.from(`${process.env.QBO_CLIENT_ID}:${process.env.QBO_CLIENT_SECRET}`).toString('base64');
     try {
-      await fetch(QBO_REVOKE, {
+      const res = await fetch(QBO_REVOKE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json', Authorization: `Basic ${basic}` },
         body: JSON.stringify({ token: integ.refreshToken }),
       });
+      revokeFailed = !res.ok;
     } catch {
       // best-effort; we still want to delete the local row
     }
   }
   await db.delete(integrations).where(eq(integrations.id, integ.id));
-  return { ok: true };
+  return { ok: true, revokeFailed };
 }
 
 // -------------------------------------------------------------------

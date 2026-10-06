@@ -40,3 +40,14 @@ export function connectionIdFor(all: XeroTenant[] | null | undefined, tenantId: 
   if (!tenantId) return null;
   return (all ?? []).find((t) => t?.tenantId === tenantId && t.id)?.id ?? null;
 }
+
+/**
+ * True when we could not confirm that our access was removed at Xero. listOk: the Connections list call
+ * succeeded. connectionId: the matching connection, or null when Xero no longer lists this organisation
+ * (nothing left to remove). deleteOk: the DELETE returned 2xx, or undefined if it was not attempted.
+ */
+export function xeroRevokeFailed(listOk: boolean, connectionId: string | null | undefined, deleteOk?: boolean): boolean {
+  if (!listOk) return true;
+  if (!connectionId) return false;
+  return deleteOk !== true;
+}

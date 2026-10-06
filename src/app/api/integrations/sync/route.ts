@@ -103,11 +103,13 @@ async function deleteHandler(req: NextRequest) {
   }
 
   try {
+    let revokeFailed = false;
     if (adapter) await adapter.disconnect(orgId);
-    else if (provider === 'quickbooks') await disconnectQbo(orgId);
-    else if (provider === 'xero') await disconnectXero(orgId);
+    else if (provider === 'quickbooks') revokeFailed = (await disconnectQbo(orgId)).revokeFailed;
+    else if (provider === 'xero') revokeFailed = (await disconnectXero(orgId)).revokeFailed;
     else await disconnectSquare(orgId);
-    return NextResponse.json({ ok: true, provider });
+    // revokeFailed: removed here, but the provider did not confirm it removed our access.
+    return NextResponse.json({ ok: true, provider, revokeFailed });
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }
