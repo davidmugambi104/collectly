@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
   const provider = parseImportProvider(req.nextUrl.searchParams.get('provider') ?? 'xero');
   if (!provider) return NextResponse.json({ error: 'provider must be xero or quickbooks' }, { status: 400 });
   const summary = await previewImportedData(orgId, provider);
+  console.info('[imported] count', { provider, orgTail: orgId.slice(-6), invoices: summary.invoices, customers: summary.customers });
   return NextResponse.json({ provider, ...summary, connected: await isConnected(orgId, provider), message: describeImported(summary, provider) });
 }
 

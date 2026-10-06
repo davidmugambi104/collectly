@@ -7,6 +7,7 @@ import { and, eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { syncQboForOrg, disconnectQbo } from '@/lib/integrations/quickbooks';
 import { previewImportedData } from '@/lib/integrations/imported-data-db';
+import { sql } from 'drizzle-orm';
 import { syncXeroForOrg, disconnectXero } from '@/lib/integrations/xero';
 import { recordFunnelEvent } from '@/lib/funnel-events';
 import { syncSquareForOrg, disconnectSquare } from '@/lib/integrations/square';
@@ -90,7 +91,13 @@ async function postHandler(req: NextRequest) {
         const s = await previewImportedData(orgId, provider);
         stored = { invoices: s.invoices, customers: s.customers };
       } catch { /* the check is only a diagnostic */ }
-      console.info('[sync] stored', { provider, orgTail: orgId.slice(-6), reported: { customers: result.customersUpserted, invoices: result.invoicesUpserted }, stored });
+      // Where did QuickBooks-format invoices end up, across every organisation? Counts per last-six-characters only.
+      let acrossOrgs: unknown = null;
+      try {
+        const r: unknown = await db.execute(sql`select right(org_id, 6) as org_tail, count(*)::int as n from invoices where external_id ~ '^[0-9]{1,18}$' group by 1`);
+        acrossOrgs = (r as { rows?: unknown[] })?.rows ?? r;
+      } catch { /* diagnostic only */ }
+      console.info('[sync] stored', { provider, orgTail: orgId.slice(-6), reported: { customers: result.customersUpserted, invoices: result.invoicesUpserted }, stored, acrossOrgs });
     }
     return NextResponse.json({ ok: true, provider, ...result, stored });
   } catch (e: unknown) {
