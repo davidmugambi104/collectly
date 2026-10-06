@@ -1,0 +1,15 @@
+[
+  {
+    "id": "AW-1",
+    "platform": "accountingweb",
+    "url": "https://www.accountingweb.co.uk/any-answers/how-do-you-automate-client-document-chasing",
+    "community": "AccountingWEB Any Answers",
+    "title": "How do you automate client document chasing?",
+    "text": "Quick question for solo and small practice owners. We keep seeing so much time get swallowed up every week just emailing and texting clients 3+ times for the exact same paperwork: UTRs, bank statements, P60s, onboarding files. Half the time clients ignore portals because they forget passwords, so it ends up back on manual email threads. Curious what systems or workflows people here are using to automate client doc-chasing, without paying 100+ a month for full enterprise practice suites.",
+    "createdAt": "2026-09-06T21:30:00Z",
+    "score": 0,
+    "comments": 19,
+    "locked": false,
+    "flags": ["weak-fit", "document-chasing-not-invoices", "thread-older-than-7-days-but-active-this-week"]
+  }
+]

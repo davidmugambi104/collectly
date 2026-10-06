@@ -1,0 +1,8 @@
+{
+  "AW-1": {
+    "painPoint": "Chasing clients three or more times for the same documents because they ignore the portal and forget passwords.",
+    "reply": "What cut our repeat chasing most was making the request itself harder to ignore: one message listing exactly what is missing, a fixed date, and a short follow up on a set schedule so nobody has to remember to nag. Since the password problem is what sends people back to email, a plain reply to the email that works as a fallback saves a lot of grief. A shared spreadsheet or Karbon style tracker only helps if someone owns the schedule, so I would pick the cheapest thing that sends the reminders for you before paying for a full suite.",
+    "mentionsMugavi": false,
+    "mentionReason": ""
+  }
+}

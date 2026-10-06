@@ -1,0 +1,18 @@
+[
+  {
+    "id": "QC-376201",
+    "platform": "quickbooks-community",
+    "url": "https://quickbooks.intuit.com/community/payments-3/finish-your-payment-emails-cannot-be-disabled-and-are-not-automatic-invoice-reminders-376201",
+    "community": "Payments",
+    "title": "Finish Your Payment Emails Cannot Be Disabled and Are NOT Automatic Invoice Reminders",
+    "text": "I do not use Automatic Invoice Reminders. They are disabled on my account. Despite this, QuickBooks sends my customers a Finish your payment email approximately 48 hours after I send their invoice, even though our invoices have Net 30 payment terms. Disabling Online automatically follows up does not stop it. The only method I have found that stops these emails is changing Online Delivery to Plain Text Only, which removes invoice tracking. Where is the setting to independently disable it?",
+    "createdAt": "2026-09-19T12:00:00Z",
+    "score": 7,
+    "comments": 14,
+    "locked": false,
+    "flags": [
+      "approximate-date",
+      "new-replies-last-2-days"
+    ]
+  }
+]
