@@ -1,0 +1,49 @@
+[
+  {
+    "id": "RD-1wyfoqp",
+    "platform": "reddit",
+    "url": "https://www.reddit.com/r/SaaS/comments/1wyfoqp/16m_arr_370_b2b_customers_almost_half_pay_late/",
+    "community": "r/SaaS",
+    "title": "$1.6M ARR, 370 B2B customers, almost half pay late. Looking for advice on finding a mentor or coach.",
+    "text": "Hardware-enabled SaaS (GPS tracking and dashcams for commercial fleets), about 370 customers, around $1.6M ARR. Almost half the clients, about 170 of 370, pay late. They do not default, they are just consistently late. Paid by wire transfer across 20+ territories. Asks whether anyone has dealt with late payments where wire transfer is the default and what actually changed client behavior.",
+    "createdAt": "2026-10-05T21:00:00Z",
+    "score": 0,
+    "comments": 14,
+    "locked": false,
+    "flags": [
+      "outside-us-uk",
+      "weak-fit"
+    ]
+  },
+  {
+    "id": "RD-1wvyv1a",
+    "platform": "reddit",
+    "url": "https://www.reddit.com/r/webdev/comments/1wvyv1a/i_built_a_business_a_website_for_free_he_loved_it/",
+    "community": "r/webdev",
+    "title": "I built a business a website for free. He loved it, then accused me of \"forcing\" him to buy it when I charged for hosting",
+    "text": "Cold-approaches businesses without websites and offers a free preview, charging monthly hosting if they like it. A prospect asked for a preview, said it was great, was quoted $150 a month, then ghosted and finally accused the poster of forcing him. Second time this has happened. Wonders whether to ask for a $50 deposit before doing work.",
+    "createdAt": "2026-10-02T20:00:00Z",
+    "score": 0,
+    "comments": 0,
+    "locked": false,
+    "flags": [
+      "weak-fit",
+      "hostile-comments"
+    ]
+  },
+  {
+    "id": "RD-1ww0868",
+    "platform": "reddit",
+    "url": "https://www.reddit.com/r/graphic_design/comments/1ww0868/invoicing_question_on_a_paid_assessment/",
+    "community": "r/graphic_design",
+    "title": "Invoicing Question on a Paid Assessment",
+    "text": "Junior designer finished a paid project assessment for an employer and was asked to send an invoice. Has never invoiced before. Asks how designers do it, which payment method to request (Zelle, direct deposit, check) and wants to avoid invoicing fees from PayPal or Stripe.",
+    "createdAt": "2026-10-02T20:00:00Z",
+    "score": 0,
+    "comments": 2,
+    "locked": false,
+    "flags": [
+      "weak-fit"
+    ]
+  }
+]

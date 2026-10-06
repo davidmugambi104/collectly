@@ -1,8 +1,8 @@
 # Lead shortlist, 2026-10-06
 
-4 conversations worth a reply out of 10 found. Top 4 below, best first. You post everything by hand; nothing here was sent.
+5 conversations worth a reply out of 13 found. Top 5 below, best first. You post everything by hand; nothing here was sent.
 
-By platform: reddit 4.
+By platform: reddit 5.
 
 ## 1. The mistake I made on my first day in collections (and what fixed it).
 
@@ -56,7 +56,25 @@ _Why it ranks: relevance 12, ICP 0, engagement 8.3, recency 6.9, asking 10._
 
 ---
 
-## 4. Cash flow timing is becoming a headache
+## 4. $1.6M ARR, 370 B2B customers, almost half pay late. Looking for advice on finding a mentor or coach.
+
+**reddit** · r/SaaS · score 35 · 14 comments · 2026-10-05
+
+Link: https://www.reddit.com/r/SaaS/comments/1wyfoqp/16m_arr_370_b2b_customers_almost_half_pay_late/
+
+**Pain point:** About half of 370 B2B customers pay late by wire and the owner suspects he has tolerated it for too long.
+
+**Draft reply** (edit into your own words):
+
+> Consistently late rather than defaulting usually means the invoice is not getting a clear owner on their side, not that they cannot pay. What tends to move it: put the late fee and a firm net 30 in the terms and tell everyone before you enforce it, as the first commenter said. Then add a reminder rhythm, a short note a few days before the due date, one on the day, and a follow up a week after, each with the invoice number and the exact wire reference so their finance person can match it. For the 170 habitual late payers, call the person who actually releases payments once and ask what date their payment run happens, then invoice to land just before it. Check also whether your invoice says who to contact if something blocks payment.
+
+**Agent flags:** outside-us-uk, weak-fit
+
+_Why it ranks: relevance 12, ICP 0, engagement 4, recency 8.8, asking 10._
+
+---
+
+## 5. Cash flow timing is becoming a headache
 
 **reddit** · r/smallbusinessowner · score 18 · 15 comments · 2026-10-05
 
@@ -82,3 +100,5 @@ _Why it ranks: relevance 5, ICP 0, engagement 4, recency 8.8, asking 0._
 - reddit RD-1wy45f5: no invoice or payment pain in the text (https://www.reddit.com/r/agency/comments/1wy45f5/)
 - reddit RD-1ww3tz3: no invoice or payment pain in the text (https://www.reddit.com/r/agency/comments/1ww3tz3/)
 - reddit RD-1ww1dpp: no invoice or payment pain in the text (https://www.reddit.com/r/freelance/comments/1ww1dpp/)
+- reddit RD-1wvyv1a: founder validating or launching a product (https://www.reddit.com/r/webdev/comments/1wvyv1a/i_built_a_business_a_website_for_free_he_loved_it/)
+- reddit RD-1ww0868: no invoice or payment pain in the text (https://www.reddit.com/r/graphic_design/comments/1ww0868/invoicing_question_on_a_paid_assessment/)

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-06T16:39:43.403Z",
-  "total": 10,
-  "kept": 4,
+  "generatedAt": "2026-10-06T17:02:57.523Z",
+  "total": 13,
+  "kept": 5,
   "shortlist": [
     {
       "id": "RD-1wupy4j",
@@ -108,6 +108,41 @@
       "problems": []
     },
     {
+      "id": "RD-1wyfoqp",
+      "platform": "reddit",
+      "url": "https://www.reddit.com/r/SaaS/comments/1wyfoqp/16m_arr_370_b2b_customers_almost_half_pay_late/",
+      "community": "r/SaaS",
+      "title": "$1.6M ARR, 370 B2B customers, almost half pay late. Looking for advice on finding a mentor or coach.",
+      "text": "Hardware-enabled SaaS (GPS tracking and dashcams for commercial fleets), about 370 customers, around $1.6M ARR. Almost half the clients, about 170 of 370, pay late. They do not default, they are just consistently late. Paid by wire transfer across 20+ territories. Asks whether anyone has dealt with late payments where wire transfer is the default and what actually changed client behavior.",
+      "createdAt": "2026-10-05T21:00:00Z",
+      "score": 35,
+      "comments": 14,
+      "locked": false,
+      "flags": [
+        "outside-us-uk",
+        "weak-fit"
+      ],
+      "breakdown": {
+        "total": 35,
+        "relevance": 12,
+        "icp": 0,
+        "engagement": 4,
+        "recency": 8.8,
+        "asking": 10,
+        "competitorMentioned": false,
+        "hits": [
+          "\\blate[\\s-]?pay(ment|men"
+        ]
+      },
+      "draft": {
+        "painPoint": "About half of 370 B2B customers pay late by wire and the owner suspects he has tolerated it for too long.",
+        "reply": "Consistently late rather than defaulting usually means the invoice is not getting a clear owner on their side, not that they cannot pay. What tends to move it: put the late fee and a firm net 30 in the terms and tell everyone before you enforce it, as the first commenter said. Then add a reminder rhythm, a short note a few days before the due date, one on the day, and a follow up a week after, each with the invoice number and the exact wire reference so their finance person can match it. For the 170 habitual late payers, call the person who actually releases payments once and ask what date their payment run happens, then invoice to land just before it. Check also whether your invoice says who to contact if something blocks payment.",
+        "mentionsMugavi": false,
+        "mentionReason": ""
+      },
+      "problems": []
+    },
+    {
       "id": "RD-1wyompq",
       "platform": "reddit",
       "url": "https://www.reddit.com/r/smallbusinessowner/comments/1wyompq/cash_flow_timing_is_becoming_a_headache/",
@@ -179,9 +214,21 @@
       "platform": "reddit",
       "url": "https://www.reddit.com/r/freelance/comments/1ww1dpp/",
       "why": "no invoice or payment pain in the text"
+    },
+    {
+      "id": "RD-1wvyv1a",
+      "platform": "reddit",
+      "url": "https://www.reddit.com/r/webdev/comments/1wvyv1a/i_built_a_business_a_website_for_free_he_loved_it/",
+      "why": "founder validating or launching a product"
+    },
+    {
+      "id": "RD-1ww0868",
+      "platform": "reddit",
+      "url": "https://www.reddit.com/r/graphic_design/comments/1ww0868/invoicing_question_on_a_paid_assessment/",
+      "why": "no invoice or payment pain in the text"
     }
   ],
   "byPlatform": {
-    "reddit": 4
+    "reddit": 5
   }
 }
