@@ -6,6 +6,7 @@ import { integrations } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { syncQboForOrg, disconnectQbo } from '@/lib/integrations/quickbooks';
+import { previewImportedData } from '@/lib/integrations/imported-data-db';
 import { syncXeroForOrg, disconnectXero } from '@/lib/integrations/xero';
 import { recordFunnelEvent } from '@/lib/funnel-events';
 import { syncSquareForOrg, disconnectSquare } from '@/lib/integrations/square';
@@ -81,7 +82,17 @@ async function postHandler(req: NextRequest) {
       rowErrors: result.errors.length,
       hadInvoices: result.invoicesUpserted > 0,
     });
-    return NextResponse.json({ ok: true, provider, ...result });
+    // Read back what is stored for this organisation, next to what the sync reported. Counts only; the org is
+    // identified by its last six characters. Added to find why a sync that reports rows can leave none visible.
+    let stored: { invoices: number; customers: number } | null = null;
+    if (provider === 'quickbooks' || provider === 'xero') {
+      try {
+        const s = await previewImportedData(orgId, provider);
+        stored = { invoices: s.invoices, customers: s.customers };
+      } catch { /* the check is only a diagnostic */ }
+      console.info('[sync] stored', { provider, orgTail: orgId.slice(-6), reported: { customers: result.customersUpserted, invoices: result.invoicesUpserted }, stored });
+    }
+    return NextResponse.json({ ok: true, provider, ...result, stored });
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 502 });
   }
