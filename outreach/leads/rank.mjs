@@ -60,7 +60,7 @@ export function renderHtml(rep, date) {
   <div class="meta"><span class="tag">${esc(r.platform)}</span> ${esc(r.community ?? '')} · score ${r.score} · ${r.comments ?? 0} comments · ${esc(String(r.createdAt).slice(0, 10))}</div>
   <h2>${i + 1}. <a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.title || r.url)}</a></h2>
   <p class="pain"><b>Pain point:</b> ${esc(r.draft?.painPoint ?? '(none)')}</p>
-  ${r.draft?.reply ? `<pre class="reply" id="r${i}">${esc(r.draft.reply)}</pre><button type="button" onclick="copyReply(${i}, this)">Copy reply</button>` : ''}
+  ${r.draft?.reply ? `<pre class="reply" id="r${i}">${esc(r.draft.reply)}</pre><div class="actions"><button type="button" onclick="copyReply(${i}, this)">Copy reply</button> <button type="button" class="primary" onclick="copyOpen(${i}, this, '${esc(r.url)}')">Copy and open thread</button> <label class="posted"><input type="checkbox" data-id="${esc(r.id)}" onchange="markPosted(this)"> Posted</label></div>` : ''}
   ${r.draft?.mentionsMugavi ? `<p class="note">Mentions Mugavi because: ${esc(r.draft.mentionReason)}</p>` : ''}
   ${r.flags?.length ? `<p class="note">Agent flags: ${esc(r.flags.join(', '))}</p>` : ''}
   ${r.problems.length ? `<p class="warn">Fix before posting: ${esc(r.problems.join('; '))}</p>` : ''}
@@ -72,11 +72,15 @@ export function renderHtml(rep, date) {
 body{background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0}
 h2{font-size:1.05rem;margin:.3rem 0}a{color:var(--acc)}.meta,.note{color:var(--mut);font-size:.85rem}.tag{background:var(--line);padding:1px 8px;border-radius:99px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}.primary{background:#0a7d3b}.posted{margin-left:auto}.card.done{opacity:.5}
 .reply{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit}
 button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}.warn{color:var(--warn)}</style></head><body>
 <h1>Lead shortlist, ${esc(date)}</h1><p>${rep.kept} conversations worth a reply out of ${rep.total} found. You post everything by hand; nothing here was sent.</p>
 ${cards}<details><summary>Skipped (${rep.skipped.length})</summary><ul>${skipped}</ul></details>
-<script>function copyReply(i,b){var t=document.getElementById('r'+i).innerText;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied'},function(){b.textContent='Select and copy'})}</script></body></html>`;
+<script>function copyOpen(i,b,u){var t=document.getElementById('r'+i).innerText;var go=function(l){b.textContent=l;window.open(u,'_blank','noopener')};(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){go('Copied, thread opened')},function(){go('Select the text, then paste')})}
+function markPosted(c){try{localStorage.setItem('lead-posted-'+c.dataset.id,c.checked?'1':'')}catch(e){}c.closest('.card').classList.toggle('done',c.checked)}
+document.querySelectorAll('input[data-id]').forEach(function(c){try{if(localStorage.getItem('lead-posted-'+c.dataset.id)){c.checked=true;c.closest('.card').classList.add('done')}}catch(e){}});
+function copyReply(i,b){var t=document.getElementById('r'+i).innerText;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied'},function(){b.textContent='Select and copy'})}</script></body></html>`;
 }
 
 function readJson(f, fallback) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return fallback; } }

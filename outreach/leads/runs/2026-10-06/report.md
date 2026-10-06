@@ -88,7 +88,7 @@ Link: https://www.reddit.com/r/smallbusinessowner/comments/1wyompq/cash_flow_tim
 
 **Agent flags:** possible-bot-thread, mild-pain
 
-_Why it ranks: relevance 5, ICP 0, engagement 4, recency 8.8, asking 0._
+_Why it ranks: relevance 5, ICP 0, engagement 4, recency 8.7, asking 0._
 
 ---
 
