@@ -66,7 +66,7 @@ async function main() {
   // 1. Paging: 2300 open invoices and 1500 customers.
   reset();
   const r1 = await syncQboForOrg(org.id);
-  out.paging = { invoices: r1.invoicesUpserted, errors: r1.errors, truncated: r1.truncated, invoiceStarts: starts(/FROM Invoice WHERE Balance/), customerStarts: starts(/FROM Customer/), allOrdered: queries.filter((q) => /FROM (Invoice WHERE Balance|Customer|CreditMemo|Payment)/.test(q)).every((q) => /ORDERBY Id/.test(q) && /MAXRESULTS 1000/.test(q)) };
+  out.paging = { invoices: r1.invoicesUpserted, errors: r1.errors, truncated: r1.truncated, invoiceStarts: starts(/FROM Invoice WHERE Balance/), customerStarts: starts(/FROM Customer/), allOrdered: queries.filter((q) => /FROM (Invoice WHERE Balance|Customer|CreditMemo|Payment)/.test(q)).every((q) => (/FROM Payment/.test(q) ? /ORDERBY TxnDate DESC/.test(q) : /ORDERBY Id/.test(q)) && /MAXRESULTS 1000/.test(q)) };
 
   customers.length = 3; open.length = 3; // later scenarios do not need the big lists
 

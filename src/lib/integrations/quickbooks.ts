@@ -11,6 +11,7 @@ import { withMinorVersion } from './qbo-minor-version';
  *  - We auto-refresh transparently before any API call when within 5 min
  *    of expiry, so callers can treat tokens as always-valid.
  */
+import { qboCustomersQuery, qboPaymentsQuery } from './qbo-queries';
 import { db } from '@/db';
 import { ensureIntegrationProviderSchema } from '@/lib/integrations/provider-enum';
 import { integrations, customers as customersTbl, invoices as invoicesTbl, organizations, timelineEvents } from '@/db/schema';
@@ -365,11 +366,10 @@ export async function qboHomeCurrency(orgId: string): Promise<string> {
   return resolveHomeCurrency({ preferences: preferences as never, companyInfo: companyInfo as never, orgBaseCurrency }).currency;
 }
 
-const QBO_CUSTOMER_FIELDS = 'Id, DisplayName, CompanyName, PrimaryEmailAddr, PrimaryPhone, CurrencyRef';
 
 /** List customers from QBO (first page). */
 export async function qboListCustomers(orgId: string) {
-  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer ORDERBY Id MAXRESULTS ${QBO_PAGE}`;
+  const query = qboCustomersQuery(QBO_PAGE);
   return qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`);
 }
 
@@ -387,7 +387,7 @@ async function qboListCreditMemosFrom(orgId: string, startPosition: number): Pro
 
 type QboPayment = { Id?: string; UnappliedAmt?: number; CustomerRef?: { value?: string }; CurrencyRef?: { value?: string } };
 async function qboListUnappliedPaymentsFrom(orgId: string, startPosition: number): Promise<QboPayment[]> {
-  const query = `SELECT Id, CustomerRef, UnappliedAmt, CurrencyRef FROM Payment WHERE UnappliedAmt > '0' ORDERBY Id STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const query = qboPaymentsQuery(QBO_PAGE, startPosition);
   const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Payment', QboPayment>;
   return res?.QueryResponse?.Payment ?? [];
 }
@@ -410,7 +410,7 @@ export async function qboListCredits(orgId: string, homeCurrency = 'USD'): Promi
 
 /** Customers past the first 1000. Same approach as qboListOpenInvoicesFrom. */
 async function qboListCustomersFrom(orgId: string, startPosition: number): Promise<QboCustomer[]> {
-  const query = `SELECT ${QBO_CUSTOMER_FIELDS} FROM Customer ORDERBY Id STARTPOSITION ${startPosition} MAXRESULTS ${QBO_PAGE}`;
+  const query = qboCustomersQuery(QBO_PAGE, startPosition);
   const res = (await qboFetch(orgId, `/query?query=${encodeURIComponent(query)}`)) as QboQuery<'Customer', QboCustomer>;
   return res?.QueryResponse?.Customer ?? [];
 }
