@@ -183,7 +183,7 @@ For more on this last step, including how to word a final notice, see our post o
 
 ## If you run this for ten or more clients
 
-The set above works for one client. At ten clients the problem changes. You are tracking ten lists of customers, ten schedules and ten opinions about tone. A spreadsheet and a calendar reminder will carry you until a busy week breaks it. If you are building this into a paid service, our page for [bookkeepers](/for/bookkeepers) covers how we think about it.
+The set above works for one client. At ten clients the problem changes. You are tracking ten lists of customers, ten schedules and ten opinions about tone. A spreadsheet and a calendar reminder will carry you until a busy week breaks it. If you are building this into a paid service, our post on [selling invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service) and our page for [bookkeepers](/for/bookkeepers) cover how we think about it. If you send these for several clients, the [pilot plan for running reminders across client books](/blog/run-invoice-reminders-across-many-quickbooks-client-books) shows how to start small.
 
 Mugavi drafts reminders like these for QuickBooks and Xero and holds each one until the owner approves it, so nothing goes to a client's customer unseen. The QuickBooks connection is in beta, late fees are not written back to QuickBooks, and there is no read-only team role yet. Whichever way you do it, keep the wording above and change only the blanks.`,
   },
@@ -423,7 +423,7 @@ Compare the aged receivables report to the copy you saved on day 1. Report the r
 
 ## Running this across many clients
 
-Do this once and it is a job. Do it for ten clients and you need a repeatable version: the same checklist and the same questions each time, with only the customer notes changing. Write your version down once and reuse it. Our page for [bookkeepers](/for/bookkeepers) covers how we think about running follow-up across many books.
+Do this once and it is a job. Do it for ten clients and you need a repeatable version: the same checklist and the same questions each time, with only the customer notes changing. Write your version down once and reuse it. Our page for [bookkeepers](/for/bookkeepers) covers how we think about running follow-up across many books, and the [pilot plan for many QuickBooks client books](/blog/run-invoice-reminders-across-many-quickbooks-client-books) walks through starting with one book and adding the next. If you sell this as a service, see [how a bookkeeper can sell invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service).
 
 If you want software for the drafting step, Mugavi drafts reminders for what is already overdue in QuickBooks or Xero and sends nothing until the owner approves it, with a 30-second hold after approval. The QuickBooks connection is in beta, late fees are not written back to QuickBooks, and there is no read-only team role for a helper yet. A spreadsheet and your own email work for a handful of clients.`,
   },
@@ -553,7 +553,9 @@ Do not add a fee to an invoice you know is in dispute. Do not charge a fee to a 
 
 ## Disclosure
 
-This article is from Mugavi, which makes accounts receivable software. Mugavi has a late fee rule you set yourself, with a grace period and an optional cap. It never applies a fee on its own: it lists the invoices that are due one, and you choose which to apply. It skips disputed invoices and invoices with a promise to pay. It does not write the fee back to your accounting software and does not add it to the payment page, so you collect it yourself and mark it paid. Everything above works without it.`,
+This article is from Mugavi, which makes accounts receivable software. Mugavi has a late fee rule you set yourself, with a grace period and an optional cap. It never applies a fee on its own: it lists the invoices that are due one, and you choose which to apply. It skips disputed invoices and invoices with a promise to pay. It does not write the fee back to your accounting software and does not add it to the payment page, so you collect it yourself and mark it paid. Everything above works without it.
+
+Fees are easier to stand behind when the invoice states its terms clearly. If you invoice in the UK, see [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase) for what belongs on the invoice.`,
   },
   {
     slug: 'customer-statement-vs-another-reminder',
@@ -1632,6 +1634,8 @@ If payables says it is approved and scheduled and the date passes, ask for the n
 
 Note the date you sent each message, who you sent it to and what they said. If the customer is in the UK and the invoice stays unpaid, you will want this record for any conversation about statutory interest. Look up the current rules on gov.uk before you rely on them.
 
+Clear terms on the original invoice make this chase easier too. See [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase).
+
 ## Where Mugavi fits
 
 Mugavi is for small businesses and the bookkeepers who work with them. It drafts the reminder, you approve it, and it waits thirty seconds before sending so you can undo. It has no portal integrations, so it will not tell you whether a customer's portal has your invoice. We have not tested it with a UK QuickBooks company. The [UK page](/for/uk-agencies) has the details we are sure of.`,
@@ -1673,7 +1677,9 @@ Send the first pile first, then wait a few days before the second. Each message 
 
 ## Where Mugavi fits
 
-Mugavi can do the sorting step for you in a narrow way. You set a minimum balance below which an invoice is not chased. It sends one reminder per customer, with the other overdue invoices listed in a short table, then waits a gap you choose before the next. A filter shows customers who owe you but cannot be reminded, for example because there is no email address. Nothing reaches a customer until you approve it. The QuickBooks connection is in beta, so check the numbers against your own report before you rely on them.`,
+Mugavi can do the sorting step for you in a narrow way. You set a minimum balance below which an invoice is not chased. It sends one reminder per customer, with the other overdue invoices listed in a short table, then waits a gap you choose before the next. A filter shows customers who owe you but cannot be reminded, for example because there is no email address. Nothing reaches a customer until you approve it. The QuickBooks connection is in beta, so check the numbers against your own report before you rely on them.
+
+If you do this for several clients, see the [pilot plan for running reminders across many QuickBooks client books](/blog/run-invoice-reminders-across-many-quickbooks-client-books).`,
   },
   {
     slug: 'customer-promised-to-pay-friday-track-it',
@@ -1773,7 +1779,9 @@ The easiest handover is the one agreed at the start. A short clause covers it: h
 
 ## Where Mugavi fits
 
-In Mugavi, the owner or an admin can download one ZIP from Settings with the customers, invoices, reminders, what each customer owes and the statements emailed, or each as a single CSV. After you disconnect QuickBooks, Integrations shows what the sync left behind. You see the counts and then confirm. Only rows with that provider's id format are removed, and anything typed in by hand stays. It is refused while the connection is still active, a customer who also has a hand-typed or other-provider invoice is kept, and it cannot be undone, so export first. It removes Mugavi's copy and does not change anything in QuickBooks itself.`,
+In Mugavi, the owner or an admin can download one ZIP from Settings with the customers, invoices, reminders, what each customer owes and the statements emailed, or each as a single CSV. After you disconnect QuickBooks, Integrations shows what the sync left behind. You see the counts and then confirm. Only rows with that provider's id format are removed, and anything typed in by hand stays. It is refused while the connection is still active, a customer who also has a hand-typed or other-provider invoice is kept, and it cannot be undone, so export first. It removes Mugavi's copy and does not change anything in QuickBooks itself.
+
+If you handle follow-up for several client books, the [pilot plan for running reminders across client books](/blog/run-invoice-reminders-across-many-quickbooks-client-books) shows how to start with one book and add the next. The service side of this work is in [how a bookkeeper can sell invoice follow-up as a service](/blog/bookkeeper-invoice-follow-up-service).`,
   },
   {
     slug: 'check-who-you-invoiced-uk-company-before-chasing',
@@ -1845,7 +1853,9 @@ Before you send a reminder, look at the bank feed for anything that matches. A p
 
 ## Where Mugavi fits
 
-You choose when each step of a schedule goes out relative to the due date, so you can leave a few days for a slow payment method. There is also an option for a heads-up before the due date that never calls the invoice overdue. Nothing is sent until you approve it, and after you press send there is a 30-second window to change your mind. Mugavi does not see your bank feed, so it reads what has been recorded in your books. If a payment has arrived but not been recorded, record it first.`,
+You choose when each step of a schedule goes out relative to the due date, so you can leave a few days for a slow payment method. There is also an option for a heads-up before the due date that never calls the invoice overdue. Nothing is sent until you approve it, and after you press send there is a 30-second window to change your mind. Mugavi does not see your bank feed, so it reads what has been recorded in your books. If a payment has arrived but not been recorded, record it first.
+
+If late payments keep coming from unclear due dates, [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase) covers what to put on the invoice.`,
   },
 ];
 
