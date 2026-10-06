@@ -19,3 +19,16 @@ Skip threads over 7 days old for this run unless the post is still active (new c
 Item ids: `RD-<postid>` (the id in the URL after /comments/). If the Reddit API variables are set in the shell
 (`REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`) you may use `node ../sources/reddit-api.mjs --out ../runs/<date>/reddit.json`
 instead of the browser. Never print them.
+
+## Method that works today (2026-10-06): logged-out new Reddit, read-only
+`old.reddit.com` now forces a login, so do not use it. The logged-out search on `www.reddit.com` works in the debug Chrome:
+`https://www.reddit.com/r/<sub>/search/?q=<url-encoded query>&restrict_sr=1&sort=new&t=week`
+(the `t=week` filter is not always honoured, so read the age shown beside each result: "3 hr ago", "2 days ago",
+"3mo ago"; keep results of 7 days or less and stop reading a query once results are older). Wait about 10 seconds after
+navigating. Extract each result with Runtime.evaluate, for example:
+`[...document.querySelectorAll('a[href*="/comments/"]')].map(a=>({href:a.href,text:a.innerText.trim().slice(0,160)}))`
+then dedupe by the post id in the URL. Open each promising thread (`/comments/<id>/`) in the same tab, read the post
+body and the top few comments with `document.body.innerText` (cut at 2500 characters), and decide. Never click Log In,
+Join, vote, reply or any button. If a page shows a login wall for a thread, skip that thread. Pause about 3 seconds
+between navigations. Split work: each agent covers only its assigned subreddits and writes its own files
+`reddit-<letter>.json` and `drafts-reddit-<letter>.json` in the run folder.
