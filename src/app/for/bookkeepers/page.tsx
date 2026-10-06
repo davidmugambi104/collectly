@@ -188,6 +188,16 @@ export default function ForBookkeepersPage() {
           </Link>
         </div>
       </section>
+      <section className="container-page pb-16 max-w-3xl">
+        <p className="eyebrow">Guides for practices</p>
+        <h2 className="mt-3 h2">Read how it works in a practice.</h2>
+        <ul className="mt-6 space-y-3 text-sm text-ink-700">
+          <li><Link href="/blog/run-invoice-reminders-across-many-quickbooks-client-books" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">Running invoice reminders across many QuickBooks client books: a pilot plan</Link></li>
+          <li><Link href="/blog/bookkeeper-invoice-follow-up-service" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">How a bookkeeper can sell invoice follow-up as a service</Link></li>
+          <li><Link href="/blog/onboard-client-to-invoice-follow-up-first-week" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">Onboard a client to invoice follow-up in the first week</Link></li>
+          <li><Link href="/blog/accounts-receivable-month-end-checklist-quickbooks-online" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">An accounts receivable month-end checklist for QuickBooks Online</Link></li>
+        </ul>
+      </section>
       <FaqSection items={FAQS} title="Bookkeeper questions" />
       <MarketingFooter />
     </div>
