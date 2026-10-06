@@ -1,0 +1,63 @@
+[
+  {
+    "id": "RD-1wxde6g",
+    "platform": "reddit",
+    "url": "https://www.reddit.com/r/smallbusiness/comments/1wxde6g/not_getting_paid_for_an_event/",
+    "community": "r/smallbusiness",
+    "title": "Not getting paid for an event",
+    "text": "I am a dancer and recently did an event. The client was difficult to get an answer from whilst going through the booking process, and changing her mind a lot. I did the event yesterday and before I left I thanked her and thought she may give me the cash but she didn't. I'm genuinely worried I won't get payment. What should I do if I get ignored?",
+    "createdAt": "2026-10-04T12:00:00Z",
+    "score": 11,
+    "comments": 15,
+    "locked": false,
+    "flags": []
+  },
+  {
+    "id": "RD-1wyfq2m",
+    "platform": "reddit",
+    "url": "https://www.reddit.com/r/Entrepreneur/comments/1wyfq2m/12_years_running_a_b2b_company_in_the_caribbean/",
+    "community": "r/Entrepreneur",
+    "title": "12 years running a B2B company in the Caribbean, ~$1.6M ARR, and I've never had a mentor. How did you find yours?",
+    "text": "Almost half our clients, about 170 of 370, pay late. They don't default, they're just consistently late. We get paid by wire transfer because that's how most businesses in the region pay. I can't tell anymore whether it's just the market or something I've been tolerating. Has anyone dealt with late payments in a market where wire transfer is the default? What actually changed client behavior? (Main question is about finding a mentor.)",
+    "createdAt": "2026-10-05T14:00:00Z",
+    "score": 37,
+    "comments": 20,
+    "locked": false,
+    "flags": [
+      "outside-us-uk",
+      "main-topic-is-mentor"
+    ]
+  },
+  {
+    "id": "RD-1wupy4j",
+    "platform": "reddit",
+    "url": "https://www.reddit.com/r/Entrepreneur/comments/1wupy4j/the_mistake_i_made_on_my_first_day_in_collections/",
+    "community": "r/Entrepreneur",
+    "title": "The mistake I made on my first day in collections (and what fixed it).",
+    "text": "A collections process is not a luxury. It is the backbone of cash flow. Most small service businesses send an invoice, wait, and send another when cash gets tight. No reminder schedule, no follow-up rule, no escalation line. Curious how other people here handle this. Do you run a defined collections process, or do you chase invoices as they come up?",
+    "createdAt": "2026-09-30T14:00:00Z",
+    "score": 0,
+    "comments": 8,
+    "locked": false,
+    "flags": [
+      "likely-ai-written-post",
+      "asks-open-question"
+    ]
+  },
+  {
+    "id": "RD-1wyompq",
+    "platform": "reddit",
+    "url": "https://www.reddit.com/r/smallbusinessowner/comments/1wyompq/cash_flow_timing_is_becoming_a_headache/",
+    "community": "r/smallbusinessowner",
+    "title": "Cash flow timing is becoming a headache",
+    "text": "Had a couple customer payments that were supposed to clear this week get pushed back, meanwhile two vendors want their invoices paid right on schedule. I can cover everything but I'd rather not drain checking and then have the money show up three days later. Cash flow on paper and cash actually sitting in the account are two very different things.",
+    "createdAt": "2026-10-05T20:00:00Z",
+    "score": 0,
+    "comments": 15,
+    "locked": false,
+    "flags": [
+      "possible-bot-thread",
+      "mild-pain"
+    ]
+  }
+]

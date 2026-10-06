@@ -43,6 +43,7 @@ export function renderMarkdown(rep, date) {
     L.push(`**Pain point:** ${r.draft?.painPoint ?? '(none)'}`, '');
     if (r.draft?.reply) L.push('**Draft reply** (edit into your own words):', '', ...r.draft.reply.split('\n').map((l) => `> ${l}`), '');
     if (r.draft?.mentionsMugavi) L.push(`_Mentions Mugavi because: ${r.draft.mentionReason}_`, '');
+    if (r.flags?.length) L.push(`**Agent flags:** ${r.flags.join(', ')}`, '');
     if (r.problems.length) L.push(`**Fix before posting:** ${r.problems.join('; ')}`, '');
     L.push(`_Why it ranks: relevance ${r.breakdown.relevance}, ICP ${r.breakdown.icp}, engagement ${r.breakdown.engagement}, recency ${r.breakdown.recency}, asking ${r.breakdown.asking}${r.breakdown.competitorMentioned ? ', a competitor is mentioned' : ''}._`, '', '---', '');
   });
@@ -61,6 +62,7 @@ export function renderHtml(rep, date) {
   <p class="pain"><b>Pain point:</b> ${esc(r.draft?.painPoint ?? '(none)')}</p>
   ${r.draft?.reply ? `<pre class="reply" id="r${i}">${esc(r.draft.reply)}</pre><button type="button" onclick="copyReply(${i}, this)">Copy reply</button>` : ''}
   ${r.draft?.mentionsMugavi ? `<p class="note">Mentions Mugavi because: ${esc(r.draft.mentionReason)}</p>` : ''}
+  ${r.flags?.length ? `<p class="note">Agent flags: ${esc(r.flags.join(', '))}</p>` : ''}
   ${r.problems.length ? `<p class="warn">Fix before posting: ${esc(r.problems.join('; '))}</p>` : ''}
 </article>`).join('\n');
   const skipped = rep.skipped.map((s) => `<li>${esc(s.platform)} ${esc(s.id)}: ${esc(s.why)}</li>`).join('');

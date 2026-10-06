@@ -66,3 +66,9 @@ test('reddit and x mappers keep no author and give usable links', () => {
   assert.equal(x.url, 'https://x.com/i/web/status/9'); assert.equal(x.score, 3); assert.equal(x.comments, 3); assert.ok(!('author_id' in x));
   assert.ok(XQ.every((q) => q.length < 512));
 });
+
+test('"not getting paid" style posts count as payment pain', () => {
+  const s = scoreItem(item({ title: 'Not getting paid for an event', text: 'The organiser still has not paid and keeps saying next week.' }), { now });
+  assert.ok(s.relevance >= 12, `got ${s.relevance}`);
+  assert.equal(excludeReason(item({ title: 'Not getting paid for an event', text: 'He owes me 2k.' }), { now }), null);
+});

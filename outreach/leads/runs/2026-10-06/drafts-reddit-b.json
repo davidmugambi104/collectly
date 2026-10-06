@@ -1,0 +1,26 @@
+{
+  "RD-1wxde6g": {
+    "painPoint": "A dancer finished an event, got no payment and no invoice has gone out yet, and worries she will be ignored.",
+    "reply": "Most of the replies here are right that the first move is a written invoice, but I'd make it hard to ignore. Put the event date, the agreed amount and a specific due date on it, and send it today or tomorrow while the night is fresh. Then one short follow up two or three days after the due date, same wording, asking them to confirm they got it. Plenty of clients honestly just wait for paperwork before they pay, so give it a fair chance before assuming the worst. For the next booking, put the fee, how they pay and when in the confirmation, and take a deposit.",
+    "mentionsMugavi": false,
+    "mentionReason": ""
+  },
+  "RD-1wyfq2m": {
+    "painPoint": "Roughly half of his clients pay late by wire, mostly smaller disorganized accounts, and he does not know what would change their behavior.",
+    "reply": "You said the big accounts pay on time and the small ones drift, which suggests it's an attention problem more than a willingness problem. I'd split the two groups. For the small accounts, send a heads up a few days before the due date with the invoice and bank details repeated, then a plain reminder the day after it's due, then a weekly one that lists everything they owe. Make the reference they need on the wire obvious, because missing references hold payments up a lot. Pair that with a stated rule, like service access pausing at a set number of days late, and put it in the contract. Government clients at 90 days are a separate problem, mostly solved by pricing it in.",
+    "mentionsMugavi": false,
+    "mentionReason": ""
+  },
+  "RD-1wupy4j": {
+    "painPoint": "Asks how small service businesses run reminders and escalation for late invoices instead of chasing them one at a time.",
+    "reply": "I chase as they come up when I'm busy, and it always costs more than a fixed routine would. What works for me is deciding the schedule once and writing it into the proposal: one note a few days before the due date, one on the day, one a week later, then a firmer one that names the date work pauses. The part people skip is the pause. If the stop point is in the contract, the late invoice stops being a negotiation. Whatever schedule you pick, stop the sequence the moment the client replies, so nobody gets a reminder for something they already answered.",
+    "mentionsMugavi": false,
+    "mentionReason": ""
+  },
+  "RD-1wyompq": {
+    "painPoint": "Customer payments land a few days after vendor bills are due, squeezing checking even though the month works out.",
+    "reply": "The gap you describe is mostly about when the customer's money was promised versus when it was actually asked for. If those customer payments slipped, check whether a reminder went out before the due date, because a note two or three days ahead catches a lot of them. On the vendor side, ask which bills can move to the end of their grace period, and ask the two vendors whether a pay date a few days later works. Keeping a one week view of expected in and out, updated whenever a payment slips, shows you the tight days before they arrive.",
+    "mentionsMugavi": false,
+    "mentionReason": ""
+  }
+}

@@ -11,6 +11,7 @@ const PAIN = [
   [/\bcash[\s-]?flow\b/i, 5],
   [/\bnet[\s-]?(15|30|45|60)\b|\bpayment terms\b/i, 4],
   [/\bawkward\b.{0,40}\b(chas|ask|remind)/i, 6],
+  [/\b(not|never|haven'?t|hasn'?t|didn'?t|won'?t|still)\b.{0,15}\b(been\s+)?(getting\s+)?paid\b|\b(didn'?t|won'?t|hasn'?t|haven'?t)\s+pay\b|\bowes?\s+me\b|\bpayment\s+(not\s+received|is\s+late|was\s+late|never\s+(came|arrived))/i, 12],
 ];
 
 const ICP = [
