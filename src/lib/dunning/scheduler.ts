@@ -26,6 +26,7 @@ import { maySendSms } from '@/lib/sms-consent';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
 import { nanoid, errorMessage, formatCurrency } from '@/lib/utils';
 import { renderEmailHtml } from '@/lib/email-html';
+import { brokenAccountingConnections } from '@/lib/integrations/connection-health-db';
 
 // Mirrors the inline element type of dunningSequences.steps's jsonb
 // $type<Array<{...}>>() in schema.ts. That inline type has no exported name
@@ -164,7 +165,22 @@ export async function processDunning(opts: ProcessOptions = {}) {
   await ensureDunningControlSchema();
   const now = new Date();
   const sequences = await db.select().from(dunningSequences).where(opts.orgId ? and(eq(dunningSequences.isActive, true), eq(dunningSequences.orgId, opts.orgId)) : eq(dunningSequences.isActive, true));
-  let scheduled = 0, sent = 0, errors = 0, awaitingApproval = 0, outsideWindow = 0;
+  let scheduled = 0, sent = 0, errors = 0, awaitingApproval = 0, outsideWindow = 0, blockedByConnection = 0;
+  // A QuickBooks or Xero connection in `status: 'error'` cannot refresh
+  // invoices or detect payments made since the last successful sync, so
+  // anything imported from it may be stale: a reminder could chase an
+  // invoice that was paid, disputed or voided at the source after the
+  // connection died. Checked once per org per run; the integrations page and
+  // the dashboard banner carry the reconnect call to action, so this gate
+  // only has to stop the send, never explain it to the customer.
+  const brokenConnectionByOrg = new Map<string, boolean>();
+  async function hasBrokenConnection(orgId: string): Promise<boolean> {
+    const known = brokenConnectionByOrg.get(orgId);
+    if (known !== undefined) return known;
+    const broken = (await brokenAccountingConnections(orgId)).length > 0;
+    brokenConnectionByOrg.set(orgId, broken);
+    return broken;
+  }
   const orgDigest = new Map<string, DigestEntry[]>();
   const pendingDigest = new Map<string, DigestEntry[]>();
   // Read once per org per run, not cached across runs: the owner can flip it
@@ -240,6 +256,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
       windowOpenByOrg.set(seq.orgId, open);
     }
     if (!open) { outsideWindow += 1; continue; }
+    if (await hasBrokenConnection(seq.orgId)) { blockedByConnection += 1; continue; }
 
     const businessName = await getOrgName(seq.orgId);
 
@@ -688,7 +705,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
   // Monthly statements: drafts only, held for approval. Never fails the reminder run.
   let statementDrafts = 0;
   try { statementDrafts = (await generateStatementDrafts(now, opts.orgId)).created; } catch (e: unknown) { console.error('[statements] drafting failed:', errorMessage(e)); }
-  return { scheduled, sent, errors, awaitingApproval, outsideWindow, statementDrafts };
+  return { scheduled, sent, errors, awaitingApproval, outsideWindow, blockedByConnection, statementDrafts };
 }
 
 export { renderEmailHtml };

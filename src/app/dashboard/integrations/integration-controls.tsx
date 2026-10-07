@@ -16,11 +16,13 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
   const [syncHadErrors, setSyncHadErrors] = useState(false);
+  const [reconnectHref, setReconnectHref] = useState<string | null>(null);
   const [disconnecting, setDisconnecting] = useState(false);
 
   const onSync = async () => {
     setSyncing(true);
     setSyncResult(null);
+    setReconnectHref(null);
     try {
       const res = await fetch('/api/integrations/sync', {
         method: 'POST',
@@ -29,6 +31,9 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
       });
       const data = await res.json();
       if (!res.ok) {
+        // A dead refresh token or a revoked connection: show the reconnect link
+        // right here instead of a dead end the owner has to go find themselves.
+        if (data?.reconnectRequired && data?.reconnectHref) setReconnectHref(data.reconnectHref);
         // The API puts the useful reason in `details`; showing only "sync failed" hid it.
         const why = Array.isArray(data?.details) && data.details.length > 0 ? `: ${String(data.details[0]).slice(0, 240)}` : '';
         throw new Error(`${data?.error ?? 'sync failed'}${why}`);
@@ -102,7 +107,10 @@ export function IntegrationControls({ provider, label, lastSyncAt }: { provider:
       </div>
       {syncing && <p role="status" className="text-xs text-ink-600">Syncing your books. Keep this page open until it says it is done. Nothing is sent to anyone.</p>}
       {syncResult && <p className={`text-xs ${syncHadErrors ? 'text-red-600' : 'text-ink-600'}`}>{syncResult}</p>}
-      {syncResult && !syncHadErrors && (
+      {reconnectHref && (
+        <a href={reconnectHref} className="btn-primary btn-sm w-fit">Reconnect {label}</a>
+      )}
+      {syncResult && !syncHadErrors && !reconnectHref && (
         <a href="/dashboard/dunning#starter-heading" className="btn-primary btn-sm w-fit">Next: draft your first reminders</a>
       )}
     </div>

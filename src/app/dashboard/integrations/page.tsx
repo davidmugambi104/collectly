@@ -4,8 +4,9 @@ import { AppShell } from '@/components/app/shell';
 import { getAuth as auth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
 import { db } from '@/db';
-import { integrations, customers } from '@/db/schema';
+import { integrations, customers, organizations } from '@/db/schema';
 import { eq, count } from 'drizzle-orm';
+import type { SyncSummary } from '@/lib/integrations/connection-health';
 import { CheckCircle2, AlertCircle, BookOpen, Database, ArrowRight, Plug } from 'lucide-react';
 import { TRADEMARK_NOTICE } from '@/lib/trademark';
 import Link from 'next/link';
@@ -41,10 +42,16 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   const connectedProvider = sp?.ok && PROVIDER_LABELS[sp.ok] ? sp.ok : null;
   const erroredProvider = sp?.err && PROVIDER_LABELS[sp.err] ? sp.err : null;
 
-  const [list, customerCountRow] = await Promise.all([
+  const [list, customerCountRow, orgRow] = await Promise.all([
     db.select().from(integrations).where(eq(integrations.orgId, orgId)),
     db.select({ n: count() }).from(customers).where(eq(customers.orgId, orgId)),
+    db.select({ name: organizations.name }).from(organizations).where(eq(organizations.id, orgId)).limit(1),
   ]);
+  // Shown in the page subtitle: a connection belongs to exactly one Clerk
+  // organisation. A user who is in a different org sees this page with no
+  // data and no obvious reason why -- the org name here is the one clue that
+  // they may simply be looking at the wrong workspace.
+  const orgName = orgRow[0]?.name ?? null;
   const customerCount = Number(customerCountRow[0]?.n ?? 0);
   // Data a disconnected Xero or QuickBooks left behind (a wrong organisation, or simply an owner who left).
   const leftBehind: Array<{ provider: ImportProvider; summary: ImportedSummary; message: string }> = [];
@@ -84,7 +91,8 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   const needsSetup = Object.values(providerStatus).filter((s) => !s.ready).length;
 
   return (
-    <AppShell title="Integrations" subtitle="Connect your accounting and payment tools.">
+    <AppShell title="Integrations" subtitle={orgName ? `Connect your accounting and payment tools for ${orgName}.` : 'Connect your accounting and payment tools.'}>
+
       {connectedProvider && (
         <div className="mb-6 card bg-success-50 border-success-200">
           <div className="flex items-start gap-3">
@@ -156,8 +164,8 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
       {leftBehind.map((l) => <RemoveImportedButton key={l.provider} provider={l.provider} summary={l.summary} message={l.message} />)}
 
       <div id="providers" className="grid md:grid-cols-2 gap-4">
-        <IntegrationCard logo={<Plug className="h-5 w-5" aria-hidden="true" />} name="QuickBooks" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks" ctaLabel="Connect to QuickBooks" notice={TRADEMARK_NOTICE} lastSyncAt={conn('quickbooks')?.lastSyncAt?.toISOString() ?? null} />
-        <IntegrationCard logo={<Plug className="h-5 w-5" aria-hidden="true" />} name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" ctaLabel="Connect to Xero" lastSyncAt={conn('xero')?.lastSyncAt?.toISOString() ?? null} detail={((conn('xero')?.metadata as { tenantName?: string | null } | null)?.tenantName) ? `Connected to ${(conn('xero')!.metadata as { tenantName: string }).tenantName}` : null} />
+        <IntegrationCard logo={<Plug className="h-5 w-5" aria-hidden="true" />} name="QuickBooks" description="Sync invoices, customers, and payments from your books." status={conn('quickbooks')?.status ?? 'disconnected'} connectHref={`/api/quickbooks/connect?orgId=${orgId}`} docsHref="#" provider="quickbooks" label="QuickBooks" ctaLabel="Connect to QuickBooks" notice={TRADEMARK_NOTICE} lastSyncAt={conn('quickbooks')?.lastSyncAt?.toISOString() ?? null} lastSync={(conn('quickbooks')?.metadata as { lastSync?: SyncSummary } | null)?.lastSync ?? null} />
+        <IntegrationCard logo={<Plug className="h-5 w-5" aria-hidden="true" />} name="Xero" description="Pull invoices, customers, and aging reports from Xero." status={conn('xero')?.status ?? 'disconnected'} connectHref={`/api/xero/connect?orgId=${orgId}`} docsHref="#" provider="xero" label="Xero" ctaLabel="Connect to Xero" lastSyncAt={conn('xero')?.lastSyncAt?.toISOString() ?? null} lastSync={(conn('xero')?.metadata as { lastSync?: SyncSummary } | null)?.lastSync ?? null} detail={((conn('xero')?.metadata as { tenantName?: string | null } | null)?.tenantName) ? `Connected to ${(conn('xero')!.metadata as { tenantName: string }).tenantName}` : null} />
         <IntegrationCard logo="S" name="Stripe" description="Card payments through Stripe are not available yet." status="paused" connectHref="#" docsHref="#" ctaLabel="Paused" />
         <IntegrationCard logo="Sq" name="Square" description="Sync sales and invoice data for product businesses." status={conn('square')?.status ?? 'disconnected'} connectHref={`/api/square/connect?orgId=${orgId}`} docsHref="#" provider="square" label="Square" lastSyncAt={conn('square')?.lastSyncAt?.toISOString() ?? null} />
         <PlaidCard status={conn('plaid')?.status ?? 'disconnected'} />
@@ -193,12 +201,13 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
   );
 }
 
-function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt, detail, notice }: { detail?: string | null; notice?: string; logo: React.ReactNode; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero' | 'square'; label?: string; lastSyncAt?: string | null }) {
+function IntegrationCard({ logo, name, description, status, connectHref, docsHref, ctaLabel, provider, label, lastSyncAt, lastSync, detail, notice }: { detail?: string | null; notice?: string; logo: React.ReactNode; name: string; description: string; status: string; connectHref: string; docsHref: string; ctaLabel?: string; provider?: 'quickbooks' | 'xero' | 'square'; label?: string; lastSyncAt?: string | null; lastSync?: { at: string; ok: boolean; customersUpserted?: number; invoicesUpserted?: number; truncated?: boolean; errors: string[]; failureMessage?: string } | null }) {
   const connected = status === 'connected';
   const errored = status === 'error';
   const paused = status === 'paused';
+  const accountingProvider = provider === 'quickbooks' || provider === 'xero';
   // QuickBooks and Xero: the connect button is replaced by the Disconnect link once connected.
-  const hideConnect = connected && (provider === 'quickbooks' || provider === 'xero');
+  const hideConnect = connected && accountingProvider;
   const showControls = connected && provider && (provider === 'quickbooks' || provider === 'xero' || provider === 'square');
   return (
     <div className={`card transition-all duration-200 hover:lift-2 ${errored ? 'row-urgent' : ''} ${paused ? 'opacity-65' : ''}`}>
@@ -216,12 +225,17 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
           </div>
           <p className="app-body mt-1">{description}</p>
           {connected && detail && <p className="mt-1 text-sm font-medium text-ink-800">{detail}</p>}
+          {errored && accountingProvider && (
+            <p className="mt-1 text-sm font-medium text-danger-700">
+              {name} needs to be reconnected{lastSync?.failureMessage ? `: ${lastSync.failureMessage}` : '.'} Reminders that would rely on {name} data are paused until you reconnect.
+            </p>
+          )}
           <div className="mt-3 flex items-center gap-2">
             {paused ? (
               <span className="btn-secondary btn-sm opacity-60 cursor-not-allowed" aria-disabled="true">Paused</span>
             ) : hideConnect ? null : (
               <a href={connectHref} className={connected ? 'btn-secondary btn-sm' : 'btn-primary btn-sm'}>
-                {connected ? 'Manage' : ctaLabel ?? 'Connect'}
+                {connected ? 'Manage' : errored ? `Reconnect ${name}` : ctaLabel ?? 'Connect'}
               </a>
             )}
             {docsHref !== '#' && (
@@ -230,6 +244,15 @@ function IntegrationCard({ logo, name, description, status, connectHref, docsHre
           </div>
           {showControls && (
             <IntegrationControls provider={provider!} label={label!} lastSyncAt={lastSyncAt ?? null} />
+          )}
+          {/* Persistent, survives a reload -- unlike the transient message under Sync now, which is only ever in React state. */}
+          {accountingProvider && lastSync && (
+            <p className={`mt-2 text-xs ${lastSync.ok ? 'text-ink-500' : 'text-red-600'}`}>
+              Last sync {new Date(lastSync.at).toLocaleString()}: {lastSync.ok
+                ? `imported ${lastSync.customersUpserted ?? 0} customers, ${lastSync.invoicesUpserted ?? 0} invoices${lastSync.truncated ? ' (stopped at the sync limit)' : ''}`
+                : (lastSync.failureMessage ?? 'failed')}
+              {lastSync.errors.length > 0 && ` — ${lastSync.errors.slice(0, 2).join('; ')}`}
+            </p>
           )}
           {notice && <p className="mt-3 text-[11px] leading-4 text-ink-500">{notice}</p>}
         </div>

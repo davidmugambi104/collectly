@@ -5,14 +5,15 @@ import { db } from '@/db';
 import { integrations } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
-import { syncQboForOrg, disconnectQbo } from '@/lib/integrations/quickbooks';
+import { syncQboForOrg, disconnectQbo, QboReconnectRequiredError, getQboReconnectUrl } from '@/lib/integrations/quickbooks';
 import { previewImportedData } from '@/lib/integrations/imported-data-db';
 import { sql } from 'drizzle-orm';
-import { syncXeroForOrg, disconnectXero } from '@/lib/integrations/xero';
+import { syncXeroForOrg, disconnectXero, XeroReconnectRequiredError, getXeroReconnectUrl } from '@/lib/integrations/xero';
 import { recordFunnelEvent } from '@/lib/funnel-events';
 import { syncSquareForOrg, disconnectSquare } from '@/lib/integrations/square';
 import { getAdapter } from '@/lib/integrations/adapters';
 import { runSync, type ProviderId } from '@/lib/integrations/adapter';
+import { recordSyncSummary, type AccountingProvider } from '@/lib/integrations/connection-health-db';
 
 export const dynamic = 'force-dynamic';
 // syncXeroForOrg/syncQboForOrg do sequential, unbatched per-row DB upserts on
@@ -70,6 +71,20 @@ async function postHandler(req: NextRequest) {
     const topLevelFailed = result.errors.some((e: string) =>
       e.startsWith('customers:') || e.startsWith('contacts:') || e.startsWith('invoices:'),
     );
+    // Persisted so the card can show it after a reload, not only in the
+    // transient message under the Sync button -- including a partial failure
+    // like `customers:` or `credit:` errors, which used to vanish on refresh.
+    if (provider === 'quickbooks' || provider === 'xero') {
+      await recordSyncSummary(orgId, provider as AccountingProvider, {
+        at: new Date().toISOString(),
+        ok: !(topLevelFailed && result.customersUpserted === 0 && result.invoicesUpserted === 0),
+        customersUpserted: result.customersUpserted,
+        invoicesUpserted: result.invoicesUpserted,
+        invoicesMarkedPaid: result.invoicesMarkedPaid,
+        truncated: result.truncated,
+        errors: result.errors.slice(0, 5),
+      }).catch(() => { /* the summary is a convenience; never fail the sync over it */ });
+    }
     if (topLevelFailed && result.customersUpserted === 0 && result.invoicesUpserted === 0) {
       return NextResponse.json(
         { ok: false, provider, error: 'sync failed', details: result.errors, ...result },
@@ -101,7 +116,28 @@ async function postHandler(req: NextRequest) {
     }
     return NextResponse.json({ ok: true, provider, ...result, stored });
   } catch (e: unknown) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 502 });
+    const message = e instanceof Error ? e.message : String(e);
+    // A dead refresh token or a revoked connection: no amount of retrying this
+    // request fixes it, so the client gets a reconnect link up front instead of
+    // a generic "sync failed" it would otherwise show next to the Sync button.
+    const reconnectRequired = e instanceof QboReconnectRequiredError || e instanceof XeroReconnectRequiredError;
+    const reconnectHref = e instanceof QboReconnectRequiredError
+      ? getQboReconnectUrl(orgId)
+      : e instanceof XeroReconnectRequiredError
+        ? getXeroReconnectUrl(orgId)
+        : undefined;
+    if (provider === 'quickbooks' || provider === 'xero') {
+      await recordSyncSummary(orgId, provider as AccountingProvider, {
+        at: new Date().toISOString(),
+        ok: false,
+        errors: [],
+        failureMessage: reconnectRequired ? `${provider === 'quickbooks' ? 'QuickBooks' : 'Xero'} needs to be reconnected.` : message,
+      }).catch(() => { /* the summary is a convenience; never mask the real error over it */ });
+    }
+    return NextResponse.json(
+      { error: reconnectRequired ? `${provider === 'quickbooks' ? 'QuickBooks' : 'Xero'} needs to be reconnected.` : message, reconnectRequired, reconnectHref },
+      { status: reconnectRequired ? 409 : 502 },
+    );
   }
 }
 

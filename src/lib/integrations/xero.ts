@@ -72,8 +72,12 @@ async function getFreshXero(orgId: string) {
     }),
   });
   if (!res.ok) {
+    // A refresh token Xero no longer honours (revoked, or past its 60-day cap)
+    // cannot be retried -- only reconnecting fixes it. Distinguishing this lets
+    // callers show a reconnect CTA instead of a generic failure.
+    const detail = await res.text();
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
-    throw new Error(`Xero refresh failed: ${res.status} ${await res.text()}`);
+    throw new XeroReconnectRequiredError(`Xero refresh failed: ${res.status} ${detail}`, orgId);
   }
   const json = (await res.json()) as XeroTokenResponse;
   const newExpiresAt = new Date(now + (json.expires_in as number) * 1000);
@@ -139,8 +143,29 @@ type XeroInvoice = {
 };
 type XeroList = { Contacts?: XeroContact[]; Invoices?: XeroInvoice[] };
 
+/**
+ * Thrown when Xero no longer honours this connection: the refresh token was
+ * rejected, or a request came back 401/403 AuthenticationUnsuccessful. Only a
+ * fresh OAuth round trip fixes it. Callers (the sync route, the dunning
+ * scheduler) catch this specifically to show a reconnect CTA with the
+ * provider name and link, instead of a generic sync-failed message.
+ */
+export class XeroReconnectRequiredError extends Error {
+  constructor(message = 'Xero reconnect required', public readonly orgId?: string) {
+    super(message);
+    this.name = 'XeroReconnectRequiredError';
+  }
+}
+
+export function getXeroReconnectUrl(orgId: string): string {
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mugavi.com';
+  return `${base}/api/xero/connect?orgId=${encodeURIComponent(orgId)}`;
+}
+
 /** How many times a 429 is retried before giving up. */
 const XERO_MAX_RETRIES = 3;
+/** How many times a 5xx (Xero's side down, not our request) is retried before giving up. */
+const XERO_MAX_5XX_RETRIES = 2;
 
 /**
  * Xero enforces 60 calls/minute and 5,000/day per tenant, and answers a breach
@@ -159,6 +184,7 @@ const XERO_MAX_RETRIES = 3;
 async function xeroFetch(orgId: string, path: string, init?: RequestInit) {
   const integ = await getFreshXero(orgId);
   if (!integ.tenantId) throw new Error('Xero: tenant not resolved');
+  let serverErrorAttempts = 0;
 
   for (let attempt = 0; ; attempt++) {
     const res = await fetch(`${XERO_API}${path}`, {
@@ -190,6 +216,15 @@ async function xeroFetch(orgId: string, path: string, init?: RequestInit) {
       continue;
     }
 
+    // Xero's side failing outright (a real outage, not throttling). A short
+    // bounded retry survives a blip instead of failing a whole sync on one
+    // flaky request.
+    if (res.status >= 500 && serverErrorAttempts < XERO_MAX_5XX_RETRIES) {
+      serverErrorAttempts++;
+      await new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** (serverErrorAttempts - 1)));
+      continue;
+    }
+
     if (!res.ok) {
       const text = await res.text();
       // 401, or 403 AuthenticationUnsuccessful, means Xero no longer accepts this
@@ -198,7 +233,7 @@ async function xeroFetch(orgId: string, path: string, init?: RequestInit) {
       // integration as errored: the card then offers Connect again.
       if (res.status === 401 || (res.status === 403 && /AuthenticationUnsuccessful/i.test(text))) {
         await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
-        throw new Error('Xero no longer accepts this connection. Reconnect Xero from Integrations.');
+        throw new XeroReconnectRequiredError('Xero no longer accepts this connection. Reconnect Xero from Integrations.', orgId);
       }
       throw new Error(`Xero ${path} failed: ${res.status} ${text}`);
     }

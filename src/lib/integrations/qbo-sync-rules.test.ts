@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { qboClosure, isQboNotFound, resolveHomeCurrency } from './qbo-sync-rules.ts';
+import { qboClosure, isQboNotFound, resolveHomeCurrency, qboFaultIsEnvironmentMismatch } from './qbo-sync-rules.ts';
 import { qboSyncedStatus } from './sync-status.ts';
 
 test('a voided invoice is closed, not "paid"; a plain paid one is not', () => {
@@ -36,4 +36,12 @@ test('home currency: preferences, then country, then org base, then USD', () => 
   assert.deepEqual(resolveHomeCurrency({ companyInfo: { CompanyInfo: { Country: 'ZZ' } }, orgBaseCurrency: 'EUR' }), { currency: 'EUR', source: 'organization' });
   assert.deepEqual(resolveHomeCurrency({}), { currency: 'USD', source: 'default' });
   assert.equal(resolveHomeCurrency({ preferences: { Preferences: { CurrencyPrefs: { HomeCurrency: { value: 'pounds' } } } } }).source, 'default', 'junk is ignored');
+});
+
+test('fault 3100 (ApplicationAuthorizationFailed) is recognised as an environment mismatch, not a generic fault', () => {
+  assert.equal(qboFaultIsEnvironmentMismatch({ Error: [{ Message: 'Application Authorization Failed', code: '3100' }], type: 'AuthenticationFailed' }), true);
+  assert.equal(qboFaultIsEnvironmentMismatch('{"Fault":{"Error":[{"code":"3100"}]}}'), true);
+  assert.equal(qboFaultIsEnvironmentMismatch({ Error: [{ Message: 'ApplicationAuthorizationFailed' }] }), true, 'matches on the name even without the numeric code');
+  assert.equal(qboFaultIsEnvironmentMismatch({ Error: [{ Message: 'Object Not Found', code: '610' }] }), false);
+  assert.equal(qboFaultIsEnvironmentMismatch(null), false);
 });

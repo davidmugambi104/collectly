@@ -24,12 +24,18 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  const [aging, cash, aiInsights, topRiskCustomers, connectedIntegrations, recentPayments] = await Promise.all([
+  const [aging, cash, aiInsights, topRiskCustomers, connectedIntegrations, erroredIntegrations, recentPayments] = await Promise.all([
     getAgingReport(orgId),
     getCashFlowSnapshot(orgId),
     getAIInsights(orgId).then((all) => all.filter((i) => i.id !== 'no-data')),
     getCustomerInsights(orgId, 5),
     db.select().from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.status, 'connected'))),
+    // A connection can go from connected to error (revoked access, a dead
+    // refresh token, an Intuit/Xero outage) with nothing on this page saying
+    // so before this -- the query above only ever looked at 'connected' rows,
+    // so a broken connection was invisible here and the aging/cash numbers
+    // kept looking current when they were frozen at the last successful sync.
+    db.select({ provider: integrations.provider }).from(integrations).where(and(eq(integrations.orgId, orgId), eq(integrations.status, 'error'))),
     db
       .select({ payment: payments, customer: customers, invoice: invoices })
       .from(payments)
@@ -72,8 +78,23 @@ export default async function DashboardPage() {
     paidAfterReminder: Number(runCounts?.paid ?? 0),
   });
 
+  const PROVIDER_LABEL: Record<string, string> = { quickbooks: 'QuickBooks', xero: 'Xero' };
+
   return (
     <AppShell title="Overview" subtitle="Your accounts receivable, and what to do next.">
+      {erroredIntegrations.map((i: { provider: string }) => (
+        <div key={i.provider} className="mb-6 card bg-danger-50 border-danger-200">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-danger-700 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-danger-900">
+                <b>{PROVIDER_LABEL[i.provider] ?? i.provider}</b> needs to be reconnected. The numbers below may be out of date until you do, and reminders that would rely on it are paused.{' '}
+                <Link href="/dashboard/integrations" className="link font-medium">Reconnect {PROVIDER_LABEL[i.provider] ?? i.provider}</Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
       {first.showChecklist ? <FirstSessionCard view={first} /> : first.next && <WaitingStrip view={first} />}
       <DashboardKpiGrid aging={aging} cash={cash} />
 

@@ -14,7 +14,7 @@ let payments: Row[] = [];
 let memos: Row[] = [];
 let queries: string[] = [];
 // Behaviour switches, set per scenario.
-const mode = { throttleFirst: 0, retryAfter: '', unauthorizedFirst: false, faultOn200: false, badRequest: false, failInvoicesFromPage2: false };
+const mode = { throttleFirst: 0, retryAfter: '', unauthorizedFirst: false, faultOn200: false, badRequest: false, failInvoicesFromPage2: false, serverErrorFirst: 0, serverErrorAlways: false, envMismatch: false, refreshRejected: false };
 let oauthCalls = 0; let seenTokens: string[] = [];
 
 const server = http.createServer((req, res) => {
@@ -25,6 +25,9 @@ const server = http.createServer((req, res) => {
   if (mode.unauthorizedFirst && req.headers.authorization === 'Bearer stale') return send({ fault: 'AuthenticationFailed' }, 401);
   if (mode.faultOn200) return send({ Fault: { Error: [{ Message: 'Something odd', code: '5000' }], type: 'SERVICE' } });
   if (mode.badRequest) return send({ Fault: { Error: [{ Message: 'QueryParserError' }], type: 'ValidationFault' } }, 400, { intuit_tid: 'tid-abc-123' });
+  if (mode.serverErrorAlways) { res.writeHead(503); res.end('{}'); return; }
+  if (mode.serverErrorFirst > 0) { mode.serverErrorFirst--; res.writeHead(503); res.end('{}'); return; }
+  if (mode.envMismatch) return send({ Fault: { Error: [{ Message: 'Application Authorization Failed', code: '3100' }], type: 'AuthenticationFailed' } }, 403);
   const start = Number(/STARTPOSITION (\d+)/.exec(q)?.[1] ?? 1); const max = Number(/MAXRESULTS (\d+)/.exec(q)?.[1] ?? 100);
   const page = (rows: Row[]) => rows.slice(start - 1, start - 1 + Math.min(max, 1000));
   if (/FROM Payment/.test(q)) return send({ QueryResponse: { Payment: page(payments) } });
@@ -45,13 +48,17 @@ async function main() {
   // Intercept only Intuit's token endpoint; everything else (the local stand-in) passes through.
   const realFetch = globalThis.fetch;
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
-    if (String(input).startsWith('https://oauth.platform.intuit.com')) { oauthCalls++; return new Response(JSON.stringify({ access_token: 'fresh', refresh_token: 'r2', expires_in: 3600 }), { status: 200 }); }
+    if (String(input).startsWith('https://oauth.platform.intuit.com')) {
+      oauthCalls++;
+      if (mode.refreshRejected) return new Response(JSON.stringify({ error: 'invalid_grant' }), { status: 400 });
+      return new Response(JSON.stringify({ access_token: 'fresh', refresh_token: 'r2', expires_in: 3600 }), { status: 200 });
+    }
     return realFetch(input, init);
   }) as typeof fetch;
   const { db } = await import('@/db'); const { ensureBootstrapped } = await import('@/lib/bootstrap-db');
   const { organizations, integrations } = await import('@/db/schema');
   const { sql } = await import('drizzle-orm'); const { DUNNING_CONTROL_DDL } = await import('@/lib/dunning-control-schema');
-  const { syncQboForOrg, qboListCredits } = await import('@/lib/integrations/quickbooks');
+  const { syncQboForOrg, qboListCredits, qboListCustomers, QboReconnectRequiredError } = await import('@/lib/integrations/quickbooks');
   await ensureBootstrapped();
   for (const stmt of DUNNING_CONTROL_DDL.filter((x: string) => x.includes('customer_credits'))) await db.execute(sql.raw(stmt));
   const [org] = await db.select().from(organizations).limit(1);
@@ -59,7 +66,7 @@ async function main() {
     await db.delete(integrations).where(eq(integrations.orgId, org.id));
     await db.insert(integrations).values({ orgId: org.id, provider: 'quickbooks', status: 'connected', accessToken: token, refreshToken: 'r', expiresAt: new Date(Date.now() + 86_400_000), realmId: 'R1' });
   };
-  const reset = () => { queries = []; seenTokens = []; oauthCalls = 0; Object.assign(mode, { throttleFirst: 0, retryAfter: '', unauthorizedFirst: false, faultOn200: false, badRequest: false, failInvoicesFromPage2: false }); };
+  const reset = () => { queries = []; seenTokens = []; oauthCalls = 0; Object.assign(mode, { throttleFirst: 0, retryAfter: '', unauthorizedFirst: false, faultOn200: false, badRequest: false, failInvoicesFromPage2: false, serverErrorFirst: 0, serverErrorAlways: false, envMismatch: false, refreshRejected: false }); };
   const out: Record<string, unknown> = {};
   await connect('good');
 
@@ -114,6 +121,36 @@ async function main() {
   for (let i = open.length; i < 1001; i++) open.push({ Id: `q${i}`, CustomerRef: { value: 'c1' }, TotalAmt: 1, Balance: 1 }); // a full first page, so a second page is asked for
   const r8 = await syncQboForOrg(org.id);
   out.laterPageFails = { errors: r8.errors.map((e) => e.slice(0, 20)) };
+
+  // 9. A 500/503 is retried (bounded, 2 retries) then succeeds -- an outage blip, not thrown partway through.
+  reset(); await connect('good'); mode.serverErrorFirst = 2;
+  const r9 = await syncQboForOrg(org.id);
+  out.serverErrorRetried = { errors: r9.errors, customers: r9.customersUpserted };
+  //    Past the retry budget: reported, not thrown, and nothing claims a clean sync.
+  reset(); mode.serverErrorAlways = true;
+  const r9b = await syncQboForOrg(org.id);
+  out.serverErrorExhausted = { errors: r9b.errors.slice(0, 1).map((e) => e.slice(0, 20)), customersUpserted: r9b.customersUpserted };
+
+  // 10. Fault 3100 (sandbox token against the production base, or vice versa): the admin-facing log names the
+  // real cause; what the sync records as its error is the plain customer-safe sentence, no fault code, no JSON.
+  reset(); mode.envMismatch = true;
+  const r10 = await syncQboForOrg(org.id);
+  out.envMismatch = { errors: r10.errors.map((e) => e.slice(0, 120)), namesCodeOrJson: r10.errors.some((e) => /3100|Fault|ApplicationAuthorizationFailed/.test(e)) };
+
+  // 11. The refresh token itself is rejected (revoked, or past its 100-day cap). syncQboForOrg catches this like
+  // any other read failure and reports it in `errors` rather than throwing, but the lower-level call that hit it
+  // directly (not wrapped in a sync's own try/catch) must throw QboReconnectRequiredError specifically, not a
+  // generic Error, and the integration must already be marked errored so the card can offer Connect again.
+  reset(); await connect('stale'); mode.unauthorizedFirst = true; mode.refreshRejected = true;
+  let threwClass: string | null = null;
+  let isInstance = false;
+  try { await qboListCustomers(org.id); } catch (e) { threwClass = e instanceof Error ? e.constructor.name : typeof e; isInstance = e instanceof QboReconnectRequiredError; }
+  const [rowAfter] = await db.select({ status: integrations.status }).from(integrations).where(eq(integrations.orgId, org.id));
+  out.reconnectRequired = { threwClass, isInstance, statusAfter: rowAfter?.status };
+  // The sync-level call, over the same failure, never throws -- it is reported in `errors` instead.
+  reset(); await connect('stale'); mode.unauthorizedFirst = true; mode.refreshRejected = true;
+  const r11 = await syncQboForOrg(org.id);
+  out.reconnectRequiredInSync = { reported: r11.errors.some((e) => /refresh failed/i.test(e)), customersUpserted: r11.customersUpserted };
 
   console.log('RESULT ' + JSON.stringify(out));
   server.close(); process.exit(0);

@@ -18,7 +18,7 @@ import { integrations, customers as customersTbl, invoices as invoicesTbl, organ
 import { eq, and, inArray } from 'drizzle-orm';
 import { fetchAllPages, chunk } from '@/lib/integrations/paging';
 import { needsLookup, reconcileStatus, qboSyncedStatus } from '@/lib/integrations/sync-status';
-import { qboClosure, isQboNotFound, resolveHomeCurrency } from '@/lib/integrations/qbo-sync-rules';
+import { qboClosure, isQboNotFound, resolveHomeCurrency, qboFaultIsEnvironmentMismatch, QBO_ENVIRONMENT_MISMATCH_ADMIN_MESSAGE, QBO_ENVIRONMENT_MISMATCH_CUSTOMER_MESSAGE } from '@/lib/integrations/qbo-sync-rules';
 import { nanoid, errorMessage } from '@/lib/utils';
 import { replaceCredits } from '@/lib/integrations/credits';
 
@@ -89,9 +89,14 @@ async function getFreshQboToken(orgId: string, force = false) {
     }),
   });
   if (!res.ok) {
-    // Mark integration as errored so the UI surfaces it; throw so caller knows
+    // Mark integration as errored so the UI surfaces it. A refresh that Intuit
+    // rejects (revoked, expired past its 100-day cap, or the user disconnected
+    // in QuickBooks itself) cannot be retried -- only a fresh OAuth round trip
+    // fixes it, so this is the one signal callers need to show a reconnect CTA
+    // instead of a generic failure.
+    const detail = await res.text();
     await db.update(integrations).set({ status: 'error', updatedAt: new Date() }).where(eq(integrations.id, integ.id));
-    throw new Error(`QBO refresh failed: ${res.status} ${await res.text()}`);
+    throw new QboReconnectRequiredError(`QBO refresh failed: ${res.status} ${detail}`, orgId);
   }
   const json = (await res.json()) as QboTokenResponse;
   const newExpiresAt = new Date(now + json.expires_in * 1000);
@@ -142,10 +147,14 @@ const QBO_MAX_RETRIES = 3;
  * backs off exponentially from 2s rather than trusting a header that may not
  * be there.
  */
+/** How many times a 5xx (Intuit's side down, not our request) is retried before giving up. Shorter than the 429 budget: an outage is not a quota that clears on its own schedule. */
+const QBO_MAX_5XX_RETRIES = 2;
+
 async function qboFetch(orgId: string, path: string) {
   let integ = await getFreshQboToken(orgId);
   const url = path.startsWith('http') ? path : `${QBO_BASE}/v3/company/${integ.realmId}${withMinorVersion(path)}`;
   let refreshedOn401 = false;
+  let serverErrorAttempts = 0;
 
   for (let attempt = 0; ; attempt++) {
     const res = await fetch(url, {
@@ -170,12 +179,39 @@ async function qboFetch(orgId: string, path: string) {
       continue;
     }
 
-    if (!res.ok) throw new Error(`QBO ${path} failed: ${res.status} ${await res.text()}${tidSuffix(res)}`);
+    // Intuit's side failing outright (a real outage, not throttling). A bounded
+    // retry with a short backoff survives a blip without turning one flaky
+    // request into a whole sync throwing partway through.
+    if (res.status >= 500 && serverErrorAttempts < QBO_MAX_5XX_RETRIES) {
+      serverErrorAttempts++;
+      await new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** (serverErrorAttempts - 1)));
+      continue;
+    }
+
+    if (!res.ok) {
+      const text = await res.text();
+      // Fault code 3100 (ApplicationAuthorizationFailed) means a token minted for
+      // one environment (sandbox/production) hit the other's API base -- proven
+      // live on 2026-10-06. Reconnecting will not fix it; it is a config mismatch
+      // between QBO_ENVIRONMENT and the keys the connection used. The admin gets
+      // the real cause in the server log; the thrown message (surfaced toward the
+      // customer) stays plain and names no fault codes or environment names.
+      if (qboFaultIsEnvironmentMismatch(text)) {
+        console.error(`[qbo] ${QBO_ENVIRONMENT_MISMATCH_ADMIN_MESSAGE} orgId=${orgId}${tidSuffix(res)} raw=${text.slice(0, 300)}`);
+        throw new Error(QBO_ENVIRONMENT_MISMATCH_CUSTOMER_MESSAGE);
+      }
+      throw new Error(`QBO ${path} failed: ${res.status} ${text}${tidSuffix(res)}`);
+    }
     const json = await res.json();
     // QuickBooks reports some failures as a Fault object. Never treat one as an empty result:
     // an empty page would read as "no more invoices" and end a sync looking clean.
     if (json && typeof json === 'object' && (json as { Fault?: unknown }).Fault) {
-      throw new Error(`QBO ${path} returned a Fault: ${JSON.stringify((json as { Fault: unknown }).Fault).slice(0, 300)}${tidSuffix(res)}`);
+      const fault = (json as { Fault: unknown }).Fault;
+      if (qboFaultIsEnvironmentMismatch(fault)) {
+        console.error(`[qbo] ${QBO_ENVIRONMENT_MISMATCH_ADMIN_MESSAGE} orgId=${orgId}${tidSuffix(res)} raw=${JSON.stringify(fault).slice(0, 300)}`);
+        throw new Error(QBO_ENVIRONMENT_MISMATCH_CUSTOMER_MESSAGE);
+      }
+      throw new Error(`QBO ${path} returned a Fault: ${JSON.stringify(fault).slice(0, 300)}${tidSuffix(res)}`);
     }
     return json;
   }
