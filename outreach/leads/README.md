@@ -21,6 +21,7 @@ Tests: `node --test outreach/leads/*.test.mjs` (they are outside `src/`, so `npm
 | X / Twitter | Needs an API bearer token in `X_BEARER_TOKEN` (the search endpoint is not available without one). Scraping the site is not done. | `agents/x.md`, `sources/x-api.mjs` |
 | LinkedIn | No public search API for posts. Scraping breaks LinkedIn's terms and risks your account, so it is not done. You paste post links or text you found into `runs/<date>/linkedin-inbox.txt` and the agent ranks and drafts. | `agents/linkedin.md` |
 | QuickBooks Community (Intuit) | Public pages, read-only through your Chrome. Where bookkeepers actually ask. | `agents/quickbooks-community.md` |
+| Xero product ideas | `productideas.xero.com` is public without login (the old `community.xero.com` is gone; `central.xero.com` needs login). Recent human comments on invoice ideas only. | `agents/xero-community.md` |
 
 Credentials are read from your shell environment only. They are never written to files or reports.
 
