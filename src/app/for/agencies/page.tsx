@@ -102,7 +102,7 @@ export default function ForAgenciesPage() {
         <p className="eyebrow">For agencies</p>
         <h1 className="mt-3 h1">A/R automation for agencies on Xero.</h1>
         <p className="mt-5 lead">
-          Built for 5–30 person agencies and consultancies on Xero. Tone-aware AI
+          Built for 5-30 person agencies and consultancies on Xero. Tone-aware AI
           reminders that draft, route, pause on reply, and track promised-pay dates.
           Founder-assisted setup, no per-invoice fees, ${PLAN_PRICING.starter.monthly}/mo
           for a single business and ${PLAN_PRICING.growth.monthly}/mo for a practice

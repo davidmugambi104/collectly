@@ -118,7 +118,7 @@ export default async function IntegrationsPage(props: { searchParams?: Promise<{
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="app-title">No data yet</h2>
-              <p className="app-body mt-1.5">Connect your accounting tool to import customers, invoices, and payment history. Or load sample data to explore the product with realistic A/R — every dashboard, every AI insight, every workflow.</p>
+              <p className="app-body mt-1.5">Connect your accounting tool to import customers, invoices, and payment history. Or load sample data to explore the product with realistic A/R: every dashboard, every AI insight, every workflow.</p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <SampleDataButton />
                 <Link href="/dashboard/integrations/import" className="link-quiet">

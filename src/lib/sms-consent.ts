@@ -22,7 +22,7 @@
  */
 import { db } from '@/db';
 import { customers, smsConsentEvents, organizations } from '@/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 import { sendSms } from '@/lib/infra';
 import { recordUsage, smsSegments } from '@/lib/usage-meter';
 import { BRAND } from '@/lib/seo';

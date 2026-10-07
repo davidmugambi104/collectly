@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Loader2, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { FIELDS, FIELD_LABEL, type Field } from '@/lib/integrations/csv-fields';
 
@@ -167,7 +168,7 @@ export function CsvImport() {
               {data.errorCount > 0 && <p className="mt-1">{data.errorCount} row{data.errorCount === 1 ? ' was' : 's were'} skipped for the problems listed in the preview.</p>}
               {data.result.errors.length > 0 && <p className="mt-1">Problems while saving: {data.result.errors.slice(0, 3).join('; ')}</p>}
               <p className="mt-2">Re-upload to refresh; it does not sync automatically. To take this data out again, use Remove on the Integrations page.</p>
-              <p className="mt-2"><a className="link" href="/dashboard/invoices">See the invoices</a> · <a className="link" href="/dashboard/integrations">Back to integrations</a></p>
+              <p className="mt-2"><Link className="link" href="/dashboard/invoices">See the invoices</Link> · <Link className="link" href="/dashboard/integrations">Back to integrations</Link></p>
             </div>
           </div>
         </div>

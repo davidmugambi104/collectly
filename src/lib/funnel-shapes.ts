@@ -35,6 +35,7 @@ export const FUNNEL_EVENTS = {
 
 export type FunnelEventType = keyof typeof FUNNEL_EVENTS;
 export type FunnelProps<E extends FunnelEventType> = PropsOf<(typeof FUNNEL_EVENTS)[E]>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- intentional "all props optional" check, not a general-object type
 export type FunnelPropsArg<E extends FunnelEventType> = {} extends FunnelProps<E> ? [payload?: FunnelProps<E>] : [payload: FunnelProps<E>];
 
 /** Validate a server funnel payload. Pure, so tests can run it without a database. */

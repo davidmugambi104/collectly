@@ -104,7 +104,7 @@ export default function ForConsultanciesPage() {
         <p className="eyebrow">For consultancies</p>
         <h1 className="mt-3 h1">A/R automation for consultancies on Xero.</h1>
         <p className="mt-5 lead">
-          Built for 5–30 person consultancies and boutique advisory firms on Xero.
+          Built for 5-30 person consultancies and boutique advisory firms on Xero.
           Tone-aware AI reminders, reply-or-pay pause, promise-to-pay tracking, and
           dispute classification. Founder-assisted onboarding. ${PLAN_PRICING.starter.monthly}/mo
           for one organization; ${PLAN_PRICING.growth.monthly}/mo for a practice covering
@@ -149,7 +149,7 @@ export default function ForConsultanciesPage() {
               Reads your Xero payment terms.
             </h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              Reminders are timed from each invoice's due date, which comes
+              Reminders are timed from each invoice&apos;s due date, which comes
               from Xero, so a net-60 invoice is not chased early. Give a
               slow-paying customer their own schedule with a customer group.
             </p>

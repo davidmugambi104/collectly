@@ -46,9 +46,9 @@ const DEMO_ROWS: DemoRow[] = [
 
 const TABS: { key: 'all' | Bucket; label: string }[] = [
   { key: 'all', label: 'All' },
-  { key: '1-30', label: '1–30' },
-  { key: '31-60', label: '31–60' },
-  { key: '61-90', label: '61–90' },
+  { key: '1-30', label: '1-30' },
+  { key: '31-60', label: '31-60' },
+  { key: '61-90', label: '61-90' },
   { key: '90+', label: '90+' },
 ];
 

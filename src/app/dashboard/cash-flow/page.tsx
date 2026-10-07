@@ -28,7 +28,7 @@ function baselineForecast(forecast30d: number) {
     week4: Math.round(forecast30d * 0.1),
     confidence: 'low' as const,
     narrative:
-      'AI forecast unavailable — showing a baseline projection weighted from your outstanding A/R.',
+      'AI forecast unavailable. Showing a baseline projection weighted from your outstanding A/R.',
   };
 }
 

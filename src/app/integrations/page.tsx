@@ -238,7 +238,7 @@ export default function IntegrationsPage() {
         </p>
         <p className="mt-3 text-sm text-ink-500">
           Status means what is wired today. Some integrations need production credentials swapped in before they collect real money.
-          Customers pay your invoices by wire transfer today. Mugavi's own subscription is billed by manual invoice until Stripe live keys are added.
+          Customers pay your invoices by wire transfer today. Mugavi&apos;s own subscription is billed by manual invoice until Stripe live keys are added.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link href="/sign-up" className="btn-primary">

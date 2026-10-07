@@ -9,7 +9,7 @@ import { CONTACT } from '@/lib/site-contact';
 // actually evaluate (Chaser, BILL, Melio, QuickBooks AR, FreshBooks). We
 // deliberately exclude enterprise AR platforms (Gaviti, Growfin,
 // HighRadius) — they target $50M+ ARR NetSuite/ERP-first orgs, not the
-// 5–30 person agency we sell to. If you're an enterprise buyer, see the
+// 5-30 person agency we sell to. If you're an enterprise buyer, see the
 // per-page comparisons under /compare.
 
 
@@ -21,7 +21,7 @@ const ROWS: Array<[string, string, string, string, string, string, string]> = [
   ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo (1 user)', '$38/mo list', '$23/mo list'],
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Payment processing fees', 'Not on pricing page'],
   ['Time to set up', 'Self-serve, no demo call', 'A few hours (reviewer-reported)', 'Not published', 'Not published', 'Not published', 'Not published'],
-  ['Built for 5–30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
+  ['Built for 5-30 person teams', '✓', '✓', '✓', '✓', '✓', '✓'],
   ['Multi-currency', `${PLAN_PRICING.growth.name}+`, '✓', '✓', '✓', '—', '✓'],
   ['Multi-entity', `${PLAN_PRICING.growth.name}+`, 'Core+', 'Corporate+', '—', '—', '—'],
   ['Cash-flow forecast', `${PLAN_PRICING.growth.name}+`, 'Complete+', 'QuickBooks Online only', '—', 'Basic', 'Basic'],
@@ -183,7 +183,7 @@ export function ComparisonTable({ only }: { only?: CompetitorKey } = {}) {
           vendor's public pricing page. */}
       <div className="mt-6 text-xs text-ink-500 leading-relaxed">
         <p>
-          <b>Scope:</b> Compared against AR/invoicing tools evaluated by 5–30 person agencies and
+          <b>Scope:</b> Compared against AR/invoicing tools evaluated by 5-30 person agencies and
           consultancies. Enterprise AR platforms (Gaviti, Growfin, HighRadius) are excluded —
           they target $50M+ ARR ERP-first orgs. See <a href="/vs-freshbooks" className="underline underline-offset-2 transition-colors hover:text-ink-900">vs FreshBooks</a> or
           the <a href="/compare" className="underline underline-offset-2 transition-colors hover:text-ink-900">full comparison list</a> for the others.

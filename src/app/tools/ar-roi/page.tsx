@@ -30,7 +30,7 @@ export default function ArRoiPage() {
               How much is slow invoicing costing you?
             </h1>
             <p className="mt-4 text-lg text-ink-600">
-              Most 5–30 person agencies and consultancies are leaving <b>$15,000–$90,000</b> on the table every year in late payments. Punch in your numbers and see what faster collections would actually do for you.
+              Most 5-30 person agencies and consultancies are leaving <b>$15,000-$90,000</b> on the table every year in late payments. Punch in your numbers and see what faster collections would actually do for you.
             </p>
           </div>
           <RoiCalculator />

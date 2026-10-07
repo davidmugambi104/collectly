@@ -38,7 +38,7 @@ export default function AboutPage() {
         <h1 className="mt-3 h1">We&apos;re building the A/R tool we wish we had.</h1>
       </section>
       <section className="container-page pb-20 max-w-3xl prose prose-ink">
-        <p className="lead">Mugavi is being built for 5–30 person agencies and consultancies using Xero, where a founder or operations lead still manages overdue invoices manually.</p>
+        <p className="lead">Mugavi is being built for 5-30 person agencies and consultancies using Xero, where a founder or operations lead still manages overdue invoices manually.</p>
         <h2 className="h3 mt-10">Why we exist</h2>
         <p>Most A/R automation is priced and built for much bigger companies than a 5-30 person agency. QuickBooks and Xero now cover the invoicing and reminders basics. What&apos;s missing for the 5-30 person agency segment is relationship-aware follow-up: reading a reply, tracking a promise to pay, and knowing when to pause.</p>
         <h2 className="h3 mt-10">What we believe</h2>

@@ -2,16 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { getAuth } from '@/lib/auth-helper';
 import { db } from '@/db';
-import { customers, organizations, statementLog } from '@/db/schema';
+import { customers } from '@/db/schema';
 import { ensureBootstrapped } from '@/lib/bootstrap-db';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
-import { sendEmail, withUnsubscribeFooter, dunningListUnsubscribeHeaders, getDunningReplyToAddress } from '@/lib/infra';
-import { resolveFrom } from '@/lib/dunning/org-settings';
 import { rateLimit } from '@/lib/rate-limit';
-import { recordEvent } from '@/lib/events';
-import { errorMessage } from '@/lib/utils';
-import { loadStatement, loadStatementFooter } from '@/lib/statements-load';
-import { renderStatementHtml, statementCsv, statementSubject } from '@/lib/statements';
+import { loadStatement } from '@/lib/statements-load';
+import { statementCsv } from '@/lib/statements';
 import { sendStatementEmail } from '@/lib/statements-send';
 
 /** GET ?format=csv downloads this customer's open invoices as a CSV. */

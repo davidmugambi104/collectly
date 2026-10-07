@@ -11,7 +11,7 @@ const STEPS: Array<{ selector: string; title: string; body: string }> = [
   {
     selector: '[data-tour="impact"]',
     title: "Here's what's on the line",
-    body: 'Revenue at risk is what’s overdue right now. Recovered via dunning is what automation already brought back — the numbers this whole page exists to move.',
+    body: 'Revenue at risk is what’s overdue right now. Recovered via dunning is what automation already brought back: the numbers this whole page exists to move.',
   },
   {
     selector: '[data-tour="control"]',
@@ -21,7 +21,7 @@ const STEPS: Array<{ selector: string; title: string; body: string }> = [
   {
     selector: '[data-tour="flow"]',
     title: 'This is the actual sequence',
-    body: 'One node per reminder, in order — invoice overdue, escalating steps, customer pays. Tap any step to change its timing, channel, or tone.',
+    body: 'One node per reminder, in order: invoice overdue, escalating steps, customer pays. Tap any step to change its timing, channel, or tone.',
   },
   {
     selector: '[data-tour="generate-preview"]',

@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- parsed JSON observation blob with ad hoc shape, asserted on below
 type Obs = Record<string, any>;
 let obs: Obs;
 

@@ -18,7 +18,7 @@
  */
 import { sendEmail } from '@/lib/infra';
 import { buildLeadEmail, type LeadNotification } from '@/lib/lead-email';
-import { CONTACT, placeholderEmail } from '@/lib/site-contact';
+import { CONTACT } from '@/lib/site-contact';
 
 export * from '@/lib/lead-email';
 
@@ -38,7 +38,8 @@ export async function sendLeadNotification(
     return { ok: true };
   } catch (e: unknown) {
     const error = e instanceof Error ? e.message : String(e);
-    console.error(`[lead-notify] FAILED for ${data.type} ${data.email}:`, error);
+    const domain = data.email?.split('@')[1] ?? 'unknown-domain';
+    console.error(`[lead-notify] FAILED for ${data.type} (domain: ${domain}):`, error);
     return { ok: false, error };
   }
 }

@@ -104,7 +104,7 @@ export default function VsBillPage() {
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Credit lines as hook</div>
-              <p className="mt-1">Offers $1K–$5M credit lines embedded in the platform, giving cash-strapped SMBs a reason to sign up.</p>
+              <p className="mt-1">Offers $1K-$5M credit lines embedded in the platform, giving cash-strapped SMBs a reason to sign up.</p>
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Deep ERP integrations</div>

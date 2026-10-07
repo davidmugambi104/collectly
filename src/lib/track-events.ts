@@ -26,6 +26,7 @@ export const MARKETING_EVENTS = {
 
 export type MarketingEvent = keyof typeof MARKETING_EVENTS;
 export type MarketingProps<E extends MarketingEvent> = PropsOf<(typeof MARKETING_EVENTS)[E]>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- intentional "all props optional" check, not a general-object type
 export type PropsArg<E extends MarketingEvent> = {} extends MarketingProps<E> ? [props?: MarketingProps<E>] : [props: MarketingProps<E>];
 
 /**

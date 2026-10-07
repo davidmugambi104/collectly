@@ -186,7 +186,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
     <form onSubmit={pay} className="space-y-4">
       {!cardAchAvailable && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-          {orgSlug} hasn&apos;t finished setting up online card/ACH payments yet — {paystackEligible ? 'use Paystack or wire transfer below.' : 'use wire transfer below.'}
+          {orgSlug} hasn&apos;t finished setting up online card/ACH payments yet. {paystackEligible ? 'use Paystack or wire transfer below.' : 'use wire transfer below.'}
         </div>
       )}
       <div className={`grid gap-2 ${methods.length === 4 ? 'grid-cols-4' : methods.length === 3 ? 'grid-cols-3' : methods.length === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
@@ -208,7 +208,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
               <div className="font-semibold text-ink-900">Pay by card via Square</div>
               <div className="text-ink-600 text-xs">
                 You&apos;ll be taken to a secure page hosted by Square. The payment goes
-                straight to {orgName ?? 'the business'} — Mugavi never holds it.
+                straight to {orgName ?? 'the business'}. Mugavi never holds it.
               </div>
             </div>
           </div>
