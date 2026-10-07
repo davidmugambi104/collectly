@@ -23,7 +23,7 @@ export const metadata = pageMetadata({
 });
 
 const DIFFS = [
-  { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'Payment reminders, with Intuit Assist drafting reminder text for you to review' },
+  { icon: Bot, label: 'Collections AI', collectly: 'Tone-aware email + SMS dunning', quickbooks: 'AI-drafted overdue reminders, lined up ready to send for you to review (beta, Essentials and up)' },
   { icon: DollarSign, label: 'Cost', collectly: `$${PLAN_PRICING.starter.monthly}/mo, no per-invoice fees`, quickbooks: 'Reminders come with your QuickBooks plan (from $38/mo list, before promotions); payments carry processing fees' },
   { icon: LineChart, label: 'Forecasting', collectly: '4-week AR cash-flow forecast', quickbooks: 'Reports, and a cash flow planner on some plans' },
   { icon: Target, label: 'Best for', collectly: 'Businesses serious about reducing DSO', quickbooks: 'Businesses already living in QuickBooks' },
@@ -89,6 +89,33 @@ export default function VsQuickbooksPage() {
         <ComparisonTable only="qb" />
       </section>
 
+      {/* Facts from Intuit's own product pages, dated. Recheck before changing:
+          ~/collectly-market-research/63-xero-jax-and-intuit-agents-2026-10-08.md */}
+      <section className="container-page pb-16 max-w-3xl">
+        <h2 className="h2">QuickBooks&apos; own AI reminders</h2>
+        <p className="mt-2 text-xs text-ink-500">Read on 2026-10-08 from Intuit&apos;s product update pages. Not tested by us.</p>
+        <p className="mt-3 text-ink-600 leading-relaxed">
+          QuickBooks now lets you choose when overdue invoices get flagged and lines up AI-drafted,
+          ready-to-send reminders for you to review. Intuit says customers using it get paid four days
+          faster on average (Intuit&apos;s figure, for US customers). It is in beta on the Essentials, Plus and
+          Advanced plans, and comes with your QuickBooks plan. If you run one business on one of those
+          plans, try it first.
+        </p>
+        <p className="mt-4 text-ink-600 leading-relaxed">
+          What Intuit&apos;s public pages do not describe a way to do, as of the date above:
+        </p>
+        <ul className="mt-3 space-y-2 text-sm text-ink-700 leading-relaxed list-disc pl-5">
+          <li>Switch off the &quot;Finish your payment&quot; email QuickBooks sends a customer who opens an unpaid invoice. A QuickBooks moderator has called it a known issue under investigation.</li>
+          <li>Hold reminders for one customer while you handle them yourself.</li>
+          <li>See, in plain words, why a reminder has not gone out.</li>
+          <li>Run reminders for many client books from one place, each with its own rules.</li>
+        </ul>
+        <p className="mt-4 text-ink-600 leading-relaxed">
+          Mugavi does those three things on top of QuickBooks, and lists every client book in one table. It
+          cannot switch off QuickBooks&apos; own emails: that setting belongs to QuickBooks.
+        </p>
+      </section>
+
       {/* What QuickBooks users say about its own reminders. Attributed to
           "users report", not quoted at anyone by name, and worded as reports
           because we have not reproduced each one. */}
@@ -130,11 +157,11 @@ export default function VsQuickbooksPage() {
             </div>
             <div className="card">
               <div className="font-semibold text-ink-900">Transaction-fee model</div>
-              <p className="mt-1">No monthly fee for basic payments means it wins on simplicity, even when features are shallow.</p>
+              <p className="mt-1">No monthly fee for basic payments means it wins on simplicity.</p>
             </div>
           </div>
           <div className="mt-6 text-center text-sm text-ink-600">
-            <strong>Bottom line:</strong> QuickBooks is where your invoices live and that is not worth changing. The only question is whether its built-in reminders are enough. On a small book they are. Past roughly a hundred open invoices the reminders stop working and the chasing starts. Run several client books? See <Link href="/for/bookkeepers" className="link">Mugavi for bookkeepers</Link>.
+            <strong>Bottom line:</strong> QuickBooks is where your invoices live and that is not worth changing. The only question is whether its built-in reminders are enough. For one business they often are. Mugavi is for when you want per-customer control, or run several client books. See <Link href="/for/bookkeepers" className="link">Mugavi for bookkeepers</Link>.
           </div>
         </div>
       </section>

@@ -63,8 +63,8 @@ const FAQS: FaqItem[] = [
 export const metadata = pageMetadata({
   title: 'Invoice reminders for bookkeepers on QuickBooks Online',
   description:
-    'Run overdue-invoice follow-up across your clients’ QuickBooks books, in one ' +
-    'place. Reminders go out in your words, and wait for your approval by default. ' +
+    'Every client book in one place, each with its own reminder rules. See what each ' +
+    'book needs, hold any customer, and see why a reminder has not gone out. ' +
     `$${PLAN_PRICING.growth.monthly}/mo for ${PRACTICE_INCLUDED_ORGS} client books. QuickBooks Online integration is in beta.`,
   path: '/for/bookkeepers',
   keywords: [
@@ -80,7 +80,7 @@ const jsonLd = JSON.stringify([
   webPageJsonLd({
     title: 'Invoice reminders for bookkeepers on QuickBooks',
     description:
-      'How Mugavi lets a bookkeeping practice follow up on overdue invoices across client books, with approval before anything is sent.',
+      'How Mugavi lets a bookkeeping practice follow up on overdue invoices across every client book in one place, each book with its own reminder rules.',
     path: '/for/bookkeepers',
   }),
   softwareAppJsonLd(),
@@ -101,11 +101,12 @@ export default function ForBookkeepersPage() {
       <MarketingHeader />
       <section className="container-page pt-16 pb-12 max-w-3xl">
         <p className="eyebrow">For bookkeepers</p>
-        <h1 className="mt-3 h1">Chase late invoices for your clients, without sending anything unseen.</h1>
+        <h1 className="mt-3 h1">Every client book in one place, each with its own reminder rules.</h1>
         <p className="mt-5 lead">
-          Many clients on QuickBooks have overdue invoices and nobody following up. Mugavi drafts the
-          reminders for each client book, you read and approve them, and only then do they go out. Your words,
-          your client&apos;s name, nothing sent behind your back.
+          Many clients on QuickBooks have overdue invoices and nobody following up. Mugavi lists every client
+          book in one table with what each one needs, and each book keeps its own schedules, with different
+          groups of customers on different schedules. Hold any customer you are handling yourself, and ask
+          why a reminder has not gone out. Reminders wait for your approval by default.
           ${PLAN_PRICING.growth.monthly}/mo for {PRACTICE_INCLUDED_ORGS} client books.
         </p>
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -122,19 +123,19 @@ export default function ForBookkeepersPage() {
       <section className="container-page pb-16">
         <div className="grid md:grid-cols-3 gap-5 max-w-5xl">
           <div className="card">
-            <MailCheck className="h-6 w-6 text-brand-600" />
-            <h2 className="mt-3 text-lg font-semibold text-ink-900">Approval is built in.</h2>
-            <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-              By default Mugavi writes the reminder and waits. Edit it, skip it, or approve it, and after you press send
-              you have thirty seconds to undo. Switching to automatic sending is your choice, per book.
-            </p>
-          </div>
-          <div className="card">
             <Layers className="h-6 w-6 text-brand-600" />
             <h2 className="mt-3 text-lg font-semibold text-ink-900">All your client books in one table.</h2>
             <p className="mt-2 text-sm text-ink-600 leading-relaxed">
               Outstanding and overdue per book, the oldest overdue invoice, and what needs you, with the books
-              that need a person listed first.
+              that need a person listed first. Each book keeps its own schedules and customer groups.
+            </p>
+          </div>
+          <div className="card">
+            <MailCheck className="h-6 w-6 text-brand-600" />
+            <h2 className="mt-3 text-lg font-semibold text-ink-900">Approval is on by default.</h2>
+            <p className="mt-2 text-sm text-ink-600 leading-relaxed">
+              Mugavi writes the reminder and waits. Edit it, skip it, or approve it, and after you press send
+              you have thirty seconds to undo. Switching to automatic sending is your choice, per book.
             </p>
           </div>
           <div className="card">

@@ -17,7 +17,7 @@ import { CONTACT } from '@/lib/site-contact';
 const MOBILE_LEAD_ROWS = 4;
 
 const ROWS: Array<[string, string, string, string, string, string, string]> = [
-  ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'Basic', 'Basic'],
+  ['AI dunning (tone-aware, multi-channel)', '✓', '✓', 'Reminders', 'Payment links', 'AI-drafted, you review (beta)', 'Basic'],
   ['Public starting price', `$${PLAN_PRICING.starter.monthly}/mo`, '~$259/mo', '$49/user/mo', '$0/mo (1 user)', '$38/mo list', '$23/mo list'],
   ['Per-invoice / hidden fees', 'None', 'None', 'Yes (transactions)', 'ACH/card fees', 'Payment processing fees', 'Not on pricing page'],
   ['Time to set up', 'Self-serve, no demo call', 'A few hours (reviewer-reported)', 'Not published', 'Not published', 'Not published', 'Not published'],

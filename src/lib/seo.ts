@@ -426,7 +426,7 @@ export const COMPETITORS: Record<
     name: 'QuickBooks',
     pricing: '$0/mo extra, plus payment processing fees',
     builtFor: 'businesses already working inside QuickBooks',
-    shape: 'basic built-in payment reminders',
+    shape: 'invoicing with built-in payment reminders, including AI-drafted reminders queued for your review (beta, Essentials and up)',
   },
   upflow: {
     name: 'Upflow',
