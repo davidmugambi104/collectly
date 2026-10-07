@@ -1,3 +1,44 @@
+// Content-Security-Policy, in Report-Only mode.
+//
+// Shipped Report-Only, not enforcing, because the exact set of first-party
+// vs. third-party script/connect origins can't be verified from the repo
+// alone: NEXT_PUBLIC_POSTHOG_HOST is a Vercel env value this process can't
+// read, and Clerk's own script/connect/frame origins depend on which bot-
+// protection and OAuth providers are active for this instance. Getting any
+// of those wrong in enforcing mode would silently break sign-in or payment
+// pages for the handful of real visitors this app has today, which is worse
+// than shipping no CSP at all. Report-Only sends none of that risk: nothing
+// is blocked, browsers just log would-be violations to the console.
+//
+// Before switching the header name below to the enforcing
+// 'Content-Security-Policy': load /, /sign-in, /dashboard (signed in) and a
+// live /pay/<id> link in a real browser, open the console, and add any
+// origin that logs a violation there. Known third-party origins already
+// accounted for: Google AdSense (pagead2.googlesyndication.com), Microsoft
+// Clarity (www.clarity.ms, c.clarity.ms), Clerk's own domains, and whatever
+// NEXT_PUBLIC_POSTHOG_HOST resolves to (PostHog's own JS ships in our bundle
+// as 'self'; only its network calls need connect-src).
+const cspReportOnly = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  // 'unsafe-inline' on script-src covers the Clarity loader, which is an
+  // inline IIFE (see src/components/consent/gated-scripts.tsx) rather than a
+  // plain src= tag so it can define the clarity() queue before its remote
+  // tag arrives. Tightening this to a nonce is follow-up work, not part of
+  // this report-only rollout.
+  "script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.clarity.ms https://challenges.cloudflare.com https://*.clerk.com https://*.clerk.accounts.dev",
+  "style-src 'self' 'unsafe-inline'",
+  // Broad on purpose: next.config's images.remotePatterns already allows any
+  // https host through the Next image optimizer, and Clerk/Google avatar
+  // images come from their own CDNs.
+  "img-src 'self' data: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://*.posthog.com https://*.i.posthog.com https://www.clarity.ms https://c.clarity.ms https://*.clerk.com https://*.clerk.accounts.dev",
+  "frame-src 'self' https://accounts.google.com https://*.clerk.com",
+].join('; ');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -63,6 +104,7 @@ const nextConfig = {
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(self)' },
+          { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
         ],
       },
       {

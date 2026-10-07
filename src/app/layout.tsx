@@ -100,10 +100,8 @@ export const metadata: Metadata = {
     description:
       `AI-native AR for agencies, consultancies and bookkeeping practices on Xero & QuickBooks. From $${PLAN_PRICING.starter.monthly}/mo.`,
     images: ['/og.png'],
-    // See the note in src/lib/seo.ts -- a social handle, not a domain. Held
-    // until the new handle is actually registered.
-    creator: '@getcollectly',
-    site: '@getcollectly',
+    // No creator/site handle: see the note in src/lib/seo.ts. @getcollectly
+    // predates the rebrand; add a handle back once one is actually registered.
   },
   robots: {
     index: true,

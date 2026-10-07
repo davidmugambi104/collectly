@@ -60,12 +60,6 @@ export const SITE = {
     `payment. From $${PLAN_PRICING.starter.monthly}/mo flat.`,
   url: DOMAIN,
   locale: 'en_US',
-  // NOT migrated with the rebrand, deliberately. This is a social handle, not a
-  // domain: changing it to '@mugavi' would point twitter:site and
-  // twitter:creator at whoever actually owns that handle, attributing this
-  // site's content to a stranger. Update it only once the new handle is
-  // registered to us -- and if it never is, delete these two tags instead.
-  twitter: '@getcollectly',
   email: CONTACT.hello,
 };
 
@@ -124,12 +118,14 @@ export function pageMetadata(input: PageMetaInput): Metadata {
       ...(input.modifiedTime ? { modifiedTime: input.modifiedTime } : {}),
     },
     twitter: {
+      // No creator/site handle: the account that held it (@getcollectly)
+      // predates the rebrand and attributing this site's cards to it would
+      // misattribute them to the old brand. Add the handle back once a
+      // @mugavi (or similar) account is actually registered.
       card: 'summary_large_image',
       title: `${input.title} · ${BRAND}`,
       description: input.description,
       images: [image],
-      creator: SITE.twitter,
-      site: SITE.twitter,
     },
     robots: input.noindex
       ? { index: false, follow: false }

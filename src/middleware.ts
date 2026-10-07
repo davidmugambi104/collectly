@@ -2,6 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { hostRedirect } from '@/lib/legacy-domain';
 import { COUNTRY_COOKIE, COUNTRY_COOKIE_MAX_AGE, countryFromHeaders } from '@/lib/consent';
+import { requiresAuthEvenIfUnknown } from '@/lib/route-guard';
 
 const isPublicRoute = createRouteMatcher([
   // Marketing pages
@@ -161,12 +162,14 @@ export default hasClerk
   ? clerkMiddleware(async (auth, req: NextRequest) => {
       const moved = domainRedirect(req);
       if (moved) return moved;
-      if (!isPublicRoute(req)) {
+      const { pathname } = req.nextUrl;
+      const isApi = pathname.startsWith('/api/');
+      if (!isPublicRoute(req) && (isApi || requiresAuthEvenIfUnknown(pathname))) {
         // Manual auth check instead of auth.protect() to avoid Clerk's
         // default 404 rewrite when the sign-in redirect can't be resolved.
         const { userId } = await auth();
         if (!userId) {
-          if (req.nextUrl.pathname.startsWith('/api/')) {
+          if (isApi) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
           }
           return NextResponse.redirect(new URL('/sign-in', req.url));
@@ -175,6 +178,11 @@ export default hasClerk
         // `src/lib/mfa.ts` is still available for when the workspace
         // upgrades to Pro and Clerk Multi-factor is flipped on.
       }
+      // Any other non-public path (not /api, not /dashboard, not /admin)
+      // falls through here unauthenticated: it's either a public marketing
+      // page missing from isPublicRoute (which will now render instead of
+      // bouncing to sign-in) or a genuinely nonexistent path, which Next's
+      // own router will 404. See src/lib/route-guard.ts.
       // Reached only when the request is allowed to continue — every deny
       // path above has already returned. Returning a NextResponse from a
       // clerkMiddleware handler is supported and is the documented way to
