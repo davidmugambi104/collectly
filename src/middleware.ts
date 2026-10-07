@@ -6,7 +6,7 @@ import { COUNTRY_COOKIE, COUNTRY_COOKIE_MAX_AGE, countryFromHeaders } from '@/li
 const isPublicRoute = createRouteMatcher([
   // Marketing pages
   '/', '/pricing', '/features', '/blog', '/blog/(.*)', '/customers', '/about', '/contact', '/changelog', '/privacy', '/terms', '/security',
-  '/dpa', '/help/(.*)', '/integrations', '/integrations/quickbooks', '/disconnected', '/tools/(.*)', '/compare', '/ar-roi', '/ar-audit', '/tour',
+  '/dpa', '/help', '/help/(.*)', '/integrations', '/integrations/quickbooks', '/disconnected', '/tools/(.*)', '/compare', '/ar-roi', '/ar-audit', '/tour',
   // These two pages' own submit endpoints (/api/interview,
   // /api/playbook/download) were already public, but the pages
   // themselves were never added here — an anonymous visitor hit Clerk's

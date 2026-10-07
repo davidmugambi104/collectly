@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { POSTS } from '@/lib/posts';
 import { absoluteUrl } from '@/lib/seo';
+import { HELP_PAGES } from '@/app/help/_lib/help-pages';
 
 // Crawl-priority model:
 //
@@ -73,7 +74,8 @@ export const FIXED: Array<{
   { path: '/contact', priority: 0.3, changefreq: 'monthly' },
   { path: '/customers', priority: 0.6, changefreq: 'monthly' },
   { path: '/security', priority: 0.3, changefreq: 'monthly' },
-  { path: '/help/send-from-your-domain', priority: 0.4, changefreq: 'monthly' },
+  { path: '/help', priority: 0.5, changefreq: 'monthly' },
+  ...HELP_PAGES.map((p) => ({ path: `/help/${p.slug}`, priority: 0.4 as const, changefreq: 'monthly' as const })),
   { path: '/dpa', priority: 0.3, changefreq: 'yearly' },
   { path: '/privacy', priority: 0.3, changefreq: 'yearly' },
   { path: '/terms', priority: 0.3, changefreq: 'yearly' },
