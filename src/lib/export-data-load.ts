@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { asc, desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { customers, dunningRuns, invoices, organizations, statementLog } from '@/db/schema';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';

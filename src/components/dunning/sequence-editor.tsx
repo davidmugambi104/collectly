@@ -172,7 +172,7 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true, send
                       and because each step fires at most once per invoice, that
                       invoice never gets another chance at it. */}
                   {s.channel === 'sms' && !smsReady ? (
-                    <span className="text-warn-600" title="SMS is not configured — this step will fail">
+                    <span className="text-warn-600" title="SMS is not configured, this step will fail">
                       <AlertTriangle className="h-3.5 w-3.5" />
                       <span className="sr-only">SMS not configured, this step will fail</span>
                     </span>
@@ -300,7 +300,7 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true, send
                 placeholder="e.g. mention we value the relationship, keep it short, sign off as 'the team' not a person"
               />
               <div className="mt-1 text-xs text-ink-500">
-                Guides the AI&apos;s tone and content for this step. It does not get sent as-is — every message is
+                Guides the AI&apos;s tone and content for this step. It does not get sent as-is. Every message is
                 still written fresh by Gemini using this hint, the actual invoice, and the customer&apos;s real payment
                 history. Leave blank to let the AI write with no extra guidance.
               </div>
@@ -331,13 +331,13 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true, send
                   <MessageBubble channel={active.channel === 'sms' ? 'sms' : 'email'} subject={preview.subject} body={preview.body} />
                   <div className="flex items-center gap-2 text-xs text-ink-500">
                     {preview.sample
-                      ? <span>Sample data — connect your books and sync invoices to preview against a real overdue invoice.</span>
-                      : <span>Generated from one of your actual overdue invoices — this is a real customer, shown above.</span>}
+                      ? <span>Sample data. Connect your books and sync invoices to preview against a real overdue invoice.</span>
+                      : <span>Generated from one of your actual overdue invoices. This is a real customer, shown above.</span>}
                   </div>
                 </div>
               )}
               {!preview && !previewError && (
-                <div className="text-xs text-ink-500">No preview generated yet — click above to see what the AI would actually write for this step.</div>
+                <div className="text-xs text-ink-500">No preview generated yet. Click above to see what the AI would actually write for this step.</div>
               )}
             </div>
           </motion.div>
@@ -364,8 +364,8 @@ export function SequenceEditor({ initialSteps, sequenceId, smsReady = true, send
                 <span className={`h-2 w-2 rounded-full ${saveError ? 'bg-red-500' : 'bg-amber-500 animate-pulse-soft'}`} />
                 <span className="font-medium">
                   {saveError
-                    ? `Save failed — your changes are NOT stored: ${saveError}`
-                    : 'Unsaved changes — nothing sends until this is saved, and saving still does not send anything'}
+                    ? `Save failed, your changes are NOT stored: ${saveError}`
+                    : 'Unsaved changes, nothing sends until this is saved, and saving still does not send anything'}
                 </span>
               </div>
               <button data-stuck-id="save-sequence" onClick={save} disabled={saving} className="btn-primary text-sm">

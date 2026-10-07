@@ -63,7 +63,7 @@ export default async function AdminUpgradeRequestsPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="app-display">Upgrade requests</h1>
-            <p className="mt-2 text-ink-600">Private beta — these come in via the soft-launch flow. Davie reviews and invoices manually.</p>
+            <p className="mt-2 text-ink-600">Private beta. These come in via the soft-launch flow, and Davie reviews and invoices manually.</p>
           </div>
           <div className="text-right">
             <div className="text-3xl font-display font-bold text-ink-950">{pending.length}</div>

@@ -115,7 +115,7 @@ export default async function SmsConsentPage() {
       <section className="mt-6">
         <h2 className="app-heading">Consent log</h2>
         <p className="app-body mt-1 text-ink-500">
-          Append-only. Message text is recorded verbatim — this is the record Twilio&apos;s toll-free
+          Append-only. Message text is recorded verbatim. This is the record Twilio&apos;s toll-free
           verification asks for. Scoped to this workspace: a STOP from a number we cannot match to
           one of your contacts is still honoured and recorded, but it belongs to no workspace and so
           is not listed here.

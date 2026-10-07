@@ -35,7 +35,7 @@ export function WriteOffButton({ invoiceId }: { invoiceId: string }) {
       onClick={writeOff}
       disabled={loading}
       aria-busy={loading}
-      title="Write off — stops dunning and cannot be undone here"
+      title="Write off, stops dunning and cannot be undone here"
       className="btn-ghost text-ink-600 transition-colors hover:bg-danger-50 hover:text-danger-700 focus-visible:bg-danger-50 focus-visible:text-danger-700"
     >
       {loading

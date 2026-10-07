@@ -64,7 +64,7 @@ export default async function PaymentsPage() {
         </div>
       </div>
       {totalPaymentCount > rows.length && (
-        <p className="text-xs text-ink-500 -mt-3 mb-5">Showing the latest {rows.length} of {totalPaymentCount} payments below — the totals above cover all of them.</p>
+        <p className="text-xs text-ink-500 -mt-3 mb-5">Showing the latest {rows.length} of {totalPaymentCount} payments below. The totals above cover all of them.</p>
       )}
 
       {rows.length === 0 ? (

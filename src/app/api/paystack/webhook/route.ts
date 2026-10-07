@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
       const amountKobo = Number(data?.amount ?? 0);
       const amountMajor = amountKobo > 0 ? amountKobo / 100 : 0;
       const currency = String(data?.currency ?? 'NGN').toUpperCase();
-      const email = data?.customer?.email ? String(data.customer.email) : null;
 
       if (!invoiceId) {
         console.log('[paystack] charge.success without metadata.invoiceId; skipping DB write. ref=', data?.reference);
@@ -143,7 +142,7 @@ export async function POST(req: NextRequest) {
         flippedInvoice = updated.length > 0;
       }
 
-      console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', flippedInvoice, 'email=', email);
+      console.log('[paystack] charge.success applied. invoice=', row.invoice.id, 'paymentInserted=', paymentInserted, 'flippedInvoice=', flippedInvoice);
       return NextResponse.json({ received: true, action: 'applied' });
     } catch (e: unknown) {
       console.error('[paystack] charge.success failed:', errorMessage(e));

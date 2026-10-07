@@ -109,7 +109,7 @@ export default function PlaybookPage() {
                 Cut your DSO with <span className="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">five steps</span> you can start this week.
               </h1>
               <p className="mt-5 text-lg text-ink-600 max-w-xl">
-                A 5-step method to help 5–30 person agencies and consultancies stop chasing invoices and start collecting them. No fluff, no upsell, no &quot;book a call.&quot;
+                A 5-step method to help 5-30 person agencies and consultancies stop chasing invoices and start collecting them. No fluff, no upsell, no &quot;book a call.&quot;
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-700">
                 <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-600" />7-page PDF</span>

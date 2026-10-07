@@ -56,7 +56,7 @@ export function DsoCalculator({ benchmarks }: { benchmarks: Array<{ region: stri
         </div>
         {nearest && revenue > 0 && (
           <div className="mt-4 text-sm text-brand-50">
-            Closest to the <span className="font-semibold text-white">{nearest.region}</span> benchmark ({nearest.dso} days) — {dso > nearest.dso ? `${(dso - nearest.dso).toFixed(1)} days slower` : dso < nearest.dso ? `${(nearest.dso - dso).toFixed(1)} days faster` : 'right in line'}.
+            Closest to the <span className="font-semibold text-white">{nearest.region}</span> benchmark ({nearest.dso} days): {dso > nearest.dso ? `${(dso - nearest.dso).toFixed(1)} days slower` : dso < nearest.dso ? `${(nearest.dso - dso).toFixed(1)} days faster` : 'right in line'}.
           </div>
         )}
       </div>

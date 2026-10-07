@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { useState, useMemo } from 'react';
-import { Calculator, ArrowRight, Clock, DollarSign, TrendingUp, Mail, Download } from 'lucide-react';
+import { Calculator, ArrowRight, Clock, DollarSign, Mail, Download } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
 
@@ -56,7 +56,7 @@ export function ArCostCalculator() {
         body: JSON.stringify({
           email: email.trim(),
           source: 'ar-cost-calculator',
-          painPoint: `[AR cost calculator] annual drag ${formatCurrency(result.total, currency)} — avg invoice ${formatCurrency(avgInvoice, currency)}, ${lateDays}d late, ${lateClients} late clients, ${chaseHours}h/wk chasing at ${formatCurrency(hourlyRate, currency)}/hr`,
+          painPoint: `[AR cost calculator] annual drag ${formatCurrency(result.total, currency)}, avg invoice ${formatCurrency(avgInvoice, currency)}, ${lateDays}d late, ${lateClients} late clients, ${chaseHours}h/wk chasing at ${formatCurrency(hourlyRate, currency)}/hr`,
         }),
       });
       if (!res.ok) {
@@ -80,7 +80,7 @@ export function ArCostCalculator() {
         <div className="mt-5 space-y-5">
           <Field label="Currency">
             <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="input">
-              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.code} — {c.name}</option>)}
+              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.code} ({c.name})</option>)}
             </select>
           </Field>
 

@@ -76,7 +76,8 @@ export async function captureLead(
         .where(eq(waitlist.email, row.email));
     }
   } catch (e: unknown) {
-    console.error(`[lead-capture] store FAILED for ${row.source} ${row.email}:`, e instanceof Error ? e.message : e);
+    const domain = row.email.split('@')[1] ?? 'unknown-domain';
+    console.error(`[lead-capture] store FAILED for ${row.source} (domain: ${domain}):`, e instanceof Error ? e.message : e);
   }
   const n = await sendLeadNotification(notify);
   return { stored, created, notified: n.ok, id };

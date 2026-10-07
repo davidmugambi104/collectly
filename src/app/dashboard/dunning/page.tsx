@@ -79,7 +79,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
       .limit(1);
 
     if (!inv) {
-      composerError = 'No open invoices for this customer — nothing to chase.';
+      composerError = 'No open invoices for this customer, nothing to chase.';
     } else if (targetChannel === 'email' && !inv.customer.email) {
       composerError = 'This customer has no email on file. Switch channel to SMS or add an email in their profile.';
     } else if (targetChannel === 'sms' && !inv.customer.phone) {
@@ -306,7 +306,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
   const failedTotal = parseInt(failedCountRow?.count ?? '0', 10);
 
   return (
-    <AppShell title="AI Dunning" subtitle="Automated, tone-aware reminders — written by Gemini, sent on your schedule.">
+    <AppShell title="AI Dunning" subtitle="Automated, tone-aware reminders, written by Gemini, sent on your schedule.">
       <DunningTour />
       {/* Composer: when the page is opened from a per-customer follow-up
           recommendation (?customerId=...&tone=...&channel=...) we pre-fill
@@ -390,7 +390,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
           tone="amber"
           label="Open balance"
           value={formatCurrency(revenueAtRisk)}
-          sub="All unpaid invoices — not all of them are overdue yet"
+          sub="All unpaid invoices, not all of them are overdue yet"
         />
         <ImpactTile
           delay={60}
@@ -471,7 +471,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
               {!cronConfigured
                 ? 'CRON_SECRET is not set on this deployment, so the scheduler returns 503 and nothing is ever sent.'
                 : active
-                  ? <>Runs once a day at 14:00 UTC — <span className="text-ink-700">next run in about {nextRun.inHours}h</span>. Nothing sends in between.</>
+                  ? <>Runs once a day at 14:00 UTC, <span className="text-ink-700">next run in about {nextRun.inHours}h</span>. Nothing sends in between.</>
                   : 'Nothing sends on its own. One-off reminders below still work.'}
             </p>
           </div>

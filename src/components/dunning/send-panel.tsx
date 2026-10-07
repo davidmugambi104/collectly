@@ -33,7 +33,7 @@ export function DunningSendPanel({
     return (
       <div className="card">
         <h2 className="app-heading">Send a reminder</h2>
-        <p className="text-sm text-ink-600 mt-1">Write and send a one-off reminder — or turn on the dunning sequence to do it automatically.</p>
+        <p className="text-sm text-ink-600 mt-1">Write and send a one-off reminder, or turn on the dunning sequence to do it automatically.</p>
         {recommendedAction && (
           <div className="mt-4 rounded-lg border border-brand-200 bg-brand-50/50 p-3 flex items-start gap-2.5">
             <Sparkles className="h-4 w-4 text-brand-600 mt-0.5 shrink-0" />

@@ -79,7 +79,7 @@ export function RoiCalculator() {
         <div className="mt-5 space-y-5">
           <Field label="Currency">
             <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="input">
-              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.code} — {c.name}</option>)}
+              {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.code} ({c.name})</option>)}
             </select>
           </Field>
           <Field label={`Outstanding A/R right now (${sym})`} hint="Total unpaid invoices, all ages.">

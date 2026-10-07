@@ -3,7 +3,7 @@
  * Called by the cron endpoint at /api/cron/dunning
  */
 import { db } from '@/db';
-import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, customerGroupMembers, groupSequences, type Invoice } from '@/db/schema';
+import { dunningSequences, dunningRuns, invoices, customers, organizations, users, promisesToPay, dunningHolds, dunningSettings, dunningApprovals, inboxMessages, customerGroupMembers, groupSequences } from '@/db/schema';
 import { eq, and, sql, lte, inArray, gte } from 'drizzle-orm';
 import { generateDunningMessage } from '@/lib/ai/dunning';
 import { recordUsage, smsSegments } from '@/lib/usage-meter';

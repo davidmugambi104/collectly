@@ -115,7 +115,7 @@ export default function ForUkAgenciesPage() {
         <p className="eyebrow">For UK agencies</p>
         <h1 className="mt-3 h1">A/R automation for UK agencies on Xero.</h1>
         <p className="mt-5 lead">
-          Built for 5–30 person UK agencies and consultancies. Tone-aware AI
+          Built for 5-30 person UK agencies and consultancies. Tone-aware AI
           dunning, reply-or-pay pause, a branded payment page, and a published
           GDPR / UK GDPR data processing agreement. From
           £{Math.round(PLAN_PRICING.starter.monthly * 0.8)}/mo, with {FOUNDING.discountPct}% off

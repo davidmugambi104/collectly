@@ -20,7 +20,7 @@ test('the Single plan points to Practice instead of a per-book price', () => {
 });
 
 import { planMonthly } from './book-overage.ts';
-import { PLAN_PRICING, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_INCLUDED_ORGS, PRACTICE_SCALE_CROSSOVER_ORGS, PRACTICE_SCALE_INCLUDED_ORGS } from './utils.ts';
+import { PLAN_PRICING, PRACTICE_EXTRA_ORG_MONTHLY, PRACTICE_SCALE_CROSSOVER_ORGS, PRACTICE_SCALE_INCLUDED_ORGS } from './utils.ts';
 
 const g = PLAN_PRICING.growth;
 const monthly = (books: number) => planMonthly({ books, monthly: g.monthly, included: g.includedOrgs, extraMonthly: PRACTICE_EXTRA_ORG_MONTHLY });

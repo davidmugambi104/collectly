@@ -28,7 +28,7 @@ export default function ArCostCalculatorPage() {
               How much are late payments costing your agency?
             </h1>
             <p className="mt-4 text-lg text-ink-600">
-              Most small agencies lose $10,000–$50,000 a year to late invoices and the hours spent chasing them. Plug in your numbers.
+              Most small agencies lose $10,000-$50,000 a year to late invoices and the hours spent chasing them. Plug in your numbers.
             </p>
           </div>
           <ArCostCalculator />

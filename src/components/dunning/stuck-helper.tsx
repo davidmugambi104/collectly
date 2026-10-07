@@ -28,7 +28,7 @@ export function DunningStuckHelper() {
           selector="[data-stuck-id='unsaved-bar']"
           badge="Still here?"
           title="This change isn't saved yet"
-          body="Nothing you've typed here is kept until you click Save below. And to be clear: saving still doesn't send anything to a customer — it only stores the rule for the next automatic run."
+          body="Nothing you've typed here is kept until you click Save below. And to be clear: saving still doesn't send anything to a customer. It only stores the rule for the next automatic run."
           primaryLabel="Got it"
           onDismiss={dismiss}
           dismissOnTargetClick={false}
@@ -41,7 +41,7 @@ export function DunningStuckHelper() {
             selector="[data-stuck-id='save-sequence']"
             badge="Already worked"
             title="That saved on the first click"
-            body="This bar disappearing is the confirmation — the rule is stored. You don't need to click again. If it's still showing, check your connection and try once more."
+            body="This bar disappearing is the confirmation: the rule is stored. You don't need to click again. If it's still showing, check your connection and try once more."
             primaryLabel="Got it"
             onDismiss={dismiss}
           />
@@ -63,7 +63,7 @@ export function DunningStuckHelper() {
           selector="[data-tour='generate-preview']"
           badge="This keeps failing"
           title="Here's what's actually going wrong"
-          body={`"${signal.message}" — if you're on a trial or dev setup, this usually means the AI key isn't configured yet. Check Integrations, or reach out to support if it keeps happening.`}
+          body={`"${signal.message}". If you're on a trial or dev setup, this usually means the AI key isn't configured yet. Check Integrations, or reach out to support if it keeps happening.`}
           primaryLabel="Got it"
           onDismiss={dismiss}
         />
@@ -74,7 +74,7 @@ export function DunningStuckHelper() {
           selector="[data-tour='activity']"
           badge="Looking for proof it sent?"
           title="This list is the real record"
-          body="Every message this app sends — automatic or one-off — shows up here, usually within a minute, with who it went to and whether it worked. Nothing sends without leaving a trace here."
+          body="Every message this app sends, automatic or one-off, shows up here, usually within a minute, with who it went to and whether it worked. Nothing sends without leaving a trace here."
           primaryLabel="Got it"
           onDismiss={dismiss}
         />

@@ -25,7 +25,7 @@ const DIFFS = [
   { icon: Clock, label: 'Setup', collectly: 'Self-serve, no demo call', chaser: 'Hours of setup for one G2 reviewer, who called it very easy; others mention a learning curve for automation rules' },
   { icon: Zap, label: 'AI dunning', collectly: 'Tone-aware email + SMS out of the box', chaser: 'Email/SMS/call, AI email generator' },
   { icon: Layers, label: 'Schedules', collectly: 'Customer groups, each with its own schedule. No cap on how many', chaser: 'Compact ($259/mo, 4 users): 4 automated workflows. Unlimited workflows and users from Core at $779/mo (their pricing page, read 2026-10-03)' },
-  { icon: Users, label: 'Best for', collectly: '5-30 person agencies and consultancies', chaser: 'SMB to mid-market ($5M–$120M revenue)' },
+  { icon: Users, label: 'Best for', collectly: '5-30 person agencies and consultancies', chaser: 'SMB to mid-market ($5M-$120M revenue)' },
 ];
 
 export default function VsChaserPage() {

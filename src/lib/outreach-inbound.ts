@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { pool } from '@/db';
 import { errorMessage } from '@/lib/utils';
-import { CONTACT, placeholderEmail } from '@/lib/site-contact';
+import { CONTACT } from '@/lib/site-contact';
 
 /**
  * Resend inbound webhook handler for outreach replies.
