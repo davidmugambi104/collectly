@@ -100,7 +100,7 @@ function blogEntries(): MetadataRoute.Sitemap {
     }
     return {
       url: absoluteUrl(`/blog/${p.slug}`),
-      lastModified: new Date(p.date),
+      lastModified: new Date(p.updated ?? p.date),
       changeFrequency: changefreq,
       priority,
     };

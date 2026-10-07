@@ -49,6 +49,7 @@ export async function generateMetadata(
     type: 'article',
     keywords: post.tags,
     publishedTime: new Date(post.date).toISOString(),
+    ...(post.updated ? { modifiedTime: new Date(post.updated).toISOString() } : {}),
   });
 }
 
@@ -81,6 +82,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       description: post.excerpt,
       path,
       datePublished: new Date(post.date).toISOString(),
+      ...(post.updated ? { dateModified: new Date(post.updated).toISOString() } : {}),
     }),
     breadcrumbJsonLd([
       { name: 'Home', path: '/' },
@@ -97,6 +99,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         <Link href="/blog" className="inline-flex items-center gap-1 text-sm text-ink-600 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" />Back to blog</Link>
         <div className="mt-6 flex items-center gap-3 text-xs text-ink-500">
           <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{post.date}</span>
+          {post.updated && <span>Updated {post.updated}</span>}
           <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{post.read} read</span>
         </div>
         <h1 className="mt-3 text-4xl sm:text-5xl font-display font-bold tracking-tight text-ink-950 leading-tight">{post.title}</h1>

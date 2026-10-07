@@ -1,4 +1,4 @@
-type Post = { slug: string; title: string; date: string; read: string; excerpt: string; body: string; tags: string[]; };
+type Post = { slug: string; title: string; date: string; updated?: string; read: string; excerpt: string; body: string; tags: string[]; };
 
 export const POSTS: Post[] = [
   {
@@ -606,19 +606,40 @@ This article is from Mugavi, which makes accounts receivable software. In Mugavi
   },
   {
     slug: 'stop-quickbooks-emailing-your-customers',
-    title: 'Stop QuickBooks Online emailing your customers without asking',
-    date: '2026-09-30', read: '4 min',
-    excerpt: 'Business owners keep finding that QuickBooks sent their customers reminders they never approved. What people report, where to look, and how to stay in control.',
-    tags: ['QuickBooks', 'invoice reminders', 'A/R automation'],
+    title: 'Stop QuickBooks emailing your customers without asking',
+    date: '2026-09-30', updated: '2026-10-08', read: '6 min',
+    excerpt: 'QuickBooks emails customers who open an unpaid invoice a "Finish your payment" note you cannot turn off. What is known as of October 2026, and what to do.',
+    tags: ['QuickBooks', 'invoice reminders', 'Finish your payment', 'A/R automation'],
     body: `If a customer told you they got a "finish your payment" or "payment overdue" email you never sent, you are not imagining it. QuickBooks Online can send reminders on its own, and several business owners have recently posted about finding out from their clients.
 
 Here is what people report, and what you can do about it. We have not verified every report ourselves, and QuickBooks changes its settings often, so check each step in your own account.
+
+## Update, 8 October 2026: the "Finish your payment" emails
+
+Since about August 2026, QuickBooks Online has been emailing customers who open an invoice and do not pay it, prompting them to finish their payment. Owners describe it in a QuickBooks Community thread called "Finish Your Payment Customer Email", started on 24 August 2026, which had 81 replies when we read it on 8 October 2026.
+
+What the thread says, as of that date:
+
+- **It is not your reminder schedule.** Owners say it arrives even when their own reminders are set exactly how they want them. The original poster says QuickBooks support described it as a new feature with no option to turn it on or off.
+- **QuickBooks says it is investigating.** A QuickBooks moderator replied on 24 August 2026 that there is "an ongoing investigation" into these automatic emails, and added the poster's account so they would get updates when the product team confirms a fix.
+- **There is no setting to turn it off or edit the wording yet.** Nobody in the thread, Intuit included, has posted one. A second Community thread is titled to say the same thing: these emails cannot be disabled and are not the automatic invoice reminders.
+- **The trigger is not documented.** Neither the thread nor Intuit says what sends it beyond a customer opening an invoice that is still unpaid, so we would not change other settings on a guess.
+
+### What you can do today
+
+1. **Tell affected customers it was automatic.** Two lines are enough: "You may have had an automatic email from our invoicing system after opening your invoice. Please ignore it; your terms with us have not changed." This matters most for customers on agreed payment terms, who can read the email as you going back on them. If a customer says the invoice never reached them, [check that first](/blog/customer-says-never-got-invoice-or-disputes-it).
+2. **If you run books for clients, warn each client before their customers call.** One commenter runs QuickBooks for 10 clients and has stopped sending invoices until this is fixed. Giving each client the same two lines saves you ten awkward calls.
+3. **Check your own reminders separately.** Your reminder settings (below) do not control this email, but they decide whether customers get your reminder on top of it. Avoid sending both in the same week. If one of your own reminders did not go out when you expected, [here is how to find out why](/blog/why-hasnt-my-invoice-reminder-gone-out).
+4. **Record payments the day they arrive.** An invoice you have been paid for but not recorded still looks unpaid in QuickBooks, so a customer who opens it can get this email after paying you. More on that below.
+5. **Ask to be kept informed.** The moderator added the original poster's account to the investigation so they hear when there is a fix. Ask QuickBooks support whether your account can be added too.
+
+We will update this section when Intuit posts a fix or a setting.
 
 ## What people are seeing
 
 - **Reminders for invoices that are already paid.** If a customer pays by check or transfer and you have not recorded it in QuickBooks yet, QuickBooks still sees an open invoice. One owner found late notices going to their only client after that client had paid.
 - **Reminders that ignore your arrangements.** An owner who makes verbal payment arrangements said reminders started one day past due, and even went out for an invoice due three days later. They had to apologize to customers.
-- **"Finish your payment" emails.** A few owners say their customers get an email after opening an invoice without paying. One said support called it a beta test.
+- **"Finish your payment" emails.** Customers get an email after opening an invoice without paying. See the update above.
 - **Text you did not write.** Some users say QuickBooks adds wording to invoice emails that they cannot edit, or offers customers other ways to pay.
 
 ## Check your reminder settings
@@ -640,9 +661,9 @@ One commenter put it well: problems start "when both sides think the other perso
 
 ## When QuickBooks reminders are not enough
 
-Users say QuickBooks sends the same message to everyone, with no way to hold one customer or use a different tone for a long-standing client. If you need to skip customers, pause when someone replies, or track a promised payment date, you will need either a manual process or a separate tool.
+QuickBooks now drafts overdue reminders for you to review, but as of 8 October 2026 it does not publish a way to hold one customer or give a long standing client a different schedule. If you need to skip customers, pause when someone replies, or track a promised payment date, you will need either a manual process or a separate tool. Bookkeepers doing this across many clients may find [this guide to running reminders across many QuickBooks client books](/blog/run-invoice-reminders-across-many-quickbooks-client-books) useful.
 
-Disclosure: this article is from Mugavi, which makes accounts receivable software. Mugavi drafts each reminder and waits for your approval by default, lets you pause any customer, and pauses reminders when a customer replies. We wrote this because the questions keep coming up, not because the fixes above need our product. Every step above works without us.`,
+Disclosure: this article is from Mugavi, which makes accounts receivable software. Mugavi cannot switch off QuickBooks' own emails, including the "Finish your payment" one. What it does is run reminders from its own rules, [one client book at a time or many in one place](/for/bookkeepers): groups of customers with their own schedules, a hold on any customer, a pause when a customer replies, and a plain explanation when a reminder has not gone out. We wrote this because the questions keep coming up, not because the fixes above need our product. Every step above works without us.`,
   },
   {
     slug: 'ar-automation-for-small-business-2026',
