@@ -15,7 +15,7 @@ export const metadata = pageMetadata({
   title: 'Mugavi vs QuickBooks: smarter AR automation for QuickBooks users',
   description:
     'QuickBooks handles invoicing, payments and built-in reminders. ' +
-    'Mugavi adds AI tone-aware AI dunning, AR aging, cash-flow forecasting, ' +
+    'Mugavi adds AI tone-aware dunning, AR aging, cash-flow forecasting, ' +
     'and a branded payment portal while keeping your QuickBooks data in sync.',
   path: '/vs-quickbooks',
   image: '/og-vs-quickbooks.png',
