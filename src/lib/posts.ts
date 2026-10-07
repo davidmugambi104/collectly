@@ -669,7 +669,7 @@ Disclosure: this article is from Mugavi, which makes accounts receivable softwar
     slug: 'ar-automation-for-small-business-2026',
     title: 'The state of A/R automation for small businesses in 2026',
     date: '2026-07-10', read: '8 min',
-    excerpt: 'QuickBooks AR is unusable. HighRadius is $3K/mo. Gaviti, Growfin, Chaser skip the long tail. Here\'s the gap we\'re building to close.',
+    excerpt: 'QuickBooks and Xero handle one business\'s own reminders. HighRadius is $3K/mo. Gaviti, Growfin, Chaser skip the long tail. Here\'s the gap we\'re building to close.',
     tags: ['A/R automation', 'small business', 'market analysis'],
     body: `The 5-30 person business segment is the most underserved part of the $4-6B accounts-receivable automation market. Here's the data, the gap, and what we're doing about it.
 
@@ -707,7 +707,7 @@ We spent the first 6 weeks of building Mugavi auditing every A/R tool we could f
 ### 3. Legacy SMB (QuickBooks AR module, Xero AR, FreshBooks)
 - Price: included with your accounting software
 - Implementation: 0 minutes (it's already there)
-- Quality: unusable
+- Fit: built for one business's own reminders, not for chasing across many client books
 
 QuickBooks now covers invoicing, reminders, payment tracking, aging reports, and even a cash-flow planner. What it doesn't do is relationship-aware follow-up, reading a reply, tracking a promise to pay, routing a dispute, or knowing when to pause because a customer already responded. That's a different workflow, not a missing feature list.
 
