@@ -32,6 +32,9 @@ Credentials are read from your shell environment only. They are never written to
 ```
 IDs: `RD-<postid>`, `X-<tweetid>`, `QC-<n>`, `LI-<n>`. No usernames, no emails, no phone numbers anywhere.
 
+`lastActiveAt` (optional, ISO): set it when a post is older than the window but has a genuine new reply within
+the last 2 days, the exception every agent brief already allows. Without it, an old `createdAt` is excluded as usual.
+
 ## Drafts file (`drafts-<platform>.json`: object keyed by item id)
 ```
 { "RD-1abcde": { "painPoint": "one line", "reply": "the drafted comment", "mentionsMugavi": false, "mentionReason": "" } }

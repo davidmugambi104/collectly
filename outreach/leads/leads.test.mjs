@@ -36,6 +36,13 @@ test('locked, old, validation, promo, competitor and Kenya threads are excluded'
 
 test('ageDays handles bad dates', () => { assert.equal(ageDays('nope', now), null); });
 
+test('an old thread with a recent reply is kept; one with no recent reply is not', () => {
+  const old = { createdAt: '2026-09-20T00:00:00Z' };
+  assert.equal(excludeReason(item({ ...old, lastActiveAt: '2026-10-05T18:00:00Z' }), { now }), null);
+  assert.match(excludeReason(item({ ...old, lastActiveAt: '2026-10-01T00:00:00Z' }), { now }), /older/);
+  assert.match(excludeReason(item(old), { now }), /older/);
+});
+
 test('lint passes a plain draft and catches the usual problems', () => {
   const ok = { painPoint: 'owner hates chasing', reply: 'In practice I would send one reminder per customer each week that lists everything they owe, then stop the moment they reply or pay.' };
   assert.deepEqual(lintDraft(ok), []);

@@ -38,12 +38,16 @@ export function ageDays(createdAt, now = new Date()) {
 }
 
 /** Why an item must not be shown at all, or null. */
-export function excludeReason(item, { now = new Date(), maxAgeDays = 7 } = {}) {
+export function excludeReason(item, { now = new Date(), maxAgeDays = 7, activeWithinDays = 2 } = {}) {
   const text = `${item.title ?? ''} ${item.text ?? ''}`;
   if (item.locked) return 'locked or archived thread, cannot take a reply';
   const age = ageDays(item.createdAt, now);
   if (age === null) return 'no usable date';
-  if (age > maxAgeDays) return `older than ${maxAgeDays} days`;
+  if (age > maxAgeDays) {
+    // Agent briefs allow an older thread through when it has a reply within the last couple of days.
+    const activeAge = item.lastActiveAt ? ageDays(item.lastActiveAt, now) : null;
+    if (activeAge === null || activeAge > activeWithinDays) return `older than ${maxAgeDays} days`;
+  }
   if (COMPETITORS.test(text) && /\b(i|we) (built|made|run|offer)|\bour (tool|app|product)\b|\bmy (tool|app|product)\b/i.test(text)) return 'competitor promoting a product';
   for (const [name, re] of EXCLUDE) if (re.test(text)) return name === 'validation' ? 'founder validating or launching a product' : name === 'promo' ? 'promotion' : 'hiring post';
   if (OFF_TOPIC.test(text) && !PAIN.slice(0, 5).some(([re]) => re.test(text))) return 'about card payments, not invoices';

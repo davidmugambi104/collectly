@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-10-07T19:33:45.697Z",
+  "total": 1,
+  "kept": 0,
+  "shortlist": [],
+  "skipped": [
+    {
+      "id": "QC-375767",
+      "platform": "quickbooks-community",
+      "url": "https://quickbooks.intuit.com/community/other-questions-9/finish-your-payment-customer-email-375767?tid=375767&fid=9",
+      "why": "no invoice or payment pain in the text"
+    }
+  ],
+  "byPlatform": {}
+}

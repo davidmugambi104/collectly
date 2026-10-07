@@ -1,0 +1,8 @@
+{
+  "QC-375767": {
+    "painPoint": "QuickBooks is automatically emailing their customers a 'finish your payment' nudge whenever a customer opens an unpaid invoice, on top of the reminders they already set up themselves, and there is no setting to turn it off or edit the wording.",
+    "reply": "This is a separate automated email from your own invoice reminders, and right now there is no toggle for it anywhere in Account and settings, so you have not missed a setting. A QuickBooks moderator confirmed in this thread that it is a known issue their product team is investigating, not something you can switch off yet. If the wording is the main problem, replying in the thread gets your account added to that investigation list, which is how they are tracking who to notify when there is a fix. Your own configured reminders are separate and are not affected by this.",
+    "mentionsMugavi": false,
+    "mentionReason": ""
+  }
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "QC-375767",
+    "platform": "quickbooks-community",
+    "url": "https://quickbooks.intuit.com/community/other-questions-9/finish-your-payment-customer-email-375767?tid=375767&fid=9",
+    "community": "QuickBooks Q&A (US) > Other Questions",
+    "title": "Finish Your Payment Customer Email",
+    "text": "Two weeks ago, my customers started receiving emails after they open an invoice reminding them that they did not pay. I contacted Quickbooks, and as usual they were first completely confused by a feature in their own software and took them a week to get back to me. When they did, they stated this is a new feature and there is no option to turn it on or off. Does anyone know if there is a way to turn these emails off? Or is there a way to edit these emails as they are completely unprofessional? This is not a reminder email. I have those set and have zero issues. This appears to be a new feature rolled out with the typical zero thought Quickbooks gives to features.",
+    "createdAt": "2026-08-24T12:18:07Z",
+    "lastActiveAt": "2026-10-07T02:30:00Z",
+    "score": 18,
+    "comments": 79,
+    "locked": false,
+    "flags": ["active-in-last-2-days", "original-post-older-than-7-days-but-thread-replied-to-within-20-hours", "quickbooks-team-confirmed-known-issue"]
+  }
+]
