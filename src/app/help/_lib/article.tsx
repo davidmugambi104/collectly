@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { MarketingHeader } from '@/components/marketing/header';
 import { MarketingFooter } from '@/components/marketing/footer';
 import { CONTACT } from '@/lib/site-contact';
+import { HELP_PAGES } from './help-pages';
 
 /**
  * Shared shell for a help page: same header, same "Help" eyebrow, same
@@ -20,6 +21,19 @@ export function HelpArticle({ title, lead, children }: { title: string; lead: st
         <h1 className="mt-3 h1">{title}</h1>
         <p className="mt-6 lead">{lead}</p>
         {children}
+        {/* Every help page links to every other one. Before this each article
+            was linked only from the /help index, which left fifteen URLs with
+            a single internal link apiece. */}
+        <nav aria-label="More help" className="mt-14 border-t border-ink-100 pt-6">
+          <p className="text-sm font-semibold text-ink-900">More help</p>
+          <ul className="mt-3 space-y-1.5 text-sm">
+            {HELP_PAGES.filter((p) => p.title !== title).map((p) => (
+              <li key={p.slug}>
+                <Link href={`/help/${p.slug}`} className="text-ink-700 underline underline-offset-2 hover:text-brand-600">{p.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
         <p className="mt-12 text-sm text-ink-600">
           Stuck? Write to <a className="underline" href={`mailto:${CONTACT.hello}`}>{CONTACT.hello}</a>, replies within one business day.
           See <Link className="underline" href="/help">more help pages</Link> or <Link className="underline" href="/security">how we handle your data</Link>.
