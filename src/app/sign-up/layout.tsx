@@ -5,6 +5,11 @@ import { ClerkProvider } from '@/components/clerk-provider';
 // marketing pages too, and Clerk's production instance rejects any origin but
 // getcollectly.app — which blanked the server render of every mugavi.com page.
 // See the note in src/app/layout.tsx.
+// Auth screens are not search landing pages. robots.txt already disallows them,
+// but a blocked URL can still be indexed from links, and the root layout says
+// `index, follow`, so say noindex here as well.
+export const metadata = { robots: { index: false, follow: false } };
+
 export default function SignUpLayout({ children }: { children: React.ReactNode }) {
   return <ClerkProvider>{children}</ClerkProvider>;
 }

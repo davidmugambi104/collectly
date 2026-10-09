@@ -33,3 +33,39 @@ test('llms.txt body text has no em or en dashes', () => {
   const body = code(llms).split('body(): string')[1] ?? '';
   assert.doesNotMatch(body, /[–—]/);
 });
+
+// ─── Canonicals and indexability (Search Console, 2026-10-09) ────────────────
+
+const rootLayout = readFileSync(new URL('../app/layout.tsx', import.meta.url), 'utf8');
+
+test('root layout sets no canonical or hreflang, so no page inherits the homepage URL', () => {
+  assert.doesNotMatch(code(rootLayout), /canonical\s*:/);
+  assert.doesNotMatch(code(rootLayout), /languages\s*:/);
+});
+
+test('pageMetadata gives every page its own canonical', () => {
+  assert.match(code(seo), /alternates:\s*\{\s*canonical:\s*url\s*\}/);
+});
+
+test('sign-in and sign-up layouts are noindex', () => {
+  for (const f of ['sign-in', 'sign-up']) {
+    const src = readFileSync(new URL(`../app/${f}/layout.tsx`, import.meta.url), 'utf8');
+    assert.match(code(src), /robots:\s*\{\s*index:\s*false/);
+  }
+});
+
+test('/pay/[id] answers an unknown id with a real 404 from generateMetadata and stays noindex', () => {
+  const src = code(readFileSync(new URL('../app/pay/[id]/page.tsx', import.meta.url), 'utf8'));
+  const gm = src.slice(src.indexOf('export async function generateMetadata'));
+  assert.match(gm.slice(0, 500), /notFound\(\)/);
+  assert.match(src, /index:\s*false/);
+});
+
+test('every help page and the QuickBooks page are linked from site-wide chrome, not only the sitemap', () => {
+  const footer = readFileSync(new URL('../components/marketing/footer.tsx', import.meta.url), 'utf8');
+  for (const href of ['/help', '/integrations/quickbooks', '/interview', '/qualify', '/vs-gaviti', '/vs-upflow', '/vs-growfin', '/vs-highradius']) {
+    assert.ok(footer.includes(`href="${href}"`), `footer should link ${href}`);
+  }
+  const article = readFileSync(new URL('../app/help/_lib/article.tsx', import.meta.url), 'utf8');
+  assert.match(article, /HELP_PAGES/);
+});

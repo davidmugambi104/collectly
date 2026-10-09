@@ -41,6 +41,7 @@ export function MarketingFooter() {
                 <li><Link href="/features" className="inline-block py-1.5 hover:text-ink-900">Features</Link></li>
                 <li><Link href="/pricing" className="inline-block py-1.5 hover:text-ink-900">Pricing</Link></li>
                 <li><Link href="/integrations" className="inline-block py-1.5 hover:text-ink-900">Integrations</Link></li>
+                <li><Link href="/integrations/quickbooks" className="inline-block py-1.5 hover:text-ink-900">QuickBooks Online</Link></li>
               </ul>
             </div>
             <div>
@@ -63,6 +64,10 @@ export function MarketingFooter() {
                 <li><Link href="/vs-quickbooks" className="inline-block py-1.5 hover:text-ink-900">vs QuickBooks</Link></li>
                 <li><Link href="/vs-zohobooks" className="inline-block py-1.5 hover:text-ink-900">vs Zoho Books</Link></li>
                 <li><Link href="/vs-freshbooks" className="inline-block py-1.5 hover:text-ink-900">vs FreshBooks</Link></li>
+                <li><Link href="/vs-gaviti" className="inline-block py-1.5 hover:text-ink-900">vs Gaviti</Link></li>
+                <li><Link href="/vs-upflow" className="inline-block py-1.5 hover:text-ink-900">vs Upflow</Link></li>
+                <li><Link href="/vs-growfin" className="inline-block py-1.5 hover:text-ink-900">vs Growfin</Link></li>
+                <li><Link href="/vs-highradius" className="inline-block py-1.5 hover:text-ink-900">vs HighRadius</Link></li>
                 <li><Link href="/compare" className="inline-block py-1.5 hover:text-ink-900">All comparisons</Link></li>
               </ul>
             </div>
@@ -74,6 +79,7 @@ export function MarketingFooter() {
                   links are what say it matters. */}
               <p className="text-sm font-semibold text-ink-900">Resources</p>
               <ul className="mt-3 space-y-1 text-sm text-ink-600">
+                <li><Link href="/help" className="inline-block py-1.5 hover:text-ink-900">Help center</Link></li>
                 <li><Link href="/blog" className="inline-block py-1.5 hover:text-ink-900">Blog</Link></li>
                 <li><Link href="/playbook" className="inline-block py-1.5 hover:text-ink-900">A/R playbook</Link></li>
                 <li><Link href="/customers" className="inline-block py-1.5 hover:text-ink-900">What it does</Link></li>
@@ -97,6 +103,8 @@ export function MarketingFooter() {
                     scrolled to the bottom looking for a way to get in touch —
                     which is where people look — found nothing. */}
                 <li><Link href="/contact" className="inline-block py-1.5 hover:text-ink-900">Contact</Link></li>
+                <li><Link href="/interview" className="inline-block py-1.5 hover:text-ink-900">Share your A/R workflow</Link></li>
+                <li><Link href="/qualify" className="inline-block py-1.5 hover:text-ink-900">Quick survey</Link></li>
                 <li><a href={`mailto:${CONTACT.hello}`} className="inline-block py-1.5 hover:text-ink-900">Email us directly</a></li>
               </ul>
             </div>

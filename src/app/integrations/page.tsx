@@ -324,7 +324,7 @@ export default function IntegrationsPage() {
         <div className="rounded-2xl border border-ink-200 bg-ink-50 p-8">
           <h2 className="h3">Don&apos;t see what you need?</h2>
           <p className="mt-2 text-sm text-ink-600 leading-relaxed">
-            Mugavi connects to QuickBooks Online (beta) and Xero today. If your accounting tool is not listed, you can import a CSV export today. Tell us what is blocking you and we will weigh it when we pick the next integration.
+            Mugavi connects to QuickBooks Online (beta) and Xero today. If your accounting tool is not listed, you can import a CSV export today. Tell us what is blocking you and we will weigh it when we pick the next integration. Using QuickBooks? Read <Link href="/integrations/quickbooks" className="underline">how the QuickBooks Online connection works</Link>.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <a href={`mailto:${CONTACT.hello}?subject=Integration%20request`} className="btn-primary">

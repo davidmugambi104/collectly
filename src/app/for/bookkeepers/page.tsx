@@ -198,6 +198,14 @@ export default function ForBookkeepersPage() {
           <li><Link href="/blog/onboard-client-to-invoice-follow-up-first-week" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">Onboard a client to invoice follow-up in the first week</Link></li>
           <li><Link href="/blog/accounts-receivable-month-end-checklist-quickbooks-online" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">An accounts receivable month-end checklist for QuickBooks Online</Link></li>
         </ul>
+        <p className="mt-8 text-sm text-ink-700">
+          Setting up? See <Link href="/integrations/quickbooks" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">how the QuickBooks Online connection works</Link>,
+          or the help pages on <Link href="/help/connect-quickbooks-or-xero" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">connecting a client book</Link>,
+          {' '}<Link href="/help/import-from-a-spreadsheet" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">importing from a spreadsheet</Link>,
+          {' '}<Link href="/help/send-from-your-domain" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">sending from your own domain</Link>
+          {' '}and <Link href="/help/customer-statements" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">customer statements</Link>.
+          All of it is in the <Link href="/help" className="text-brand-700 underline underline-offset-2 hover:text-brand-800">help center</Link>.
+        </p>
       </section>
       <FaqSection items={FAQS} title="Bookkeeper questions" />
       <MarketingFooter />

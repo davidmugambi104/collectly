@@ -123,9 +123,12 @@ export const metadata: Metadata = {
     apple: '/icon.svg',
   },
   manifest: '/site.webmanifest',
+  // No canonical or hreflang here, on purpose. Metadata inherits, so a
+  // canonical set on the root layout stamps the HOMEPAGE url on every page that
+  // does not set its own (sign-in, sign-up, /pay/*, every 404). Search Console
+  // then reports those as duplicates of the homepage. Every indexable page
+  // sets its own canonical through pageMetadata() in src/lib/seo.ts.
   alternates: {
-    canonical: 'https://mugavi.com',
-    languages: { 'en-US': 'https://mugavi.com' },
     types: {
       'application/rss+xml': [
         { url: 'https://mugavi.com/rss.xml', title: 'Mugavi blog' },

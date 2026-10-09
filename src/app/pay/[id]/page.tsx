@@ -39,9 +39,22 @@ import { isSquareConnected } from '@/lib/integrations/square';
  *
  * If one has to go, drop the Disallow, not this.
  */
-export const metadata = {
-  robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
-};
+const PORTAL_ROBOTS = { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } };
+
+/**
+ * Unknown ids must be a real 404, not a 200 page that says "not found".
+ * The root loading.tsx wraps this page in a Suspense boundary, so by the time
+ * the page body calls notFound() the 200 status has already been sent.
+ * generateMetadata is resolved before the shell is flushed for crawlers, so the
+ * existence check lives here too. The page body keeps its own notFound() as the
+ * backstop for browsers that stream metadata.
+ */
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const [row] = await db.select({ id: invoices.id }).from(invoices).where(eq(invoices.id, id)).limit(1);
+  if (!row) notFound();
+  return { robots: PORTAL_ROBOTS };
+}
 
 export const dynamic = 'force-dynamic';
 
