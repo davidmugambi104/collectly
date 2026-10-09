@@ -375,7 +375,7 @@ export default async function DunningPage({ searchParams }: { searchParams: Prom
         </div>
       ) : (
         <>
-        {recentRuns.length === 0 && queue.length === 0 && <StarterSetup presets={PRESETS.map(({ id, name, blurb }) => ({ id, name, blurb }))} approvalRequired={approvalRequired} />}
+        {recentRuns.length === 0 && queue.length === 0 && <StarterSetup presets={PRESETS.map(({ id, name, blurb }) => ({ id, name, blurb }))} approvalRequired={approvalRequired} smsConfigured={isSmsConfigured()} />}
         <ApprovalQueue approvalRequired={approvalRequired} items={queue} smsConfigured={isSmsConfigured()} />
         <StatementDraftsQueue items={stmtDrafts} />
         </>

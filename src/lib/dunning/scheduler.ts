@@ -20,7 +20,7 @@ import { belowMinBalance, isGapBlocked, CONTACTING_STATUSES, type ChaseRules, ty
 import { isWithinWindow } from '@/lib/dunning/send-window';
 import { ensureDunningControlSchema } from '@/lib/dunning-control-schema';
 import { isApprovalRequired } from '@/lib/dunning/approval';
-import { isSmsConfigured, smsStepSkipReason } from '@/lib/dunning/sms-config';
+import { isSmsConfigured, smsStepSkipReason, latestDraftableStep } from '@/lib/dunning/sms-config';
 import { recordEvent } from '@/lib/events';
 import { maySendSms } from '@/lib/sms-consent';
 import { ensureSmsConsentSchema } from '@/lib/sms-consent-schema';
@@ -394,7 +394,7 @@ export async function processDunning(opts: ProcessOptions = {}) {
       const dueSteps = (seq.steps ?? []).filter((s: DunningStep) => s.daysFromDue <= days).sort((a: DunningStep, b: DunningStep) => a.daysFromDue - b.daysFromDue);
       if (!dueSteps.length) continue;
 
-      const lastStep: DunningStep = dueSteps[dueSteps.length - 1];
+      let lastStep: DunningStep = dueSteps[dueSteps.length - 1];
 
       // Check if this exact step was already executed for this invoice
       // (batched lookup computed once above, not a per-invoice query).
@@ -447,8 +447,20 @@ export async function processDunning(opts: ProcessOptions = {}) {
             payload: { runId: skipped[0].id, invoiceId: invoice.id, stepId: lastStep.id, channel: 'sms', days, reason: smsSkip },
           });
         }
-        continue;
+        // An invoice that is already past the text step (a new account's oldest
+        // invoices) would otherwise get nothing at all. Fall back to the latest
+        // earlier step that can go out, once.
+        const fallback = latestDraftableStep<DunningStep>(seq.steps, days, false);
+        if (!fallback || existingRunKeys.has(`${invoice.id}:${fallback.id}`)) continue;
+        lastStep = fallback;
       }
+      // Call steps were handled above; a fallback never becomes a call task here.
+      if (lastStep.channel === 'phone') continue;
+
+      // An email step for a customer with no email on file cannot be sent, so do not
+      // put a draft in the approval queue that can only fail. Nothing is recorded, so
+      // the step drafts on the next run after an address is added.
+      if (lastStep.channel === 'email' && !customer.email) continue;
 
       try {
         const result = await generateDunningMessage({

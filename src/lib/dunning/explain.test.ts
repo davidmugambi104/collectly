@@ -171,3 +171,11 @@ test('credit that does not cover it is ignored, and a hold still comes first', (
   assert.equal(explain({ ...base, unappliedCredit: 50, customerOwed: 200 }).willAct, true);
   assert.match(explain({ ...base, unappliedCredit: 250, customerOwed: 200, hold: { heldUntil: null } }).headline, /paused reminders/);
 });
+
+test('a drafted reminder that is waiting is not described as sent, even when a later text step was skipped', () => {
+  const e = explain({ ...base, daysOverdue: 60, ranStepIds: ['s2', 's3'], waitingStepIds: ['s2'] });
+  assert.equal(e.willAct, false);
+  assert.equal(e.short, 'Waiting for you');
+  assert.ok(!/sent/i.test(e.short));
+  assert.equal(explain({ ...base, daysOverdue: 60, ranStepIds: ['s1', 's2', 's3'] }).short, 'Up to date');
+});

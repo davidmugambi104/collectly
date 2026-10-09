@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { isSmsConfigured, smsStepSkipReason, latestDueStep, SMS_UNCONFIGURED_REASON } from './sms-config.ts';
+import { isSmsConfigured, smsStepSkipReason, latestDueStep, latestDraftableStep, SMS_UNCONFIGURED_REASON } from './sms-config.ts';
 import { approvalBlocker } from './approval.ts';
 
 const fullEnv = { TWILIO_ACCOUNT_SID: 'ACfake', TWILIO_AUTH_TOKEN: 'fake', TWILIO_FROM_NUMBER: '+15550100' };
@@ -59,4 +59,18 @@ test('approval: a queued SMS draft cannot be approved while Twilio is unconfigur
   assert.match(approvalBlocker({ ...sms, smsConfigured: false }) ?? '', /not set up/);
   assert.equal(approvalBlocker({ ...sms, smsConfigured: true }), null);
   assert.equal(approvalBlocker(sms), null);
+});
+
+test('without Twilio, an invoice past the text step falls back to the latest earlier email step', () => {
+  const standard = [
+    { id: 's1', daysFromDue: 1, channel: 'email' as const },
+    { id: 's2', daysFromDue: 7, channel: 'email' as const },
+    { id: 's3', daysFromDue: 14, channel: 'email' as const },
+    { id: 's4', daysFromDue: 30, channel: 'sms' as const },
+  ];
+  assert.equal(latestDraftableStep(standard, 60, false)?.id, 's3');
+  assert.equal(latestDraftableStep(standard, 35, false)?.id, 's3');
+  assert.equal(latestDraftableStep(standard, 60, true)?.id, 's4');
+  assert.equal(latestDraftableStep(standard, 0, false), null);
+  assert.equal(latestDraftableStep(null, 10, false), null);
 });

@@ -10,7 +10,7 @@ type PresetView = { id: string; name: string; blurb: string };
  * drafts reminders for whatever is already overdue. Drafts only: the first
  * batch always waits in the approval queue below.
  */
-export function StarterSetup({ presets, approvalRequired }: { presets: PresetView[]; approvalRequired: boolean }) {
+export function StarterSetup({ presets, approvalRequired, smsConfigured = true }: { presets: PresetView[]; approvalRequired: boolean; smsConfigured?: boolean }) {
   const router = useRouter();
   const [choice, setChoice] = useState('standard');
   const [busy, setBusy] = useState(false);
@@ -64,6 +64,9 @@ export function StarterSetup({ presets, approvalRequired }: { presets: PresetVie
               </label>
             ))}
           </fieldset>
+          {!smsConfigured && presets.some((p) => /text/i.test(p.blurb) && !/no texts/i.test(p.blurb)) && (
+            <p className="app-meta mt-2 font-normal">Text reminders are not switched on for this account, so a text step is skipped and nothing is sent by text. Invoices already past the text step get the latest email step instead.</p>
+          )}
           {!done && (
             <div className="mt-3 flex items-center gap-3">
               <button className="btn-primary btn-sm" onClick={go} disabled={busy} aria-busy={busy}>
