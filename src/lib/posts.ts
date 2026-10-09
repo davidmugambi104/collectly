@@ -1595,7 +1595,7 @@ Large customers often will not pay without a purchase order number. Ask for it b
 
 ## Know what the law gives you
 
-For business-to-business sales in the UK, the Late Payment of Commercial Debts (Interest) Act can give you a right to statutory interest and a fixed sum on late invoices, even if your contract says nothing. We are not quoting rates or amounts because they change. Look them up on gov.uk. Our post on [late payment fees](/blog/late-payment-fees-when-to-charge) goes into how to use that without souring the relationship.
+For business-to-business sales in the UK, the Late Payment of Commercial Debts (Interest) Act can give you a right to statutory interest and a fixed sum on late invoices, even if your contract says nothing. The current rate and fixed sums are set out, with the gov.uk sources, in [how to charge late fees on invoices in the US and UK](/blog/how-to-charge-late-fees-on-invoices-us-uk). Our post on [late payment fees](/blog/late-payment-fees-when-to-charge) goes into how to use that without souring the relationship.
 
 ## Write the terms once, then keep to them
 
