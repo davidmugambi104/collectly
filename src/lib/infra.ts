@@ -190,7 +190,7 @@ export function withUnsubscribeFooter(html: string, email: string, appUrl = proc
   const footer = `
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0 12px">
 <p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0 0 8px">
-  You're receiving this because you signed up at mugavi.com or are an existing customer.
+  You're receiving this because the business that sent it is owed money on an invoice addressed to you.
 </p>
 <p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0">
   <a href="${url}" style="color:#6b7280;text-decoration:underline">Unsubscribe</a>
