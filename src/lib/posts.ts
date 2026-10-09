@@ -561,6 +561,8 @@ Do not add a fee to an invoice you know is in dispute. Do not charge a fee to a 
 
 This article is from Mugavi, which makes accounts receivable software. Mugavi has a late fee rule you set yourself, with a grace period and an optional cap. It never applies a fee on its own: it lists the invoices that are due one, and you choose which to apply. It skips disputed invoices and invoices with a promise to pay. It does not write the fee back to your accounting software and does not add it to the payment page, so you collect it yourself and mark it paid. Everything above works without it.
 
+For the step by step version with wording for the invoice and the reminder, and the current UK statutory figures, see [how to charge late fees on invoices in the US and UK](/blog/how-to-charge-late-fees-on-invoices-us-uk).
+
 Fees are easier to stand behind when the invoice states its terms clearly. If you invoice in the UK, see [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase) for what belongs on the invoice.
 
 Related reading: [tracking a customer's promise to pay](/blog/customer-promised-to-pay-friday-track-it), [the true cost of late payments for small businesses](/blog/true-cost-of-late-payments-small-business-2026), [when a UK invoice is really late, by payment method](/blog/uk-payment-methods-when-is-an-invoice-really-late).`,
@@ -1619,7 +1621,7 @@ With clear terms, a first reminder can be two sentences: the invoice, the amount
 
 Mugavi drafts reminders from your accounting software, waits for you to approve each one, and lets you add payment details that print on statements. It is built and priced in dollars, and we have not tested it with a UK QuickBooks company. If you are in the UK, read the [UK page](/for/uk-agencies) and ask us before you commit. Everything in this post works without any tool.
 
-Related reading: [when a UK invoice is really late, by payment method](/blog/uk-payment-methods-when-is-an-invoice-really-late), [checking who you invoiced at a UK company before chasing](/blog/check-who-you-invoiced-uk-company-before-chasing).`,
+Related reading: [how to charge late fees on invoices in the US and UK](/blog/how-to-charge-late-fees-on-invoices-us-uk), [when a UK invoice is really late, by payment method](/blog/uk-payment-methods-when-is-an-invoice-really-late), [checking who you invoiced at a UK company before chasing](/blog/check-who-you-invoiced-uk-company-before-chasing).`,
   },
   {
     slug: 'chasing-accounts-payable-at-large-uk-customer',
@@ -1901,6 +1903,114 @@ Before you send a reminder, look at the bank feed for anything that matches. A p
 You choose when each step of a schedule goes out relative to the due date, so you can leave a few days for a slow payment method. There is also an option for a heads-up before the due date that never calls the invoice overdue. Nothing is sent until you approve it, and after you press send there is a 30-second window to change your mind. Mugavi does not see your bank feed, so it reads what has been recorded in your books. If a payment has arrived but not been recorded, record it first.
 
 If late payments keep coming from unclear due dates, [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase) covers what to put on the invoice.`,
+  },
+  {
+    slug: 'how-to-charge-late-fees-on-invoices-us-uk',
+    title: 'How to charge late fees on invoices (US and UK)',
+    date: '2026-10-09', read: '7 min',
+    excerpt: 'Late payment charges only stick if you agreed them first. How to set the terms, what the UK statutory interest and fixed sums are, wording for the invoice and the reminder, when to waive, and how to collect.',
+    tags: ['late fees', 'late payment charges', 'invoicing', 'UK', 'US'],
+    body: `If you have ever looked at an overdue invoice and wondered whether you can add a late fee, the short answer is: sometimes, and mostly only if you said so before the invoice went out. This guide covers how to set it up, what the rules look like in the US and the UK, the wording to use, when to let a fee go, and how to actually collect it.
+
+This is general information, not legal advice. Rules depend on where you and your customer are and what you signed, so check your contract and local law, or ask a lawyer or accountant, before you rely on any of it.
+
+## Step 1: agree it in writing before you need it
+
+A late fee is much easier to collect when the customer accepted it up front. That means one of these, in place before the work starts:
+
+- a clause in your contract, engagement letter or terms of business
+- terms printed on the invoice itself, if the customer has already agreed to your terms elsewhere
+- a signed quote or proposal that mentions it
+
+A fee that first appears on an invoice that is already overdue is the kind customers dispute, and it is hard to defend. If you have no written terms today, add them for new work and for renewals. Do not apply them to old work the customer never saw.
+
+Whatever you write, state the rate plainly:
+
+- the amount or percentage (a flat sum, or a percentage of the unpaid balance)
+- when it starts (the due date, or after a grace period)
+- whether it happens once or repeats, for example every 30 days
+- any cap
+
+Keep it proportionate. A fee that is large next to the invoice looks like a penalty, and a penalty is easier to challenge than a reasonable charge.
+
+## Step 2: know the rules where you work
+
+### United States
+
+There is no single US rule. What you can charge depends on your contract and on your state, and several states cap interest or late charges or set rules for certain kinds of customers and contracts. Those limits differ a lot from state to state, so we are not going to quote a number. Look up the rules for your state, and for the state your customer is in, before you pick a rate. A state's attorney general or department of financial regulation, or a local attorney, is the right place to ask.
+
+The practical rule is the same everywhere: put the fee in writing, keep it modest, and apply it the same way to every customer.
+
+### United Kingdom
+
+If you are a business selling to another business, the Late Payment of Commercial Debts (Interest) Act gives you rights even if your contract says nothing about late payment. According to GOV.UK:
+
+- You can charge statutory interest of 8% plus the Bank of England base rate on a late business to business debt.
+- You can also charge a fixed sum for recovering the debt, set by the legislation, and only once for each payment:
+
+| Amount of the debt | Fixed sum |
+| --- | --- |
+| Up to £999.99 | £40 |
+| £1,000 to £9,999.99 | £70 |
+| £10,000 or more | £100 |
+
+- As a supplier you can also claim reasonable costs each time you try to recover the debt, on top of the fixed sum.
+- You cannot claim statutory interest if your contract sets a different rate of interest.
+- If you decide to add interest to what is owed, GOV.UK says to send a new invoice.
+
+The base rate changes, so check the current one when you work out interest. The two GOV.UK pages to read are [charging interest on a commercial debt](https://www.gov.uk/late-commercial-payments-interest-debt-recovery/charging-interest-commercial-debt) and [claiming debt recovery costs](https://www.gov.uk/late-commercial-payments-interest-debt-recovery/claim-debt-recovery-costs). This applies to business customers. Sales to consumers are covered by different rules, so ask before you charge a person who is not buying for a business.
+
+## Step 3: put it on the invoice
+
+Short and plain works best. Here is a line for the foot of an invoice:
+
+"Payment is due within 14 days of the invoice date. Invoices unpaid after the due date and a 7 day grace period incur a late fee of 1.5% of the unpaid balance, charged once every 30 days until paid, up to a maximum of 10% of the original invoice. This is set out in our terms of business."
+
+Change the numbers to whatever you actually agreed and whatever your state allows. Those figures are an illustration of the layout, not a recommendation.
+
+For UK business customers who have agreed no other rate, something like this is enough:
+
+"If this invoice is not paid by the due date, we may claim statutory interest and a fixed sum for recovery costs under the Late Payment of Commercial Debts (Interest) Act 1998."
+
+Put a late fee on its own line, never folded into the invoice total. The original invoice stays the same, and the customer can see what is the debt and what is the charge.
+
+## Step 4: say it in the reminder, kindly
+
+Most late invoices are late because someone was busy, not because they are refusing to pay. So send a normal reminder first, with no mention of fees. If the invoice is still unpaid when the grace period ends, a second message can mention the fee calmly:
+
+"Hi Sam, invoice 1042 for $2,400 was due on 3 October and is still open. As set out in our terms, a late fee of $36 applies from today. If you can pay this week, we will take it off. Here is the link to pay. If there is a problem with the invoice, tell me and I will sort it out."
+
+The offer to remove the fee in exchange for payment is the point of the message. It is fair, and it gets paid.
+
+If the customer disputes the invoice, stop. Do not add a fee to an invoice that is being argued about until the dispute is settled. The same goes for a customer who has told you they will pay on a set date: wait for the date to pass.
+
+## When to waive it
+
+A fee is a tool, not a goal. Waive it when:
+
+- it is the first time this customer has been late, and they are normally prompt
+- the delay was your own error, such as an invoice sent to the wrong person or with a wrong reference
+- the customer pays in full right after you mention the fee, and you promised to waive it for that
+- the fee would cost you more in goodwill than it brings in
+
+Waive it openly and say so in writing ("I have removed the late fee this time"). That keeps the rule intact for next time. What hurts you is waiving it quietly for some customers and charging it to others, because the customer who gets charged will notice.
+
+## How to collect it
+
+Collecting a fee is the same job as collecting the invoice, with one extra step:
+
+1. Issue it clearly. Add the fee as a separate line or a separate invoice, so the customer has something to pay against.
+2. Tell the customer the new total and how to pay.
+3. Follow up on the fee just like the original invoice. If the invoice is paid but the fee is not, send a short note asking for the fee, and keep in mind that chasing a small fee for months is rarely worth it.
+4. Record it. When the fee is paid, mark it paid, and when you waive it, record that. Otherwise the books and your memory disagree later.
+
+If a customer pays the invoice and refuses the fee, decide whether the amount is worth a fight. For small sums, waiving it and keeping the customer is usually the better deal. If you are owed a lot, speak to a professional before you escalate.
+
+## What Mugavi does about this
+
+Mugavi is an invoice reminder tool that works from QuickBooks or Xero, and it has a late fee rule you set yourself: a flat amount or a percentage, a grace period, whether it repeats every 30 days, and an optional cap. It lists the open invoices that are now due a fee, and you choose which ones to apply. It never applies a fee on its own, and it skips disputed invoices and invoices with a promise to pay. The limits are real: a fee is not written back to QuickBooks or Xero, it is not added to the payment page so the customer cannot pay it there, and you mark it paid yourself. It does not calculate statutory interest. Setup is in the [late fees help page](/help/late-fees). If you run follow-up for several clients, see [Mugavi for bookkeepers](/for/bookkeepers), and the [pricing](/pricing) page has the plans. You can do everything in this guide with a spreadsheet and your own email.
+
+Related reading: [when to charge late payment fees without losing the customer](/blog/late-payment-fees-when-to-charge), [UK invoice payment terms that make a late invoice easier to chase](/blog/uk-invoice-payment-terms-you-can-chase).`,
   },
 ];
 
