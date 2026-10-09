@@ -1,4 +1,5 @@
 import { db } from '@/db';
+import { moneyText, roundCents } from '@/lib/money-text';
 import { invoices, customers, payments } from '@/db/schema';
 import { eq, and, sum, gte, lte, sql, desc } from 'drizzle-orm';
 import { bucketFor, daysOverdue } from '@/lib/utils';
@@ -267,7 +268,7 @@ export async function getCustomerInsights(orgId: string, limit = 50): Promise<Cu
       email: c.email,
       phone: c.phone,
       openInvoices: cur.open,
-      openBalance: Math.round(cur.balance),
+      openBalance: roundCents(cur.balance),
       oldestInvoiceDays: cur.oldestDays,
       avgDaysToPay: beh.avgDaysToPay,
       paidRate: beh.paidRate,
@@ -330,7 +331,7 @@ export async function getAIInsights(orgId: string): Promise<AIInsight[]> {
       priority: 1,
       category: 'risk',
       title: `${top.name} is at write-off risk`,
-      detail: `$${top.openBalance.toLocaleString()} outstanding across ${top.openInvoices} invoice${top.openInvoices === 1 ? '' : 's'}, oldest is ${top.oldestInvoiceDays} days past due. Predicted payment in 7 days: ${Math.round(top.predictedPayment7d * 100)}%. ${top.recommendedAction}`,
+      detail: `${moneyText(top.openBalance)} outstanding across ${top.openInvoices} invoice${top.openInvoices === 1 ? '' : 's'}, oldest is ${top.oldestInvoiceDays} days past due. Predicted payment in 7 days: ${Math.round(top.predictedPayment7d * 100)}%. ${top.recommendedAction}`,
       cta: { href: `/dashboard/customers/${top.customerId}`, label: `Review ${top.name}` },
       amount: top.openBalance,
     });
@@ -343,7 +344,7 @@ export async function getAIInsights(orgId: string): Promise<AIInsight[]> {
       id: 'high-value-overdue',
       priority: 2,
       category: 'action',
-      title: `$${topByBalance.openBalance.toLocaleString()} stuck at ${topByBalance.name}`,
+      title: `${moneyText(topByBalance.openBalance)} stuck at ${topByBalance.name}`,
       detail: `Largest single exposure on your books. ${topByBalance.recommendedAction}`,
       cta: { href: `/dashboard/customers/${topByBalance.customerId}`, label: 'Take action' },
       amount: topByBalance.openBalance,
@@ -357,9 +358,9 @@ export async function getAIInsights(orgId: string): Promise<AIInsight[]> {
       id: 'forecast',
       priority: 3,
       category: 'forecast',
-      title: `$${cash.forecast30d.toLocaleString()} expected in next 30 days`,
+      title: `${moneyText(cash.forecast30d)} expected in next 30 days`,
       detail: cash.avgDaysToPay
-        ? `Based on your ${cash.avgDaysToPay}-day average DSO across ${cash.outstanding.toLocaleString()} of total A/R.${confidenceNote}`
+        ? `Based on your ${cash.avgDaysToPay}-day average DSO across ${moneyText(cash.outstanding)} of total A/R.${confidenceNote}`
         : `Estimated from outstanding A/R. We need more paid-invoice history to improve this forecast.`,
       cta: { href: '/dashboard/cash-flow', label: 'See forecast' },
       amount: cash.forecast30d,
@@ -376,8 +377,8 @@ export async function getAIInsights(orgId: string): Promise<AIInsight[]> {
         ? `Collections up ${cash.collectedTrend}% this month`
         : `Collections down ${Math.abs(cash.collectedTrend)}% this month`,
       detail: cash.collectedTrend > 0
-        ? `You're collecting $${(cash.collectedThisMonth - cash.collectedLastMonth).toLocaleString()} more than last month. Keep it up.`
-        : `$${Math.abs(cash.collectedThisMonth - cash.collectedLastMonth).toLocaleString()} less collected vs last month. Worth a 5-min review of the dunning sequence.`,
+        ? `You're collecting ${moneyText((cash.collectedThisMonth - cash.collectedLastMonth))} more than last month. Keep it up.`
+        : `${moneyText(Math.abs(cash.collectedThisMonth - cash.collectedLastMonth))} less collected vs last month. Worth a 5-min review of the dunning sequence.`,
       cta: { href: '/dashboard/dunning', label: 'Review sequence' },
     });
   }
@@ -392,7 +393,7 @@ export async function getAIInsights(orgId: string): Promise<AIInsight[]> {
         priority: 2,
         category: 'risk',
         title: `${overduePct}% of your A/R is overdue`,
-        detail: `$${totalOverdue.toLocaleString()} sitting past due across ${aging.invoiceCount} invoice${aging.invoiceCount === 1 ? '' : 's'}. Reminders you approve first are drafted from the Dunning page.`,
+        detail: `${moneyText(totalOverdue)} sitting past due across ${aging.invoiceCount} invoice${aging.invoiceCount === 1 ? '' : 's'}. Reminders you approve first are drafted from the Dunning page.`,
         cta: { href: '/dashboard/dunning', label: 'Draft reminders' },
         amount: totalOverdue,
       });
@@ -455,12 +456,12 @@ export async function getExecSummary(orgId: string): Promise<ExecSummary> {
   const topWin = topWinRow[0] ? { customer: topWinRow[0].customerName, amount: Number(topWinRow[0].amount) } : null;
 
   const narrative = [
-    `Total A/R: $${aging.total.toLocaleString()}.`,
-    `Overdue: $${(aging.buckets['1-30'].amount + aging.buckets['31-60'].amount + aging.buckets['61-90'].amount + aging.buckets['90+'].amount).toLocaleString()}.`,
+    `Total A/R: ${moneyText(aging.total)}.`,
+    `Overdue: ${moneyText((aging.buckets['1-30'].amount + aging.buckets['31-60'].amount + aging.buckets['61-90'].amount + aging.buckets['90+'].amount))}.`,
     cash.avgDaysToPay ? `DSO: ${cash.avgDaysToPay} days.` : '',
-    `Collected this month: $${cash.collectedThisMonth.toLocaleString()}.`,
+    `Collected this month: ${moneyText(cash.collectedThisMonth)}.`,
     cash.collectedTrend !== null ? `Trend: ${cash.collectedTrend > 0 ? '+' : ''}${cash.collectedTrend}% vs last month.` : '',
-    topRisk ? `Top risk: ${topRisk.customer} ($${topRisk.amount.toLocaleString()}, ${topRisk.days} days).` : '',
+    topRisk ? `Top risk: ${topRisk.customer} (${moneyText(topRisk.amount)}, ${topRisk.days} days).` : '',
   ].filter(Boolean).join(' ');
 
   return {

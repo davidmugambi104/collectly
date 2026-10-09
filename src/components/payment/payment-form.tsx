@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Lock, ShieldCheck, Loader2, AlertTriangle } from 'lucide-react';
+import { noCardNotice, poweredByLabel } from './payment-copy';
 
 // Currencies Mugavi routes to Paystack instead of Stripe. Paystack also
 // supports USD, but we keep USD on Stripe (already live there) and only
@@ -186,7 +187,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
     <form onSubmit={pay} className="space-y-4">
       {!cardAchAvailable && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-          {orgSlug} hasn&apos;t finished setting up online card/ACH payments yet. {paystackEligible ? 'use Paystack or wire transfer below.' : 'use wire transfer below.'}
+          {noCardNotice(orgName, paystackEligible)}
         </div>
       )}
       <div className={`grid gap-2 ${methods.length === 4 ? 'grid-cols-4' : methods.length === 3 ? 'grid-cols-3' : methods.length === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
@@ -240,7 +241,7 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
       {method === 'wire' && (
         <div className="rounded-lg border border-ink-200 bg-ink-50 p-4 text-sm space-y-1.5">
           <div className="font-semibold text-ink-900">Wire transfer</div>
-          <div className="text-ink-600 text-xs">Clicking Pay will open an email to the business requesting wire instructions. Wire transfers cannot be initiated online.</div>
+          <div className="text-ink-600 text-xs">Pressing the button below opens an email to the business requesting wire instructions. Wire transfers cannot be initiated online.</div>
         </div>
       )}
 
@@ -273,9 +274,11 @@ export function PaymentForm({ amount, currency, invoiceNumber, invoiceId, orgSlu
         {method === 'wire' ? 'Request wire instructions' : `Continue to secure payment · ${currency} ${amount.toFixed(2)}`}
       </button>
 
-      <div className="flex items-center justify-center gap-1.5 text-xs text-ink-500">
-        <ShieldCheck className="h-3.5 w-3.5" /> {method === 'paystack' ? 'Powered by Paystack' : 'Powered by Stripe · PCI DSS Level 1'}
-      </div>
+      {poweredByLabel(method) && (
+        <div className="flex items-center justify-center gap-1.5 text-xs text-ink-500">
+          <ShieldCheck className="h-3.5 w-3.5" /> {poweredByLabel(method)}
+        </div>
+      )}
     </form>
   );
 }

@@ -1,6 +1,7 @@
 import { AppShell } from '@/components/app/shell';
 import { getAuth } from '@/lib/auth-helper';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { db } from '@/db';
 import { dunningSequences } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -30,7 +31,11 @@ export default async function DunningSequencesPage() {
       {seq ? (
         <SequenceEditor initialSteps={seq.steps ?? []} sequenceId={seq.id} sender={await loadSenderContext(orgId)} />
       ) : (
-        <div className="card text-center py-10">No active sequence. The default sequence is created automatically when you turn on dunning.</div>
+        <div className="card text-center py-10">
+          <p>You do not have a reminder schedule yet.</p>
+          <p className="app-meta mt-1 font-normal">Pick a starter schedule on the Dunning page. Mugavi drafts your first reminders from it, and then you can edit every step here.</p>
+          <Link href="/dashboard/dunning" className="btn-primary btn-sm mt-4 inline-flex">Choose a starter schedule</Link>
+        </div>
       )}
     </AppShell>
   );

@@ -88,6 +88,7 @@ export async function explainInvoices(orgId: string, invoiceIds: string[], now =
       scheduleName: seq?.name ?? 'none', scheduleActive: !!seq?.isActive,
       steps: ((seq?.steps ?? []) as Step[]).map((s) => ({ id: s.id, daysFromDue: s.daysFromDue, channel: s.channel })),
       ranStepIds: runs.filter((r) => r.status !== 'failed').map((r) => r.stepId),
+      waitingStepIds: runs.filter((r) => r.status === 'scheduled').map((r) => r.stepId),
       failedStepIds: runs.filter((r) => r.status === 'failed').map((r) => r.stepId),
       approvalRequired: isApprovalRequired(settings),
       window,
